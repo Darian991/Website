@@ -205,6 +205,83 @@ p  { margin: 0 0 1.1em; }
 }
 .burger { display: none; }
 
+.nav__close { display: none; }
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(22,21,15,.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t);
+  z-index: 90;
+}
+.nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+/* ---------- Sprachumschalter ---------- */
+/* Der Sprachumschalter im Menü ist nur im Menü sichtbar. Die Auszeichnung
+   muss genauer sein als .langs weiter unten, sonst wird sie überschrieben. */
+.nav .langs--menu { display: none; }
+.langs { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang {
+  background: none;
+  border: 0;
+  padding: .42rem .6rem;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--t), color var(--t);
+}
+.lang + .lang { border-left: 1px solid var(--line); }
+.lang:hover { color: var(--ink); }
+.lang.is-active { background: var(--ink); color: var(--paper); }
+
+/* ---------- Suchleiste ---------- */
+.searchbar {
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--t);
+}
+.searchbar.is-open { max-height: 70vh; overflow-y: auto; }
+.searchbar__inner { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 0; color: var(--muted); }
+.searchbar input {
+  flex: 1;
+  font: inherit;
+  font-size: 1.05rem;
+  border: 0;
+  background: none;
+  padding: .3rem 0;
+  color: var(--ink);
+}
+.searchbar input:focus { outline: none; }
+.searchbar input::-webkit-search-cancel-button { display: none; }
+
+.search__hint { font-size: .9rem; color: var(--muted); padding-bottom: 1.4rem; margin: 0; }
+.search__hint strong { color: var(--ink); font-weight: 500; }
+.search__count { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 0 0 .6rem; }
+.search__list { display: grid; gap: .2rem; padding-bottom: 1rem; }
+.search__item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: .7rem;
+  margin-inline: -.7rem;
+  border-radius: var(--radius);
+  transition: background var(--t);
+}
+.search__item:hover { background: var(--paper-2); }
+.search__thumb { display: block; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--paper-2); }
+.search__thumb svg { width: 100%; height: 100%; object-fit: cover; }
+.search__text { display: grid; gap: .1rem; min-width: 0; }
+.search__cat { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.search__name { font-family: var(--serif); font-size: 1.15rem; }
+.search__desc { font-size: .84rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search__price { font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.searchbar .link-underline { margin-bottom: 1.6rem; display: inline-block; }
+
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
@@ -414,6 +491,13 @@ p  { margin: 0 0 1.1em; }
 }
 .chip:hover { border-color: var(--ink); }
 .chip.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.shop-search { display: flex; align-items: center; gap: .7rem; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: .5rem 1.1rem; min-width: 260px; color: var(--muted); }
+.shop-search input { flex: 1; font: inherit; font-size: .9rem; border: 0; background: none; color: var(--ink); min-width: 0; }
+.shop-search input:focus { outline: none; }
+.shop-search input::-webkit-search-cancel-button { display: none; }
+.shop-search button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: 1.1rem; line-height: 1; padding: 0 .1rem; }
+.shop-search button:hover { color: var(--ink); }
+
 .sort { display: flex; align-items: center; gap: .6rem; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .sort select { border: 1px solid var(--line); background: var(--card); padding: .55rem .8rem; border-radius: var(--radius); font-size: .78rem; }
 
@@ -525,15 +609,20 @@ p  { margin: 0 0 1.1em; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 760px) {
+/* Navigation wandert in ein Menü */
+@media (max-width: 1240px) {
+  /* Der Weichzeichner der Kopfzeile macht sie zum Bezugsrahmen für fest
+     positionierte Elemente — das Menü wäre dann nur kopfzeilenhoch. */
+  .header { backdrop-filter: none; background: var(--paper); }
   .burger { display: inline-flex; }
   .nav {
-    position: fixed; inset: 0 0 0 auto;
+    position: fixed;
+    inset: 0 0 0 auto;
     width: min(320px, 100%);
     background: var(--paper);
     flex-direction: column;
     gap: 0;
-    padding: 6rem var(--pad) 2rem;
+    padding: 5rem var(--pad) 2rem;
     transform: translateX(100%);
     transition: transform var(--t);
     z-index: 95;
@@ -542,12 +631,24 @@ p  { margin: 0 0 1.1em; }
   .nav.is-open { transform: none; }
   .nav a { padding: 1.1rem 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
   .nav a::after { display: none; }
+  .nav__close { display: block; position: absolute; top: 1.3rem; right: 1.1rem; font-size: 1.8rem; }
+  .nav .langs--menu { display: inline-flex; margin-top: 1.6rem; align-self: flex-start; }
+  .langs--menu .lang { padding: .5rem .9rem; font-size: .7rem; }
+  .header__actions .langs { display: none; }
+}
+
+@media (max-width: 760px) {
   .icon-btn span.label { display: none; }
-  .header__actions a.icon-btn { display: none; }
+  .header__actions { gap: .85rem; }
+  .header__inner { gap: .8rem; }
+  .logo { font-size: 1.25rem; letter-spacing: .16em; }
   .form-row { grid-template-columns: 1fr; }
   .footer__grid { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 84px 1fr; }
   .cart-item__price { grid-column: 2; text-align: right; }
+  .search__item { grid-template-columns: 48px 1fr; }
+  .search__price { grid-column: 2; text-align: right; }
+  .shop-search { min-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

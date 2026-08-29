@@ -304,291 +304,271 @@ function artFor(product, variant = 0) {
   return (ART[product.shape] || ART.sofa)(tone);
 }
 
-/* --- Katalog --- */
+/* --- Katalog ---
+   Sprachunabhängig: id, Kategorie, Form, Farbstimmung, Preis, Gewicht,
+   Farbwerte. Alles Sprachliche steht unter t.<sprache>. --- */
 const PRODUCTS = [
   {
-    id: "sofa-milano",
-    name: "Milano",
-    category: "Sofas",
-    shape: "sofa",
-    tone: "sand",
-    price: 8490,
-    badge: "Neuheit",
-    short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
-    description: "Das Sofa Milano verbindet großzügige Proportionen mit einer bemerkenswert leichten Silhouette. Der Korpus wird in Handarbeit über einen Rahmen aus lufttrockneter Eiche gespannt, die Sitzkissen bestehen aus einem Kern aus Kaltschaum mit einer Auflage aus Gänsedaunen. Das pflanzlich gegerbte Anilinleder entwickelt über die Jahre eine eigene Patina.",
-    material: "Anilinleder, Eiche massiv, Gänsedaunen",
-    dimensions: "B 240 × T 98 × H 72 cm",
-    weight: "68 kg",
-    origin: "Manufaktur Brianza, Italien",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Cognac", hex: "#9a6a3f" },
-      { name: "Sandbeige", hex: "#d9c9ae" },
-      { name: "Anthrazit", hex: "#3a3a38" }
-    ]
+    id: "sofa-milano", name: "Milano", categoryKey: "sofas", shape: "sofa", tone: "sand",
+    price: 8490, weight: "68 kg", swatches: ["#9a6a3f", "#d9c9ae", "#3a3a38"],
+    t: {
+      de: { badge: "Neuheit", short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
+        description: "Das Sofa Milano verbindet großzügige Proportionen mit einer bemerkenswert leichten Silhouette. Der Korpus wird in Handarbeit über einen Rahmen aus lufttrockneter Eiche gespannt, die Sitzkissen bestehen aus einem Kern aus Kaltschaum mit einer Auflage aus Gänsedaunen. Das pflanzlich gegerbte Anilinleder entwickelt über die Jahre eine eigene Patina.",
+        material: "Anilinleder, Eiche massiv, Gänsedaunen", dimensions: "B 240 × T 98 × H 72 cm",
+        origin: "Manufaktur Brianza, Italien", lead: "10–12 Wochen", colors: ["Cognac", "Sandbeige", "Anthrazit"] },
+      en: { badge: "New", short: "Three-seater in Italian aniline leather on a solid oak frame.",
+        description: "Milano pairs generous proportions with a remarkably light silhouette. The body is drawn by hand over a frame of air-dried oak; the seat cushions have a cold-foam core topped with goose down. The vegetable-tanned aniline leather develops a patina of its own over the years.",
+        material: "Aniline leather, solid oak, goose down", dimensions: "W 240 × D 98 × H 72 cm",
+        origin: "Brianza workshop, Italy", lead: "10–12 weeks", colors: ["Cognac", "Sand beige", "Anthracite"] },
+      fr: { badge: "Nouveauté", short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
+        description: "Le Milano associe des proportions généreuses à une silhouette remarquablement légère. La carcasse est tendue à la main sur une structure en chêne séché à l'air ; les coussins d'assise ont une âme en mousse froide surmontée de duvet d'oie. Le cuir aniline à tannage végétal développe sa propre patine au fil des ans.",
+        material: "Cuir aniline, chêne massif, duvet d'oie", dimensions: "L 240 × P 98 × H 72 cm",
+        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] }
+    }
   },
   {
-    id: "sofa-riviera",
-    name: "Riviera",
-    category: "Sofas",
-    shape: "sofa",
-    tone: "sage",
-    price: 6950,
-    short: "Modularer Zweisitzer mit Bezug aus belgischem Leinen.",
-    description: "Riviera ist als modulares System konzipiert und lässt sich jederzeit erweitern. Der Bezug aus gewaschenem belgischem Leinen ist vollständig abnehmbar und waschbar. Die konisch gedrechselten Füße aus Messing geben dem Volumen optische Leichtigkeit.",
-    material: "Belgisches Leinen, Buche, Messing",
-    dimensions: "B 196 × T 94 × H 74 cm",
-    weight: "52 kg",
-    origin: "Atelier Flandern, Belgien",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Salbei", hex: "#9aa78d" },
-      { name: "Elfenbein", hex: "#e8e0d2" },
-      { name: "Taubenblau", hex: "#7d8a99" }
-    ]
+    id: "sofa-riviera", name: "Riviera", categoryKey: "sofas", shape: "sofa", tone: "sage",
+    price: 6950, weight: "52 kg", swatches: ["#9aa78d", "#e8e0d2", "#7d8a99"],
+    t: {
+      de: { short: "Modularer Zweisitzer mit Bezug aus belgischem Leinen.",
+        description: "Riviera ist als modulares System konzipiert und lässt sich jederzeit erweitern. Der Bezug aus gewaschenem belgischem Leinen ist vollständig abnehmbar und waschbar. Die konisch gedrechselten Füße aus Messing geben dem Volumen optische Leichtigkeit.",
+        material: "Belgisches Leinen, Buche, Messing", dimensions: "B 196 × T 94 × H 74 cm",
+        origin: "Atelier Flandern, Belgien", lead: "8–10 Wochen", colors: ["Salbei", "Elfenbein", "Taubenblau"] },
+      en: { short: "Modular two-seater covered in Belgian linen.",
+        description: "Riviera is conceived as a modular system and can be extended at any time. The washed Belgian linen cover comes off completely and is machine washable. The tapered turned brass feet lend the volume a visual lightness.",
+        material: "Belgian linen, beech, brass", dimensions: "W 196 × D 94 × H 74 cm",
+        origin: "Flanders workshop, Belgium", lead: "8–10 weeks", colors: ["Sage", "Ivory", "Dove blue"] },
+      fr: { short: "Canapé deux places modulaire recouvert de lin belge.",
+        description: "Riviera est conçu comme un système modulaire et peut être agrandi à tout moment. La housse en lin belge lavé s'enlève entièrement et passe en machine. Les pieds en laiton tournés coniques donnent de la légèreté au volume.",
+        material: "Lin belge, hêtre, laiton", dimensions: "L 196 × P 94 × H 74 cm",
+        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] }
+    }
   },
   {
-    id: "sessel-orsini",
-    name: "Orsini",
-    category: "Sessel",
-    shape: "sessel",
-    tone: "clay",
-    price: 3280,
-    badge: "Bestseller",
-    short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
-    description: "Ein Sessel, der zum Verweilen einlädt. Die umlaufende Rückenlehne wird aus einem Stück formverleimt und anschließend von Hand gepolstert. Der Bouclé-Bezug aus Schurwolle ist besonders strapazierfähig und angenehm warm.",
-    material: "Bouclé aus Schurwolle, Formsperrholz, Messing",
-    dimensions: "B 88 × T 84 × H 76 cm",
-    weight: "24 kg",
-    origin: "Werkstatt Kopenhagen, Dänemark",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Terrakotta", hex: "#b2705a" },
-      { name: "Creme", hex: "#e6dcc9" },
-      { name: "Nachtblau", hex: "#38445c" }
-    ]
+    id: "sessel-orsini", name: "Orsini", categoryKey: "sessel", shape: "sessel", tone: "clay",
+    price: 3280, weight: "24 kg", swatches: ["#b2705a", "#e6dcc9", "#38445c"],
+    t: {
+      de: { badge: "Bestseller", short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
+        description: "Ein Sessel, der zum Verweilen einlädt. Die umlaufende Rückenlehne wird aus einem Stück formverleimt und anschließend von Hand gepolstert. Der Bouclé-Bezug aus Schurwolle ist besonders strapazierfähig und angenehm warm.",
+        material: "Bouclé aus Schurwolle, Formsperrholz, Messing", dimensions: "B 88 × T 84 × H 76 cm",
+        origin: "Werkstatt Kopenhagen, Dänemark", lead: "6–8 Wochen", colors: ["Terrakotta", "Creme", "Nachtblau"] },
+      en: { badge: "Bestseller", short: "Lounge chair with a curved back and bouclé cover.",
+        description: "A chair that invites you to stay. The wrap-around back is moulded from a single piece of laminated wood and then upholstered by hand. The new-wool bouclé is particularly hard-wearing and pleasantly warm.",
+        material: "New-wool bouclé, moulded plywood, brass", dimensions: "W 88 × D 84 × H 76 cm",
+        origin: "Copenhagen workshop, Denmark", lead: "6–8 weeks", colors: ["Terracotta", "Cream", "Midnight blue"] },
+      fr: { badge: "Best-seller", short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
+        description: "Un fauteuil qui invite à rester. Le dossier enveloppant est moulé d'une seule pièce en bois lamellé, puis garni à la main. Le bouclé en laine vierge est particulièrement résistant et agréablement chaud.",
+        material: "Bouclé en laine vierge, contreplaqué moulé, laiton", dimensions: "L 88 × P 84 × H 76 cm",
+        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] }
+    }
   },
   {
-    id: "sessel-luca",
-    name: "Luca",
-    category: "Sessel",
-    shape: "sessel",
-    tone: "ink",
-    price: 4150,
-    short: "Ohrensessel in Samt mit hoher Rückenlehne.",
-    description: "Luca zitiert die klassische Ohrensessel-Form und übersetzt sie in eine reduzierte Gegenwartssprache. Der Baumwollsamt ist lichtecht und schmutzabweisend ausgerüstet, die Federung besteht aus handgebundenen Stahlfedern.",
-    material: "Baumwollsamt, Nussbaum, Stahlfedern",
-    dimensions: "B 92 × T 90 × H 108 cm",
-    weight: "31 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Tannengrün", hex: "#2f4438" },
-      { name: "Bordeaux", hex: "#5d2b30" },
-      { name: "Graphit", hex: "#33322e" }
-    ]
+    id: "sessel-luca", name: "Luca", categoryKey: "sessel", shape: "sessel", tone: "ink",
+    price: 4150, weight: "31 kg", swatches: ["#2f4438", "#5d2b30", "#33322e"],
+    t: {
+      de: { short: "Ohrensessel in Samt mit hoher Rückenlehne.",
+        description: "Luca zitiert die klassische Ohrensessel-Form und übersetzt sie in eine reduzierte Gegenwartssprache. Der Baumwollsamt ist lichtecht und schmutzabweisend ausgerüstet, die Federung besteht aus handgebundenen Stahlfedern.",
+        material: "Baumwollsamt, Nussbaum, Stahlfedern", dimensions: "B 92 × T 90 × H 108 cm",
+        origin: "Manufaktur Rhein, Deutschland", lead: "8–10 Wochen", colors: ["Tannengrün", "Bordeaux", "Graphit"] },
+      en: { short: "Wing chair in velvet with a high back.",
+        description: "Luca quotes the classic wing-chair form and translates it into a pared-back contemporary language. The cotton velvet is lightfast and stain-repellent; the suspension uses hand-tied steel springs.",
+        material: "Cotton velvet, walnut, steel springs", dimensions: "W 92 × D 90 × H 108 cm",
+        origin: "Rhine workshop, Germany", lead: "8–10 weeks", colors: ["Fir green", "Bordeaux", "Graphite"] },
+      fr: { short: "Bergère à oreilles en velours, dossier haut.",
+        description: "Luca cite la forme classique de la bergère à oreilles et la traduit dans un langage contemporain épuré. Le velours de coton est résistant à la lumière et déperlant ; la suspension repose sur des ressorts d'acier guindés à la main.",
+        material: "Velours de coton, noyer, ressorts d'acier", dimensions: "L 92 × P 90 × H 108 cm",
+        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] }
+    }
   },
   {
-    id: "tisch-atelier",
-    name: "Atelier",
-    category: "Tische",
-    shape: "tisch",
-    tone: "stone",
-    price: 5890,
-    short: "Esstisch aus Nussbaum massiv für acht Personen.",
-    description: "Die Tischplatte wird aus durchgehenden Bohlen eines einzigen Nussbaumstamms gefertigt — jede Platte ist damit ein Unikat. Die Oberfläche ist mit Hartwachsöl behandelt und kann jederzeit partiell aufgearbeitet werden.",
-    material: "Nussbaum massiv, Hartwachsöl",
-    dimensions: "B 260 × T 100 × H 75 cm",
-    weight: "94 kg",
-    origin: "Schreinerei Schwarzwald, Deutschland",
-    lead: "12–14 Wochen",
-    colors: [
-      { name: "Nussbaum natur", hex: "#6b4a30" },
-      { name: "Eiche geräuchert", hex: "#4a3b2c" },
-      { name: "Esche weiß", hex: "#d5c8b2" }
-    ]
+    id: "tisch-atelier", name: "Atelier", categoryKey: "tische", shape: "tisch", tone: "stone",
+    price: 5890, weight: "94 kg", swatches: ["#6b4a30", "#4a3b2c", "#d5c8b2"],
+    t: {
+      de: { short: "Esstisch aus Nussbaum massiv für acht Personen.",
+        description: "Die Tischplatte wird aus durchgehenden Bohlen eines einzigen Nussbaumstamms gefertigt — jede Platte ist damit ein Unikat. Die Oberfläche ist mit Hartwachsöl behandelt und kann jederzeit partiell aufgearbeitet werden.",
+        material: "Nussbaum massiv, Hartwachsöl", dimensions: "B 260 × T 100 × H 75 cm",
+        origin: "Schreinerei Schwarzwald, Deutschland", lead: "12–14 Wochen", colors: ["Nussbaum natur", "Eiche geräuchert", "Esche weiß"] },
+      en: { short: "Dining table in solid walnut, seats eight.",
+        description: "The top is made from continuous boards of a single walnut trunk — which makes every top unique. The surface is finished with hard wax oil and can be refreshed in parts at any time.",
+        material: "Solid walnut, hard wax oil", dimensions: "W 260 × D 100 × H 75 cm",
+        origin: "Black Forest joinery, Germany", lead: "12–14 weeks", colors: ["Natural walnut", "Smoked oak", "White ash"] },
+      fr: { short: "Table de salle à manger en noyer massif, huit places.",
+        description: "Le plateau est réalisé à partir de planches continues issues d'un seul tronc de noyer — chaque plateau est donc unique. La surface est traitée à l'huile-cire dure et peut être reprise localement à tout moment.",
+        material: "Noyer massif, huile-cire dure", dimensions: "L 260 × P 100 × H 75 cm",
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] }
+    }
   },
   {
-    id: "tisch-onda",
-    name: "Onda",
-    category: "Tische",
-    shape: "tisch",
-    tone: "rose",
-    price: 2740,
-    short: "Couchtisch mit Platte aus Travertin und Sockel aus Messing.",
-    description: "Onda setzt einen ruhigen Gegenpol im Wohnraum. Die 4 cm starke Platte aus römischem Travertin ruht auf einem gebürsteten Messingsockel. Der Stein ist gegen Flecken imprägniert, behält aber seine offene, lebendige Struktur.",
-    material: "Travertin, gebürstetes Messing",
-    dimensions: "Ø 110 × H 34 cm",
-    weight: "58 kg",
-    origin: "Steinmetz Tivoli, Italien",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Travertin hell", hex: "#d8c6ad" },
-      { name: "Marmor Nero", hex: "#3b3a38" },
-      { name: "Marmor Verde", hex: "#5b6b58" }
-    ]
+    id: "tisch-onda", name: "Onda", categoryKey: "tische", shape: "tisch", tone: "rose",
+    price: 2740, weight: "58 kg", swatches: ["#d8c6ad", "#3b3a38", "#5b6b58"],
+    t: {
+      de: { short: "Couchtisch mit Platte aus Travertin und Sockel aus Messing.",
+        description: "Onda setzt einen ruhigen Gegenpol im Wohnraum. Die 4 cm starke Platte aus römischem Travertin ruht auf einem gebürsteten Messingsockel. Der Stein ist gegen Flecken imprägniert, behält aber seine offene, lebendige Struktur.",
+        material: "Travertin, gebürstetes Messing", dimensions: "Ø 110 × H 34 cm",
+        origin: "Steinmetz Tivoli, Italien", lead: "10–12 Wochen", colors: ["Travertin hell", "Marmor Nero", "Marmor Verde"] },
+      en: { short: "Coffee table with a travertine top on a brass base.",
+        description: "Onda sets a calm counterpoint in the living room. The 4 cm Roman travertine top rests on a brushed brass base. The stone is sealed against stains but keeps its open, living structure.",
+        material: "Travertine, brushed brass", dimensions: "Ø 110 × H 34 cm",
+        origin: "Tivoli stonemasons, Italy", lead: "10–12 weeks", colors: ["Light travertine", "Nero marble", "Verde marble"] },
+      fr: { short: "Table basse à plateau en travertin sur socle en laiton.",
+        description: "Onda pose un contrepoint calme dans le séjour. Le plateau de 4 cm en travertin romain repose sur un socle en laiton brossé. La pierre est imperméabilisée contre les taches mais conserve sa structure ouverte et vivante.",
+        material: "Travertin, laiton brossé", dimensions: "Ø 110 × H 34 cm",
+        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] }
+    }
   },
   {
-    id: "stuhl-vela",
-    name: "Vela",
-    category: "Stühle",
-    shape: "stuhl",
-    tone: "sand",
-    price: 690,
-    short: "Esszimmerstuhl mit gepolsterter Sitzfläche und Eichengestell.",
-    description: "Vela ist auf das Wesentliche reduziert: ein schlankes Gestell aus massiver Eiche, eine ergonomisch geformte Rückenlehne und eine großzügig gepolsterte Sitzfläche. Stapelbar bis vier Stück.",
-    material: "Eiche massiv, Wollfilz",
-    dimensions: "B 48 × T 54 × H 82 cm",
-    weight: "6 kg",
-    origin: "Werkstatt Jütland, Dänemark",
-    lead: "4–6 Wochen",
-    colors: [
-      { name: "Naturweiß", hex: "#e3dccb" },
-      { name: "Karamell", hex: "#b98d5c" },
-      { name: "Schiefer", hex: "#4d5157" }
-    ]
+    id: "stuhl-vela", name: "Vela", categoryKey: "stuehle", shape: "stuhl", tone: "sand",
+    price: 690, weight: "6 kg", swatches: ["#e3dccb", "#b98d5c", "#4d5157"],
+    t: {
+      de: { short: "Esszimmerstuhl mit gepolsterter Sitzfläche und Eichengestell.",
+        description: "Vela ist auf das Wesentliche reduziert: ein schlankes Gestell aus massiver Eiche, eine ergonomisch geformte Rückenlehne und eine großzügig gepolsterte Sitzfläche. Stapelbar bis vier Stück.",
+        material: "Eiche massiv, Wollfilz", dimensions: "B 48 × T 54 × H 82 cm",
+        origin: "Werkstatt Jütland, Dänemark", lead: "4–6 Wochen", colors: ["Naturweiß", "Karamell", "Schiefer"] },
+      en: { short: "Dining chair with an upholstered seat and oak frame.",
+        description: "Vela is reduced to essentials: a slim solid-oak frame, an ergonomically shaped back and a generously padded seat. Stacks up to four high.",
+        material: "Solid oak, wool felt", dimensions: "W 48 × D 54 × H 82 cm",
+        origin: "Jutland workshop, Denmark", lead: "4–6 weeks", colors: ["Natural white", "Caramel", "Slate"] },
+      fr: { short: "Chaise de salle à manger, assise garnie et piètement en chêne.",
+        description: "Vela est réduite à l'essentiel : un piètement fin en chêne massif, un dossier de forme ergonomique et une assise généreusement garnie. Empilable jusqu'à quatre.",
+        material: "Chêne massif, feutre de laine", dimensions: "L 48 × P 54 × H 82 cm",
+        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] }
+    }
   },
   {
-    id: "stuhl-marchese",
-    name: "Marchese",
-    category: "Stühle",
-    shape: "stuhl",
-    tone: "ink",
-    price: 980,
-    short: "Armlehnstuhl mit Lederbezug und Rahmen aus Nussbaum.",
-    description: "Der Armlehnstuhl Marchese wurde für lange Abende am Tisch entworfen. Die Armlehnen sind aus dem Rahmen herausgearbeitet, der Sattelledersitz wird von Hand über einen Gurtboden gespannt.",
-    material: "Sattelleder, Nussbaum massiv",
-    dimensions: "B 58 × T 56 × H 84 cm",
-    weight: "8 kg",
-    origin: "Manufaktur Brianza, Italien",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Tabak", hex: "#7d5636" },
-      { name: "Schwarz", hex: "#2b2a27" },
-      { name: "Ocker", hex: "#a97f42" }
-    ]
+    id: "stuhl-marchese", name: "Marchese", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
+    price: 980, weight: "8 kg", swatches: ["#7d5636", "#2b2a27", "#a97f42"],
+    t: {
+      de: { short: "Armlehnstuhl mit Lederbezug und Rahmen aus Nussbaum.",
+        description: "Der Armlehnstuhl Marchese wurde für lange Abende am Tisch entworfen. Die Armlehnen sind aus dem Rahmen herausgearbeitet, der Sattelledersitz wird von Hand über einen Gurtboden gespannt.",
+        material: "Sattelleder, Nussbaum massiv", dimensions: "B 58 × T 56 × H 84 cm",
+        origin: "Manufaktur Brianza, Italien", lead: "8–10 Wochen", colors: ["Tabak", "Schwarz", "Ocker"] },
+      en: { short: "Armchair with a leather seat and walnut frame.",
+        description: "The Marchese armchair was designed for long evenings at the table. The arms are worked out of the frame itself; the saddle-leather seat is stretched by hand over a webbed base.",
+        material: "Saddle leather, solid walnut", dimensions: "W 58 × D 56 × H 84 cm",
+        origin: "Brianza workshop, Italy", lead: "8–10 weeks", colors: ["Tobacco", "Black", "Ochre"] },
+      fr: { short: "Chaise à accoudoirs, assise en cuir et cadre en noyer.",
+        description: "La chaise Marchese a été dessinée pour les longues soirées à table. Les accoudoirs sont taillés dans le cadre lui-même ; l'assise en cuir de selle est tendue à la main sur un fond sanglé.",
+        material: "Cuir de selle, noyer massif", dimensions: "L 58 × P 56 × H 84 cm",
+        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] }
+    }
   },
   {
-    id: "lampe-soleil",
-    name: "Soleil",
-    category: "Leuchten",
-    shape: "lampe",
-    tone: "sand",
-    price: 1290,
-    badge: "Limitiert",
-    short: "Stehleuchte mit handgefaltetem Schirm aus Pergamentpapier.",
-    description: "Der Schirm der Soleil wird von Hand aus Pergamentpapier gefaltet und über ein Gestell aus Messingdraht gespannt. Das Licht fällt weich und warm — ideal als Grundbeleuchtung neben dem Sofa. Dimmbar über einen Fußschalter.",
-    material: "Pergamentpapier, Messing, Marmorfuß",
-    dimensions: "Ø 46 × H 168 cm",
-    weight: "9 kg",
-    origin: "Atelier Lyon, Frankreich",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Naturpergament", hex: "#e5d3ab" },
-      { name: "Alabaster", hex: "#ece7dc" },
-      { name: "Kupfer", hex: "#a6663f" }
-    ]
+    id: "lampe-soleil", name: "Soleil", categoryKey: "leuchten", shape: "lampe", tone: "sand",
+    price: 1290, weight: "9 kg", swatches: ["#e5d3ab", "#ece7dc", "#a6663f"],
+    t: {
+      de: { badge: "Limitiert", short: "Stehleuchte mit handgefaltetem Schirm aus Pergamentpapier.",
+        description: "Der Schirm der Soleil wird von Hand aus Pergamentpapier gefaltet und über ein Gestell aus Messingdraht gespannt. Das Licht fällt weich und warm — ideal als Grundbeleuchtung neben dem Sofa. Dimmbar über einen Fußschalter.",
+        material: "Pergamentpapier, Messing, Marmorfuß", dimensions: "Ø 46 × H 168 cm",
+        origin: "Atelier Lyon, Frankreich", lead: "6–8 Wochen", colors: ["Naturpergament", "Alabaster", "Kupfer"] },
+      en: { badge: "Limited", short: "Floor lamp with a hand-folded parchment shade.",
+        description: "The Soleil shade is folded by hand from parchment paper and stretched over a brass wire frame. The light falls soft and warm — ideal as ambient light beside the sofa. Dimmable with a foot switch.",
+        material: "Parchment paper, brass, marble base", dimensions: "Ø 46 × H 168 cm",
+        origin: "Lyon workshop, France", lead: "6–8 weeks", colors: ["Natural parchment", "Alabaster", "Copper"] },
+      fr: { badge: "Édition limitée", short: "Lampadaire à abat-jour en parchemin plié à la main.",
+        description: "L'abat-jour du Soleil est plié à la main dans du papier parchemin et tendu sur une armature en fil de laiton. La lumière est douce et chaude — idéale comme éclairage d'ambiance près du canapé. Variateur au pied.",
+        material: "Papier parchemin, laiton, pied en marbre", dimensions: "Ø 46 × H 168 cm",
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] }
+    }
   },
   {
-    id: "regal-biblio",
-    name: "Biblio",
-    category: "Aufbewahrung",
-    shape: "regal",
-    tone: "stone",
-    price: 3960,
-    short: "Bibliotheksregal aus geräucherter Eiche, vier Ebenen.",
-    description: "Biblio ist ein Regal für Sammlungen. Die Böden sind in der Höhe verstellbar und tragen bis zu 60 kg pro Ebene. Die Verbindungen sind gezinkt und kommen ohne sichtbare Beschläge aus.",
-    material: "Eiche geräuchert, Messingdübel",
-    dimensions: "B 180 × T 38 × H 210 cm",
-    weight: "86 kg",
-    origin: "Schreinerei Schwarzwald, Deutschland",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Eiche geräuchert", hex: "#4a3b2c" },
-      { name: "Eiche natur", hex: "#c1a37a" },
-      { name: "Schwarz gebeizt", hex: "#2e2c28" }
-    ]
+    id: "regal-biblio", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
+    price: 3960, weight: "86 kg", swatches: ["#4a3b2c", "#c1a37a", "#2e2c28"],
+    t: {
+      de: { short: "Bibliotheksregal aus geräucherter Eiche, vier Ebenen.",
+        description: "Biblio ist ein Regal für Sammlungen. Die Böden sind in der Höhe verstellbar und tragen bis zu 60 kg pro Ebene. Die Verbindungen sind gezinkt und kommen ohne sichtbare Beschläge aus.",
+        material: "Eiche geräuchert, Messingdübel", dimensions: "B 180 × T 38 × H 210 cm",
+        origin: "Schreinerei Schwarzwald, Deutschland", lead: "10–12 Wochen", colors: ["Eiche geräuchert", "Eiche natur", "Schwarz gebeizt"] },
+      en: { short: "Library shelf in smoked oak, four levels.",
+        description: "Biblio is a shelf for collections. The shelves are height-adjustable and carry up to 60 kg each. The joints are dovetailed and need no visible fittings.",
+        material: "Smoked oak, brass dowels", dimensions: "W 180 × D 38 × H 210 cm",
+        origin: "Black Forest joinery, Germany", lead: "10–12 weeks", colors: ["Smoked oak", "Natural oak", "Black stained"] },
+      fr: { short: "Bibliothèque en chêne fumé, quatre niveaux.",
+        description: "Biblio est une étagère pour les collections. Les tablettes sont réglables en hauteur et supportent jusqu'à 60 kg chacune. Les assemblages sont à queues d'aronde et se passent de ferrures visibles.",
+        material: "Chêne fumé, tourillons en laiton", dimensions: "L 180 × P 38 × H 210 cm",
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] }
+    }
   },
   {
-    id: "sideboard-linea",
-    name: "Linea",
-    category: "Aufbewahrung",
-    shape: "sideboard",
-    tone: "clay",
-    price: 4480,
-    short: "Sideboard mit Schiebetüren und Innenausbau aus Ahorn.",
-    description: "Hinter den grifflosen Schiebetüren von Linea verbirgt sich ein sorgfältig gearbeiteter Innenausbau aus hellem Ahorn mit verstellbaren Böden und zwei Schubladen mit Filzeinlage.",
-    material: "Nussbaum, Ahorn, Messing",
-    dimensions: "B 200 × T 45 × H 72 cm",
-    weight: "74 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Nussbaum", hex: "#6b4a30" },
-      { name: "Eiche natur", hex: "#c1a37a" },
-      { name: "Olivgrün", hex: "#5a5f45" }
-    ]
+    id: "sideboard-linea", name: "Linea", categoryKey: "aufbewahrung", shape: "sideboard", tone: "clay",
+    price: 4480, weight: "74 kg", swatches: ["#6b4a30", "#c1a37a", "#5a5f45"],
+    t: {
+      de: { short: "Sideboard mit Schiebetüren und Innenausbau aus Ahorn.",
+        description: "Hinter den grifflosen Schiebetüren von Linea verbirgt sich ein sorgfältig gearbeiteter Innenausbau aus hellem Ahorn mit verstellbaren Böden und zwei Schubladen mit Filzeinlage.",
+        material: "Nussbaum, Ahorn, Messing", dimensions: "B 200 × T 45 × H 72 cm",
+        origin: "Manufaktur Rhein, Deutschland", lead: "10–12 Wochen", colors: ["Nussbaum", "Eiche natur", "Olivgrün"] },
+      en: { short: "Sideboard with sliding doors and a maple interior.",
+        description: "Behind Linea's handle-free sliding doors sits a carefully made interior of pale maple with adjustable shelves and two felt-lined drawers.",
+        material: "Walnut, maple, brass", dimensions: "W 200 × D 45 × H 72 cm",
+        origin: "Rhine workshop, Germany", lead: "10–12 weeks", colors: ["Walnut", "Natural oak", "Olive green"] },
+      fr: { short: "Buffet à portes coulissantes, intérieur en érable.",
+        description: "Derrière les portes coulissantes sans poignée de Linea se cache un aménagement soigné en érable clair, avec tablettes réglables et deux tiroirs doublés de feutre.",
+        material: "Noyer, érable, laiton", dimensions: "L 200 × P 45 × H 72 cm",
+        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] }
+    }
   },
   {
-    id: "bett-sereno",
-    name: "Sereno",
-    category: "Betten",
-    shape: "bett",
-    tone: "sage",
-    price: 5240,
-    short: "Polsterbett mit hohem Kopfteil in Leinen.",
-    description: "Das großzügige Kopfteil von Sereno ist in einzelne Segmente unterteilt und mit Rosshaar unterfüttert. Der Bettrahmen ist aus massiver Buche gezapft und trägt einen Lattenrost mit 42 Federleisten.",
-    material: "Leinen, Buche massiv, Rosshaar",
-    dimensions: "B 200 × L 220 × H 118 cm (Liegefläche 180 × 200)",
-    weight: "88 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "12–14 Wochen",
-    colors: [
-      { name: "Salbei", hex: "#9aa78d" },
-      { name: "Leinen natur", hex: "#ded3bd" },
-      { name: "Rauchblau", hex: "#6e7d8a" }
-    ]
+    id: "bett-sereno", name: "Sereno", categoryKey: "betten", shape: "bett", tone: "sage",
+    price: 5240, weight: "88 kg", swatches: ["#9aa78d", "#ded3bd", "#6e7d8a"],
+    t: {
+      de: { short: "Polsterbett mit hohem Kopfteil in Leinen.",
+        description: "Das großzügige Kopfteil von Sereno ist in einzelne Segmente unterteilt und mit Rosshaar unterfüttert. Der Bettrahmen ist aus massiver Buche gezapft und trägt einen Lattenrost mit 42 Federleisten.",
+        material: "Leinen, Buche massiv, Rosshaar", dimensions: "B 200 × L 220 × H 118 cm (Liegefläche 180 × 200)",
+        origin: "Manufaktur Rhein, Deutschland", lead: "12–14 Wochen", colors: ["Salbei", "Leinen natur", "Rauchblau"] },
+      en: { short: "Upholstered bed with a tall linen headboard.",
+        description: "Sereno's generous headboard is divided into separate panels and backed with horsehair. The bed frame is mortised from solid beech and carries a slatted base with 42 sprung slats.",
+        material: "Linen, solid beech, horsehair", dimensions: "W 200 × L 220 × H 118 cm (mattress 180 × 200)",
+        origin: "Rhine workshop, Germany", lead: "12–14 weeks", colors: ["Sage", "Natural linen", "Smoke blue"] },
+      fr: { short: "Lit rembourré à haute tête de lit en lin.",
+        description: "La généreuse tête de lit du Sereno est divisée en panneaux et doublée de crin. Le cadre est assemblé à tenons en hêtre massif et reçoit un sommier à 42 lattes.",
+        material: "Lin, hêtre massif, crin", dimensions: "L 200 × P 220 × H 118 cm (couchage 180 × 200)",
+        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] }
+    }
   },
   {
-    id: "teppich-nomade",
-    name: "Nomade",
-    category: "Accessoires",
-    shape: "teppich",
-    tone: "clay",
-    price: 2180,
-    short: "Handgeknüpfter Teppich aus Hochlandwolle.",
-    description: "Nomade wird von Hand aus reiner Hochlandwolle geknüpft — rund 900 Arbeitsstunden stecken in einem Stück. Die leicht changierende Farbgebung entsteht durch die Färbung mit Pflanzenfarben.",
-    material: "Hochlandwolle, pflanzengefärbt",
-    dimensions: "300 × 200 cm",
-    weight: "22 kg",
-    origin: "Knüpferei Anatolien, Türkei",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Rost", hex: "#a5643f" },
-      { name: "Sand", hex: "#d4c2a4" },
-      { name: "Kohle", hex: "#484540" }
-    ]
+    id: "teppich-nomade", name: "Nomade", categoryKey: "accessoires", shape: "teppich", tone: "clay",
+    price: 2180, weight: "22 kg", swatches: ["#a5643f", "#d4c2a4", "#484540"],
+    t: {
+      de: { short: "Handgeknüpfter Teppich aus Hochlandwolle.",
+        description: "Nomade wird von Hand aus reiner Hochlandwolle geknüpft — rund 900 Arbeitsstunden stecken in einem Stück. Die leicht changierende Farbgebung entsteht durch die Färbung mit Pflanzenfarben.",
+        material: "Hochlandwolle, pflanzengefärbt", dimensions: "300 × 200 cm",
+        origin: "Knüpferei Anatolien, Türkei", lead: "8–10 Wochen", colors: ["Rost", "Sand", "Kohle"] },
+      en: { short: "Hand-knotted rug in highland wool.",
+        description: "Nomade is knotted by hand from pure highland wool — around 900 working hours go into one piece. The gently shifting colour comes from dyeing with plant pigments.",
+        material: "Highland wool, plant-dyed", dimensions: "300 × 200 cm",
+        origin: "Anatolian knotters, Turkey", lead: "8–10 weeks", colors: ["Rust", "Sand", "Charcoal"] },
+      fr: { short: "Tapis noué main en laine des hauts plateaux.",
+        description: "Nomade est noué à la main en pure laine des hauts plateaux — environ 900 heures de travail par pièce. Les nuances légèrement changeantes viennent de la teinture végétale.",
+        material: "Laine des hauts plateaux, teinture végétale", dimensions: "300 × 200 cm",
+        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] }
+    }
   },
   {
-    id: "spiegel-luna",
-    name: "Luna",
-    category: "Accessoires",
-    shape: "spiegel",
-    tone: "rose",
-    price: 1480,
-    short: "Standspiegel mit Rahmen aus poliertem Messing.",
-    description: "Luna ist ein Ganzkörperspiegel mit einem Rahmen aus poliertem Messing, der mit den Jahren sanft nachdunkelt. Das Kristallglas ist 6 mm stark und facettiert geschliffen.",
-    material: "Poliertes Messing, Kristallglas",
-    dimensions: "B 80 × H 190 cm",
-    weight: "34 kg",
-    origin: "Atelier Lyon, Frankreich",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Messing poliert", hex: "#b08d4a" },
-      { name: "Bronze", hex: "#7d6144" },
-      { name: "Schwarz matt", hex: "#2e2c28" }
-    ]
+    id: "spiegel-luna", name: "Luna", categoryKey: "accessoires", shape: "spiegel", tone: "rose",
+    price: 1480, weight: "34 kg", swatches: ["#b08d4a", "#7d6144", "#2e2c28"],
+    t: {
+      de: { short: "Standspiegel mit Rahmen aus poliertem Messing.",
+        description: "Luna ist ein Ganzkörperspiegel mit einem Rahmen aus poliertem Messing, der mit den Jahren sanft nachdunkelt. Das Kristallglas ist 6 mm stark und facettiert geschliffen.",
+        material: "Poliertes Messing, Kristallglas", dimensions: "B 80 × H 190 cm",
+        origin: "Atelier Lyon, Frankreich", lead: "6–8 Wochen", colors: ["Messing poliert", "Bronze", "Schwarz matt"] },
+      en: { short: "Floor mirror framed in polished brass.",
+        description: "Luna is a full-length mirror in a polished brass frame that darkens gently over the years. The crystal glass is 6 mm thick with a bevelled edge.",
+        material: "Polished brass, crystal glass", dimensions: "W 80 × H 190 cm",
+        origin: "Lyon workshop, France", lead: "6–8 weeks", colors: ["Polished brass", "Bronze", "Matt black"] },
+      fr: { short: "Miroir sur pied encadré de laiton poli.",
+        description: "Luna est un miroir en pied dans un cadre en laiton poli qui fonce doucement au fil des ans. Le verre cristal fait 6 mm d'épaisseur, à bord biseauté.",
+        material: "Laiton poli, verre cristal", dimensions: "L 80 × H 190 cm",
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] }
+    }
   }
 ];
 
-const CATEGORIES = ["Alle", "Sofas", "Sessel", "Tische", "Stühle", "Leuchten", "Aufbewahrung", "Betten", "Accessoires"];
+/* Liefert die Texte eines Produkts in der aktiven Sprache. */
+function pt(product) {
+  return (product.t && (product.t[getLang()] || product.t.de)) || {};
+}
+
+/* Farbfelder mit übersetzten Namen */
+function productColors(product) {
+  const names = pt(product).colors || [];
+  return product.swatches.map((hex, i) => ({ hex, name: names[i] || "" }));
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Warenkorb — Maison Noir</title>
+<title data-i18n="title.cart">Warenkorb — Maison Noir</title>
 <meta name="description" content="Ihre Auswahl bei Maison Noir.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,8 +16,8 @@
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="crumbs"><a href="index.html">Startseite</a> · Warenkorb</div>
-      <h1>Ihre Auswahl</h1>
+      <div class="crumbs"><a href="index.html" data-i18n="nav.home"></a> · <span data-i18n="cart.title"></span></div>
+      <h1 data-i18n="cartpage.title"></h1>
     </div>
   </section>
 
@@ -28,6 +28,7 @@
 
 <div id="site-footer"></div>
 
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
@@ -43,13 +44,12 @@ function renderCartPage() {
   if (!items.length) {
     root.innerHTML = `
       <div class="empty-state">
-        <span class="eyebrow">Noch nichts ausgewählt</span>
-        <h2>Ihr Warenkorb ist leer</h2>
-        <p class="lede" style="margin-inline:auto">Stöbern Sie in der Kollektion — oder lassen Sie sich
-        von uns persönlich beraten.</p>
+        <span class="eyebrow">${t("cartpage.empty.eyebrow")}</span>
+        <h2>${t("cartpage.empty.title")}</h2>
+        <p class="lede" style="margin-inline:auto">${t("cartpage.empty.p")}</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-          <a class="btn" href="kollektion.html">Zur Kollektion</a>
-          <a class="btn btn--ghost" href="kontakt.html">Beratung anfragen</a>
+          <a class="btn" href="kollektion.html">${t("cartpage.empty.cta1")}</a>
+          <a class="btn btn--ghost" href="kontakt.html">${t("cartpage.empty.cta2")}</a>
         </div>
       </div>`;
     return;
@@ -64,19 +64,20 @@ function renderCartPage() {
     <div>
       ${items.map((item, index) => {
         const p = findProduct(item.id);
+        const x = pt(p);
         return `
         <div class="cart-item">
           <a class="cart-item__media" href="produkt.html?id=${p.id}">${artFor(p)}</a>
           <div>
             <a class="cart-item__title" href="produkt.html?id=${p.id}">${p.name}</a>
-            <div class="cart-item__meta">${p.category} · ${item.color || p.colors[0].name} · Fertigung ${p.lead}</div>
+            <div class="cart-item__meta">${t("cat." + p.categoryKey)} · ${itemColor(p, item)} · ${t("cartpage.production")} ${x.lead}</div>
             <div style="display:flex;align-items:center;gap:1rem;margin-top:.8rem;flex-wrap:wrap">
               <div class="qty">
-                <button data-dec="${index}" aria-label="Weniger">−</button>
+                <button data-dec="${index}" aria-label="${t("pdp.less")}">−</button>
                 <span>${item.qty}</span>
-                <button data-inc="${index}" aria-label="Mehr">+</button>
+                <button data-inc="${index}" aria-label="${t("pdp.more")}">+</button>
               </div>
-              <button class="cart-item__remove" data-del="${index}" style="margin:0">Entfernen</button>
+              <button class="cart-item__remove" data-del="${index}" style="margin:0">${t("cart.remove")}</button>
             </div>
           </div>
           <div class="cart-item__price">${euro(p.price * item.qty)}</div>
@@ -84,23 +85,20 @@ function renderCartPage() {
       }).join("")}
 
       <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:2rem">
-        <a class="link-underline" href="kollektion.html">Weiter stöbern</a>
-        <button class="cart-item__remove" id="cart-clear" style="margin:0">Warenkorb leeren</button>
+        <a class="link-underline" href="kollektion.html">${t("cart.continue")}</a>
+        <button class="cart-item__remove" id="cart-clear" style="margin:0">${t("cartpage.clear")}</button>
       </div>
     </div>
 
     <aside class="summary">
-      <h3>Zusammenfassung</h3>
-      <div class="summary__row"><span>Zwischensumme</span><span>${euro(subtotal)}</span></div>
-      <div class="summary__row"><span>Lieferung &amp; Montage</span><span>${versand === 0 ? "inklusive" : euro(versand)}</span></div>
-      <div class="summary__row muted" style="font-size:.85rem"><span>enthaltene MwSt. (19 %)</span><span>${euro(mwst)}</span></div>
-      <div class="summary__row summary__row--total"><span>Gesamt</span><span>${euro(subtotal + versand)}</span></div>
+      <h3>${t("cartpage.summary")}</h3>
+      <div class="summary__row"><span>${t("cart.subtotal")}</span><span>${euro(subtotal)}</span></div>
+      <div class="summary__row"><span>${t("cartpage.delivery")}</span><span>${versand === 0 ? t("cartpage.included") : euro(versand)}</span></div>
+      <div class="summary__row muted" style="font-size:.85rem"><span>${t("cartpage.vat")}</span><span>${euro(mwst)}</span></div>
+      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(subtotal + versand)}</span></div>
 
-      <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">Verbindlich anfragen</button>
-      <p class="form-note" style="margin-top:1rem">
-        Wir bestätigen jede Bestellung persönlich, bevor die Fertigung beginnt. Anzahlung 30 %,
-        Restbetrag bei Lieferung.
-      </p>
+      <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">${t("cartpage.checkout")}</button>
+      <p class="form-note" style="margin-top:1rem">${t("cartpage.note")}</p>
       <div class="form-msg" id="checkout-msg" hidden style="margin-top:1rem"></div>
     </aside>
   </div>`;
@@ -117,7 +115,7 @@ function renderCartPage() {
   $("#checkout").addEventListener("click", () => {
     const msg = $("#checkout-msg");
     msg.hidden = false;
-    msg.textContent = "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.";
+    msg.textContent = t("cartpage.demo");
   });
 }
 </script>

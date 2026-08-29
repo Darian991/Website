@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Produkt — Maison Noir</title>
+<title data-i18n="title.product">Produkt — Maison Noir</title>
 <meta name="description" content="Details, Materialien und Maße zu den Entwürfen von Maison Noir.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,10 +20,10 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="eyebrow">Passt dazu</span>
-          <h2>Ebenfalls sehenswert</h2>
+          <span class="eyebrow" data-i18n="pdp.related.eyebrow"></span>
+          <h2 data-i18n="pdp.related.title"></h2>
         </div>
-        <a class="link-underline" href="kollektion.html">Alle Entwürfe</a>
+        <a class="link-underline" href="kollektion.html" data-i18n="pdp.related.link"></a>
       </div>
       <div class="grid grid--3" id="related"></div>
     </div>
@@ -32,39 +32,42 @@
 
 <div id="site-footer"></div>
 
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
-let current, chosenColor, chosenQty = 1, chosenVariant = 0;
+let current, chosenColorIndex = 0, chosenQty = 1, chosenVariant = 0;
 
 function initPage() {
-  const id = queryParams().get("id");
-  current = findProduct(id);
+  current = findProduct(queryParams().get("id"));
 
   if (!current) {
     $("#pdp-root").innerHTML = `
       <div class="wrap empty-state">
-        <span class="eyebrow">Nicht gefunden</span>
-        <h1>Dieser Entwurf existiert nicht</h1>
-        <p class="lede" style="margin-inline:auto">Vielleicht wurde er umbenannt oder der Link ist unvollständig.</p>
-        <a class="btn" href="kollektion.html" style="margin-top:1rem">Zur Kollektion</a>
+        <span class="eyebrow">${t("pdp.missing.eyebrow")}</span>
+        <h1>${t("pdp.missing.title")}</h1>
+        <p class="lede" style="margin-inline:auto">${t("pdp.missing.p")}</p>
+        <a class="btn" href="kollektion.html" style="margin-top:1rem">${t("pdp.missing.cta")}</a>
       </div>`;
     return;
   }
 
-  if (!isPreview()) document.title = `${current.name} — Maison Noir`;
-  chosenColor = current.colors[0].name;
+  if (!isPreview()) document.title = current.name + " — Maison Noir";
+  chosenColorIndex = 0;
   renderPdp();
   renderRelated();
 }
 
 function renderPdp() {
   const p = current;
+  const x = pt(p);
+  const colors = productColors(p);
+
   $("#pdp-root").innerHTML = `
   <div class="wrap">
     <div class="crumbs">
-      <a href="index.html">Startseite</a> ·
-      <a href="kollektion.html?kategorie=${encodeURIComponent(p.category)}">${p.category}</a> · ${p.name}
+      <a href="index.html">${t("nav.home")}</a> ·
+      <a href="kollektion.html?kategorie=${p.categoryKey}">${t("cat." + p.categoryKey)}</a> · ${p.name}
     </div>
 
     <div class="pdp">
@@ -73,79 +76,68 @@ function renderPdp() {
         <div class="pdp__thumbs" id="pdp-thumbs">
           ${[0, 1, 2].map((i) => `
             <button data-variant="${i}" class="${i === chosenVariant ? "is-active" : ""}"
-                    aria-label="Ansicht ${i + 1}">${artFor(p, i)}</button>`).join("")}
+                    aria-label="${t("pdp.view", { n: i + 1 })}">${artFor(p, i)}</button>`).join("")}
         </div>
       </div>
 
       <div class="pdp__info">
-        <span class="eyebrow">${p.category}${p.badge ? " · " + p.badge : ""}</span>
+        <span class="eyebrow">${t("cat." + p.categoryKey)}${x.badge ? " · " + x.badge : ""}</span>
         <h1 style="font-size:clamp(2.2rem,4vw,3.2rem)">${p.name}</h1>
         <div class="price">${euro(p.price)}</div>
-        <p class="lede">${p.short}</p>
+        <p class="lede">${x.short}</p>
 
         <hr class="divider">
 
         <div class="field">
-          <label>Ausführung — <span id="color-name">${chosenColor}</span></label>
+          <label>${t("pdp.variant")} — <span id="color-name">${colors[chosenColorIndex].name}</span></label>
           <div class="swatches" id="swatches">
-            ${p.colors.map((c, i) => `
-              <button class="swatch ${i === 0 ? "is-active" : ""}" data-color="${c.name}"
+            ${colors.map((c, i) => `
+              <button class="swatch ${i === chosenColorIndex ? "is-active" : ""}" data-index="${i}"
                       style="background:${c.hex}" title="${c.name}" aria-label="${c.name}"></button>`).join("")}
           </div>
         </div>
 
         <div class="buy-row" style="margin-top:1.6rem">
           <div class="qty">
-            <button id="qty-minus" aria-label="Weniger">−</button>
+            <button id="qty-minus" aria-label="${t("pdp.less")}">−</button>
             <span id="qty-value">1</span>
-            <button id="qty-plus" aria-label="Mehr">+</button>
+            <button id="qty-plus" aria-label="${t("pdp.more")}">+</button>
           </div>
-          <button class="btn" id="add-to-cart">In den Warenkorb</button>
+          <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
-        <p class="form-note" style="margin-top:1rem">
-          Fertigungszeit ${p.lead} · Lieferung bis in den Raum inklusive · 30 Tage Rückgaberecht
-        </p>
+        <p class="form-note" style="margin-top:1rem">${t("pdp.note", { lead: x.lead })}</p>
 
         <hr class="divider">
 
         <div class="acc">
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="true">Beschreibung <i>+</i></button>
-            <div class="acc__panel is-open"><p>${p.description}</p></div>
+            <button class="acc__btn" aria-expanded="true">${t("pdp.acc.desc")} <i>+</i></button>
+            <div class="acc__panel is-open"><p>${x.description}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Material &amp; Maße <i>+</i></button>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.spec")} <i>+</i></button>
             <div class="acc__panel">
               <ul class="specs">
-                <li><span>Material</span><span>${p.material}</span></li>
-                <li><span>Maße</span><span>${p.dimensions}</span></li>
-                <li><span>Gewicht</span><span>${p.weight}</span></li>
-                <li><span>Fertigung</span><span>${p.origin}</span></li>
+                <li><span>${t("pdp.spec.material")}</span><span>${x.material}</span></li>
+                <li><span>${t("pdp.spec.dimensions")}</span><span>${x.dimensions}</span></li>
+                <li><span>${t("pdp.spec.weight")}</span><span>${p.weight}</span></li>
+                <li><span>${t("pdp.spec.origin")}</span><span>${x.origin}</span></li>
               </ul>
             </div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Lieferung &amp; Montage <i>+</i></button>
-            <div class="acc__panel">
-              <p>Wir liefern europaweit versandkostenfrei bis in den gewünschten Raum, packen aus,
-              montieren und nehmen das Verpackungsmaterial wieder mit. Den Termin stimmen wir
-              telefonisch mit Ihnen ab, sobald Ihr Stück die Werkstatt verlässt.</p>
-            </div>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.delivery")} <i>+</i></button>
+            <div class="acc__panel"><p>${t("pdp.delivery.body")}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Pflege &amp; Garantie <i>+</i></button>
-            <div class="acc__panel">
-              <p>Auf Rahmen, Federung und Verarbeitung geben wir zehn Jahre Garantie. Zu jedem Stück
-              erhalten Sie eine Pflegeanleitung; Leder- und Holzpflegemittel senden wir Ihnen auf Wunsch
-              kostenfrei nach.</p>
-            </div>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.care")} <i>+</i></button>
+            <div class="acc__panel"><p>${t("pdp.care.body")}</p></div>
           </div>
         </div>
       </div>
     </div>
   </div>`;
 
-  // Ansichten
   $$("#pdp-thumbs button").forEach((btn) => {
     btn.addEventListener("click", () => {
       chosenVariant = Number(btn.dataset.variant);
@@ -154,23 +146,21 @@ function renderPdp() {
     });
   });
 
-  // Farben
   $$("#swatches .swatch").forEach((sw) => {
     sw.addEventListener("click", () => {
-      chosenColor = sw.dataset.color;
-      $("#color-name").textContent = chosenColor;
+      chosenColorIndex = Number(sw.dataset.index);
+      $("#color-name").textContent = productColors(current)[chosenColorIndex].name;
       $$("#swatches .swatch").forEach((s) => s.classList.toggle("is-active", s === sw));
     });
   });
 
-  // Menge
   const qtyEl = $("#qty-value");
   $("#qty-minus").addEventListener("click", () => { chosenQty = Math.max(1, chosenQty - 1); qtyEl.textContent = chosenQty; });
   $("#qty-plus").addEventListener("click",  () => { chosenQty = Math.min(99, chosenQty + 1); qtyEl.textContent = chosenQty; });
 
   $("#add-to-cart").addEventListener("click", () => {
-    Cart.add(current.id, chosenQty, chosenColor);
-    toast(`${current.name} (${chosenColor}) wurde in den Warenkorb gelegt`);
+    Cart.add(current.id, chosenQty, chosenColorIndex);
+    toast(t("cart.added", { name: current.name + " (" + productColors(current)[chosenColorIndex].name + ")" }));
   });
 
   initAccordions($("#pdp-root"));
@@ -178,8 +168,8 @@ function renderPdp() {
 
 function renderRelated() {
   const rest = PRODUCTS.filter((p) => p.id !== current.id);
-  const sameCat = rest.filter((p) => p.category === current.category);
-  const list = [...sameCat, ...rest.filter((p) => p.category !== current.category)].slice(0, 3);
+  const same = rest.filter((p) => p.categoryKey === current.categoryKey);
+  const list = [...same, ...rest.filter((p) => p.categoryKey !== current.categoryKey)].slice(0, 3);
   $("#related").innerHTML = list.map(productCard).join("");
   $("#related-section").hidden = false;
   bindAddButtons($("#related"));

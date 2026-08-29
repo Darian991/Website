@@ -8,9 +8,41 @@ const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 const euro = (n) =>
-  new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat(langLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+
+/* Vergleichbare Schreibweise: Kleinbuchstaben, ohne Akzente */
+const normalize = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+/* Durchsucht Name, Kategorie, Material und Beschreibung */
+function searchProducts(query) {
+  const words = normalize(query).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  return PRODUCTS.filter((p) => {
+    const x = pt(p);
+    const haystack = normalize([
+      p.name, t("cat." + p.categoryKey), x.short, x.description,
+      x.material, x.origin, (x.colors || []).join(" ")
+    ].join(" "));
+    return words.every((w) => haystack.includes(w));
+  });
+}
 
 const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
+
+/* Name einer Farbe in ihre Position umrechnen — in allen Sprachen, damit
+   ein vor dem Sprachwechsel gefüllter Warenkorb erhalten bleibt. */
+function nameToIndex(product, name) {
+  if (!name) return 0;
+  const langs = Object.keys(product.t || {});
+  for (const l of langs) {
+    const i = (product.t[l].colors || []).indexOf(name);
+    if (i > -1) return i;
+  }
+  return 0;
+}
+
+/* Übersetzter Farbname einer Warenkorb-Position */
+const itemColor = (product, item) => (productColors(product)[item.colorIndex] || {}).name || "";
 
 
 /* ---------- Adressparameter ----------
@@ -55,24 +87,32 @@ const CART_KEY = "maison-noir-cart";
 
 const Cart = {
   read() {
+    let items = [];
     try {
       const raw = localStorage.getItem(CART_KEY);
-      const items = raw ? JSON.parse(raw) : [];
-      return Array.isArray(items) ? items.filter((i) => findProduct(i.id)) : [];
+      items = raw ? JSON.parse(raw) : [];
     } catch (e) {
       return [];
     }
+    if (!Array.isArray(items)) return [];
+    return items.filter((i) => findProduct(i.id)).map((i) => {
+      const p = findProduct(i.id);
+      // Ältere Warenkörbe haben den Farbnamen gespeichert — in eine Position umrechnen,
+      // damit die Farbe die Sprache mitwechselt.
+      let idx = Number.isInteger(i.colorIndex) ? i.colorIndex : nameToIndex(p, i.color);
+      if (idx < 0 || idx >= p.swatches.length) idx = 0;
+      return { id: i.id, qty: i.qty, colorIndex: idx };
+    });
   },
   write(items) {
     try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) { /* z. B. privater Modus */ }
     document.dispatchEvent(new CustomEvent("cart:changed", { detail: items }));
   },
-  add(id, qty = 1, color = null) {
+  add(id, qty = 1, colorIndex = 0) {
     const items = Cart.read();
-    const key = (i) => i.id === id && i.color === color;
-    const existing = items.find(key);
+    const existing = items.find((i) => i.id === id && i.colorIndex === colorIndex);
     if (existing) existing.qty += qty;
-    else items.push({ id, qty, color });
+    else items.push({ id, qty, colorIndex });
     Cart.write(items);
   },
   setQty(index, qty) {
@@ -109,20 +149,42 @@ function renderChrome() {
   const page = document.body.dataset.page || "";
 
   const header = `
-  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <div class="topbar" data-i18n="topbar"></div>
   <header class="header">
     <div class="wrap header__inner">
-      <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+      <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
       <nav class="nav" id="nav">
-        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}">${n.label}</a>`).join("")}
+        <button class="close-x nav__close" id="nav-close" data-i18n-aria="action.close">×</button>
+        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
+        <div class="langs langs--menu" role="group" aria-label="${t("action.language")}">
+          ${LANGS.map((l) => `<button class="lang ${l.code === getLang() ? "is-active" : ""}" data-lang="${l.code}" lang="${l.code}">${l.label}</button>`).join("")}
+        </div>
       </nav>
       <div class="header__actions">
-        <button class="icon-btn burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">☰</button>
-        <a class="icon-btn" href="kontakt.html" aria-label="Beratung"><span class="label">Beratung</span></a>
-        <button class="icon-btn" id="cart-open" aria-label="Warenkorb öffnen">
-          <span class="label">Warenkorb</span><span class="cart-count" id="cart-count">0</span>
+        <button class="icon-btn" id="search-open" data-i18n-aria="action.search.open" data-i18n-title="action.search">
+          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
+          </svg>
         </button>
+        <div class="langs" role="group" aria-label="${t("action.language")}">
+          ${LANGS.map((l) => `<button class="lang ${l.code === getLang() ? "is-active" : ""}" data-lang="${l.code}" title="${l.name}" lang="${l.code}">${l.label}</button>`).join("")}
+        </div>
+        <button class="icon-btn" id="cart-open" data-i18n-aria="action.cart.open" data-i18n-title="action.cart">
+          <span class="label" data-i18n="action.cart"></span><span class="cart-count" id="cart-count">0</span>
+        </button>
+        <button class="icon-btn burger" id="burger" data-i18n-aria="action.menu" aria-expanded="false">☰</button>
       </div>
+    </div>
+    <div class="nav-backdrop" id="nav-backdrop"></div>
+    <div class="searchbar" id="searchbar" hidden>
+      <div class="wrap searchbar__inner">
+        <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
+        </svg>
+        <input type="search" id="search-input" data-i18n-placeholder="search.placeholder" autocomplete="off">
+        <button class="close-x" id="search-close" data-i18n-aria="action.close">×</button>
+      </div>
+      <div class="wrap" id="search-results"></div>
     </div>
   </header>`;
 
@@ -131,33 +193,30 @@ function renderChrome() {
     <div class="wrap">
       <div class="footer__grid">
         <div>
-          <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
-          <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem">
-            Möbel, die in Handarbeit entstehen und über Generationen bleiben.
-            Gefertigt in Europa, seit 1974.
-          </p>
+          <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+          <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem" data-i18n="footer.tagline"></p>
         </div>
         <div>
-          <h5>Kollektion</h5>
+          <h5 data-i18n="footer.collection"></h5>
           <ul>
-            <li><a href="kollektion.html?kategorie=Sofas">Sofas</a></li>
-            <li><a href="kollektion.html?kategorie=Sessel">Sessel</a></li>
-            <li><a href="kollektion.html?kategorie=Tische">Tische</a></li>
-            <li><a href="kollektion.html?kategorie=Leuchten">Leuchten</a></li>
-            <li><a href="kollektion.html">Alles ansehen</a></li>
+            <li><a href="kollektion.html?kategorie=sofas" data-i18n="cat.sofas"></a></li>
+            <li><a href="kollektion.html?kategorie=sessel" data-i18n="cat.sessel"></a></li>
+            <li><a href="kollektion.html?kategorie=tische" data-i18n="cat.tische"></a></li>
+            <li><a href="kollektion.html?kategorie=leuchten" data-i18n="cat.leuchten"></a></li>
+            <li><a href="kollektion.html" data-i18n="footer.all"></a></li>
           </ul>
         </div>
         <div>
-          <h5>Service</h5>
+          <h5 data-i18n="footer.service"></h5>
           <ul>
-            <li><a href="kontakt.html">Persönliche Beratung</a></li>
-            <li><a href="kontakt.html">Lieferung &amp; Montage</a></li>
-            <li><a href="ueber-uns.html">Pflegehinweise</a></li>
-            <li><a href="ueber-uns.html">Manufaktur</a></li>
+            <li><a href="kontakt.html" data-i18n="footer.advice"></a></li>
+            <li><a href="kontakt.html" data-i18n="footer.delivery"></a></li>
+            <li><a href="ueber-uns.html" data-i18n="footer.care"></a></li>
+            <li><a href="ueber-uns.html" data-i18n="footer.manufactory"></a></li>
           </ul>
         </div>
         <div>
-          <h5>Showroom</h5>
+          <h5 data-i18n="footer.showroom"></h5>
           <ul>
             <li>Maximilianstraße 12</li>
             <li>80539 München</li>
@@ -167,24 +226,24 @@ function renderChrome() {
         </div>
       </div>
       <div class="footer__bottom">
-        <span>© ${new Date().getFullYear()} Maison Noir Möbelmanufaktur</span>
-        <span>Impressum · Datenschutz · AGB · Widerrufsrecht</span>
+        <span>© ${new Date().getFullYear()} ${t("footer.rights")}</span>
+        <span data-i18n="footer.legal"></span>
       </div>
     </div>
   </footer>`;
 
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Warenkorb">
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="${t("cart.title")}">
     <div class="drawer__head">
-      <h3>Warenkorb</h3>
-      <button class="close-x" id="drawer-close" aria-label="Schließen">×</button>
+      <h3 data-i18n="cart.title"></h3>
+      <button class="close-x" id="drawer-close" data-i18n-aria="action.close">×</button>
     </div>
     <div class="drawer__body" id="drawer-body"></div>
     <div class="drawer__foot">
-      <div class="summary__row"><span>Zwischensumme</span><strong id="drawer-total">0 €</strong></div>
-      <a class="btn btn--block" href="warenkorb.html">Zur Kasse</a>
-      <button class="btn btn--ghost btn--block" id="drawer-continue">Weiter stöbern</button>
+      <div class="summary__row"><span data-i18n="cart.subtotal"></span><strong id="drawer-total">0 €</strong></div>
+      <a class="btn btn--block" href="warenkorb.html" data-i18n="cart.checkout"></a>
+      <button class="btn btn--ghost btn--block" id="drawer-continue" data-i18n="cart.continue"></button>
     </div>
   </aside>
   <div class="toast" id="toast"></div>`;
@@ -194,18 +253,29 @@ function renderChrome() {
   if (hostTop) hostTop.innerHTML = header;
   if (hostBottom) hostBottom.innerHTML = footer + drawer;
 
+  applyI18n(document);
   bindChrome();
 }
 
 function bindChrome() {
   const burger = $("#burger");
   const nav = $("#nav");
+  const navBackdrop = $("#nav-backdrop");
+
+  const setNav = (open) => {
+    nav.classList.toggle("is-open", open);
+    navBackdrop?.classList.toggle("is-open", open);
+    burger?.setAttribute("aria-expanded", String(open));
+  };
+
   if (burger && nav) {
-    burger.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      burger.setAttribute("aria-expanded", String(open));
-      burger.textContent = open ? "×" : "☰";
-    });
+    burger.addEventListener("click", () => setNav(!nav.classList.contains("is-open")));
+    $("#nav-close")?.addEventListener("click", () => setNav(false));
+    navBackdrop?.addEventListener("click", () => setNav(false));
+    // Ein Verweis im Menü schließt es ebenfalls
+    $$("#nav a").forEach((a) => a.addEventListener("click", () => setNav(false)));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setNav(false); });
+    document.addEventListener("route:changed", () => setNav(false));
   }
 
   const backdrop = $("#drawer-backdrop");
@@ -232,6 +302,13 @@ function bindChrome() {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
   document.addEventListener("route:changed", closeDrawer);
 
+  /* Sprache wechseln */
+  $$(".lang").forEach((btn) => {
+    btn.addEventListener("click", () => { if (btn.dataset.lang !== getLang()) setLang(btn.dataset.lang); });
+  });
+
+  bindSearch();
+
   updateCartCount();
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
 }
@@ -247,7 +324,7 @@ function renderDrawer() {
   const items = Cart.read();
 
   if (!items.length) {
-    body.innerHTML = `<p class="muted" style="padding:2.5rem 0;text-align:center">Ihr Warenkorb ist noch leer.</p>`;
+    body.innerHTML = `<p class="muted" style="padding:2.5rem 0;text-align:center">${t("cart.empty")}</p>`;
   } else {
     body.innerHTML = items.map((item, index) => {
       const p = findProduct(item.id);
@@ -256,8 +333,8 @@ function renderDrawer() {
         <div class="cart-item__media">${artFor(p)}</div>
         <div>
           <div class="cart-item__title">${p.name}</div>
-          <div class="cart-item__meta">${item.color || p.colors[0].name} · ${item.qty} × ${euro(p.price)}</div>
-          <button class="cart-item__remove" data-remove="${index}">Entfernen</button>
+          <div class="cart-item__meta">${itemColor(p, item)} · ${item.qty} × ${euro(p.price)}</div>
+          <button class="cart-item__remove" data-remove="${index}">${t("cart.remove")}</button>
         </div>
       </div>`;
     }).join("");
@@ -267,6 +344,74 @@ function renderDrawer() {
   }
   const total = $("#drawer-total");
   if (total) total.textContent = euro(Cart.subtotal());
+}
+
+
+/* ---------- Suche ---------- */
+function bindSearch() {
+  const bar = $("#searchbar");
+  const input = $("#search-input");
+  const results = $("#search-results");
+  if (!bar || !input) return;
+
+  const openSearch = () => {
+    bar.hidden = false;
+    requestAnimationFrame(() => bar.classList.add("is-open"));
+    input.focus();
+    renderSearch(input.value);
+  };
+  const closeSearch = () => {
+    bar.classList.remove("is-open");
+    setTimeout(() => { if (!bar.classList.contains("is-open")) bar.hidden = true; }, 300);
+    $("#search-open")?.focus();
+  };
+
+  $("#search-open")?.addEventListener("click", () => (bar.hidden ? openSearch() : closeSearch()));
+  $("#search-close")?.addEventListener("click", closeSearch);
+  input.addEventListener("input", () => renderSearch(input.value));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSearch();
+    if (e.key === "Enter" && input.value.trim()) {
+      location.href = "kollektion.html?suche=" + encodeURIComponent(input.value.trim());
+    }
+  });
+  document.addEventListener("route:changed", () => { if (!bar.hidden) closeSearch(); });
+
+  function renderSearch(query) {
+    const q = query.trim();
+    if (!q) {
+      results.innerHTML = `<p class="search__hint" data-i18n="search.hint"></p>`;
+      applyI18n(results);
+      return;
+    }
+    const hits = searchProducts(q);
+    if (!hits.length) {
+      results.innerHTML = `
+        <p class="search__hint"><strong>${t("search.none")} „${escapeHtml(q)}“</strong><br>${t("search.noneHint")}</p>
+        <a class="link-underline" href="kollektion.html">${t("footer.all")}</a>`;
+      return;
+    }
+    results.innerHTML = `
+      <p class="search__count">${hits.length} ${t("search.results")}</p>
+      <div class="search__list">
+        ${hits.slice(0, 6).map((p) => `
+          <a class="search__item" href="produkt.html?id=${p.id}">
+            <span class="search__thumb">${artFor(p)}</span>
+            <span class="search__text">
+              <span class="search__cat">${t("cat." + p.categoryKey)}</span>
+              <span class="search__name">${p.name}</span>
+              <span class="search__desc">${escapeHtml(pt(p).short)}</span>
+            </span>
+            <span class="search__price">${euro(p.price)}</span>
+          </a>`).join("")}
+      </div>
+      ${hits.length > 6 ? `<a class="link-underline" href="kollektion.html?suche=${encodeURIComponent(q)}">${t("search.all")}</a>` : ""}`;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
 /* ---------- Hinweis-Einblendung ---------- */
@@ -282,17 +427,18 @@ function toast(msg) {
 
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
+  const x = pt(p);
   return `
   <article class="card reveal">
-    <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name} ansehen">
+    <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name}">
       ${artFor(p)}
-      ${p.badge ? `<span class="card__tag">${p.badge}</span>` : ""}
+      ${x.badge ? `<span class="card__tag">${x.badge}</span>` : ""}
       <div class="card__quick">
-        <button class="btn btn--block" data-add="${p.id}">In den Warenkorb</button>
+        <button class="btn btn--block" data-add="${p.id}">${t("shop.add")}</button>
       </div>
     </a>
     <div class="card__body">
-      <span class="card__cat">${p.category}</span>
+      <span class="card__cat">${t("cat." + p.categoryKey)}</span>
       <a class="card__title" href="produkt.html?id=${p.id}">${p.name}</a>
       <span class="card__price">${euro(p.price)}</span>
     </div>
@@ -312,8 +458,8 @@ function bindAddButtons(root = document) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const p = findProduct(btn.dataset.add);
-      Cart.add(p.id, 1, p.colors[0].name);
-      toast(`${p.name} wurde in den Warenkorb gelegt`);
+      Cart.add(p.id, 1, 0);
+      toast(t("cart.added", { name: p.name }));
     });
   });
 }
@@ -358,9 +504,7 @@ function initForms() {
       const name = form.querySelector("[name=name]")?.value?.trim();
       if (box) {
         box.hidden = false;
-        box.textContent = name
-          ? `Vielen Dank, ${name}. Wir melden uns innerhalb eines Werktages bei Ihnen.`
-          : "Vielen Dank — wir haben Ihre Anfrage erhalten.";
+        box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
       }
       form.reset();
     });

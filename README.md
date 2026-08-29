@@ -18,8 +18,9 @@ HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.
 
 ```
 assets/css/style.css   Gesamtes Design (Farben, Typografie, Layout, Responsive)
+assets/js/i18n.js      Alle Texte in Deutsch, Englisch und Französisch
 assets/js/data.js      Produktkatalog + alle Abbildungen als SVG
-assets/js/app.js       Warenkorb, Kopf-/Fußzeile, Filter, Formulare
+assets/js/app.js       Warenkorb, Suche, Kopf-/Fußzeile, Filter, Formulare
 tools/build-preview.js Baut daraus preview.html (alles in einer Datei)
 ```
 
@@ -47,6 +48,41 @@ node tools/build-preview.js
 
 Statt eigener Adressen pro Seite nutzt sie die Raute (`#kollektion.html`).
 
+## Sprachen
+
+Die Website gibt es in Deutsch, Englisch und Französisch. Beim ersten Besuch
+wird die Sprache des Browsers verwendet; die Wahl über DE/EN/FR in der
+Kopfzeile wird im Browser gespeichert. Preise, Datumsangaben und Zahlen
+folgen der jeweiligen Schreibweise (8.490 € · €8,490 · 8 490 €).
+
+**Texte ändern** — alle Oberflächen- und Seitentexte stehen in
+`assets/js/i18n.js`, jeweils unter demselben Schlüssel pro Sprache:
+
+```js
+de: { "home.hero.title": "Möbel für ein<br>ganzes Leben." },
+en: { "home.hero.title": "Furniture for<br>a whole life." },
+fr: { "home.hero.title": "Des meubles pour<br>toute une vie." }
+```
+
+Im HTML wird ein Text über `data-i18n="schlüssel"` gesetzt, Text mit
+Formatierung über `data-i18n-html`, Platzhalter in Feldern über
+`data-i18n-placeholder`.
+
+**Eine Sprache ergänzen** — in `i18n.js` einen Eintrag in `LANGS` anlegen
+(Kürzel, Beschriftung, Name, Schreibweise wie `it-IT`), einen Block mit
+denselben Schlüsseln in `I18N` ergänzen und bei jedem Produkt einen
+weiteren Eintrag unter `t`. Fehlt ein Schlüssel, wird die deutsche Fassung
+angezeigt — die Seite bleibt also immer benutzbar.
+
+## Suche
+
+Die Lupe in der Kopfzeile öffnet ein Suchfeld mit Vorschlägen; auf der
+Kollektionsseite gibt es zusätzlich ein Suchfeld, das sich mit Kategorie und
+Sortierung kombinieren lässt. Gesucht wird in Name, Kategorie, Material,
+Herkunft, Farbnamen und Beschreibung — in der aktiven Sprache, ohne
+Rücksicht auf Groß-/Kleinschreibung und Akzente. Die Suche steht in der
+Adresszeile (`?suche=eiche`), ist also verlinkbar.
+
 ## Produkte ändern
 
 Alle Produkte stehen in `assets/js/data.js` im Array `PRODUCTS`. Ein neuer
@@ -54,20 +90,27 @@ Eintrag sieht so aus:
 
 ```js
 {
-  id: "sofa-neu",          // eindeutig, erscheint in der Adresszeile
-  name: "Neues Sofa",
-  category: "Sofas",       // muss in CATEGORIES stehen
-  shape: "sofa",           // Abbildung: sofa, sessel, tisch, stuhl, lampe,
-                           // regal, bett, sideboard, teppich, spiegel
-  tone: "sand",            // Farbstimmung: sand, clay, sage, stone, ink, rose
-  price: 4900,             // in Euro
-  badge: "Neuheit",        // optional
-  short: "Kurzbeschreibung für die Übersicht.",
-  description: "Ausführlicher Text auf der Produktseite.",
-  material: "…", dimensions: "…", weight: "…", origin: "…", lead: "8–10 Wochen",
-  colors: [{ name: "Cognac", hex: "#9a6a3f" }]
+  id: "sofa-neu",            // eindeutig, erscheint in der Adresszeile
+  name: "Bellagio",          // Eigenname, in allen Sprachen gleich
+  categoryKey: "sofas",      // muss in CATEGORY_KEYS stehen
+  shape: "sofa",             // Abbildung: sofa, sessel, tisch, stuhl, lampe,
+                             // regal, bett, sideboard, teppich, spiegel
+  tone: "sand",              // Farbstimmung: sand, clay, sage, stone, ink, rose
+  price: 4900,               // in Euro
+  weight: "40 kg",
+  swatches: ["#9a6a3f", "#d9c9ae", "#3a3a38"],   // Farbwerte
+  t: {
+    de: { badge: "Neuheit", short: "…", description: "…", material: "…",
+          dimensions: "B 200 × T 90 × H 75 cm", origin: "…",
+          lead: "8–10 Wochen", colors: ["Cognac", "Sandbeige", "Anthrazit"] },
+    en: { … }, fr: { … }
+  }
 }
 ```
+
+Die Reihenfolge in `colors` gehört zu `swatches`. Der Warenkorb merkt sich
+die Position der Farbe, nicht ihren Namen — deshalb wechselt eine bereits
+gewählte Farbe die Sprache mit.
 
 ## Abbildungen
 

@@ -62,6 +62,9 @@ ${read("assets/css/style.css")}
 <div id="site-footer"></div>
 
 <script>
+${read("assets/js/i18n.js")}
+</script>
+<script>
 ${read("assets/js/data.js")}
 </script>
 <script>
@@ -93,7 +96,9 @@ function renderRoute() {
 
   const app = document.getElementById("app");
   app.innerHTML = route.html;
+  applyI18n(app);
   route.init();
+  applyI18n(app);
   bindAddButtons(app);
   initAccordions(app);
   initForms();

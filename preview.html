@@ -212,6 +212,83 @@ p  { margin: 0 0 1.1em; }
 }
 .burger { display: none; }
 
+.nav__close { display: none; }
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(22,21,15,.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t);
+  z-index: 90;
+}
+.nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+/* ---------- Sprachumschalter ---------- */
+/* Der Sprachumschalter im Menü ist nur im Menü sichtbar. Die Auszeichnung
+   muss genauer sein als .langs weiter unten, sonst wird sie überschrieben. */
+.nav .langs--menu { display: none; }
+.langs { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang {
+  background: none;
+  border: 0;
+  padding: .42rem .6rem;
+  font-size: .68rem;
+  letter-spacing: .1em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--t), color var(--t);
+}
+.lang + .lang { border-left: 1px solid var(--line); }
+.lang:hover { color: var(--ink); }
+.lang.is-active { background: var(--ink); color: var(--paper); }
+
+/* ---------- Suchleiste ---------- */
+.searchbar {
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--t);
+}
+.searchbar.is-open { max-height: 70vh; overflow-y: auto; }
+.searchbar__inner { display: flex; align-items: center; gap: .9rem; padding: 1.1rem 0; color: var(--muted); }
+.searchbar input {
+  flex: 1;
+  font: inherit;
+  font-size: 1.05rem;
+  border: 0;
+  background: none;
+  padding: .3rem 0;
+  color: var(--ink);
+}
+.searchbar input:focus { outline: none; }
+.searchbar input::-webkit-search-cancel-button { display: none; }
+
+.search__hint { font-size: .9rem; color: var(--muted); padding-bottom: 1.4rem; margin: 0; }
+.search__hint strong { color: var(--ink); font-weight: 500; }
+.search__count { font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin: 0 0 .6rem; }
+.search__list { display: grid; gap: .2rem; padding-bottom: 1rem; }
+.search__item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: .7rem;
+  margin-inline: -.7rem;
+  border-radius: var(--radius);
+  transition: background var(--t);
+}
+.search__item:hover { background: var(--paper-2); }
+.search__thumb { display: block; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--paper-2); }
+.search__thumb svg { width: 100%; height: 100%; object-fit: cover; }
+.search__text { display: grid; gap: .1rem; min-width: 0; }
+.search__cat { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.search__name { font-family: var(--serif); font-size: 1.15rem; }
+.search__desc { font-size: .84rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search__price { font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.searchbar .link-underline { margin-bottom: 1.6rem; display: inline-block; }
+
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
@@ -421,6 +498,13 @@ p  { margin: 0 0 1.1em; }
 }
 .chip:hover { border-color: var(--ink); }
 .chip.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.shop-search { display: flex; align-items: center; gap: .7rem; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: .5rem 1.1rem; min-width: 260px; color: var(--muted); }
+.shop-search input { flex: 1; font: inherit; font-size: .9rem; border: 0; background: none; color: var(--ink); min-width: 0; }
+.shop-search input:focus { outline: none; }
+.shop-search input::-webkit-search-cancel-button { display: none; }
+.shop-search button { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: 1.1rem; line-height: 1; padding: 0 .1rem; }
+.shop-search button:hover { color: var(--ink); }
+
 .sort { display: flex; align-items: center; gap: .6rem; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .sort select { border: 1px solid var(--line); background: var(--card); padding: .55rem .8rem; border-radius: var(--radius); font-size: .78rem; }
 
@@ -532,15 +616,20 @@ p  { margin: 0 0 1.1em; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 760px) {
+/* Navigation wandert in ein Menü */
+@media (max-width: 1240px) {
+  /* Der Weichzeichner der Kopfzeile macht sie zum Bezugsrahmen für fest
+     positionierte Elemente — das Menü wäre dann nur kopfzeilenhoch. */
+  .header { backdrop-filter: none; background: var(--paper); }
   .burger { display: inline-flex; }
   .nav {
-    position: fixed; inset: 0 0 0 auto;
+    position: fixed;
+    inset: 0 0 0 auto;
     width: min(320px, 100%);
     background: var(--paper);
     flex-direction: column;
     gap: 0;
-    padding: 6rem var(--pad) 2rem;
+    padding: 5rem var(--pad) 2rem;
     transform: translateX(100%);
     transition: transform var(--t);
     z-index: 95;
@@ -549,12 +638,24 @@ p  { margin: 0 0 1.1em; }
   .nav.is-open { transform: none; }
   .nav a { padding: 1.1rem 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
   .nav a::after { display: none; }
+  .nav__close { display: block; position: absolute; top: 1.3rem; right: 1.1rem; font-size: 1.8rem; }
+  .nav .langs--menu { display: inline-flex; margin-top: 1.6rem; align-self: flex-start; }
+  .langs--menu .lang { padding: .5rem .9rem; font-size: .7rem; }
+  .header__actions .langs { display: none; }
+}
+
+@media (max-width: 760px) {
   .icon-btn span.label { display: none; }
-  .header__actions a.icon-btn { display: none; }
+  .header__actions { gap: .85rem; }
+  .header__inner { gap: .8rem; }
+  .logo { font-size: 1.25rem; letter-spacing: .16em; }
   .form-row { grid-template-columns: 1fr; }
   .footer__grid { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 84px 1fr; }
   .cart-item__price { grid-column: 2; text-align: right; }
+  .search__item { grid-template-columns: 48px 1fr; }
+  .search__price { grid-column: 2; text-align: right; }
+  .shop-search { min-width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -572,6 +673,730 @@ p  { margin: 0 0 1.1em; }
 <main id="app"></main>
 <div id="site-footer"></div>
 
+<script>
+/* =========================================================
+   MAISON NOIR — Sprachen
+   Alle Texte der Website liegen hier in Deutsch, Englisch
+   und Französisch. Eine neue Sprache ergänzt man, indem man
+   einen weiteren Block nach demselben Muster anlegt.
+   ========================================================= */
+
+const LANGS = [
+  { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
+  { code: "en", label: "EN", name: "English",  locale: "en-GB" },
+  { code: "fr", label: "FR", name: "Français", locale: "fr-FR" }
+];
+
+const CATEGORY_KEYS = ["alle", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "accessoires"];
+
+const I18N = {
+
+  /* ------------------------------------------------------ Deutsch */
+  de: {
+    "html.lang": "de",
+
+    "title.home": "Maison Noir — Luxusmöbel aus europäischer Handarbeit",
+    "title.shop": "Kollektion — Maison Noir",
+    "title.product": "Entwurf — Maison Noir",
+    "title.cart": "Warenkorb — Maison Noir",
+    "title.about": "Die Manufaktur — Maison Noir",
+    "title.contact": "Kontakt & Beratung — Maison Noir",
+
+    "topbar": "Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678",
+    "logo.sub": "Möbelmanufaktur",
+    "nav.home": "Startseite",
+    "nav.shop": "Kollektion",
+    "nav.about": "Manufaktur",
+    "nav.contact": "Kontakt",
+    "action.advice": "Beratung",
+    "action.cart": "Warenkorb",
+    "action.cart.open": "Warenkorb öffnen",
+    "action.search": "Suchen",
+    "action.search.open": "Suche öffnen",
+    "action.menu": "Menü öffnen",
+    "action.close": "Schließen",
+    "action.language": "Sprache wählen",
+
+    "cat.alle": "Alle",
+    "cat.sofas": "Sofas",
+    "cat.sessel": "Sessel",
+    "cat.tische": "Tische",
+    "cat.stuehle": "Stühle",
+    "cat.leuchten": "Leuchten",
+    "cat.aufbewahrung": "Aufbewahrung",
+    "cat.betten": "Betten",
+    "cat.accessoires": "Accessoires",
+
+    "search.title": "Suchen",
+    "search.placeholder": "Wonach suchen Sie? Etwa Sofa, Eiche, Leder …",
+    "search.hint": "Suchen Sie nach Name, Kategorie oder Material.",
+    "search.results": "Ergebnisse",
+    "search.none": "Nichts gefunden für",
+    "search.noneHint": "Versuchen Sie es mit einem anderen Wort — oder sehen Sie sich die ganze Kollektion an.",
+    "search.all": "Alle Ergebnisse ansehen",
+    "search.clear": "Suche zurücksetzen",
+
+    "cart.title": "Warenkorb",
+    "cart.empty": "Ihr Warenkorb ist noch leer.",
+    "cart.subtotal": "Zwischensumme",
+    "cart.checkout": "Zur Kasse",
+    "cart.continue": "Weiter stöbern",
+    "cart.remove": "Entfernen",
+    "cart.added": "{name} wurde in den Warenkorb gelegt",
+
+    "footer.tagline": "Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.",
+    "footer.collection": "Kollektion",
+    "footer.service": "Service",
+    "footer.showroom": "Showroom",
+    "footer.all": "Alles ansehen",
+    "footer.advice": "Persönliche Beratung",
+    "footer.delivery": "Lieferung & Montage",
+    "footer.care": "Pflegehinweise",
+    "footer.manufactory": "Manufaktur",
+    "footer.rights": "Maison Noir Möbelmanufaktur",
+    "footer.legal": "Impressum · Datenschutz · AGB · Widerrufsrecht",
+
+    "home.hero.eyebrow": "Manufaktur seit 1974",
+    "home.hero.title": "Möbel für ein<br>ganzes Leben.",
+    "home.hero.lede": "Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern, Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.",
+    "home.hero.cta1": "Kollektion entdecken",
+    "home.hero.cta2": "Beratungstermin",
+    "home.feat1.t": "Handgefertigt", "home.feat1.p": "In Manufakturen in Italien, Dänemark und Deutschland",
+    "home.feat2.t": "Lieferung bis in den Raum", "home.feat2.p": "Weißhandschuh-Service inklusive Montage",
+    "home.feat3.t": "10 Jahre Garantie", "home.feat3.p": "Auf Rahmen, Federung und Verarbeitung",
+    "home.feat4.t": "Persönliche Beratung", "home.feat4.p": "Im Showroom München oder bei Ihnen zu Hause",
+    "home.featured.eyebrow": "Ausgewählt",
+    "home.featured.title": "Die Stücke der Saison",
+    "home.featured.link": "Alle 14 Entwürfe",
+    "home.story.eyebrow": "Unsere Haltung",
+    "home.story.title": "Das Gegenteil von schnell.",
+    "home.story.p1": "An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.",
+    "home.story.p2": "Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.",
+    "home.story.link": "Die Manufaktur besuchen",
+    "home.cats.eyebrow": "Nach Raum",
+    "home.cats.title": "Wo möchten Sie beginnen?",
+    "home.cats.sitting": "Sofas & Sessel",
+    "home.quote": "„Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“",
+    "home.quote.cite": "Elena Farber · Gestalterische Leitung",
+    "home.service.eyebrow": "Service",
+    "home.service.title": "Wir planen Ihren Raum mit.",
+    "home.service.p": "Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.",
+    "home.service.r1": "Erstgespräch", "home.service.v1": "kostenfrei",
+    "home.service.r2": "Raumplanung inkl. 3D-Ansicht", "home.service.v2": "ab 2 Wochen",
+    "home.service.r3": "Materialmuster nach Hause", "home.service.v3": "inklusive",
+    "home.service.cta": "Termin vereinbaren",
+    "home.news.eyebrow": "Bleiben Sie in Verbindung",
+    "home.news.title": "Neue Entwürfe zuerst sehen",
+    "home.news.lede": "Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.",
+    "home.news.placeholder": "Ihre E-Mail-Adresse",
+    "home.news.cta": "Abonnieren",
+
+    "shop.title": "Die Kollektion",
+    "shop.lede": "Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung begonnen — in der Ausführung, die Sie wählen.",
+    "shop.search": "Suchen",
+    "shop.searchPlaceholder": "Name, Kategorie oder Material",
+    "shop.sort": "Sortieren",
+    "shop.sort.featured": "Empfohlen",
+    "shop.sort.priceUp": "Preis aufsteigend",
+    "shop.sort.priceDown": "Preis absteigend",
+    "shop.sort.name": "Name A–Z",
+    "shop.count.one": "1 Entwurf",
+    "shop.count.many": "{n} Entwürfe",
+    "shop.for": "für",
+    "shop.empty": "In dieser Auswahl ist derzeit nichts verfügbar.",
+    "shop.add": "In den Warenkorb",
+
+    "pdp.variant": "Ausführung",
+    "pdp.add": "In den Warenkorb",
+    "pdp.less": "Weniger", "pdp.more": "Mehr",
+    "pdp.note": "Fertigungszeit {lead} · Lieferung bis in den Raum inklusive · 30 Tage Rückgaberecht",
+    "pdp.acc.desc": "Beschreibung",
+    "pdp.acc.spec": "Material & Maße",
+    "pdp.acc.delivery": "Lieferung & Montage",
+    "pdp.acc.care": "Pflege & Garantie",
+    "pdp.spec.material": "Material",
+    "pdp.spec.dimensions": "Maße",
+    "pdp.spec.weight": "Gewicht",
+    "pdp.spec.origin": "Fertigung",
+    "pdp.delivery.body": "Wir liefern europaweit versandkostenfrei bis in den gewünschten Raum, packen aus, montieren und nehmen das Verpackungsmaterial wieder mit. Den Termin stimmen wir telefonisch mit Ihnen ab, sobald Ihr Stück die Werkstatt verlässt.",
+    "pdp.care.body": "Auf Rahmen, Federung und Verarbeitung geben wir zehn Jahre Garantie. Zu jedem Stück erhalten Sie eine Pflegeanleitung; Leder- und Holzpflegemittel senden wir Ihnen auf Wunsch kostenfrei nach.",
+    "pdp.view": "Ansicht {n}",
+    "pdp.related.eyebrow": "Passt dazu",
+    "pdp.related.title": "Ebenfalls sehenswert",
+    "pdp.related.link": "Alle Entwürfe",
+    "pdp.missing.eyebrow": "Nicht gefunden",
+    "pdp.missing.title": "Dieser Entwurf existiert nicht",
+    "pdp.missing.p": "Vielleicht wurde er umbenannt oder der Link ist unvollständig.",
+    "pdp.missing.cta": "Zur Kollektion",
+
+    "cartpage.title": "Ihre Auswahl",
+    "cartpage.empty.eyebrow": "Noch nichts ausgewählt",
+    "cartpage.empty.title": "Ihr Warenkorb ist leer",
+    "cartpage.empty.p": "Stöbern Sie in der Kollektion — oder lassen Sie sich von uns persönlich beraten.",
+    "cartpage.empty.cta1": "Zur Kollektion",
+    "cartpage.empty.cta2": "Beratung anfragen",
+    "cartpage.production": "Fertigung",
+    "cartpage.clear": "Warenkorb leeren",
+    "cartpage.summary": "Zusammenfassung",
+    "cartpage.delivery": "Lieferung & Montage",
+    "cartpage.included": "inklusive",
+    "cartpage.vat": "enthaltene MwSt. (19 %)",
+    "cartpage.total": "Gesamt",
+    "cartpage.checkout": "Verbindlich anfragen",
+    "cartpage.note": "Wir bestätigen jede Bestellung persönlich, bevor die Fertigung beginnt. Anzahlung 30 %, Restbetrag bei Lieferung.",
+    "cartpage.demo": "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.",
+
+    "about.eyebrow": "Seit 1974",
+    "about.title": "Eine Werkstatt,<br>keine Fabrik.",
+    "about.lede": "Maison Noir wurde von Anna und Josef Farber als kleine Polsterei in München gegründet. Heute arbeiten wir mit sieben Werkstätten in vier Ländern — nach denselben Regeln wie damals.",
+    "about.mat.eyebrow": "Material",
+    "about.mat.title": "Wir kaufen dort ein, wo wir hinfahren können.",
+    "about.mat.p1": "Unser Holz stammt aus Wäldern, die wir kennen. Die Leder kommen von zwei Gerbereien in der Toskana, die noch pflanzlich gerben — ein Verfahren, das Wochen dauert statt Stunden.",
+    "about.mat.p2": "Wir verwenden keine Spanplatten, keine geklebten Furnierschichten in tragenden Teilen und keine Schäume, die nach fünf Jahren zusammenfallen. Das macht unsere Möbel teurer. Und deutlich langlebiger.",
+    "about.n1.t": "Jahre Erfahrung", "about.n1.p": "Gegründet 1974 in München, seither in Familienhand.",
+    "about.n2.t": "Partnerwerkstätten", "about.n2.p": "In Deutschland, Italien, Dänemark und Belgien.",
+    "about.n3.t": "Jahre Garantie", "about.n3.p": "Auf Rahmen, Federung und Verarbeitung — reparieren statt ersetzen.",
+    "about.proc.eyebrow": "Verfahren",
+    "about.proc.title": "Wie ein Sofa entsteht.",
+    "about.proc.s1": "Auswahl", "about.proc.p1": "Sie wählen Modell, Bezug und Maße. Muster senden wir vorab nach Hause.",
+    "about.proc.s2": "Rahmen", "about.proc.p2": "Der Schreiner baut den Rahmen aus zwei Jahre lang lufttrockneter Eiche.",
+    "about.proc.s3": "Polsterung", "about.proc.p3": "Federn werden von Hand gebunden, Rosshaar und Schaum in Lagen aufgebaut.",
+    "about.proc.s4": "Bezug", "about.proc.p4": "Der Bezug wird zugeschnitten, genäht und nass über den Korpus gezogen.",
+    "about.proc.s5": "Lieferung", "about.proc.p5": "Zwei Monteure bringen das Stück in den Raum und nehmen die Verpackung mit.",
+    "about.care.eyebrow": "Pflege",
+    "about.care.title": "Damit es lange schön bleibt",
+    "about.care.leather": "Leder",
+    "about.care.leather.p": "Anilinleder einmal im Monat mit einem trockenen, weichen Tuch abstauben und zweimal jährlich mit Lederbalsam pflegen. Direkte Sonne meiden — sie bleicht das Leder ungleichmäßig aus. Flecken nie mit Wasser reiben, sondern tupfen.",
+    "about.care.wood": "Massivholz",
+    "about.care.wood.p": "Geölte Oberflächen mit klarem Wasser und wenig Seife reinigen. Einmal jährlich mit Hartwachsöl in Faserrichtung nachölen. Kleine Kratzer verschwinden dabei fast vollständig — anders als bei lackierten Flächen.",
+    "about.care.fabric": "Leinen und Wolle",
+    "about.care.fabric.p": "Wöchentlich mit geringer Saugkraft absaugen. Abnehmbare Bezüge bei 30 °C im Schonwaschgang waschen und leicht feucht wieder aufziehen. Bouclé nicht bürsten — die Schlingen reißen sonst auf.",
+    "about.care.metal": "Messing und Stein",
+    "about.care.metal.p": "Unbehandeltes Messing dunkelt bewusst nach. Wer den hellen Glanz halten möchte, poliert es alle paar Monate mit Messingpolitur. Travertin und Marmor vertragen keine Säuren — Zitrone, Essig und Rotwein sofort abnehmen.",
+    "about.visit.eyebrow": "Besuchen Sie uns",
+    "about.visit.title": "Showroom München",
+    "about.visit.p": "Maximilianstraße 12 · 80539 München<br>Montag bis Freitag 10–19 Uhr, Samstag 11–17 Uhr",
+    "about.visit.cta": "Termin vereinbaren",
+
+    "contact.title": "Sprechen wir<br>über Ihren Raum.",
+    "contact.lede": "Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.",
+    "contact.form.title": "Anfrage senden",
+    "contact.name": "Name",
+    "contact.email": "E-Mail",
+    "contact.phone": "Telefon (optional)",
+    "contact.topic": "Anliegen",
+    "contact.topic1": "Beratungstermin im Showroom",
+    "contact.topic2": "Beratung bei mir zu Hause",
+    "contact.topic3": "Frage zu einem Entwurf",
+    "contact.topic4": "Materialmuster anfordern",
+    "contact.topic5": "Bestehende Bestellung",
+    "contact.topic6": "Sonstiges",
+    "contact.message": "Ihre Nachricht",
+    "contact.messagePlaceholder": "Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.",
+    "contact.privacy": "Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.",
+    "contact.send": "Anfrage senden",
+    "contact.thanksNamed": "Vielen Dank, {name}. Wir melden uns innerhalb eines Werktages bei Ihnen.",
+    "contact.thanks": "Vielen Dank — wir haben Ihre Anfrage erhalten.",
+    "contact.reach": "Direkt erreichbar",
+    "contact.phoneLabel": "Telefon",
+    "contact.emailLabel": "E-Mail",
+    "contact.hoursLabel": "Erreichbarkeit",
+    "contact.hours": "Mo–Fr 9–18 Uhr",
+    "contact.showroom": "Showroom",
+    "contact.address": "Maximilianstraße 12<br>80539 München<br>Deutschland",
+    "contact.monfri": "Montag – Freitag", "contact.monfriH": "10–19 Uhr",
+    "contact.sat": "Samstag", "contact.satH": "11–17 Uhr",
+    "contact.sun": "Sonntag", "contact.sunH": "geschlossen",
+    "contact.hint": "Hinweis",
+    "contact.hint.p": "Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen."
+  },
+
+  /* ------------------------------------------------------ English */
+  en: {
+    "html.lang": "en",
+
+    "title.home": "Maison Noir — Handmade European Luxury Furniture",
+    "title.shop": "Collection — Maison Noir",
+    "title.product": "Design — Maison Noir",
+    "title.cart": "Basket — Maison Noir",
+    "title.about": "The Workshop — Maison Noir",
+    "title.contact": "Contact & Advice — Maison Noir",
+
+    "topbar": "Free delivery across Europe · Personal advice on +49 89 1234 5678",
+    "logo.sub": "Furniture Makers",
+    "nav.home": "Home",
+    "nav.shop": "Collection",
+    "nav.about": "Workshop",
+    "nav.contact": "Contact",
+    "action.advice": "Advice",
+    "action.cart": "Basket",
+    "action.cart.open": "Open basket",
+    "action.search": "Search",
+    "action.search.open": "Open search",
+    "action.menu": "Open menu",
+    "action.close": "Close",
+    "action.language": "Choose language",
+
+    "cat.alle": "All",
+    "cat.sofas": "Sofas",
+    "cat.sessel": "Armchairs",
+    "cat.tische": "Tables",
+    "cat.stuehle": "Chairs",
+    "cat.leuchten": "Lighting",
+    "cat.aufbewahrung": "Storage",
+    "cat.betten": "Beds",
+    "cat.accessoires": "Accessories",
+
+    "search.title": "Search",
+    "search.placeholder": "What are you looking for? Sofa, oak, leather …",
+    "search.hint": "Search by name, category or material.",
+    "search.results": "Results",
+    "search.none": "Nothing found for",
+    "search.noneHint": "Try a different word — or browse the whole collection.",
+    "search.all": "See all results",
+    "search.clear": "Clear search",
+
+    "cart.title": "Basket",
+    "cart.empty": "Your basket is still empty.",
+    "cart.subtotal": "Subtotal",
+    "cart.checkout": "Checkout",
+    "cart.continue": "Keep browsing",
+    "cart.remove": "Remove",
+    "cart.added": "{name} was added to your basket",
+
+    "footer.tagline": "Furniture made by hand, meant to be passed on. Made in Europe since 1974.",
+    "footer.collection": "Collection",
+    "footer.service": "Service",
+    "footer.showroom": "Showroom",
+    "footer.all": "See everything",
+    "footer.advice": "Personal advice",
+    "footer.delivery": "Delivery & assembly",
+    "footer.care": "Care instructions",
+    "footer.manufactory": "Workshop",
+    "footer.rights": "Maison Noir Furniture Makers",
+    "footer.legal": "Imprint · Privacy · Terms · Right of withdrawal",
+
+    "home.hero.eyebrow": "Making furniture since 1974",
+    "home.hero.title": "Furniture for<br>a whole life.",
+    "home.hero.lede": "Every piece is made by hand in small European workshops — from woods, leathers and fabrics we choose ourselves. No production runs. No hurry.",
+    "home.hero.cta1": "Explore the collection",
+    "home.hero.cta2": "Book a consultation",
+    "home.feat1.t": "Made by hand", "home.feat1.p": "In workshops in Italy, Denmark and Germany",
+    "home.feat2.t": "Delivered to your room", "home.feat2.p": "White-glove service, assembly included",
+    "home.feat3.t": "10-year guarantee", "home.feat3.p": "On frame, suspension and workmanship",
+    "home.feat4.t": "Personal advice", "home.feat4.p": "In our Munich showroom or at your home",
+    "home.featured.eyebrow": "Selected",
+    "home.featured.title": "Pieces of the season",
+    "home.featured.link": "All 14 designs",
+    "home.story.eyebrow": "How we work",
+    "home.story.title": "The opposite of fast.",
+    "home.story.p1": "Our upholsterers spend up to nine days on a single sofa. The air-dried oak frame has seasoned for two years before that. The suspension is tied by hand, as it was a century ago.",
+    "home.story.p2": "The result is a piece that gets handed on rather than replaced. We repair every piece that has left our workshop — no matter when you bought it.",
+    "home.story.link": "Visit the workshop",
+    "home.cats.eyebrow": "By room",
+    "home.cats.title": "Where would you like to begin?",
+    "home.cats.sitting": "Sofas & armchairs",
+    "home.quote": "“Good furniture doesn't demand attention. It keeps a room calm — and you with it.”",
+    "home.quote.cite": "Elena Farber · Head of Design",
+    "home.service.eyebrow": "Service",
+    "home.service.title": "We plan your room with you.",
+    "home.service.p": "Our interior advisers come to you, take measurements, bring samples and draw up a plan — free of charge and without obligation, anywhere in Europe.",
+    "home.service.r1": "First conversation", "home.service.v1": "free of charge",
+    "home.service.r2": "Room plan incl. 3D view", "home.service.v2": "from 2 weeks",
+    "home.service.r3": "Material samples by post", "home.service.v3": "included",
+    "home.service.cta": "Book an appointment",
+    "home.news.eyebrow": "Stay in touch",
+    "home.news.title": "See new designs first",
+    "home.news.lede": "About six times a year we write about new pieces, workshop visits and the craft behind them.",
+    "home.news.placeholder": "Your email address",
+    "home.news.cta": "Subscribe",
+
+    "shop.title": "The collection",
+    "shop.lede": "Fourteen designs we make permanently. Each piece is begun after you order it — in the finish you choose.",
+    "shop.search": "Search",
+    "shop.searchPlaceholder": "Name, category or material",
+    "shop.sort": "Sort",
+    "shop.sort.featured": "Recommended",
+    "shop.sort.priceUp": "Price, low to high",
+    "shop.sort.priceDown": "Price, high to low",
+    "shop.sort.name": "Name A–Z",
+    "shop.count.one": "1 design",
+    "shop.count.many": "{n} designs",
+    "shop.for": "for",
+    "shop.empty": "Nothing is available in this selection right now.",
+    "shop.add": "Add to basket",
+
+    "pdp.variant": "Finish",
+    "pdp.add": "Add to basket",
+    "pdp.less": "Fewer", "pdp.more": "More",
+    "pdp.note": "Made in {lead} · Delivery to your room included · 30-day return period",
+    "pdp.acc.desc": "Description",
+    "pdp.acc.spec": "Material & dimensions",
+    "pdp.acc.delivery": "Delivery & assembly",
+    "pdp.acc.care": "Care & guarantee",
+    "pdp.spec.material": "Material",
+    "pdp.spec.dimensions": "Dimensions",
+    "pdp.spec.weight": "Weight",
+    "pdp.spec.origin": "Made in",
+    "pdp.delivery.body": "We deliver across Europe free of charge, right into the room you choose, unpack, assemble and take the packaging away with us. We agree the date with you by phone as soon as your piece leaves the workshop.",
+    "pdp.care.body": "We guarantee frame, suspension and workmanship for ten years. Every piece comes with care instructions; we send leather and wood care products free of charge on request.",
+    "pdp.view": "View {n}",
+    "pdp.related.eyebrow": "Goes well with",
+    "pdp.related.title": "Also worth seeing",
+    "pdp.related.link": "All designs",
+    "pdp.missing.eyebrow": "Not found",
+    "pdp.missing.title": "This design doesn't exist",
+    "pdp.missing.p": "It may have been renamed, or the link is incomplete.",
+    "pdp.missing.cta": "To the collection",
+
+    "cartpage.title": "Your selection",
+    "cartpage.empty.eyebrow": "Nothing chosen yet",
+    "cartpage.empty.title": "Your basket is empty",
+    "cartpage.empty.p": "Browse the collection — or let us advise you personally.",
+    "cartpage.empty.cta1": "To the collection",
+    "cartpage.empty.cta2": "Ask for advice",
+    "cartpage.production": "Made in",
+    "cartpage.clear": "Empty basket",
+    "cartpage.summary": "Summary",
+    "cartpage.delivery": "Delivery & assembly",
+    "cartpage.included": "included",
+    "cartpage.vat": "incl. VAT (19%)",
+    "cartpage.total": "Total",
+    "cartpage.checkout": "Place a binding request",
+    "cartpage.note": "We confirm every order personally before production starts. 30% deposit, the balance on delivery.",
+    "cartpage.demo": "Demo checkout: payment goes here in the finished version. Your request would now have reached us.",
+
+    "about.eyebrow": "Since 1974",
+    "about.title": "A workshop,<br>not a factory.",
+    "about.lede": "Maison Noir was founded by Anna and Josef Farber as a small upholstery shop in Munich. Today we work with seven workshops in four countries — by the same rules as back then.",
+    "about.mat.eyebrow": "Material",
+    "about.mat.title": "We buy where we can drive to.",
+    "about.mat.p1": "Our timber comes from forests we know. The leather comes from two tanneries in Tuscany that still tan with plant extracts — a process that takes weeks rather than hours.",
+    "about.mat.p2": "We use no chipboard, no glued veneer layers in load-bearing parts and no foams that collapse after five years. That makes our furniture more expensive. And considerably longer-lived.",
+    "about.n1.t": "Years of experience", "about.n1.p": "Founded in Munich in 1974, family-owned ever since.",
+    "about.n2.t": "Partner workshops", "about.n2.p": "In Germany, Italy, Denmark and Belgium.",
+    "about.n3.t": "Years of guarantee", "about.n3.p": "On frame, suspension and workmanship — we repair rather than replace.",
+    "about.proc.eyebrow": "Process",
+    "about.proc.title": "How a sofa comes about.",
+    "about.proc.s1": "Choice", "about.proc.p1": "You choose model, cover and dimensions. We send samples to your home first.",
+    "about.proc.s2": "Frame", "about.proc.p2": "The joiner builds the frame from oak air-dried for two years.",
+    "about.proc.s3": "Upholstery", "about.proc.p3": "Springs are tied by hand, horsehair and foam built up in layers.",
+    "about.proc.s4": "Cover", "about.proc.p4": "The cover is cut, sewn and drawn damp over the body.",
+    "about.proc.s5": "Delivery", "about.proc.p5": "Two fitters carry the piece into the room and take the packaging with them.",
+    "about.care.eyebrow": "Care",
+    "about.care.title": "So it stays beautiful",
+    "about.care.leather": "Leather",
+    "about.care.leather.p": "Dust aniline leather once a month with a dry, soft cloth and treat it with leather balm twice a year. Avoid direct sun — it bleaches leather unevenly. Never rub stains with water; blot them.",
+    "about.care.wood": "Solid wood",
+    "about.care.wood.p": "Clean oiled surfaces with clear water and a little soap. Re-oil once a year with hard wax oil, along the grain. Small scratches all but disappear in the process — unlike on lacquered surfaces.",
+    "about.care.fabric": "Linen and wool",
+    "about.care.fabric.p": "Vacuum weekly on low suction. Wash removable covers at 30 °C on a gentle cycle and put them back on slightly damp. Don't brush bouclé — the loops tear open.",
+    "about.care.metal": "Brass and stone",
+    "about.care.metal.p": "Untreated brass darkens on purpose. To keep the bright shine, polish it every few months with brass polish. Travertine and marble don't tolerate acids — remove lemon, vinegar and red wine at once.",
+    "about.visit.eyebrow": "Come and see us",
+    "about.visit.title": "Munich showroom",
+    "about.visit.p": "Maximilianstrasse 12 · 80539 Munich<br>Monday to Friday 10–19, Saturday 11–17",
+    "about.visit.cta": "Book an appointment",
+
+    "contact.title": "Let's talk<br>about your room.",
+    "contact.lede": "Whether it's a single question about a material or furnishing a whole flat — we take our time. An answer within one working day.",
+    "contact.form.title": "Send an enquiry",
+    "contact.name": "Name",
+    "contact.email": "Email",
+    "contact.phone": "Phone (optional)",
+    "contact.topic": "Subject",
+    "contact.topic1": "Appointment in the showroom",
+    "contact.topic2": "Advice at my home",
+    "contact.topic3": "Question about a design",
+    "contact.topic4": "Request material samples",
+    "contact.topic5": "An existing order",
+    "contact.topic6": "Something else",
+    "contact.message": "Your message",
+    "contact.messagePlaceholder": "Tell us briefly about your room, your measurements and your timeframe.",
+    "contact.privacy": "By sending this you agree that we may use your details to handle your enquiry. We pass nothing on to third parties.",
+    "contact.send": "Send enquiry",
+    "contact.thanksNamed": "Thank you, {name}. We'll be in touch within one working day.",
+    "contact.thanks": "Thank you — we have received your enquiry.",
+    "contact.reach": "Reach us directly",
+    "contact.phoneLabel": "Phone",
+    "contact.emailLabel": "Email",
+    "contact.hoursLabel": "Available",
+    "contact.hours": "Mon–Fri 9–18",
+    "contact.showroom": "Showroom",
+    "contact.address": "Maximilianstrasse 12<br>80539 Munich<br>Germany",
+    "contact.monfri": "Monday – Friday", "contact.monfriH": "10–19",
+    "contact.sat": "Saturday", "contact.satH": "11–17",
+    "contact.sun": "Sunday", "contact.sunH": "closed",
+    "contact.hint": "Please note",
+    "contact.hint.p": "This is a demonstration site. The form doesn't send real messages yet — connecting it to a mailbox or CRM can be added at any time."
+  },
+
+  /* ------------------------------------------------------ Français */
+  fr: {
+    "html.lang": "fr",
+
+    "title.home": "Maison Noir — Mobilier de luxe fait main en Europe",
+    "title.shop": "Collection — Maison Noir",
+    "title.product": "Modèle — Maison Noir",
+    "title.cart": "Panier — Maison Noir",
+    "title.about": "L'atelier — Maison Noir",
+    "title.contact": "Contact et conseil — Maison Noir",
+
+    "topbar": "Livraison offerte partout en Europe · Conseil personnalisé au +49 89 1234 5678",
+    "logo.sub": "Manufacture de meubles",
+    "nav.home": "Accueil",
+    "nav.shop": "Collection",
+    "nav.about": "Atelier",
+    "nav.contact": "Contact",
+    "action.advice": "Conseil",
+    "action.cart": "Panier",
+    "action.cart.open": "Ouvrir le panier",
+    "action.search": "Rechercher",
+    "action.search.open": "Ouvrir la recherche",
+    "action.menu": "Ouvrir le menu",
+    "action.close": "Fermer",
+    "action.language": "Choisir la langue",
+
+    "cat.alle": "Tout",
+    "cat.sofas": "Canapés",
+    "cat.sessel": "Fauteuils",
+    "cat.tische": "Tables",
+    "cat.stuehle": "Chaises",
+    "cat.leuchten": "Luminaires",
+    "cat.aufbewahrung": "Rangement",
+    "cat.betten": "Lits",
+    "cat.accessoires": "Accessoires",
+
+    "search.title": "Rechercher",
+    "search.placeholder": "Que cherchez-vous ? Canapé, chêne, cuir …",
+    "search.hint": "Cherchez par nom, catégorie ou matière.",
+    "search.results": "Résultats",
+    "search.none": "Aucun résultat pour",
+    "search.noneHint": "Essayez un autre mot — ou parcourez toute la collection.",
+    "search.all": "Voir tous les résultats",
+    "search.clear": "Effacer la recherche",
+
+    "cart.title": "Panier",
+    "cart.empty": "Votre panier est encore vide.",
+    "cart.subtotal": "Sous-total",
+    "cart.checkout": "Commander",
+    "cart.continue": "Continuer à parcourir",
+    "cart.remove": "Retirer",
+    "cart.added": "{name} a été ajouté au panier",
+
+    "footer.tagline": "Des meubles faits à la main, faits pour être transmis. Fabriqués en Europe depuis 1974.",
+    "footer.collection": "Collection",
+    "footer.service": "Service",
+    "footer.showroom": "Showroom",
+    "footer.all": "Tout voir",
+    "footer.advice": "Conseil personnalisé",
+    "footer.delivery": "Livraison et montage",
+    "footer.care": "Conseils d'entretien",
+    "footer.manufactory": "Atelier",
+    "footer.rights": "Maison Noir Manufacture de meubles",
+    "footer.legal": "Mentions légales · Confidentialité · CGV · Droit de rétractation",
+
+    "home.hero.eyebrow": "Manufacture depuis 1974",
+    "home.hero.title": "Des meubles pour<br>toute une vie.",
+    "home.hero.lede": "Chaque pièce est faite à la main dans de petits ateliers européens — avec des bois, des cuirs et des tissus que nous choisissons nous-mêmes. Aucune série. Aucune hâte.",
+    "home.hero.cta1": "Découvrir la collection",
+    "home.hero.cta2": "Prendre rendez-vous",
+    "home.feat1.t": "Fait à la main", "home.feat1.p": "Dans des ateliers en Italie, au Danemark et en Allemagne",
+    "home.feat2.t": "Livré dans la pièce", "home.feat2.p": "Service gants blancs, montage compris",
+    "home.feat3.t": "Garantie 10 ans", "home.feat3.p": "Sur la structure, la suspension et la finition",
+    "home.feat4.t": "Conseil personnalisé", "home.feat4.p": "Au showroom de Munich ou chez vous",
+    "home.featured.eyebrow": "Sélection",
+    "home.featured.title": "Les pièces de la saison",
+    "home.featured.link": "Les 14 modèles",
+    "home.story.eyebrow": "Notre façon de faire",
+    "home.story.title": "Le contraire de la vitesse.",
+    "home.story.p1": "Nos tapissiers passent jusqu'à neuf jours sur un seul canapé. La structure en chêne séché à l'air a reposé deux ans auparavant. La suspension est guindée à la main, comme il y a cent ans.",
+    "home.story.p2": "Le résultat est un meuble que l'on transmet au lieu de le remplacer. Nous réparons chaque pièce sortie de notre atelier — quelle que soit sa date d'achat.",
+    "home.story.link": "Visiter l'atelier",
+    "home.cats.eyebrow": "Par pièce",
+    "home.cats.title": "Par où souhaitez-vous commencer ?",
+    "home.cats.sitting": "Canapés et fauteuils",
+    "home.quote": "« Un bon meuble ne s'impose pas. Il garde la pièce calme — et vous aussi. »",
+    "home.quote.cite": "Elena Farber · Direction artistique",
+    "home.service.eyebrow": "Service",
+    "home.service.title": "Nous pensons la pièce avec vous.",
+    "home.service.p": "Nos conseillères et conseillers se déplacent chez vous, prennent les mesures, apportent des échantillons et dessinent un plan — gratuitement et sans engagement, partout en Europe.",
+    "home.service.r1": "Premier entretien", "home.service.v1": "gratuit",
+    "home.service.r2": "Plan de la pièce avec vue 3D", "home.service.v2": "à partir de 2 semaines",
+    "home.service.r3": "Échantillons envoyés chez vous", "home.service.v3": "compris",
+    "home.service.cta": "Prendre rendez-vous",
+    "home.news.eyebrow": "Restons en contact",
+    "home.news.title": "Voir les nouveautés en premier",
+    "home.news.lede": "Environ six fois par an, nous écrivons sur les nouvelles pièces, les visites d'atelier et le métier.",
+    "home.news.placeholder": "Votre adresse e-mail",
+    "home.news.cta": "S'abonner",
+
+    "shop.title": "La collection",
+    "shop.lede": "Quatorze modèles que nous fabriquons en permanence. Chaque pièce est commencée après votre commande — dans la finition que vous choisissez.",
+    "shop.search": "Rechercher",
+    "shop.searchPlaceholder": "Nom, catégorie ou matière",
+    "shop.sort": "Trier",
+    "shop.sort.featured": "Recommandé",
+    "shop.sort.priceUp": "Prix croissant",
+    "shop.sort.priceDown": "Prix décroissant",
+    "shop.sort.name": "Nom A–Z",
+    "shop.count.one": "1 modèle",
+    "shop.count.many": "{n} modèles",
+    "shop.for": "pour",
+    "shop.empty": "Rien n'est disponible dans cette sélection pour le moment.",
+    "shop.add": "Ajouter au panier",
+
+    "pdp.variant": "Finition",
+    "pdp.add": "Ajouter au panier",
+    "pdp.less": "Moins", "pdp.more": "Plus",
+    "pdp.note": "Fabrication {lead} · Livraison dans la pièce comprise · Retour sous 30 jours",
+    "pdp.acc.desc": "Description",
+    "pdp.acc.spec": "Matière et dimensions",
+    "pdp.acc.delivery": "Livraison et montage",
+    "pdp.acc.care": "Entretien et garantie",
+    "pdp.spec.material": "Matière",
+    "pdp.spec.dimensions": "Dimensions",
+    "pdp.spec.weight": "Poids",
+    "pdp.spec.origin": "Fabrication",
+    "pdp.delivery.body": "Nous livrons dans toute l'Europe sans frais, directement dans la pièce de votre choix : nous déballons, montons et remportons les emballages. Nous convenons de la date par téléphone dès que votre pièce quitte l'atelier.",
+    "pdp.care.body": "Nous garantissons la structure, la suspension et la finition pendant dix ans. Chaque pièce est livrée avec une notice d'entretien ; sur demande, nous envoyons gratuitement les produits pour le cuir et le bois.",
+    "pdp.view": "Vue {n}",
+    "pdp.related.eyebrow": "Va bien avec",
+    "pdp.related.title": "À voir également",
+    "pdp.related.link": "Tous les modèles",
+    "pdp.missing.eyebrow": "Introuvable",
+    "pdp.missing.title": "Ce modèle n'existe pas",
+    "pdp.missing.p": "Il a peut-être été renommé, ou le lien est incomplet.",
+    "pdp.missing.cta": "Vers la collection",
+
+    "cartpage.title": "Votre sélection",
+    "cartpage.empty.eyebrow": "Rien de choisi pour l'instant",
+    "cartpage.empty.title": "Votre panier est vide",
+    "cartpage.empty.p": "Parcourez la collection — ou laissez-nous vous conseiller personnellement.",
+    "cartpage.empty.cta1": "Vers la collection",
+    "cartpage.empty.cta2": "Demander conseil",
+    "cartpage.production": "Fabrication",
+    "cartpage.clear": "Vider le panier",
+    "cartpage.summary": "Récapitulatif",
+    "cartpage.delivery": "Livraison et montage",
+    "cartpage.included": "compris",
+    "cartpage.vat": "TVA comprise (19 %)",
+    "cartpage.total": "Total",
+    "cartpage.checkout": "Envoyer une demande ferme",
+    "cartpage.note": "Nous confirmons chaque commande personnellement avant le début de la fabrication. Acompte de 30 %, solde à la livraison.",
+    "cartpage.demo": "Caisse de démonstration : le paiement prendra place ici dans la version finale. Votre demande nous serait parvenue.",
+
+    "about.eyebrow": "Depuis 1974",
+    "about.title": "Un atelier,<br>pas une usine.",
+    "about.lede": "Maison Noir a été fondée par Anna et Josef Farber comme un petit atelier de tapisserie à Munich. Aujourd'hui, nous travaillons avec sept ateliers dans quatre pays — selon les mêmes règles qu'alors.",
+    "about.mat.eyebrow": "Matière",
+    "about.mat.title": "Nous achetons là où nous pouvons nous rendre.",
+    "about.mat.p1": "Notre bois vient de forêts que nous connaissons. Les cuirs proviennent de deux tanneries de Toscane qui tannent encore aux extraits végétaux — un procédé qui prend des semaines, pas des heures.",
+    "about.mat.p2": "Nous n'utilisons ni panneaux de particules, ni placages collés dans les parties porteuses, ni mousses qui s'affaissent au bout de cinq ans. Cela rend nos meubles plus chers. Et nettement plus durables.",
+    "about.n1.t": "Ans d'expérience", "about.n1.p": "Fondée à Munich en 1974, familiale depuis.",
+    "about.n2.t": "Ateliers partenaires", "about.n2.p": "En Allemagne, en Italie, au Danemark et en Belgique.",
+    "about.n3.t": "Ans de garantie", "about.n3.p": "Sur la structure, la suspension et la finition — réparer plutôt que remplacer.",
+    "about.proc.eyebrow": "Procédé",
+    "about.proc.title": "Comment naît un canapé.",
+    "about.proc.s1": "Choix", "about.proc.p1": "Vous choisissez le modèle, le revêtement et les dimensions. Nous envoyons d'abord des échantillons chez vous.",
+    "about.proc.s2": "Structure", "about.proc.p2": "Le menuisier construit la structure en chêne séché à l'air pendant deux ans.",
+    "about.proc.s3": "Garnissage", "about.proc.p3": "Les ressorts sont guindés à la main, crin et mousse montés en couches.",
+    "about.proc.s4": "Revêtement", "about.proc.p4": "Le revêtement est coupé, cousu et tendu humide sur la carcasse.",
+    "about.proc.s5": "Livraison", "about.proc.p5": "Deux monteurs portent la pièce dans la pièce et remportent l'emballage.",
+    "about.care.eyebrow": "Entretien",
+    "about.care.title": "Pour que cela reste beau",
+    "about.care.leather": "Cuir",
+    "about.care.leather.p": "Dépoussiérez le cuir aniline une fois par mois avec un chiffon doux et sec, et nourrissez-le deux fois par an avec un baume. Évitez le soleil direct — il décolore le cuir de façon inégale. Ne frottez jamais une tache à l'eau : tamponnez-la.",
+    "about.care.wood": "Bois massif",
+    "about.care.wood.p": "Nettoyez les surfaces huilées à l'eau claire avec un peu de savon. Huilez une fois par an à l'huile-cire dure, dans le sens du fil. Les petites rayures disparaissent presque entièrement — contrairement aux surfaces vernies.",
+    "about.care.fabric": "Lin et laine",
+    "about.care.fabric.p": "Aspirez chaque semaine à faible puissance. Lavez les housses amovibles à 30 °C en cycle délicat et remettez-les légèrement humides. Ne brossez pas le bouclé — les boucles se déchirent.",
+    "about.care.metal": "Laiton et pierre",
+    "about.care.metal.p": "Le laiton brut fonce volontairement. Pour garder l'éclat clair, polissez-le tous les quelques mois. Le travertin et le marbre ne supportent pas les acides — retirez aussitôt citron, vinaigre et vin rouge.",
+    "about.visit.eyebrow": "Venez nous voir",
+    "about.visit.title": "Showroom de Munich",
+    "about.visit.p": "Maximilianstrasse 12 · 80539 Munich<br>Du lundi au vendredi 10h–19h, samedi 11h–17h",
+    "about.visit.cta": "Prendre rendez-vous",
+
+    "contact.title": "Parlons<br>de votre pièce.",
+    "contact.lede": "Qu'il s'agisse d'une simple question sur une matière ou de l'aménagement d'un appartement entier — nous prenons le temps. Réponse sous un jour ouvré.",
+    "contact.form.title": "Envoyer une demande",
+    "contact.name": "Nom",
+    "contact.email": "E-mail",
+    "contact.phone": "Téléphone (facultatif)",
+    "contact.topic": "Objet",
+    "contact.topic1": "Rendez-vous au showroom",
+    "contact.topic2": "Conseil à mon domicile",
+    "contact.topic3": "Question sur un modèle",
+    "contact.topic4": "Demander des échantillons",
+    "contact.topic5": "Commande en cours",
+    "contact.topic6": "Autre",
+    "contact.message": "Votre message",
+    "contact.messagePlaceholder": "Parlez-nous brièvement de votre pièce, de vos mesures et de vos délais.",
+    "contact.privacy": "En envoyant ce formulaire, vous acceptez que nous utilisions vos données pour traiter votre demande. Nous ne transmettons rien à des tiers.",
+    "contact.send": "Envoyer la demande",
+    "contact.thanksNamed": "Merci, {name}. Nous revenons vers vous sous un jour ouvré.",
+    "contact.thanks": "Merci — nous avons bien reçu votre demande.",
+    "contact.reach": "Nous joindre directement",
+    "contact.phoneLabel": "Téléphone",
+    "contact.emailLabel": "E-mail",
+    "contact.hoursLabel": "Disponibilité",
+    "contact.hours": "Lun–ven 9h–18h",
+    "contact.showroom": "Showroom",
+    "contact.address": "Maximilianstrasse 12<br>80539 Munich<br>Allemagne",
+    "contact.monfri": "Lundi – vendredi", "contact.monfriH": "10h–19h",
+    "contact.sat": "Samedi", "contact.satH": "11h–17h",
+    "contact.sun": "Dimanche", "contact.sunH": "fermé",
+    "contact.hint": "Remarque",
+    "contact.hint.p": "Ceci est un site de démonstration. Le formulaire n'envoie pas encore de vrais messages — le raccordement à une boîte mail ou à un CRM peut être ajouté à tout moment."
+  }
+};
+
+/* --- Zugriff auf die Sprache --- */
+const LANG_KEY = "maison-noir-lang";
+
+function getLang() {
+  let stored = null;
+  try { stored = localStorage.getItem(LANG_KEY); } catch (e) { /* privater Modus */ }
+  if (stored && I18N[stored]) return stored;
+  const browser = (navigator.language || "de").slice(0, 2).toLowerCase();
+  return I18N[browser] ? browser : "de";
+}
+
+function setLang(code) {
+  if (!I18N[code]) return;
+  try { localStorage.setItem(LANG_KEY, code); } catch (e) { /* privater Modus */ }
+  location.reload();
+}
+
+function langLocale() {
+  const l = LANGS.find((x) => x.code === getLang());
+  return l ? l.locale : "de-DE";
+}
+
+/* Übersetzt einen Schlüssel; {platzhalter} werden ersetzt. */
+function t(key, vars) {
+  const dict = I18N[getLang()] || I18N.de;
+  let str = dict[key];
+  if (str === undefined) str = (I18N.de[key] !== undefined ? I18N.de[key] : key);
+  if (vars) {
+    Object.keys(vars).forEach((k) => { str = str.split("{" + k + "}").join(vars[k]); });
+  }
+  return str;
+}
+
+/* Setzt alle im HTML ausgezeichneten Texte. */
+function applyI18n(root) {
+  const scope = root || document;
+  scope.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  scope.querySelectorAll("[data-i18n-html]").forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+  scope.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  scope.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
+  scope.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); });
+  document.documentElement.lang = t("html.lang");
+}
+
+</script>
 <script>
 /* =========================================================
    MAISON NOIR — Produktdaten & Bildwelt
@@ -879,294 +1704,274 @@ function artFor(product, variant = 0) {
   return (ART[product.shape] || ART.sofa)(tone);
 }
 
-/* --- Katalog --- */
+/* --- Katalog ---
+   Sprachunabhängig: id, Kategorie, Form, Farbstimmung, Preis, Gewicht,
+   Farbwerte. Alles Sprachliche steht unter t.<sprache>. --- */
 const PRODUCTS = [
   {
-    id: "sofa-milano",
-    name: "Milano",
-    category: "Sofas",
-    shape: "sofa",
-    tone: "sand",
-    price: 8490,
-    badge: "Neuheit",
-    short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
-    description: "Das Sofa Milano verbindet großzügige Proportionen mit einer bemerkenswert leichten Silhouette. Der Korpus wird in Handarbeit über einen Rahmen aus lufttrockneter Eiche gespannt, die Sitzkissen bestehen aus einem Kern aus Kaltschaum mit einer Auflage aus Gänsedaunen. Das pflanzlich gegerbte Anilinleder entwickelt über die Jahre eine eigene Patina.",
-    material: "Anilinleder, Eiche massiv, Gänsedaunen",
-    dimensions: "B 240 × T 98 × H 72 cm",
-    weight: "68 kg",
-    origin: "Manufaktur Brianza, Italien",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Cognac", hex: "#9a6a3f" },
-      { name: "Sandbeige", hex: "#d9c9ae" },
-      { name: "Anthrazit", hex: "#3a3a38" }
-    ]
+    id: "sofa-milano", name: "Milano", categoryKey: "sofas", shape: "sofa", tone: "sand",
+    price: 8490, weight: "68 kg", swatches: ["#9a6a3f", "#d9c9ae", "#3a3a38"],
+    t: {
+      de: { badge: "Neuheit", short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
+        description: "Das Sofa Milano verbindet großzügige Proportionen mit einer bemerkenswert leichten Silhouette. Der Korpus wird in Handarbeit über einen Rahmen aus lufttrockneter Eiche gespannt, die Sitzkissen bestehen aus einem Kern aus Kaltschaum mit einer Auflage aus Gänsedaunen. Das pflanzlich gegerbte Anilinleder entwickelt über die Jahre eine eigene Patina.",
+        material: "Anilinleder, Eiche massiv, Gänsedaunen", dimensions: "B 240 × T 98 × H 72 cm",
+        origin: "Manufaktur Brianza, Italien", lead: "10–12 Wochen", colors: ["Cognac", "Sandbeige", "Anthrazit"] },
+      en: { badge: "New", short: "Three-seater in Italian aniline leather on a solid oak frame.",
+        description: "Milano pairs generous proportions with a remarkably light silhouette. The body is drawn by hand over a frame of air-dried oak; the seat cushions have a cold-foam core topped with goose down. The vegetable-tanned aniline leather develops a patina of its own over the years.",
+        material: "Aniline leather, solid oak, goose down", dimensions: "W 240 × D 98 × H 72 cm",
+        origin: "Brianza workshop, Italy", lead: "10–12 weeks", colors: ["Cognac", "Sand beige", "Anthracite"] },
+      fr: { badge: "Nouveauté", short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
+        description: "Le Milano associe des proportions généreuses à une silhouette remarquablement légère. La carcasse est tendue à la main sur une structure en chêne séché à l'air ; les coussins d'assise ont une âme en mousse froide surmontée de duvet d'oie. Le cuir aniline à tannage végétal développe sa propre patine au fil des ans.",
+        material: "Cuir aniline, chêne massif, duvet d'oie", dimensions: "L 240 × P 98 × H 72 cm",
+        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] }
+    }
   },
   {
-    id: "sofa-riviera",
-    name: "Riviera",
-    category: "Sofas",
-    shape: "sofa",
-    tone: "sage",
-    price: 6950,
-    short: "Modularer Zweisitzer mit Bezug aus belgischem Leinen.",
-    description: "Riviera ist als modulares System konzipiert und lässt sich jederzeit erweitern. Der Bezug aus gewaschenem belgischem Leinen ist vollständig abnehmbar und waschbar. Die konisch gedrechselten Füße aus Messing geben dem Volumen optische Leichtigkeit.",
-    material: "Belgisches Leinen, Buche, Messing",
-    dimensions: "B 196 × T 94 × H 74 cm",
-    weight: "52 kg",
-    origin: "Atelier Flandern, Belgien",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Salbei", hex: "#9aa78d" },
-      { name: "Elfenbein", hex: "#e8e0d2" },
-      { name: "Taubenblau", hex: "#7d8a99" }
-    ]
+    id: "sofa-riviera", name: "Riviera", categoryKey: "sofas", shape: "sofa", tone: "sage",
+    price: 6950, weight: "52 kg", swatches: ["#9aa78d", "#e8e0d2", "#7d8a99"],
+    t: {
+      de: { short: "Modularer Zweisitzer mit Bezug aus belgischem Leinen.",
+        description: "Riviera ist als modulares System konzipiert und lässt sich jederzeit erweitern. Der Bezug aus gewaschenem belgischem Leinen ist vollständig abnehmbar und waschbar. Die konisch gedrechselten Füße aus Messing geben dem Volumen optische Leichtigkeit.",
+        material: "Belgisches Leinen, Buche, Messing", dimensions: "B 196 × T 94 × H 74 cm",
+        origin: "Atelier Flandern, Belgien", lead: "8–10 Wochen", colors: ["Salbei", "Elfenbein", "Taubenblau"] },
+      en: { short: "Modular two-seater covered in Belgian linen.",
+        description: "Riviera is conceived as a modular system and can be extended at any time. The washed Belgian linen cover comes off completely and is machine washable. The tapered turned brass feet lend the volume a visual lightness.",
+        material: "Belgian linen, beech, brass", dimensions: "W 196 × D 94 × H 74 cm",
+        origin: "Flanders workshop, Belgium", lead: "8–10 weeks", colors: ["Sage", "Ivory", "Dove blue"] },
+      fr: { short: "Canapé deux places modulaire recouvert de lin belge.",
+        description: "Riviera est conçu comme un système modulaire et peut être agrandi à tout moment. La housse en lin belge lavé s'enlève entièrement et passe en machine. Les pieds en laiton tournés coniques donnent de la légèreté au volume.",
+        material: "Lin belge, hêtre, laiton", dimensions: "L 196 × P 94 × H 74 cm",
+        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] }
+    }
   },
   {
-    id: "sessel-orsini",
-    name: "Orsini",
-    category: "Sessel",
-    shape: "sessel",
-    tone: "clay",
-    price: 3280,
-    badge: "Bestseller",
-    short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
-    description: "Ein Sessel, der zum Verweilen einlädt. Die umlaufende Rückenlehne wird aus einem Stück formverleimt und anschließend von Hand gepolstert. Der Bouclé-Bezug aus Schurwolle ist besonders strapazierfähig und angenehm warm.",
-    material: "Bouclé aus Schurwolle, Formsperrholz, Messing",
-    dimensions: "B 88 × T 84 × H 76 cm",
-    weight: "24 kg",
-    origin: "Werkstatt Kopenhagen, Dänemark",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Terrakotta", hex: "#b2705a" },
-      { name: "Creme", hex: "#e6dcc9" },
-      { name: "Nachtblau", hex: "#38445c" }
-    ]
+    id: "sessel-orsini", name: "Orsini", categoryKey: "sessel", shape: "sessel", tone: "clay",
+    price: 3280, weight: "24 kg", swatches: ["#b2705a", "#e6dcc9", "#38445c"],
+    t: {
+      de: { badge: "Bestseller", short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
+        description: "Ein Sessel, der zum Verweilen einlädt. Die umlaufende Rückenlehne wird aus einem Stück formverleimt und anschließend von Hand gepolstert. Der Bouclé-Bezug aus Schurwolle ist besonders strapazierfähig und angenehm warm.",
+        material: "Bouclé aus Schurwolle, Formsperrholz, Messing", dimensions: "B 88 × T 84 × H 76 cm",
+        origin: "Werkstatt Kopenhagen, Dänemark", lead: "6–8 Wochen", colors: ["Terrakotta", "Creme", "Nachtblau"] },
+      en: { badge: "Bestseller", short: "Lounge chair with a curved back and bouclé cover.",
+        description: "A chair that invites you to stay. The wrap-around back is moulded from a single piece of laminated wood and then upholstered by hand. The new-wool bouclé is particularly hard-wearing and pleasantly warm.",
+        material: "New-wool bouclé, moulded plywood, brass", dimensions: "W 88 × D 84 × H 76 cm",
+        origin: "Copenhagen workshop, Denmark", lead: "6–8 weeks", colors: ["Terracotta", "Cream", "Midnight blue"] },
+      fr: { badge: "Best-seller", short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
+        description: "Un fauteuil qui invite à rester. Le dossier enveloppant est moulé d'une seule pièce en bois lamellé, puis garni à la main. Le bouclé en laine vierge est particulièrement résistant et agréablement chaud.",
+        material: "Bouclé en laine vierge, contreplaqué moulé, laiton", dimensions: "L 88 × P 84 × H 76 cm",
+        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] }
+    }
   },
   {
-    id: "sessel-luca",
-    name: "Luca",
-    category: "Sessel",
-    shape: "sessel",
-    tone: "ink",
-    price: 4150,
-    short: "Ohrensessel in Samt mit hoher Rückenlehne.",
-    description: "Luca zitiert die klassische Ohrensessel-Form und übersetzt sie in eine reduzierte Gegenwartssprache. Der Baumwollsamt ist lichtecht und schmutzabweisend ausgerüstet, die Federung besteht aus handgebundenen Stahlfedern.",
-    material: "Baumwollsamt, Nussbaum, Stahlfedern",
-    dimensions: "B 92 × T 90 × H 108 cm",
-    weight: "31 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Tannengrün", hex: "#2f4438" },
-      { name: "Bordeaux", hex: "#5d2b30" },
-      { name: "Graphit", hex: "#33322e" }
-    ]
+    id: "sessel-luca", name: "Luca", categoryKey: "sessel", shape: "sessel", tone: "ink",
+    price: 4150, weight: "31 kg", swatches: ["#2f4438", "#5d2b30", "#33322e"],
+    t: {
+      de: { short: "Ohrensessel in Samt mit hoher Rückenlehne.",
+        description: "Luca zitiert die klassische Ohrensessel-Form und übersetzt sie in eine reduzierte Gegenwartssprache. Der Baumwollsamt ist lichtecht und schmutzabweisend ausgerüstet, die Federung besteht aus handgebundenen Stahlfedern.",
+        material: "Baumwollsamt, Nussbaum, Stahlfedern", dimensions: "B 92 × T 90 × H 108 cm",
+        origin: "Manufaktur Rhein, Deutschland", lead: "8–10 Wochen", colors: ["Tannengrün", "Bordeaux", "Graphit"] },
+      en: { short: "Wing chair in velvet with a high back.",
+        description: "Luca quotes the classic wing-chair form and translates it into a pared-back contemporary language. The cotton velvet is lightfast and stain-repellent; the suspension uses hand-tied steel springs.",
+        material: "Cotton velvet, walnut, steel springs", dimensions: "W 92 × D 90 × H 108 cm",
+        origin: "Rhine workshop, Germany", lead: "8–10 weeks", colors: ["Fir green", "Bordeaux", "Graphite"] },
+      fr: { short: "Bergère à oreilles en velours, dossier haut.",
+        description: "Luca cite la forme classique de la bergère à oreilles et la traduit dans un langage contemporain épuré. Le velours de coton est résistant à la lumière et déperlant ; la suspension repose sur des ressorts d'acier guindés à la main.",
+        material: "Velours de coton, noyer, ressorts d'acier", dimensions: "L 92 × P 90 × H 108 cm",
+        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] }
+    }
   },
   {
-    id: "tisch-atelier",
-    name: "Atelier",
-    category: "Tische",
-    shape: "tisch",
-    tone: "stone",
-    price: 5890,
-    short: "Esstisch aus Nussbaum massiv für acht Personen.",
-    description: "Die Tischplatte wird aus durchgehenden Bohlen eines einzigen Nussbaumstamms gefertigt — jede Platte ist damit ein Unikat. Die Oberfläche ist mit Hartwachsöl behandelt und kann jederzeit partiell aufgearbeitet werden.",
-    material: "Nussbaum massiv, Hartwachsöl",
-    dimensions: "B 260 × T 100 × H 75 cm",
-    weight: "94 kg",
-    origin: "Schreinerei Schwarzwald, Deutschland",
-    lead: "12–14 Wochen",
-    colors: [
-      { name: "Nussbaum natur", hex: "#6b4a30" },
-      { name: "Eiche geräuchert", hex: "#4a3b2c" },
-      { name: "Esche weiß", hex: "#d5c8b2" }
-    ]
+    id: "tisch-atelier", name: "Atelier", categoryKey: "tische", shape: "tisch", tone: "stone",
+    price: 5890, weight: "94 kg", swatches: ["#6b4a30", "#4a3b2c", "#d5c8b2"],
+    t: {
+      de: { short: "Esstisch aus Nussbaum massiv für acht Personen.",
+        description: "Die Tischplatte wird aus durchgehenden Bohlen eines einzigen Nussbaumstamms gefertigt — jede Platte ist damit ein Unikat. Die Oberfläche ist mit Hartwachsöl behandelt und kann jederzeit partiell aufgearbeitet werden.",
+        material: "Nussbaum massiv, Hartwachsöl", dimensions: "B 260 × T 100 × H 75 cm",
+        origin: "Schreinerei Schwarzwald, Deutschland", lead: "12–14 Wochen", colors: ["Nussbaum natur", "Eiche geräuchert", "Esche weiß"] },
+      en: { short: "Dining table in solid walnut, seats eight.",
+        description: "The top is made from continuous boards of a single walnut trunk — which makes every top unique. The surface is finished with hard wax oil and can be refreshed in parts at any time.",
+        material: "Solid walnut, hard wax oil", dimensions: "W 260 × D 100 × H 75 cm",
+        origin: "Black Forest joinery, Germany", lead: "12–14 weeks", colors: ["Natural walnut", "Smoked oak", "White ash"] },
+      fr: { short: "Table de salle à manger en noyer massif, huit places.",
+        description: "Le plateau est réalisé à partir de planches continues issues d'un seul tronc de noyer — chaque plateau est donc unique. La surface est traitée à l'huile-cire dure et peut être reprise localement à tout moment.",
+        material: "Noyer massif, huile-cire dure", dimensions: "L 260 × P 100 × H 75 cm",
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] }
+    }
   },
   {
-    id: "tisch-onda",
-    name: "Onda",
-    category: "Tische",
-    shape: "tisch",
-    tone: "rose",
-    price: 2740,
-    short: "Couchtisch mit Platte aus Travertin und Sockel aus Messing.",
-    description: "Onda setzt einen ruhigen Gegenpol im Wohnraum. Die 4 cm starke Platte aus römischem Travertin ruht auf einem gebürsteten Messingsockel. Der Stein ist gegen Flecken imprägniert, behält aber seine offene, lebendige Struktur.",
-    material: "Travertin, gebürstetes Messing",
-    dimensions: "Ø 110 × H 34 cm",
-    weight: "58 kg",
-    origin: "Steinmetz Tivoli, Italien",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Travertin hell", hex: "#d8c6ad" },
-      { name: "Marmor Nero", hex: "#3b3a38" },
-      { name: "Marmor Verde", hex: "#5b6b58" }
-    ]
+    id: "tisch-onda", name: "Onda", categoryKey: "tische", shape: "tisch", tone: "rose",
+    price: 2740, weight: "58 kg", swatches: ["#d8c6ad", "#3b3a38", "#5b6b58"],
+    t: {
+      de: { short: "Couchtisch mit Platte aus Travertin und Sockel aus Messing.",
+        description: "Onda setzt einen ruhigen Gegenpol im Wohnraum. Die 4 cm starke Platte aus römischem Travertin ruht auf einem gebürsteten Messingsockel. Der Stein ist gegen Flecken imprägniert, behält aber seine offene, lebendige Struktur.",
+        material: "Travertin, gebürstetes Messing", dimensions: "Ø 110 × H 34 cm",
+        origin: "Steinmetz Tivoli, Italien", lead: "10–12 Wochen", colors: ["Travertin hell", "Marmor Nero", "Marmor Verde"] },
+      en: { short: "Coffee table with a travertine top on a brass base.",
+        description: "Onda sets a calm counterpoint in the living room. The 4 cm Roman travertine top rests on a brushed brass base. The stone is sealed against stains but keeps its open, living structure.",
+        material: "Travertine, brushed brass", dimensions: "Ø 110 × H 34 cm",
+        origin: "Tivoli stonemasons, Italy", lead: "10–12 weeks", colors: ["Light travertine", "Nero marble", "Verde marble"] },
+      fr: { short: "Table basse à plateau en travertin sur socle en laiton.",
+        description: "Onda pose un contrepoint calme dans le séjour. Le plateau de 4 cm en travertin romain repose sur un socle en laiton brossé. La pierre est imperméabilisée contre les taches mais conserve sa structure ouverte et vivante.",
+        material: "Travertin, laiton brossé", dimensions: "Ø 110 × H 34 cm",
+        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] }
+    }
   },
   {
-    id: "stuhl-vela",
-    name: "Vela",
-    category: "Stühle",
-    shape: "stuhl",
-    tone: "sand",
-    price: 690,
-    short: "Esszimmerstuhl mit gepolsterter Sitzfläche und Eichengestell.",
-    description: "Vela ist auf das Wesentliche reduziert: ein schlankes Gestell aus massiver Eiche, eine ergonomisch geformte Rückenlehne und eine großzügig gepolsterte Sitzfläche. Stapelbar bis vier Stück.",
-    material: "Eiche massiv, Wollfilz",
-    dimensions: "B 48 × T 54 × H 82 cm",
-    weight: "6 kg",
-    origin: "Werkstatt Jütland, Dänemark",
-    lead: "4–6 Wochen",
-    colors: [
-      { name: "Naturweiß", hex: "#e3dccb" },
-      { name: "Karamell", hex: "#b98d5c" },
-      { name: "Schiefer", hex: "#4d5157" }
-    ]
+    id: "stuhl-vela", name: "Vela", categoryKey: "stuehle", shape: "stuhl", tone: "sand",
+    price: 690, weight: "6 kg", swatches: ["#e3dccb", "#b98d5c", "#4d5157"],
+    t: {
+      de: { short: "Esszimmerstuhl mit gepolsterter Sitzfläche und Eichengestell.",
+        description: "Vela ist auf das Wesentliche reduziert: ein schlankes Gestell aus massiver Eiche, eine ergonomisch geformte Rückenlehne und eine großzügig gepolsterte Sitzfläche. Stapelbar bis vier Stück.",
+        material: "Eiche massiv, Wollfilz", dimensions: "B 48 × T 54 × H 82 cm",
+        origin: "Werkstatt Jütland, Dänemark", lead: "4–6 Wochen", colors: ["Naturweiß", "Karamell", "Schiefer"] },
+      en: { short: "Dining chair with an upholstered seat and oak frame.",
+        description: "Vela is reduced to essentials: a slim solid-oak frame, an ergonomically shaped back and a generously padded seat. Stacks up to four high.",
+        material: "Solid oak, wool felt", dimensions: "W 48 × D 54 × H 82 cm",
+        origin: "Jutland workshop, Denmark", lead: "4–6 weeks", colors: ["Natural white", "Caramel", "Slate"] },
+      fr: { short: "Chaise de salle à manger, assise garnie et piètement en chêne.",
+        description: "Vela est réduite à l'essentiel : un piètement fin en chêne massif, un dossier de forme ergonomique et une assise généreusement garnie. Empilable jusqu'à quatre.",
+        material: "Chêne massif, feutre de laine", dimensions: "L 48 × P 54 × H 82 cm",
+        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] }
+    }
   },
   {
-    id: "stuhl-marchese",
-    name: "Marchese",
-    category: "Stühle",
-    shape: "stuhl",
-    tone: "ink",
-    price: 980,
-    short: "Armlehnstuhl mit Lederbezug und Rahmen aus Nussbaum.",
-    description: "Der Armlehnstuhl Marchese wurde für lange Abende am Tisch entworfen. Die Armlehnen sind aus dem Rahmen herausgearbeitet, der Sattelledersitz wird von Hand über einen Gurtboden gespannt.",
-    material: "Sattelleder, Nussbaum massiv",
-    dimensions: "B 58 × T 56 × H 84 cm",
-    weight: "8 kg",
-    origin: "Manufaktur Brianza, Italien",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Tabak", hex: "#7d5636" },
-      { name: "Schwarz", hex: "#2b2a27" },
-      { name: "Ocker", hex: "#a97f42" }
-    ]
+    id: "stuhl-marchese", name: "Marchese", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
+    price: 980, weight: "8 kg", swatches: ["#7d5636", "#2b2a27", "#a97f42"],
+    t: {
+      de: { short: "Armlehnstuhl mit Lederbezug und Rahmen aus Nussbaum.",
+        description: "Der Armlehnstuhl Marchese wurde für lange Abende am Tisch entworfen. Die Armlehnen sind aus dem Rahmen herausgearbeitet, der Sattelledersitz wird von Hand über einen Gurtboden gespannt.",
+        material: "Sattelleder, Nussbaum massiv", dimensions: "B 58 × T 56 × H 84 cm",
+        origin: "Manufaktur Brianza, Italien", lead: "8–10 Wochen", colors: ["Tabak", "Schwarz", "Ocker"] },
+      en: { short: "Armchair with a leather seat and walnut frame.",
+        description: "The Marchese armchair was designed for long evenings at the table. The arms are worked out of the frame itself; the saddle-leather seat is stretched by hand over a webbed base.",
+        material: "Saddle leather, solid walnut", dimensions: "W 58 × D 56 × H 84 cm",
+        origin: "Brianza workshop, Italy", lead: "8–10 weeks", colors: ["Tobacco", "Black", "Ochre"] },
+      fr: { short: "Chaise à accoudoirs, assise en cuir et cadre en noyer.",
+        description: "La chaise Marchese a été dessinée pour les longues soirées à table. Les accoudoirs sont taillés dans le cadre lui-même ; l'assise en cuir de selle est tendue à la main sur un fond sanglé.",
+        material: "Cuir de selle, noyer massif", dimensions: "L 58 × P 56 × H 84 cm",
+        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] }
+    }
   },
   {
-    id: "lampe-soleil",
-    name: "Soleil",
-    category: "Leuchten",
-    shape: "lampe",
-    tone: "sand",
-    price: 1290,
-    badge: "Limitiert",
-    short: "Stehleuchte mit handgefaltetem Schirm aus Pergamentpapier.",
-    description: "Der Schirm der Soleil wird von Hand aus Pergamentpapier gefaltet und über ein Gestell aus Messingdraht gespannt. Das Licht fällt weich und warm — ideal als Grundbeleuchtung neben dem Sofa. Dimmbar über einen Fußschalter.",
-    material: "Pergamentpapier, Messing, Marmorfuß",
-    dimensions: "Ø 46 × H 168 cm",
-    weight: "9 kg",
-    origin: "Atelier Lyon, Frankreich",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Naturpergament", hex: "#e5d3ab" },
-      { name: "Alabaster", hex: "#ece7dc" },
-      { name: "Kupfer", hex: "#a6663f" }
-    ]
+    id: "lampe-soleil", name: "Soleil", categoryKey: "leuchten", shape: "lampe", tone: "sand",
+    price: 1290, weight: "9 kg", swatches: ["#e5d3ab", "#ece7dc", "#a6663f"],
+    t: {
+      de: { badge: "Limitiert", short: "Stehleuchte mit handgefaltetem Schirm aus Pergamentpapier.",
+        description: "Der Schirm der Soleil wird von Hand aus Pergamentpapier gefaltet und über ein Gestell aus Messingdraht gespannt. Das Licht fällt weich und warm — ideal als Grundbeleuchtung neben dem Sofa. Dimmbar über einen Fußschalter.",
+        material: "Pergamentpapier, Messing, Marmorfuß", dimensions: "Ø 46 × H 168 cm",
+        origin: "Atelier Lyon, Frankreich", lead: "6–8 Wochen", colors: ["Naturpergament", "Alabaster", "Kupfer"] },
+      en: { badge: "Limited", short: "Floor lamp with a hand-folded parchment shade.",
+        description: "The Soleil shade is folded by hand from parchment paper and stretched over a brass wire frame. The light falls soft and warm — ideal as ambient light beside the sofa. Dimmable with a foot switch.",
+        material: "Parchment paper, brass, marble base", dimensions: "Ø 46 × H 168 cm",
+        origin: "Lyon workshop, France", lead: "6–8 weeks", colors: ["Natural parchment", "Alabaster", "Copper"] },
+      fr: { badge: "Édition limitée", short: "Lampadaire à abat-jour en parchemin plié à la main.",
+        description: "L'abat-jour du Soleil est plié à la main dans du papier parchemin et tendu sur une armature en fil de laiton. La lumière est douce et chaude — idéale comme éclairage d'ambiance près du canapé. Variateur au pied.",
+        material: "Papier parchemin, laiton, pied en marbre", dimensions: "Ø 46 × H 168 cm",
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] }
+    }
   },
   {
-    id: "regal-biblio",
-    name: "Biblio",
-    category: "Aufbewahrung",
-    shape: "regal",
-    tone: "stone",
-    price: 3960,
-    short: "Bibliotheksregal aus geräucherter Eiche, vier Ebenen.",
-    description: "Biblio ist ein Regal für Sammlungen. Die Böden sind in der Höhe verstellbar und tragen bis zu 60 kg pro Ebene. Die Verbindungen sind gezinkt und kommen ohne sichtbare Beschläge aus.",
-    material: "Eiche geräuchert, Messingdübel",
-    dimensions: "B 180 × T 38 × H 210 cm",
-    weight: "86 kg",
-    origin: "Schreinerei Schwarzwald, Deutschland",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Eiche geräuchert", hex: "#4a3b2c" },
-      { name: "Eiche natur", hex: "#c1a37a" },
-      { name: "Schwarz gebeizt", hex: "#2e2c28" }
-    ]
+    id: "regal-biblio", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
+    price: 3960, weight: "86 kg", swatches: ["#4a3b2c", "#c1a37a", "#2e2c28"],
+    t: {
+      de: { short: "Bibliotheksregal aus geräucherter Eiche, vier Ebenen.",
+        description: "Biblio ist ein Regal für Sammlungen. Die Böden sind in der Höhe verstellbar und tragen bis zu 60 kg pro Ebene. Die Verbindungen sind gezinkt und kommen ohne sichtbare Beschläge aus.",
+        material: "Eiche geräuchert, Messingdübel", dimensions: "B 180 × T 38 × H 210 cm",
+        origin: "Schreinerei Schwarzwald, Deutschland", lead: "10–12 Wochen", colors: ["Eiche geräuchert", "Eiche natur", "Schwarz gebeizt"] },
+      en: { short: "Library shelf in smoked oak, four levels.",
+        description: "Biblio is a shelf for collections. The shelves are height-adjustable and carry up to 60 kg each. The joints are dovetailed and need no visible fittings.",
+        material: "Smoked oak, brass dowels", dimensions: "W 180 × D 38 × H 210 cm",
+        origin: "Black Forest joinery, Germany", lead: "10–12 weeks", colors: ["Smoked oak", "Natural oak", "Black stained"] },
+      fr: { short: "Bibliothèque en chêne fumé, quatre niveaux.",
+        description: "Biblio est une étagère pour les collections. Les tablettes sont réglables en hauteur et supportent jusqu'à 60 kg chacune. Les assemblages sont à queues d'aronde et se passent de ferrures visibles.",
+        material: "Chêne fumé, tourillons en laiton", dimensions: "L 180 × P 38 × H 210 cm",
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] }
+    }
   },
   {
-    id: "sideboard-linea",
-    name: "Linea",
-    category: "Aufbewahrung",
-    shape: "sideboard",
-    tone: "clay",
-    price: 4480,
-    short: "Sideboard mit Schiebetüren und Innenausbau aus Ahorn.",
-    description: "Hinter den grifflosen Schiebetüren von Linea verbirgt sich ein sorgfältig gearbeiteter Innenausbau aus hellem Ahorn mit verstellbaren Böden und zwei Schubladen mit Filzeinlage.",
-    material: "Nussbaum, Ahorn, Messing",
-    dimensions: "B 200 × T 45 × H 72 cm",
-    weight: "74 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "10–12 Wochen",
-    colors: [
-      { name: "Nussbaum", hex: "#6b4a30" },
-      { name: "Eiche natur", hex: "#c1a37a" },
-      { name: "Olivgrün", hex: "#5a5f45" }
-    ]
+    id: "sideboard-linea", name: "Linea", categoryKey: "aufbewahrung", shape: "sideboard", tone: "clay",
+    price: 4480, weight: "74 kg", swatches: ["#6b4a30", "#c1a37a", "#5a5f45"],
+    t: {
+      de: { short: "Sideboard mit Schiebetüren und Innenausbau aus Ahorn.",
+        description: "Hinter den grifflosen Schiebetüren von Linea verbirgt sich ein sorgfältig gearbeiteter Innenausbau aus hellem Ahorn mit verstellbaren Böden und zwei Schubladen mit Filzeinlage.",
+        material: "Nussbaum, Ahorn, Messing", dimensions: "B 200 × T 45 × H 72 cm",
+        origin: "Manufaktur Rhein, Deutschland", lead: "10–12 Wochen", colors: ["Nussbaum", "Eiche natur", "Olivgrün"] },
+      en: { short: "Sideboard with sliding doors and a maple interior.",
+        description: "Behind Linea's handle-free sliding doors sits a carefully made interior of pale maple with adjustable shelves and two felt-lined drawers.",
+        material: "Walnut, maple, brass", dimensions: "W 200 × D 45 × H 72 cm",
+        origin: "Rhine workshop, Germany", lead: "10–12 weeks", colors: ["Walnut", "Natural oak", "Olive green"] },
+      fr: { short: "Buffet à portes coulissantes, intérieur en érable.",
+        description: "Derrière les portes coulissantes sans poignée de Linea se cache un aménagement soigné en érable clair, avec tablettes réglables et deux tiroirs doublés de feutre.",
+        material: "Noyer, érable, laiton", dimensions: "L 200 × P 45 × H 72 cm",
+        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] }
+    }
   },
   {
-    id: "bett-sereno",
-    name: "Sereno",
-    category: "Betten",
-    shape: "bett",
-    tone: "sage",
-    price: 5240,
-    short: "Polsterbett mit hohem Kopfteil in Leinen.",
-    description: "Das großzügige Kopfteil von Sereno ist in einzelne Segmente unterteilt und mit Rosshaar unterfüttert. Der Bettrahmen ist aus massiver Buche gezapft und trägt einen Lattenrost mit 42 Federleisten.",
-    material: "Leinen, Buche massiv, Rosshaar",
-    dimensions: "B 200 × L 220 × H 118 cm (Liegefläche 180 × 200)",
-    weight: "88 kg",
-    origin: "Manufaktur Rhein, Deutschland",
-    lead: "12–14 Wochen",
-    colors: [
-      { name: "Salbei", hex: "#9aa78d" },
-      { name: "Leinen natur", hex: "#ded3bd" },
-      { name: "Rauchblau", hex: "#6e7d8a" }
-    ]
+    id: "bett-sereno", name: "Sereno", categoryKey: "betten", shape: "bett", tone: "sage",
+    price: 5240, weight: "88 kg", swatches: ["#9aa78d", "#ded3bd", "#6e7d8a"],
+    t: {
+      de: { short: "Polsterbett mit hohem Kopfteil in Leinen.",
+        description: "Das großzügige Kopfteil von Sereno ist in einzelne Segmente unterteilt und mit Rosshaar unterfüttert. Der Bettrahmen ist aus massiver Buche gezapft und trägt einen Lattenrost mit 42 Federleisten.",
+        material: "Leinen, Buche massiv, Rosshaar", dimensions: "B 200 × L 220 × H 118 cm (Liegefläche 180 × 200)",
+        origin: "Manufaktur Rhein, Deutschland", lead: "12–14 Wochen", colors: ["Salbei", "Leinen natur", "Rauchblau"] },
+      en: { short: "Upholstered bed with a tall linen headboard.",
+        description: "Sereno's generous headboard is divided into separate panels and backed with horsehair. The bed frame is mortised from solid beech and carries a slatted base with 42 sprung slats.",
+        material: "Linen, solid beech, horsehair", dimensions: "W 200 × L 220 × H 118 cm (mattress 180 × 200)",
+        origin: "Rhine workshop, Germany", lead: "12–14 weeks", colors: ["Sage", "Natural linen", "Smoke blue"] },
+      fr: { short: "Lit rembourré à haute tête de lit en lin.",
+        description: "La généreuse tête de lit du Sereno est divisée en panneaux et doublée de crin. Le cadre est assemblé à tenons en hêtre massif et reçoit un sommier à 42 lattes.",
+        material: "Lin, hêtre massif, crin", dimensions: "L 200 × P 220 × H 118 cm (couchage 180 × 200)",
+        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] }
+    }
   },
   {
-    id: "teppich-nomade",
-    name: "Nomade",
-    category: "Accessoires",
-    shape: "teppich",
-    tone: "clay",
-    price: 2180,
-    short: "Handgeknüpfter Teppich aus Hochlandwolle.",
-    description: "Nomade wird von Hand aus reiner Hochlandwolle geknüpft — rund 900 Arbeitsstunden stecken in einem Stück. Die leicht changierende Farbgebung entsteht durch die Färbung mit Pflanzenfarben.",
-    material: "Hochlandwolle, pflanzengefärbt",
-    dimensions: "300 × 200 cm",
-    weight: "22 kg",
-    origin: "Knüpferei Anatolien, Türkei",
-    lead: "8–10 Wochen",
-    colors: [
-      { name: "Rost", hex: "#a5643f" },
-      { name: "Sand", hex: "#d4c2a4" },
-      { name: "Kohle", hex: "#484540" }
-    ]
+    id: "teppich-nomade", name: "Nomade", categoryKey: "accessoires", shape: "teppich", tone: "clay",
+    price: 2180, weight: "22 kg", swatches: ["#a5643f", "#d4c2a4", "#484540"],
+    t: {
+      de: { short: "Handgeknüpfter Teppich aus Hochlandwolle.",
+        description: "Nomade wird von Hand aus reiner Hochlandwolle geknüpft — rund 900 Arbeitsstunden stecken in einem Stück. Die leicht changierende Farbgebung entsteht durch die Färbung mit Pflanzenfarben.",
+        material: "Hochlandwolle, pflanzengefärbt", dimensions: "300 × 200 cm",
+        origin: "Knüpferei Anatolien, Türkei", lead: "8–10 Wochen", colors: ["Rost", "Sand", "Kohle"] },
+      en: { short: "Hand-knotted rug in highland wool.",
+        description: "Nomade is knotted by hand from pure highland wool — around 900 working hours go into one piece. The gently shifting colour comes from dyeing with plant pigments.",
+        material: "Highland wool, plant-dyed", dimensions: "300 × 200 cm",
+        origin: "Anatolian knotters, Turkey", lead: "8–10 weeks", colors: ["Rust", "Sand", "Charcoal"] },
+      fr: { short: "Tapis noué main en laine des hauts plateaux.",
+        description: "Nomade est noué à la main en pure laine des hauts plateaux — environ 900 heures de travail par pièce. Les nuances légèrement changeantes viennent de la teinture végétale.",
+        material: "Laine des hauts plateaux, teinture végétale", dimensions: "300 × 200 cm",
+        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] }
+    }
   },
   {
-    id: "spiegel-luna",
-    name: "Luna",
-    category: "Accessoires",
-    shape: "spiegel",
-    tone: "rose",
-    price: 1480,
-    short: "Standspiegel mit Rahmen aus poliertem Messing.",
-    description: "Luna ist ein Ganzkörperspiegel mit einem Rahmen aus poliertem Messing, der mit den Jahren sanft nachdunkelt. Das Kristallglas ist 6 mm stark und facettiert geschliffen.",
-    material: "Poliertes Messing, Kristallglas",
-    dimensions: "B 80 × H 190 cm",
-    weight: "34 kg",
-    origin: "Atelier Lyon, Frankreich",
-    lead: "6–8 Wochen",
-    colors: [
-      { name: "Messing poliert", hex: "#b08d4a" },
-      { name: "Bronze", hex: "#7d6144" },
-      { name: "Schwarz matt", hex: "#2e2c28" }
-    ]
+    id: "spiegel-luna", name: "Luna", categoryKey: "accessoires", shape: "spiegel", tone: "rose",
+    price: 1480, weight: "34 kg", swatches: ["#b08d4a", "#7d6144", "#2e2c28"],
+    t: {
+      de: { short: "Standspiegel mit Rahmen aus poliertem Messing.",
+        description: "Luna ist ein Ganzkörperspiegel mit einem Rahmen aus poliertem Messing, der mit den Jahren sanft nachdunkelt. Das Kristallglas ist 6 mm stark und facettiert geschliffen.",
+        material: "Poliertes Messing, Kristallglas", dimensions: "B 80 × H 190 cm",
+        origin: "Atelier Lyon, Frankreich", lead: "6–8 Wochen", colors: ["Messing poliert", "Bronze", "Schwarz matt"] },
+      en: { short: "Floor mirror framed in polished brass.",
+        description: "Luna is a full-length mirror in a polished brass frame that darkens gently over the years. The crystal glass is 6 mm thick with a bevelled edge.",
+        material: "Polished brass, crystal glass", dimensions: "W 80 × H 190 cm",
+        origin: "Lyon workshop, France", lead: "6–8 weeks", colors: ["Polished brass", "Bronze", "Matt black"] },
+      fr: { short: "Miroir sur pied encadré de laiton poli.",
+        description: "Luna est un miroir en pied dans un cadre en laiton poli qui fonce doucement au fil des ans. Le verre cristal fait 6 mm d'épaisseur, à bord biseauté.",
+        material: "Laiton poli, verre cristal", dimensions: "L 80 × H 190 cm",
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] }
+    }
   }
 ];
 
-const CATEGORIES = ["Alle", "Sofas", "Sessel", "Tische", "Stühle", "Leuchten", "Aufbewahrung", "Betten", "Accessoires"];
+/* Liefert die Texte eines Produkts in der aktiven Sprache. */
+function pt(product) {
+  return (product.t && (product.t[getLang()] || product.t.de)) || {};
+}
+
+/* Farbfelder mit übersetzten Namen */
+function productColors(product) {
+  const names = pt(product).colors || [];
+  return product.swatches.map((hex, i) => ({ hex, name: names[i] || "" }));
+}
 
 </script>
 <script>
@@ -1181,9 +1986,41 @@ const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 const euro = (n) =>
-  new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat(langLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+
+/* Vergleichbare Schreibweise: Kleinbuchstaben, ohne Akzente */
+const normalize = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+/* Durchsucht Name, Kategorie, Material und Beschreibung */
+function searchProducts(query) {
+  const words = normalize(query).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  return PRODUCTS.filter((p) => {
+    const x = pt(p);
+    const haystack = normalize([
+      p.name, t("cat." + p.categoryKey), x.short, x.description,
+      x.material, x.origin, (x.colors || []).join(" ")
+    ].join(" "));
+    return words.every((w) => haystack.includes(w));
+  });
+}
 
 const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
+
+/* Name einer Farbe in ihre Position umrechnen — in allen Sprachen, damit
+   ein vor dem Sprachwechsel gefüllter Warenkorb erhalten bleibt. */
+function nameToIndex(product, name) {
+  if (!name) return 0;
+  const langs = Object.keys(product.t || {});
+  for (const l of langs) {
+    const i = (product.t[l].colors || []).indexOf(name);
+    if (i > -1) return i;
+  }
+  return 0;
+}
+
+/* Übersetzter Farbname einer Warenkorb-Position */
+const itemColor = (product, item) => (productColors(product)[item.colorIndex] || {}).name || "";
 
 
 /* ---------- Adressparameter ----------
@@ -1228,24 +2065,32 @@ const CART_KEY = "maison-noir-cart";
 
 const Cart = {
   read() {
+    let items = [];
     try {
       const raw = localStorage.getItem(CART_KEY);
-      const items = raw ? JSON.parse(raw) : [];
-      return Array.isArray(items) ? items.filter((i) => findProduct(i.id)) : [];
+      items = raw ? JSON.parse(raw) : [];
     } catch (e) {
       return [];
     }
+    if (!Array.isArray(items)) return [];
+    return items.filter((i) => findProduct(i.id)).map((i) => {
+      const p = findProduct(i.id);
+      // Ältere Warenkörbe haben den Farbnamen gespeichert — in eine Position umrechnen,
+      // damit die Farbe die Sprache mitwechselt.
+      let idx = Number.isInteger(i.colorIndex) ? i.colorIndex : nameToIndex(p, i.color);
+      if (idx < 0 || idx >= p.swatches.length) idx = 0;
+      return { id: i.id, qty: i.qty, colorIndex: idx };
+    });
   },
   write(items) {
     try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) { /* z. B. privater Modus */ }
     document.dispatchEvent(new CustomEvent("cart:changed", { detail: items }));
   },
-  add(id, qty = 1, color = null) {
+  add(id, qty = 1, colorIndex = 0) {
     const items = Cart.read();
-    const key = (i) => i.id === id && i.color === color;
-    const existing = items.find(key);
+    const existing = items.find((i) => i.id === id && i.colorIndex === colorIndex);
     if (existing) existing.qty += qty;
-    else items.push({ id, qty, color });
+    else items.push({ id, qty, colorIndex });
     Cart.write(items);
   },
   setQty(index, qty) {
@@ -1282,20 +2127,42 @@ function renderChrome() {
   const page = document.body.dataset.page || "";
 
   const header = `
-  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <div class="topbar" data-i18n="topbar"></div>
   <header class="header">
     <div class="wrap header__inner">
-      <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+      <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
       <nav class="nav" id="nav">
-        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}">${n.label}</a>`).join("")}
+        <button class="close-x nav__close" id="nav-close" data-i18n-aria="action.close">×</button>
+        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
+        <div class="langs langs--menu" role="group" aria-label="${t("action.language")}">
+          ${LANGS.map((l) => `<button class="lang ${l.code === getLang() ? "is-active" : ""}" data-lang="${l.code}" lang="${l.code}">${l.label}</button>`).join("")}
+        </div>
       </nav>
       <div class="header__actions">
-        <button class="icon-btn burger" id="burger" aria-label="Menü öffnen" aria-expanded="false">☰</button>
-        <a class="icon-btn" href="kontakt.html" aria-label="Beratung"><span class="label">Beratung</span></a>
-        <button class="icon-btn" id="cart-open" aria-label="Warenkorb öffnen">
-          <span class="label">Warenkorb</span><span class="cart-count" id="cart-count">0</span>
+        <button class="icon-btn" id="search-open" data-i18n-aria="action.search.open" data-i18n-title="action.search">
+          <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
+          </svg>
         </button>
+        <div class="langs" role="group" aria-label="${t("action.language")}">
+          ${LANGS.map((l) => `<button class="lang ${l.code === getLang() ? "is-active" : ""}" data-lang="${l.code}" title="${l.name}" lang="${l.code}">${l.label}</button>`).join("")}
+        </div>
+        <button class="icon-btn" id="cart-open" data-i18n-aria="action.cart.open" data-i18n-title="action.cart">
+          <span class="label" data-i18n="action.cart"></span><span class="cart-count" id="cart-count">0</span>
+        </button>
+        <button class="icon-btn burger" id="burger" data-i18n-aria="action.menu" aria-expanded="false">☰</button>
       </div>
+    </div>
+    <div class="nav-backdrop" id="nav-backdrop"></div>
+    <div class="searchbar" id="searchbar" hidden>
+      <div class="wrap searchbar__inner">
+        <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
+        </svg>
+        <input type="search" id="search-input" data-i18n-placeholder="search.placeholder" autocomplete="off">
+        <button class="close-x" id="search-close" data-i18n-aria="action.close">×</button>
+      </div>
+      <div class="wrap" id="search-results"></div>
     </div>
   </header>`;
 
@@ -1304,33 +2171,30 @@ function renderChrome() {
     <div class="wrap">
       <div class="footer__grid">
         <div>
-          <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
-          <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem">
-            Möbel, die in Handarbeit entstehen und über Generationen bleiben.
-            Gefertigt in Europa, seit 1974.
-          </p>
+          <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+          <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem" data-i18n="footer.tagline"></p>
         </div>
         <div>
-          <h5>Kollektion</h5>
+          <h5 data-i18n="footer.collection"></h5>
           <ul>
-            <li><a href="kollektion.html?kategorie=Sofas">Sofas</a></li>
-            <li><a href="kollektion.html?kategorie=Sessel">Sessel</a></li>
-            <li><a href="kollektion.html?kategorie=Tische">Tische</a></li>
-            <li><a href="kollektion.html?kategorie=Leuchten">Leuchten</a></li>
-            <li><a href="kollektion.html">Alles ansehen</a></li>
+            <li><a href="kollektion.html?kategorie=sofas" data-i18n="cat.sofas"></a></li>
+            <li><a href="kollektion.html?kategorie=sessel" data-i18n="cat.sessel"></a></li>
+            <li><a href="kollektion.html?kategorie=tische" data-i18n="cat.tische"></a></li>
+            <li><a href="kollektion.html?kategorie=leuchten" data-i18n="cat.leuchten"></a></li>
+            <li><a href="kollektion.html" data-i18n="footer.all"></a></li>
           </ul>
         </div>
         <div>
-          <h5>Service</h5>
+          <h5 data-i18n="footer.service"></h5>
           <ul>
-            <li><a href="kontakt.html">Persönliche Beratung</a></li>
-            <li><a href="kontakt.html">Lieferung &amp; Montage</a></li>
-            <li><a href="ueber-uns.html">Pflegehinweise</a></li>
-            <li><a href="ueber-uns.html">Manufaktur</a></li>
+            <li><a href="kontakt.html" data-i18n="footer.advice"></a></li>
+            <li><a href="kontakt.html" data-i18n="footer.delivery"></a></li>
+            <li><a href="ueber-uns.html" data-i18n="footer.care"></a></li>
+            <li><a href="ueber-uns.html" data-i18n="footer.manufactory"></a></li>
           </ul>
         </div>
         <div>
-          <h5>Showroom</h5>
+          <h5 data-i18n="footer.showroom"></h5>
           <ul>
             <li>Maximilianstraße 12</li>
             <li>80539 München</li>
@@ -1340,24 +2204,24 @@ function renderChrome() {
         </div>
       </div>
       <div class="footer__bottom">
-        <span>© ${new Date().getFullYear()} Maison Noir Möbelmanufaktur</span>
-        <span>Impressum · Datenschutz · AGB · Widerrufsrecht</span>
+        <span>© ${new Date().getFullYear()} ${t("footer.rights")}</span>
+        <span data-i18n="footer.legal"></span>
       </div>
     </div>
   </footer>`;
 
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Warenkorb">
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="${t("cart.title")}">
     <div class="drawer__head">
-      <h3>Warenkorb</h3>
-      <button class="close-x" id="drawer-close" aria-label="Schließen">×</button>
+      <h3 data-i18n="cart.title"></h3>
+      <button class="close-x" id="drawer-close" data-i18n-aria="action.close">×</button>
     </div>
     <div class="drawer__body" id="drawer-body"></div>
     <div class="drawer__foot">
-      <div class="summary__row"><span>Zwischensumme</span><strong id="drawer-total">0 €</strong></div>
-      <a class="btn btn--block" href="warenkorb.html">Zur Kasse</a>
-      <button class="btn btn--ghost btn--block" id="drawer-continue">Weiter stöbern</button>
+      <div class="summary__row"><span data-i18n="cart.subtotal"></span><strong id="drawer-total">0 €</strong></div>
+      <a class="btn btn--block" href="warenkorb.html" data-i18n="cart.checkout"></a>
+      <button class="btn btn--ghost btn--block" id="drawer-continue" data-i18n="cart.continue"></button>
     </div>
   </aside>
   <div class="toast" id="toast"></div>`;
@@ -1367,18 +2231,29 @@ function renderChrome() {
   if (hostTop) hostTop.innerHTML = header;
   if (hostBottom) hostBottom.innerHTML = footer + drawer;
 
+  applyI18n(document);
   bindChrome();
 }
 
 function bindChrome() {
   const burger = $("#burger");
   const nav = $("#nav");
+  const navBackdrop = $("#nav-backdrop");
+
+  const setNav = (open) => {
+    nav.classList.toggle("is-open", open);
+    navBackdrop?.classList.toggle("is-open", open);
+    burger?.setAttribute("aria-expanded", String(open));
+  };
+
   if (burger && nav) {
-    burger.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      burger.setAttribute("aria-expanded", String(open));
-      burger.textContent = open ? "×" : "☰";
-    });
+    burger.addEventListener("click", () => setNav(!nav.classList.contains("is-open")));
+    $("#nav-close")?.addEventListener("click", () => setNav(false));
+    navBackdrop?.addEventListener("click", () => setNav(false));
+    // Ein Verweis im Menü schließt es ebenfalls
+    $$("#nav a").forEach((a) => a.addEventListener("click", () => setNav(false)));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setNav(false); });
+    document.addEventListener("route:changed", () => setNav(false));
   }
 
   const backdrop = $("#drawer-backdrop");
@@ -1405,6 +2280,13 @@ function bindChrome() {
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
   document.addEventListener("route:changed", closeDrawer);
 
+  /* Sprache wechseln */
+  $$(".lang").forEach((btn) => {
+    btn.addEventListener("click", () => { if (btn.dataset.lang !== getLang()) setLang(btn.dataset.lang); });
+  });
+
+  bindSearch();
+
   updateCartCount();
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
 }
@@ -1420,7 +2302,7 @@ function renderDrawer() {
   const items = Cart.read();
 
   if (!items.length) {
-    body.innerHTML = `<p class="muted" style="padding:2.5rem 0;text-align:center">Ihr Warenkorb ist noch leer.</p>`;
+    body.innerHTML = `<p class="muted" style="padding:2.5rem 0;text-align:center">${t("cart.empty")}</p>`;
   } else {
     body.innerHTML = items.map((item, index) => {
       const p = findProduct(item.id);
@@ -1429,8 +2311,8 @@ function renderDrawer() {
         <div class="cart-item__media">${artFor(p)}</div>
         <div>
           <div class="cart-item__title">${p.name}</div>
-          <div class="cart-item__meta">${item.color || p.colors[0].name} · ${item.qty} × ${euro(p.price)}</div>
-          <button class="cart-item__remove" data-remove="${index}">Entfernen</button>
+          <div class="cart-item__meta">${itemColor(p, item)} · ${item.qty} × ${euro(p.price)}</div>
+          <button class="cart-item__remove" data-remove="${index}">${t("cart.remove")}</button>
         </div>
       </div>`;
     }).join("");
@@ -1440,6 +2322,74 @@ function renderDrawer() {
   }
   const total = $("#drawer-total");
   if (total) total.textContent = euro(Cart.subtotal());
+}
+
+
+/* ---------- Suche ---------- */
+function bindSearch() {
+  const bar = $("#searchbar");
+  const input = $("#search-input");
+  const results = $("#search-results");
+  if (!bar || !input) return;
+
+  const openSearch = () => {
+    bar.hidden = false;
+    requestAnimationFrame(() => bar.classList.add("is-open"));
+    input.focus();
+    renderSearch(input.value);
+  };
+  const closeSearch = () => {
+    bar.classList.remove("is-open");
+    setTimeout(() => { if (!bar.classList.contains("is-open")) bar.hidden = true; }, 300);
+    $("#search-open")?.focus();
+  };
+
+  $("#search-open")?.addEventListener("click", () => (bar.hidden ? openSearch() : closeSearch()));
+  $("#search-close")?.addEventListener("click", closeSearch);
+  input.addEventListener("input", () => renderSearch(input.value));
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSearch();
+    if (e.key === "Enter" && input.value.trim()) {
+      location.href = "kollektion.html?suche=" + encodeURIComponent(input.value.trim());
+    }
+  });
+  document.addEventListener("route:changed", () => { if (!bar.hidden) closeSearch(); });
+
+  function renderSearch(query) {
+    const q = query.trim();
+    if (!q) {
+      results.innerHTML = `<p class="search__hint" data-i18n="search.hint"></p>`;
+      applyI18n(results);
+      return;
+    }
+    const hits = searchProducts(q);
+    if (!hits.length) {
+      results.innerHTML = `
+        <p class="search__hint"><strong>${t("search.none")} „${escapeHtml(q)}“</strong><br>${t("search.noneHint")}</p>
+        <a class="link-underline" href="kollektion.html">${t("footer.all")}</a>`;
+      return;
+    }
+    results.innerHTML = `
+      <p class="search__count">${hits.length} ${t("search.results")}</p>
+      <div class="search__list">
+        ${hits.slice(0, 6).map((p) => `
+          <a class="search__item" href="produkt.html?id=${p.id}">
+            <span class="search__thumb">${artFor(p)}</span>
+            <span class="search__text">
+              <span class="search__cat">${t("cat." + p.categoryKey)}</span>
+              <span class="search__name">${p.name}</span>
+              <span class="search__desc">${escapeHtml(pt(p).short)}</span>
+            </span>
+            <span class="search__price">${euro(p.price)}</span>
+          </a>`).join("")}
+      </div>
+      ${hits.length > 6 ? `<a class="link-underline" href="kollektion.html?suche=${encodeURIComponent(q)}">${t("search.all")}</a>` : ""}`;
+  }
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
 /* ---------- Hinweis-Einblendung ---------- */
@@ -1455,17 +2405,18 @@ function toast(msg) {
 
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
+  const x = pt(p);
   return `
   <article class="card reveal">
-    <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name} ansehen">
+    <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name}">
       ${artFor(p)}
-      ${p.badge ? `<span class="card__tag">${p.badge}</span>` : ""}
+      ${x.badge ? `<span class="card__tag">${x.badge}</span>` : ""}
       <div class="card__quick">
-        <button class="btn btn--block" data-add="${p.id}">In den Warenkorb</button>
+        <button class="btn btn--block" data-add="${p.id}">${t("shop.add")}</button>
       </div>
     </a>
     <div class="card__body">
-      <span class="card__cat">${p.category}</span>
+      <span class="card__cat">${t("cat." + p.categoryKey)}</span>
       <a class="card__title" href="produkt.html?id=${p.id}">${p.name}</a>
       <span class="card__price">${euro(p.price)}</span>
     </div>
@@ -1485,8 +2436,8 @@ function bindAddButtons(root = document) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const p = findProduct(btn.dataset.add);
-      Cart.add(p.id, 1, p.colors[0].name);
-      toast(`${p.name} wurde in den Warenkorb gelegt`);
+      Cart.add(p.id, 1, 0);
+      toast(t("cart.added", { name: p.name }));
     });
   });
 }
@@ -1531,9 +2482,7 @@ function initForms() {
       const name = form.querySelector("[name=name]")?.value?.trim();
       if (box) {
         box.hidden = false;
-        box.textContent = name
-          ? `Vielen Dank, ${name}. Wir melden uns innerhalb eines Werktages bei Ihnen.`
-          : "Vielen Dank — wir haben Ihre Anfrage erhalten.";
+        box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
       }
       form.reset();
     });
@@ -1556,29 +2505,26 @@ document.addEventListener("DOMContentLoaded", () => {
 const ROUTES = {
   "index.html": {
     page: "home",
-    html: "<!-- Bühne -->\n  <section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\"></div>\n    <div class=\"wrap hero__content\">\n      <span class=\"eyebrow\">Manufaktur seit 1974</span>\n      <h1>Möbel für ein<br>ganzes Leben.</h1>\n      <p class=\"lede\">Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern,\n      Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn btn--light\" href=\"kollektion.html\">Kollektion entdecken</a>\n        <a class=\"btn btn--light\" href=\"kontakt.html\">Beratungstermin</a>\n      </div>\n    </div>\n  </section>\n\n  <!-- Versprechen -->\n  <div class=\"features\">\n    <div class=\"feature\"><h4>Handgefertigt</h4><p>In Manufakturen in Italien, Dänemark und Deutschland</p></div>\n    <div class=\"feature\"><h4>Lieferung bis in den Raum</h4><p>Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4>10 Jahre Garantie</h4><p>Auf Rahmen, Federung und Verarbeitung</p></div>\n    <div class=\"feature\"><h4>Persönliche Beratung</h4><p>Im Showroom München oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <!-- Ausgewählte Stücke -->\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\">Ausgewählt</span>\n          <h2>Die Stücke der Saison</h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\">Alle 14 Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <!-- Geschichte -->\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\">Unsere Haltung</span>\n      <h2>Das Gegenteil von schnell.</h2>\n      <p>An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche\n      lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.</p>\n      <p>Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes\n      Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\">Die Manufaktur besuchen</a></div>\n    </div>\n  </section>\n\n  <!-- Kategorien -->\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\">Nach Raum</span>\n          <h2>Wo möchten Sie beginnen?</h2>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <!-- Zitat -->\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        „Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“\n        <cite>Elena Farber · Gestalterische Leitung</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <!-- Beratung -->\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\">Service</span>\n      <h2>Wir planen Ihren Raum mit.</h2>\n      <p>Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit\n      und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span>Erstgespräch</span><span>kostenfrei</span></li>\n        <li><span>Raumplanung inkl. 3D-Ansicht</span><span>ab 2 Wochen</span></li>\n        <li><span>Materialmuster nach Hause</span><span>inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <!-- Neuigkeiten -->\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2>Neue Entwürfe zuerst sehen</h2>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\">\n        Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" placeholder=\"Ihre E-Mail-Adresse\" required aria-label=\"E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
+    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\"></div>\n    <div class=\"wrap hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\"></span>\n      <h1 data-i18n-html=\"home.hero.title\"></h1>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\"></p>\n      <div class=\"hero__actions\">\n        <a class=\"btn btn--light\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\"></a>\n        <a class=\"btn btn--light\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\"></a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\"></h4><p data-i18n=\"home.feat1.p\"></p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\"></h4><p data-i18n=\"home.feat2.p\"></p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\"></h4><p data-i18n=\"home.feat3.p\"></p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\"></h4><p data-i18n=\"home.feat4.p\"></p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\"></span>\n          <h2 data-i18n=\"home.featured.title\"></h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\"></a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\"></span>\n      <h2 data-i18n=\"home.story.title\"></h2>\n      <p data-i18n=\"home.story.p1\"></p>\n      <p data-i18n=\"home.story.p2\"></p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\"></a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\"></span>\n          <h2 data-i18n=\"home.cats.title\"></h2>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\"></span>\n        <cite data-i18n=\"home.quote.cite\"></cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\"></span>\n      <h2 data-i18n=\"home.service.title\"></h2>\n      <p data-i18n=\"home.service.p\"></p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\"></span><span data-i18n=\"home.service.v1\"></span></li>\n        <li><span data-i18n=\"home.service.r2\"></span><span data-i18n=\"home.service.v2\"></span></li>\n        <li><span data-i18n=\"home.service.r3\"></span><span data-i18n=\"home.service.v3\"></span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\"></a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\"></span>\n      <h2 data-i18n=\"home.news.title\"></h2>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\"></p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\"></button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
-  // Bühnenbild
-  $("#hero-art").innerHTML   = heroScene();
-  $("#story-art").innerHTML  = ART.regal(TONES.clay);
+  $("#hero-art").innerHTML    = heroScene();
+  $("#story-art").innerHTML   = ART.regal(TONES.clay);
   $("#service-art").innerHTML = ART.tisch(TONES.sage);
 
-  // Ausgewählte Produkte
   const featured = ["sofa-milano", "sessel-orsini", "tisch-atelier", "lampe-soleil", "sideboard-linea", "bett-sereno"]
     .map(findProduct).filter(Boolean);
   $("#featured").innerHTML = featured.map(productCard).join("");
 
-  // Kategorien
   const tiles = [
-    { label: "Sofas & Sessel", cat: "Sofas",        shape: "sofa",      tone: "sand" },
-    { label: "Tische",         cat: "Tische",       shape: "tisch",     tone: "rose" },
-    { label: "Aufbewahrung",   cat: "Aufbewahrung", shape: "sideboard", tone: "stone" }
+    { label: t("home.cats.sitting"), cat: "sofas",        shape: "sofa",      tone: "sand" },
+    { label: t("cat.tische"),        cat: "tische",       shape: "tisch",     tone: "rose" },
+    { label: t("cat.aufbewahrung"),  cat: "aufbewahrung", shape: "sideboard", tone: "stone" }
   ];
-  $("#cats").innerHTML = tiles.map((t) => `
-    <a class="cat-tile reveal" href="kollektion.html?kategorie=${encodeURIComponent(t.cat)}">
-      ${ART[t.shape](TONES[t.tone])}
-      <span class="cat-tile__label">${t.label}</span>
+  $("#cats").innerHTML = tiles.map((tile) => `
+    <a class="cat-tile reveal" href="kollektion.html?kategorie=${tile.cat}">
+      ${ART[tile.shape](TONES[tile.tone])}
+      <span class="cat-tile__label">${tile.label}</span>
     </a>`).join("");
 }
       initPage();
@@ -1586,24 +2532,42 @@ function initPage() {
   },
   "kollektion.html": {
     page: "shop",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\">Startseite</a> · Kollektion</div>\n      <h1>Die Kollektion</h1>\n      <p class=\"lede\">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung\n      begonnen — in der Ausführung, die Sie wählen.</p>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"padding-top:clamp(2.5rem,5vw,4rem)\">\n    <div class=\"wrap\">\n      <div class=\"toolbar\">\n        <div class=\"filters\" id=\"filters\"></div>\n        <div class=\"sort\">\n          <label for=\"sort\">Sortieren</label>\n          <select id=\"sort\">\n            <option value=\"empfohlen\">Empfohlen</option>\n            <option value=\"preis-auf\">Preis aufsteigend</option>\n            <option value=\"preis-ab\">Preis absteigend</option>\n            <option value=\"name\">Name A–Z</option>\n          </select>\n        </div>\n      </div>\n\n      <p class=\"muted\" id=\"result-count\" style=\"font-size:.85rem;letter-spacing:.1em;text-transform:uppercase\"></p>\n      <div class=\"grid grid--3\" id=\"products\" style=\"margin-top:1.5rem\"></div>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\"></a> · <span data-i18n=\"nav.shop\"></span></div>\n      <h1 data-i18n=\"shop.title\"></h1>\n      <p class=\"lede\" data-i18n=\"shop.lede\"></p>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"padding-top:clamp(2.5rem,5vw,4rem)\">\n    <div class=\"wrap\">\n      <div class=\"toolbar\">\n        <div class=\"filters\" id=\"filters\"></div>\n        <div style=\"display:flex;gap:1rem;flex-wrap:wrap;align-items:center\">\n          <label class=\"shop-search\">\n            <svg viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\">\n              <circle cx=\"8.5\" cy=\"8.5\" r=\"5.5\"/><line x1=\"12.6\" y1=\"12.6\" x2=\"17.5\" y2=\"17.5\" stroke-linecap=\"round\"/>\n            </svg>\n            <input type=\"search\" id=\"shop-search\" data-i18n-placeholder=\"shop.searchPlaceholder\" data-i18n-aria=\"shop.search\" autocomplete=\"off\">\n            <button type=\"button\" id=\"shop-search-clear\" data-i18n-aria=\"search.clear\" hidden>×</button>\n          </label>\n          <div class=\"sort\">\n            <label for=\"sort\" data-i18n=\"shop.sort\"></label>\n            <select id=\"sort\">\n              <option value=\"empfohlen\" data-i18n=\"shop.sort.featured\"></option>\n              <option value=\"preis-auf\" data-i18n=\"shop.sort.priceUp\"></option>\n              <option value=\"preis-ab\" data-i18n=\"shop.sort.priceDown\"></option>\n              <option value=\"name\" data-i18n=\"shop.sort.name\"></option>\n            </select>\n          </div>\n        </div>\n      </div>\n\n      <p class=\"muted\" id=\"result-count\" style=\"font-size:.85rem;letter-spacing:.1em;text-transform:uppercase\"></p>\n      <div class=\"grid grid--3\" id=\"products\" style=\"margin-top:1.5rem\"></div>\n    </div>\n  </section>",
     init: function () {
-let activeCat = "Alle";
+let activeCat = "alle";
+let activeQuery = "";
 
 function initPage() {
-  const wanted = queryParams().get("kategorie");
-  if (wanted && CATEGORIES.includes(wanted)) activeCat = wanted;
+  const params = queryParams();
+  const wantedCat = params.get("kategorie");
+  if (wantedCat && CATEGORY_KEYS.includes(wantedCat)) activeCat = wantedCat;
+  activeQuery = params.get("suche") || "";
 
-  $("#filters").innerHTML = CATEGORIES.map((c) =>
-    `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${c}</button>`).join("");
+  $("#filters").innerHTML = CATEGORY_KEYS.map((c) =>
+    `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${t("cat." + c)}</button>`).join("");
 
   $$("#filters .chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       activeCat = chip.dataset.cat;
       $$("#filters .chip").forEach((c) => c.classList.toggle("is-active", c === chip));
-      setParam("kategorie", activeCat === "Alle" ? null : activeCat);
+      setParam("kategorie", activeCat === "alle" ? null : activeCat);
       renderList();
     });
+  });
+
+  const field = $("#shop-search");
+  field.value = activeQuery;
+  field.addEventListener("input", () => {
+    activeQuery = field.value;
+    setParam("suche", activeQuery.trim() ? activeQuery.trim() : null);
+    renderList();
+  });
+  $("#shop-search-clear").addEventListener("click", () => {
+    field.value = "";
+    activeQuery = "";
+    setParam("suche", null);
+    renderList();
+    field.focus();
   });
 
   $("#sort").addEventListener("change", renderList);
@@ -1611,21 +2575,27 @@ function initPage() {
 }
 
 function renderList() {
-  let list = activeCat === "Alle" ? [...PRODUCTS] : PRODUCTS.filter((p) => p.category === activeCat);
+  const query = activeQuery.trim();
+  let list = query ? searchProducts(query) : [...PRODUCTS];
+  if (activeCat !== "alle") list = list.filter((p) => p.categoryKey === activeCat);
 
   switch ($("#sort").value) {
     case "preis-auf": list.sort((a, b) => a.price - b.price); break;
     case "preis-ab":  list.sort((a, b) => b.price - a.price); break;
-    case "name":      list.sort((a, b) => a.name.localeCompare(b.name, "de")); break;
+    case "name":      list.sort((a, b) => a.name.localeCompare(b.name, getLang())); break;
   }
 
-  $("#result-count").textContent =
-    `${list.length} ${list.length === 1 ? "Entwurf" : "Entwürfe"}${activeCat !== "Alle" ? " · " + activeCat : ""}`;
+  $("#shop-search-clear").hidden = !query;
+
+  const parts = [list.length === 1 ? t("shop.count.one") : t("shop.count.many", { n: list.length })];
+  if (activeCat !== "alle") parts.push(t("cat." + activeCat));
+  if (query) parts.push(t("shop.for") + " „" + query + "“");
+  $("#result-count").textContent = parts.join(" · ");
 
   const grid = $("#products");
   grid.innerHTML = list.length
     ? list.map(productCard).join("")
-    : `<p class="muted">In dieser Kategorie ist derzeit nichts verfügbar.</p>`;
+    : `<p class="muted">${t("shop.empty")}</p>`;
 
   bindAddButtons(grid);
   initReveal();
@@ -1635,38 +2605,40 @@ function renderList() {
   },
   "produkt.html": {
     page: "shop",
-    html: "<section class=\"section\" style=\"padding-top:clamp(2rem,4vw,3.5rem)\" id=\"pdp-root\"></section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\" id=\"related-section\" hidden>\n    <div class=\"wrap\">\n      <div class=\"section-head\">\n        <div>\n          <span class=\"eyebrow\">Passt dazu</span>\n          <h2>Ebenfalls sehenswert</h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\">Alle Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"related\"></div>\n    </div>\n  </section>",
+    html: "<section class=\"section\" style=\"padding-top:clamp(2rem,4vw,3.5rem)\" id=\"pdp-root\"></section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\" id=\"related-section\" hidden>\n    <div class=\"wrap\">\n      <div class=\"section-head\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"pdp.related.eyebrow\"></span>\n          <h2 data-i18n=\"pdp.related.title\"></h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"pdp.related.link\"></a>\n      </div>\n      <div class=\"grid grid--3\" id=\"related\"></div>\n    </div>\n  </section>",
     init: function () {
-let current, chosenColor, chosenQty = 1, chosenVariant = 0;
+let current, chosenColorIndex = 0, chosenQty = 1, chosenVariant = 0;
 
 function initPage() {
-  const id = queryParams().get("id");
-  current = findProduct(id);
+  current = findProduct(queryParams().get("id"));
 
   if (!current) {
     $("#pdp-root").innerHTML = `
       <div class="wrap empty-state">
-        <span class="eyebrow">Nicht gefunden</span>
-        <h1>Dieser Entwurf existiert nicht</h1>
-        <p class="lede" style="margin-inline:auto">Vielleicht wurde er umbenannt oder der Link ist unvollständig.</p>
-        <a class="btn" href="kollektion.html" style="margin-top:1rem">Zur Kollektion</a>
+        <span class="eyebrow">${t("pdp.missing.eyebrow")}</span>
+        <h1>${t("pdp.missing.title")}</h1>
+        <p class="lede" style="margin-inline:auto">${t("pdp.missing.p")}</p>
+        <a class="btn" href="kollektion.html" style="margin-top:1rem">${t("pdp.missing.cta")}</a>
       </div>`;
     return;
   }
 
-  if (!isPreview()) document.title = `${current.name} — Maison Noir`;
-  chosenColor = current.colors[0].name;
+  if (!isPreview()) document.title = current.name + " — Maison Noir";
+  chosenColorIndex = 0;
   renderPdp();
   renderRelated();
 }
 
 function renderPdp() {
   const p = current;
+  const x = pt(p);
+  const colors = productColors(p);
+
   $("#pdp-root").innerHTML = `
   <div class="wrap">
     <div class="crumbs">
-      <a href="index.html">Startseite</a> ·
-      <a href="kollektion.html?kategorie=${encodeURIComponent(p.category)}">${p.category}</a> · ${p.name}
+      <a href="index.html">${t("nav.home")}</a> ·
+      <a href="kollektion.html?kategorie=${p.categoryKey}">${t("cat." + p.categoryKey)}</a> · ${p.name}
     </div>
 
     <div class="pdp">
@@ -1675,79 +2647,68 @@ function renderPdp() {
         <div class="pdp__thumbs" id="pdp-thumbs">
           ${[0, 1, 2].map((i) => `
             <button data-variant="${i}" class="${i === chosenVariant ? "is-active" : ""}"
-                    aria-label="Ansicht ${i + 1}">${artFor(p, i)}</button>`).join("")}
+                    aria-label="${t("pdp.view", { n: i + 1 })}">${artFor(p, i)}</button>`).join("")}
         </div>
       </div>
 
       <div class="pdp__info">
-        <span class="eyebrow">${p.category}${p.badge ? " · " + p.badge : ""}</span>
+        <span class="eyebrow">${t("cat." + p.categoryKey)}${x.badge ? " · " + x.badge : ""}</span>
         <h1 style="font-size:clamp(2.2rem,4vw,3.2rem)">${p.name}</h1>
         <div class="price">${euro(p.price)}</div>
-        <p class="lede">${p.short}</p>
+        <p class="lede">${x.short}</p>
 
         <hr class="divider">
 
         <div class="field">
-          <label>Ausführung — <span id="color-name">${chosenColor}</span></label>
+          <label>${t("pdp.variant")} — <span id="color-name">${colors[chosenColorIndex].name}</span></label>
           <div class="swatches" id="swatches">
-            ${p.colors.map((c, i) => `
-              <button class="swatch ${i === 0 ? "is-active" : ""}" data-color="${c.name}"
+            ${colors.map((c, i) => `
+              <button class="swatch ${i === chosenColorIndex ? "is-active" : ""}" data-index="${i}"
                       style="background:${c.hex}" title="${c.name}" aria-label="${c.name}"></button>`).join("")}
           </div>
         </div>
 
         <div class="buy-row" style="margin-top:1.6rem">
           <div class="qty">
-            <button id="qty-minus" aria-label="Weniger">−</button>
+            <button id="qty-minus" aria-label="${t("pdp.less")}">−</button>
             <span id="qty-value">1</span>
-            <button id="qty-plus" aria-label="Mehr">+</button>
+            <button id="qty-plus" aria-label="${t("pdp.more")}">+</button>
           </div>
-          <button class="btn" id="add-to-cart">In den Warenkorb</button>
+          <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
-        <p class="form-note" style="margin-top:1rem">
-          Fertigungszeit ${p.lead} · Lieferung bis in den Raum inklusive · 30 Tage Rückgaberecht
-        </p>
+        <p class="form-note" style="margin-top:1rem">${t("pdp.note", { lead: x.lead })}</p>
 
         <hr class="divider">
 
         <div class="acc">
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="true">Beschreibung <i>+</i></button>
-            <div class="acc__panel is-open"><p>${p.description}</p></div>
+            <button class="acc__btn" aria-expanded="true">${t("pdp.acc.desc")} <i>+</i></button>
+            <div class="acc__panel is-open"><p>${x.description}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Material &amp; Maße <i>+</i></button>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.spec")} <i>+</i></button>
             <div class="acc__panel">
               <ul class="specs">
-                <li><span>Material</span><span>${p.material}</span></li>
-                <li><span>Maße</span><span>${p.dimensions}</span></li>
-                <li><span>Gewicht</span><span>${p.weight}</span></li>
-                <li><span>Fertigung</span><span>${p.origin}</span></li>
+                <li><span>${t("pdp.spec.material")}</span><span>${x.material}</span></li>
+                <li><span>${t("pdp.spec.dimensions")}</span><span>${x.dimensions}</span></li>
+                <li><span>${t("pdp.spec.weight")}</span><span>${p.weight}</span></li>
+                <li><span>${t("pdp.spec.origin")}</span><span>${x.origin}</span></li>
               </ul>
             </div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Lieferung &amp; Montage <i>+</i></button>
-            <div class="acc__panel">
-              <p>Wir liefern europaweit versandkostenfrei bis in den gewünschten Raum, packen aus,
-              montieren und nehmen das Verpackungsmaterial wieder mit. Den Termin stimmen wir
-              telefonisch mit Ihnen ab, sobald Ihr Stück die Werkstatt verlässt.</p>
-            </div>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.delivery")} <i>+</i></button>
+            <div class="acc__panel"><p>${t("pdp.delivery.body")}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">Pflege &amp; Garantie <i>+</i></button>
-            <div class="acc__panel">
-              <p>Auf Rahmen, Federung und Verarbeitung geben wir zehn Jahre Garantie. Zu jedem Stück
-              erhalten Sie eine Pflegeanleitung; Leder- und Holzpflegemittel senden wir Ihnen auf Wunsch
-              kostenfrei nach.</p>
-            </div>
+            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.care")} <i>+</i></button>
+            <div class="acc__panel"><p>${t("pdp.care.body")}</p></div>
           </div>
         </div>
       </div>
     </div>
   </div>`;
 
-  // Ansichten
   $$("#pdp-thumbs button").forEach((btn) => {
     btn.addEventListener("click", () => {
       chosenVariant = Number(btn.dataset.variant);
@@ -1756,23 +2717,21 @@ function renderPdp() {
     });
   });
 
-  // Farben
   $$("#swatches .swatch").forEach((sw) => {
     sw.addEventListener("click", () => {
-      chosenColor = sw.dataset.color;
-      $("#color-name").textContent = chosenColor;
+      chosenColorIndex = Number(sw.dataset.index);
+      $("#color-name").textContent = productColors(current)[chosenColorIndex].name;
       $$("#swatches .swatch").forEach((s) => s.classList.toggle("is-active", s === sw));
     });
   });
 
-  // Menge
   const qtyEl = $("#qty-value");
   $("#qty-minus").addEventListener("click", () => { chosenQty = Math.max(1, chosenQty - 1); qtyEl.textContent = chosenQty; });
   $("#qty-plus").addEventListener("click",  () => { chosenQty = Math.min(99, chosenQty + 1); qtyEl.textContent = chosenQty; });
 
   $("#add-to-cart").addEventListener("click", () => {
-    Cart.add(current.id, chosenQty, chosenColor);
-    toast(`${current.name} (${chosenColor}) wurde in den Warenkorb gelegt`);
+    Cart.add(current.id, chosenQty, chosenColorIndex);
+    toast(t("cart.added", { name: current.name + " (" + productColors(current)[chosenColorIndex].name + ")" }));
   });
 
   initAccordions($("#pdp-root"));
@@ -1780,8 +2739,8 @@ function renderPdp() {
 
 function renderRelated() {
   const rest = PRODUCTS.filter((p) => p.id !== current.id);
-  const sameCat = rest.filter((p) => p.category === current.category);
-  const list = [...sameCat, ...rest.filter((p) => p.category !== current.category)].slice(0, 3);
+  const same = rest.filter((p) => p.categoryKey === current.categoryKey);
+  const list = [...same, ...rest.filter((p) => p.categoryKey !== current.categoryKey)].slice(0, 3);
   $("#related").innerHTML = list.map(productCard).join("");
   $("#related-section").hidden = false;
   bindAddButtons($("#related"));
@@ -1792,7 +2751,7 @@ function renderRelated() {
   },
   "warenkorb.html": {
     page: "shop",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\">Startseite</a> · Warenkorb</div>\n      <h1>Ihre Auswahl</h1>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\" id=\"cart-root\"></div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\"></a> · <span data-i18n=\"cart.title\"></span></div>\n      <h1 data-i18n=\"cartpage.title\"></h1>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\" id=\"cart-root\"></div>\n  </section>",
     init: function () {
 function initPage() {
   renderCartPage();
@@ -1806,13 +2765,12 @@ function renderCartPage() {
   if (!items.length) {
     root.innerHTML = `
       <div class="empty-state">
-        <span class="eyebrow">Noch nichts ausgewählt</span>
-        <h2>Ihr Warenkorb ist leer</h2>
-        <p class="lede" style="margin-inline:auto">Stöbern Sie in der Kollektion — oder lassen Sie sich
-        von uns persönlich beraten.</p>
+        <span class="eyebrow">${t("cartpage.empty.eyebrow")}</span>
+        <h2>${t("cartpage.empty.title")}</h2>
+        <p class="lede" style="margin-inline:auto">${t("cartpage.empty.p")}</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
-          <a class="btn" href="kollektion.html">Zur Kollektion</a>
-          <a class="btn btn--ghost" href="kontakt.html">Beratung anfragen</a>
+          <a class="btn" href="kollektion.html">${t("cartpage.empty.cta1")}</a>
+          <a class="btn btn--ghost" href="kontakt.html">${t("cartpage.empty.cta2")}</a>
         </div>
       </div>`;
     return;
@@ -1827,19 +2785,20 @@ function renderCartPage() {
     <div>
       ${items.map((item, index) => {
         const p = findProduct(item.id);
+        const x = pt(p);
         return `
         <div class="cart-item">
           <a class="cart-item__media" href="produkt.html?id=${p.id}">${artFor(p)}</a>
           <div>
             <a class="cart-item__title" href="produkt.html?id=${p.id}">${p.name}</a>
-            <div class="cart-item__meta">${p.category} · ${item.color || p.colors[0].name} · Fertigung ${p.lead}</div>
+            <div class="cart-item__meta">${t("cat." + p.categoryKey)} · ${itemColor(p, item)} · ${t("cartpage.production")} ${x.lead}</div>
             <div style="display:flex;align-items:center;gap:1rem;margin-top:.8rem;flex-wrap:wrap">
               <div class="qty">
-                <button data-dec="${index}" aria-label="Weniger">−</button>
+                <button data-dec="${index}" aria-label="${t("pdp.less")}">−</button>
                 <span>${item.qty}</span>
-                <button data-inc="${index}" aria-label="Mehr">+</button>
+                <button data-inc="${index}" aria-label="${t("pdp.more")}">+</button>
               </div>
-              <button class="cart-item__remove" data-del="${index}" style="margin:0">Entfernen</button>
+              <button class="cart-item__remove" data-del="${index}" style="margin:0">${t("cart.remove")}</button>
             </div>
           </div>
           <div class="cart-item__price">${euro(p.price * item.qty)}</div>
@@ -1847,23 +2806,20 @@ function renderCartPage() {
       }).join("")}
 
       <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:2rem">
-        <a class="link-underline" href="kollektion.html">Weiter stöbern</a>
-        <button class="cart-item__remove" id="cart-clear" style="margin:0">Warenkorb leeren</button>
+        <a class="link-underline" href="kollektion.html">${t("cart.continue")}</a>
+        <button class="cart-item__remove" id="cart-clear" style="margin:0">${t("cartpage.clear")}</button>
       </div>
     </div>
 
     <aside class="summary">
-      <h3>Zusammenfassung</h3>
-      <div class="summary__row"><span>Zwischensumme</span><span>${euro(subtotal)}</span></div>
-      <div class="summary__row"><span>Lieferung &amp; Montage</span><span>${versand === 0 ? "inklusive" : euro(versand)}</span></div>
-      <div class="summary__row muted" style="font-size:.85rem"><span>enthaltene MwSt. (19 %)</span><span>${euro(mwst)}</span></div>
-      <div class="summary__row summary__row--total"><span>Gesamt</span><span>${euro(subtotal + versand)}</span></div>
+      <h3>${t("cartpage.summary")}</h3>
+      <div class="summary__row"><span>${t("cart.subtotal")}</span><span>${euro(subtotal)}</span></div>
+      <div class="summary__row"><span>${t("cartpage.delivery")}</span><span>${versand === 0 ? t("cartpage.included") : euro(versand)}</span></div>
+      <div class="summary__row muted" style="font-size:.85rem"><span>${t("cartpage.vat")}</span><span>${euro(mwst)}</span></div>
+      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(subtotal + versand)}</span></div>
 
-      <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">Verbindlich anfragen</button>
-      <p class="form-note" style="margin-top:1rem">
-        Wir bestätigen jede Bestellung persönlich, bevor die Fertigung beginnt. Anzahlung 30 %,
-        Restbetrag bei Lieferung.
-      </p>
+      <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">${t("cartpage.checkout")}</button>
+      <p class="form-note" style="margin-top:1rem">${t("cartpage.note")}</p>
       <div class="form-msg" id="checkout-msg" hidden style="margin-top:1rem"></div>
     </aside>
   </div>`;
@@ -1880,7 +2836,7 @@ function renderCartPage() {
   $("#checkout").addEventListener("click", () => {
     const msg = $("#checkout-msg");
     msg.hidden = false;
-    msg.textContent = "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.";
+    msg.textContent = t("cartpage.demo");
   });
 }
       initPage();
@@ -1888,7 +2844,7 @@ function renderCartPage() {
   },
   "ueber-uns.html": {
     page: "about",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\">Startseite</a> · Manufaktur</div>\n      <span class=\"eyebrow\">Seit 1974</span>\n      <h1>Eine Werkstatt,<br>keine Fabrik.</h1>\n      <p class=\"lede\">Maison Noir wurde von Anna und Josef Farber als kleine Polsterei in München gegründet.\n      Heute arbeiten wir mit sieben Werkstätten in vier Ländern — nach denselben Regeln wie damals.</p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\">Material</span>\n      <h2>Wir kaufen dort ein, wo wir hinfahren können.</h2>\n      <p>Unser Holz stammt aus Wäldern, die wir kennen. Die Leder kommen von zwei Gerbereien in der Toskana,\n      die noch pflanzlich gerben — ein Verfahren, das Wochen dauert statt Stunden.</p>\n      <p>Wir verwenden keine Spanplatten, keine geklebten Furnierschichten in tragenden Teilen und keine\n      Schäume, die nach fünf Jahren zusammenfallen. Das macht unsere Möbel teurer. Und deutlich langlebiger.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <span class=\"num\">52</span>\n          <h3>Jahre Erfahrung</h3>\n          <p class=\"muted\">Gegründet 1974 in München, seither in Familienhand.</p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">7</span>\n          <h3>Partnerwerkstätten</h3>\n          <p class=\"muted\">In Deutschland, Italien, Dänemark und Belgien.</p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">10</span>\n          <h3>Jahre Garantie</h3>\n          <p class=\"muted\">Auf Rahmen, Federung und Verarbeitung — reparieren statt ersetzen.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\">Verfahren</span>\n      <h2>Wie ein Sofa entsteht.</h2>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — Auswahl</strong>\n          <p style=\"margin:.35rem 0 0\">Sie wählen Modell, Bezug und Maße. Muster senden wir vorab nach Hause.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — Rahmen</strong>\n          <p style=\"margin:.35rem 0 0\">Der Schreiner baut den Rahmen aus zwei Jahre lang lufttrockneter Eiche.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — Polsterung</strong>\n          <p style=\"margin:.35rem 0 0\">Federn werden von Hand gebunden, Rosshaar und Schaum in Lagen aufgebaut.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — Bezug</strong>\n          <p style=\"margin:.35rem 0 0\">Der Bezug wird zugeschnitten, genäht und nass über den Korpus gezogen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — Lieferung</strong>\n          <p style=\"margin:.35rem 0 0\">Zwei Monteure bringen das Stück in den Raum und nehmen die Verpackung mit.</p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\">Pflege</span>\n          <h2>Damit es lange schön bleibt</h2>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\">Leder <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p>Anilinleder einmal im Monat mit einem trockenen, weichen Tuch\n          abstauben und zweimal jährlich mit Lederbalsam pflegen. Direkte Sonne meiden — sie bleicht das\n          Leder ungleichmäßig aus. Flecken nie mit Wasser reiben, sondern tupfen.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\">Massivholz <i>+</i></button>\n          <div class=\"acc__panel\"><p>Geölte Oberflächen mit klarem Wasser und wenig Seife reinigen. Einmal\n          jährlich mit Hartwachsöl in Faserrichtung nachölen. Kleine Kratzer verschwinden dabei fast\n          vollständig — anders als bei lackierten Flächen.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\">Leinen und Wolle <i>+</i></button>\n          <div class=\"acc__panel\"><p>Wöchentlich mit geringer Saugkraft absaugen. Abnehmbare Bezüge bei 30 °C\n          im Schonwaschgang waschen und leicht feucht wieder aufziehen. Bouclé nicht bürsten — die Schlingen\n          reißen sonst auf.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\">Messing und Stein <i>+</i></button>\n          <div class=\"acc__panel\"><p>Unbehandeltes Messing dunkelt bewusst nach. Wer den hellen Glanz halten\n          möchte, poliert es alle paar Monate mit Messingpolitur. Travertin und Marmor vertragen keine\n          Säuren — Zitrone, Essig und Rotwein sofort abnehmen.</p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\">Besuchen Sie uns</span>\n      <h2>Showroom München</h2>\n      <p class=\"lede\" style=\"margin-inline:auto\">Maximilianstraße 12 · 80539 München<br>\n      Montag bis Freitag 10–19 Uhr, Samstag 11–17 Uhr</p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\">Termin vereinbaren</a>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\"></a> · <span data-i18n=\"nav.about\"></span></div>\n      <span class=\"eyebrow\" data-i18n=\"about.eyebrow\"></span>\n      <h1 data-i18n-html=\"about.title\"></h1>\n      <p class=\"lede\" data-i18n=\"about.lede\"></p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"about.mat.eyebrow\"></span>\n      <h2 data-i18n=\"about.mat.title\"></h2>\n      <p data-i18n=\"about.mat.p1\"></p>\n      <p data-i18n=\"about.mat.p2\"></p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <span class=\"num\">52</span>\n          <h3 data-i18n=\"about.n1.t\"></h3>\n          <p class=\"muted\" data-i18n=\"about.n1.p\"></p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">7</span>\n          <h3 data-i18n=\"about.n2.t\"></h3>\n          <p class=\"muted\" data-i18n=\"about.n2.p\"></p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">10</span>\n          <h3 data-i18n=\"about.n3.t\"></h3>\n          <p class=\"muted\" data-i18n=\"about.n3.p\"></p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"about.proc.eyebrow\"></span>\n      <h2 data-i18n=\"about.proc.title\"></h2>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — <span data-i18n=\"about.proc.s1\"></span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p1\"></p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — <span data-i18n=\"about.proc.s2\"></span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p2\"></p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — <span data-i18n=\"about.proc.s3\"></span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p3\"></p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — <span data-i18n=\"about.proc.s4\"></span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p4\"></p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — <span data-i18n=\"about.proc.s5\"></span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p5\"></p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"about.care.eyebrow\"></span>\n          <h2 data-i18n=\"about.care.title\"></h2>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\"><span data-i18n=\"about.care.leather\"></span> <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p data-i18n=\"about.care.leather.p\"></p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.wood\"></span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.wood.p\"></p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.fabric\"></span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.fabric.p\"></p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.metal\"></span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.metal.p\"></p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"about.visit.eyebrow\"></span>\n      <h2 data-i18n=\"about.visit.title\"></h2>\n      <p class=\"lede\" style=\"margin-inline:auto\" data-i18n-html=\"about.visit.p\"></p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\" data-i18n=\"about.visit.cta\"></a>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   $("#art-1").innerHTML = ART.sessel(TONES.clay);
@@ -1899,11 +2855,14 @@ function initPage() {
   },
   "kontakt.html": {
     page: "contact",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\">Startseite</a> · Kontakt</div>\n      <h1>Sprechen wir<br>über Ihren Raum.</h1>\n      <p class=\"lede\">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung —\n      wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo>\n          <h3>Anfrage senden</h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\">Name</label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\">E-Mail</label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\">Telefon (optional)</label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\">Anliegen</label>\n              <select id=\"topic\" name=\"topic\">\n                <option>Beratungstermin im Showroom</option>\n                <option>Beratung bei mir zu Hause</option>\n                <option>Frage zu einem Entwurf</option>\n                <option>Materialmuster anfordern</option>\n                <option>Bestehende Bestellung</option>\n                <option>Sonstiges</option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\">Ihre Nachricht</label>\n            <textarea id=\"message\" name=\"message\" required placeholder=\"Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.\"></textarea>\n          </div>\n          <p class=\"form-note\">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung\n          der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\">Anfrage senden</button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3>Direkt erreichbar</h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span>Telefon</span><a href=\"tel:+498912345678\">+49 89 1234 5678</a></li>\n            <li><span>E-Mail</span><a href=\"mailto:salon@maison-noir.de\">salon@maison-noir.de</a></li>\n            <li><span>Erreichbarkeit</span><span>Mo–Fr 9–18 Uhr</span></li>\n          </ul>\n\n          <h3>Showroom</h3>\n          <p class=\"muted\">Maximilianstraße 12<br>80539 München<br>Deutschland</p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span>Montag – Freitag</span><span>10–19 Uhr</span></li>\n            <li><span>Samstag</span><span>11–17 Uhr</span></li>\n            <li><span>Sonntag</span><span>geschlossen</span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\">Hinweis</span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\">Dies ist eine Demonstrationsseite.\n            Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder\n            CRM lässt sich jederzeit ergänzen.</p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\"></a> · <span data-i18n=\"nav.contact\"></span></div>\n      <h1 data-i18n-html=\"contact.title\"></h1>\n      <p class=\"lede\" data-i18n=\"contact.lede\"></p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo>\n          <h3 data-i18n=\"contact.form.title\"></h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\" data-i18n=\"contact.name\"></label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\" data-i18n=\"contact.email\"></label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\" data-i18n=\"contact.phone\"></label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\" data-i18n=\"contact.topic\"></label>\n              <select id=\"topic\" name=\"topic\">\n                <option data-i18n=\"contact.topic1\"></option>\n                <option data-i18n=\"contact.topic2\"></option>\n                <option data-i18n=\"contact.topic3\"></option>\n                <option data-i18n=\"contact.topic4\"></option>\n                <option data-i18n=\"contact.topic5\"></option>\n                <option data-i18n=\"contact.topic6\"></option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\" data-i18n=\"contact.message\"></label>\n            <textarea id=\"message\" name=\"message\" required data-i18n-placeholder=\"contact.messagePlaceholder\"></textarea>\n          </div>\n          <p class=\"form-note\" data-i18n=\"contact.privacy\"></p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\" data-i18n=\"contact.send\"></button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3 data-i18n=\"contact.reach\"></h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.phoneLabel\"></span><a href=\"tel:+498912345678\">+49 89 1234 5678</a></li>\n            <li><span data-i18n=\"contact.emailLabel\"></span><a href=\"mailto:salon@maison-noir.de\">salon@maison-noir.de</a></li>\n            <li><span data-i18n=\"contact.hoursLabel\"></span><span data-i18n=\"contact.hours\"></span></li>\n          </ul>\n\n          <h3 data-i18n=\"contact.showroom\"></h3>\n          <p class=\"muted\" data-i18n-html=\"contact.address\"></p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.monfri\"></span><span data-i18n=\"contact.monfriH\"></span></li>\n            <li><span data-i18n=\"contact.sat\"></span><span data-i18n=\"contact.satH\"></span></li>\n            <li><span data-i18n=\"contact.sun\"></span><span data-i18n=\"contact.sunH\"></span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\" data-i18n=\"contact.hint\"></span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\" data-i18n=\"contact.hint.p\"></p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   const topic = queryParams().get("thema");
-  if (topic) { const sel = $("#topic"); [...sel.options].forEach(o => { if (o.text === topic) sel.value = o.value; }); }
+  if (topic) {
+    const sel = $("#topic");
+    [...sel.options].forEach((o) => { if (o.text === topic) sel.value = o.value; });
+  }
 }
       initPage();
     }
@@ -1929,7 +2888,9 @@ function renderRoute() {
 
   const app = document.getElementById("app");
   app.innerHTML = route.html;
+  applyI18n(app);
   route.init();
+  applyI18n(app);
   bindAddButtons(app);
   initAccordions(app);
   initForms();

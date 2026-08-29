@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kollektion — Maison Noir</title>
+<title data-i18n="title.shop">Kollektion — Maison Noir</title>
 <meta name="description" content="Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,9 @@
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="crumbs"><a href="index.html">Startseite</a> · Kollektion</div>
-      <h1>Die Kollektion</h1>
-      <p class="lede">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung
-      begonnen — in der Ausführung, die Sie wählen.</p>
+      <div class="crumbs"><a href="index.html" data-i18n="nav.home"></a> · <span data-i18n="nav.shop"></span></div>
+      <h1 data-i18n="shop.title"></h1>
+      <p class="lede" data-i18n="shop.lede"></p>
     </div>
   </section>
 
@@ -27,14 +26,23 @@
     <div class="wrap">
       <div class="toolbar">
         <div class="filters" id="filters"></div>
-        <div class="sort">
-          <label for="sort">Sortieren</label>
-          <select id="sort">
-            <option value="empfohlen">Empfohlen</option>
-            <option value="preis-auf">Preis aufsteigend</option>
-            <option value="preis-ab">Preis absteigend</option>
-            <option value="name">Name A–Z</option>
-          </select>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
+          <label class="shop-search">
+            <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
+            </svg>
+            <input type="search" id="shop-search" data-i18n-placeholder="shop.searchPlaceholder" data-i18n-aria="shop.search" autocomplete="off">
+            <button type="button" id="shop-search-clear" data-i18n-aria="search.clear" hidden>×</button>
+          </label>
+          <div class="sort">
+            <label for="sort" data-i18n="shop.sort"></label>
+            <select id="sort">
+              <option value="empfohlen" data-i18n="shop.sort.featured"></option>
+              <option value="preis-auf" data-i18n="shop.sort.priceUp"></option>
+              <option value="preis-ab" data-i18n="shop.sort.priceDown"></option>
+              <option value="name" data-i18n="shop.sort.name"></option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -46,25 +54,44 @@
 
 <div id="site-footer"></div>
 
+<script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
-let activeCat = "Alle";
+let activeCat = "alle";
+let activeQuery = "";
 
 function initPage() {
-  const wanted = queryParams().get("kategorie");
-  if (wanted && CATEGORIES.includes(wanted)) activeCat = wanted;
+  const params = queryParams();
+  const wantedCat = params.get("kategorie");
+  if (wantedCat && CATEGORY_KEYS.includes(wantedCat)) activeCat = wantedCat;
+  activeQuery = params.get("suche") || "";
 
-  $("#filters").innerHTML = CATEGORIES.map((c) =>
-    `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${c}</button>`).join("");
+  $("#filters").innerHTML = CATEGORY_KEYS.map((c) =>
+    `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${t("cat." + c)}</button>`).join("");
 
   $$("#filters .chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       activeCat = chip.dataset.cat;
       $$("#filters .chip").forEach((c) => c.classList.toggle("is-active", c === chip));
-      setParam("kategorie", activeCat === "Alle" ? null : activeCat);
+      setParam("kategorie", activeCat === "alle" ? null : activeCat);
       renderList();
     });
+  });
+
+  const field = $("#shop-search");
+  field.value = activeQuery;
+  field.addEventListener("input", () => {
+    activeQuery = field.value;
+    setParam("suche", activeQuery.trim() ? activeQuery.trim() : null);
+    renderList();
+  });
+  $("#shop-search-clear").addEventListener("click", () => {
+    field.value = "";
+    activeQuery = "";
+    setParam("suche", null);
+    renderList();
+    field.focus();
   });
 
   $("#sort").addEventListener("change", renderList);
@@ -72,21 +99,27 @@ function initPage() {
 }
 
 function renderList() {
-  let list = activeCat === "Alle" ? [...PRODUCTS] : PRODUCTS.filter((p) => p.category === activeCat);
+  const query = activeQuery.trim();
+  let list = query ? searchProducts(query) : [...PRODUCTS];
+  if (activeCat !== "alle") list = list.filter((p) => p.categoryKey === activeCat);
 
   switch ($("#sort").value) {
     case "preis-auf": list.sort((a, b) => a.price - b.price); break;
     case "preis-ab":  list.sort((a, b) => b.price - a.price); break;
-    case "name":      list.sort((a, b) => a.name.localeCompare(b.name, "de")); break;
+    case "name":      list.sort((a, b) => a.name.localeCompare(b.name, getLang())); break;
   }
 
-  $("#result-count").textContent =
-    `${list.length} ${list.length === 1 ? "Entwurf" : "Entwürfe"}${activeCat !== "Alle" ? " · " + activeCat : ""}`;
+  $("#shop-search-clear").hidden = !query;
+
+  const parts = [list.length === 1 ? t("shop.count.one") : t("shop.count.many", { n: list.length })];
+  if (activeCat !== "alle") parts.push(t("cat." + activeCat));
+  if (query) parts.push(t("shop.for") + " „" + query + "“");
+  $("#result-count").textContent = parts.join(" · ");
 
   const grid = $("#products");
   grid.innerHTML = list.length
     ? list.map(productCard).join("")
-    : `<p class="muted">In dieser Kategorie ist derzeit nichts verfügbar.</p>`;
+    : `<p class="muted">${t("shop.empty")}</p>`;
 
   bindAddButtons(grid);
   initReveal();
