@@ -19,6 +19,9 @@
   --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
+  /* Feine Körnung, die den Bildern Materialität gibt */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+
   /* Maße */
   --wrap: 1240px;
   --pad: clamp(1.25rem, 4vw, 3rem);
@@ -216,12 +219,53 @@ p  { margin: 0 0 1.1em; }
 .hero::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(100deg, rgba(22,21,15,.72) 0%, rgba(22,21,15,.42) 45%, rgba(22,21,15,.05) 100%);
+  background: linear-gradient(100deg, rgba(22,21,15,.78) 0%, rgba(22,21,15,.46) 38%, rgba(22,21,15,.06) 72%, rgba(22,21,15,0) 100%);
 }
 .hero__content { position: relative; z-index: 2; color: var(--paper); max-width: 640px; padding: 4rem 0; }
 .hero__content .eyebrow { color: #d9bd82; }
 .hero__content p { color: rgba(250,247,242,.85); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+
+
+/* ---------- Körnung über den Bildflächen ----------
+   Legt eine sehr feine Struktur über jede Abbildung, damit die
+   Flächen nicht wie flache Vektorgrafik wirken. */
+.hero__bg::after,
+.card__media::after,
+.pdp__main::after,
+.split__media::after,
+.cat-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  opacity: .30;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  z-index: 1;
+}
+.split__media, .pdp__main { position: relative; }
+.card__tag, .card__quick, .cat-tile__label { z-index: 2; }
+
+/* Dieselbe Struktur über den dunklen Flächen, damit sie Tiefe bekommen */
+.split--dark, .newsletter, .footer { position: relative; }
+.split--dark::before, .newsletter::before, .footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+  opacity: .22;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.split--dark > *, .newsletter > *, .footer > * { position: relative; z-index: 1; }
+
+/* Warmer Lichtschimmer in den dunklen Abschnitten */
+.newsletter { background-image: radial-gradient(115% 85% at 50% 0%, rgba(200,164,99,.12), transparent 62%); }
+.footer     { background-image: radial-gradient(100% 70% at 15% 0%, rgba(200,164,99,.08), transparent 60%); }
+.split--dark { background-image: radial-gradient(90% 80% at 20% 15%, rgba(200,164,99,.10), transparent 65%); }
 
 /* ---------- Merkmalsleiste ---------- */
 .features {
