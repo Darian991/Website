@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warenkorb — Maison Noir</title>
+<meta name="description" content="Ihre Auswahl bei Maison Noir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="shop">
+<div id="site-header"></div>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Startseite</a> · Warenkorb</div>
+      <h1>Ihre Auswahl</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" id="cart-root"></div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function initPage() {
+  renderCartPage();
+  document.addEventListener("cart:changed", renderCartPage);
+}
+
+function renderCartPage() {
+  const items = Cart.read();
+  const root = $("#cart-root");
+
+  if (!items.length) {
+    root.innerHTML = `
+      <div class="empty-state">
+        <span class="eyebrow">Noch nichts ausgewählt</span>
+        <h2>Ihr Warenkorb ist leer</h2>
+        <p class="lede" style="margin-inline:auto">Stöbern Sie in der Kollektion — oder lassen Sie sich
+        von uns persönlich beraten.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
+          <a class="btn" href="kollektion.html">Zur Kollektion</a>
+          <a class="btn btn--ghost" href="kontakt.html">Beratung anfragen</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const subtotal = Cart.subtotal();
+  const versand = 0;
+  const mwst = Math.round(subtotal - subtotal / 1.19);
+
+  root.innerHTML = `
+  <div class="cart-layout">
+    <div>
+      ${items.map((item, index) => {
+        const p = findProduct(item.id);
+        return `
+        <div class="cart-item">
+          <a class="cart-item__media" href="produkt.html?id=${p.id}">${artFor(p)}</a>
+          <div>
+            <a class="cart-item__title" href="produkt.html?id=${p.id}">${p.name}</a>
+            <div class="cart-item__meta">${p.category} · ${item.color || p.colors[0].name} · Fertigung ${p.lead}</div>
+            <div style="display:flex;align-items:center;gap:1rem;margin-top:.8rem;flex-wrap:wrap">
+              <div class="qty">
+                <button data-dec="${index}" aria-label="Weniger">−</button>
+                <span>${item.qty}</span>
+                <button data-inc="${index}" aria-label="Mehr">+</button>
+              </div>
+              <button class="cart-item__remove" data-del="${index}" style="margin:0">Entfernen</button>
+            </div>
+          </div>
+          <div class="cart-item__price">${euro(p.price * item.qty)}</div>
+        </div>`;
+      }).join("")}
+
+      <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-top:2rem">
+        <a class="link-underline" href="kollektion.html">Weiter stöbern</a>
+        <button class="cart-item__remove" id="cart-clear" style="margin:0">Warenkorb leeren</button>
+      </div>
+    </div>
+
+    <aside class="summary">
+      <h3>Zusammenfassung</h3>
+      <div class="summary__row"><span>Zwischensumme</span><span>${euro(subtotal)}</span></div>
+      <div class="summary__row"><span>Lieferung &amp; Montage</span><span>${versand === 0 ? "inklusive" : euro(versand)}</span></div>
+      <div class="summary__row muted" style="font-size:.85rem"><span>enthaltene MwSt. (19 %)</span><span>${euro(mwst)}</span></div>
+      <div class="summary__row summary__row--total"><span>Gesamt</span><span>${euro(subtotal + versand)}</span></div>
+
+      <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">Verbindlich anfragen</button>
+      <p class="form-note" style="margin-top:1rem">
+        Wir bestätigen jede Bestellung persönlich, bevor die Fertigung beginnt. Anzahlung 30 %,
+        Restbetrag bei Lieferung.
+      </p>
+      <div class="form-msg" id="checkout-msg" hidden style="margin-top:1rem"></div>
+    </aside>
+  </div>`;
+
+  $$("[data-inc]").forEach((b) => b.addEventListener("click", () =>
+    Cart.setQty(Number(b.dataset.inc), items[Number(b.dataset.inc)].qty + 1)));
+  $$("[data-dec]").forEach((b) => b.addEventListener("click", () =>
+    Cart.setQty(Number(b.dataset.dec), items[Number(b.dataset.dec)].qty - 1)));
+  $$("[data-del]").forEach((b) => b.addEventListener("click", () =>
+    Cart.remove(Number(b.dataset.del))));
+
+  $("#cart-clear").addEventListener("click", () => Cart.clear());
+
+  $("#checkout").addEventListener("click", () => {
+    const msg = $("#checkout-msg");
+    msg.hidden = false;
+    msg.textContent = "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.";
+  });
+}
+</script>
+</body>
+</html>

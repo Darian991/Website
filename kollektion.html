@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kollektion — Maison Noir</title>
+<meta name="description" content="Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="shop">
+<div id="site-header"></div>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Startseite</a> · Kollektion</div>
+      <h1>Die Kollektion</h1>
+      <p class="lede">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung
+      begonnen — in der Ausführung, die Sie wählen.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:clamp(2.5rem,5vw,4rem)">
+    <div class="wrap">
+      <div class="toolbar">
+        <div class="filters" id="filters"></div>
+        <div class="sort">
+          <label for="sort">Sortieren</label>
+          <select id="sort">
+            <option value="empfohlen">Empfohlen</option>
+            <option value="preis-auf">Preis aufsteigend</option>
+            <option value="preis-ab">Preis absteigend</option>
+            <option value="name">Name A–Z</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="muted" id="result-count" style="font-size:.85rem;letter-spacing:.1em;text-transform:uppercase"></p>
+      <div class="grid grid--3" id="products" style="margin-top:1.5rem"></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+let activeCat = "Alle";
+
+function initPage() {
+  const params = new URLSearchParams(location.search);
+  const wanted = params.get("kategorie");
+  if (wanted && CATEGORIES.includes(wanted)) activeCat = wanted;
+
+  $("#filters").innerHTML = CATEGORIES.map((c) =>
+    `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${c}</button>`).join("");
+
+  $$("#filters .chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      activeCat = chip.dataset.cat;
+      $$("#filters .chip").forEach((c) => c.classList.toggle("is-active", c === chip));
+      const url = new URL(location.href);
+      if (activeCat === "Alle") url.searchParams.delete("kategorie");
+      else url.searchParams.set("kategorie", activeCat);
+      history.replaceState(null, "", url);
+      renderList();
+    });
+  });
+
+  $("#sort").addEventListener("change", renderList);
+  renderList();
+}
+
+function renderList() {
+  let list = activeCat === "Alle" ? [...PRODUCTS] : PRODUCTS.filter((p) => p.category === activeCat);
+
+  switch ($("#sort").value) {
+    case "preis-auf": list.sort((a, b) => a.price - b.price); break;
+    case "preis-ab":  list.sort((a, b) => b.price - a.price); break;
+    case "name":      list.sort((a, b) => a.name.localeCompare(b.name, "de")); break;
+  }
+
+  $("#result-count").textContent =
+    `${list.length} ${list.length === 1 ? "Entwurf" : "Entwürfe"}${activeCat !== "Alle" ? " · " + activeCat : ""}`;
+
+  const grid = $("#products");
+  grid.innerHTML = list.length
+    ? list.map(productCard).join("")
+    : `<p class="muted">In dieser Kategorie ist derzeit nichts verfügbar.</p>`;
+
+  bindAddButtons(grid);
+  initReveal();
+}
+</script>
+</body>
+</html>

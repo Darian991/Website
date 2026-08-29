@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontakt &amp; Beratung — Maison Noir</title>
+<meta name="description" content="Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Maison Noir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="contact">
+<div id="site-header"></div>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Startseite</a> · Kontakt</div>
+      <h1>Sprechen wir<br>über Ihren Raum.</h1>
+      <p class="lede">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung —
+      wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="grid grid--form">
+
+        <form data-demo>
+          <h3>Anfrage senden</h3>
+          <div class="form-row">
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="email">E-Mail</label>
+              <input id="email" name="email" type="email" required autocomplete="email">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="phone">Telefon (optional)</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="topic">Anliegen</label>
+              <select id="topic" name="topic">
+                <option>Beratungstermin im Showroom</option>
+                <option>Beratung bei mir zu Hause</option>
+                <option>Frage zu einem Entwurf</option>
+                <option>Materialmuster anfordern</option>
+                <option>Bestehende Bestellung</option>
+                <option>Sonstiges</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="message">Ihre Nachricht</label>
+            <textarea id="message" name="message" required placeholder="Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen."></textarea>
+          </div>
+          <p class="form-note">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung
+          der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>
+          <button class="btn" type="submit" style="margin-top:1rem">Anfrage senden</button>
+          <div class="form-msg" data-msg hidden style="margin-top:1.2rem"></div>
+        </form>
+
+        <aside>
+          <h3>Direkt erreichbar</h3>
+          <ul class="specs" style="margin-bottom:2.5rem">
+            <li><span>Telefon</span><a href="tel:+498912345678">+49 89 1234 5678</a></li>
+            <li><span>E-Mail</span><a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></li>
+            <li><span>Erreichbarkeit</span><span>Mo–Fr 9–18 Uhr</span></li>
+          </ul>
+
+          <h3>Showroom</h3>
+          <p class="muted">Maximilianstraße 12<br>80539 München<br>Deutschland</p>
+          <ul class="specs" style="margin-bottom:2.5rem">
+            <li><span>Montag – Freitag</span><span>10–19 Uhr</span></li>
+            <li><span>Samstag</span><span>11–17 Uhr</span></li>
+            <li><span>Sonntag</span><span>geschlossen</span></li>
+          </ul>
+
+          <div style="border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)">
+            <span class="eyebrow">Hinweis</span>
+            <p style="margin:0;font-size:.92rem" class="muted">Dies ist eine Demonstrationsseite.
+            Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder
+            CRM lässt sich jederzeit ergänzen.</p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function initPage() {
+  const topic = new URLSearchParams(location.search).get("thema");
+  if (topic) { const sel = $("#topic"); [...sel.options].forEach(o => { if (o.text === topic) sel.value = o.value; }); }
+}
+</script>
+</body>
+</html>

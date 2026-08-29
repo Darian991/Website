@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maison Noir — Luxusmöbel aus europäischer Handarbeit</title>
+<meta name="description" content="Maison Noir fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+<div id="site-header"></div>
+
+<main>
+  <!-- Bühne -->
+  <section class="hero">
+    <div class="hero__bg" id="hero-art"></div>
+    <div class="wrap hero__content">
+      <span class="eyebrow">Manufaktur seit 1974</span>
+      <h1>Möbel für ein<br>ganzes Leben.</h1>
+      <p class="lede">Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern,
+      Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.</p>
+      <div class="hero__actions">
+        <a class="btn btn--light" href="kollektion.html">Kollektion entdecken</a>
+        <a class="btn btn--light" href="kontakt.html">Beratungstermin</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Versprechen -->
+  <div class="features">
+    <div class="feature"><h4>Handgefertigt</h4><p>In Manufakturen in Italien, Dänemark und Deutschland</p></div>
+    <div class="feature"><h4>Lieferung bis in den Raum</h4><p>Weißhandschuh-Service inklusive Montage</p></div>
+    <div class="feature"><h4>10 Jahre Garantie</h4><p>Auf Rahmen, Federung und Verarbeitung</p></div>
+    <div class="feature"><h4>Persönliche Beratung</h4><p>Im Showroom München oder bei Ihnen zu Hause</p></div>
+  </div>
+
+  <!-- Ausgewählte Stücke -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">Ausgewählt</span>
+          <h2>Die Stücke der Saison</h2>
+        </div>
+        <a class="link-underline" href="kollektion.html">Alle 14 Entwürfe</a>
+      </div>
+      <div class="grid grid--3" id="featured"></div>
+    </div>
+  </section>
+
+  <!-- Geschichte -->
+  <section class="split">
+    <div class="split__media" id="story-art"></div>
+    <div class="split__text split--dark">
+      <span class="eyebrow">Unsere Haltung</span>
+      <h2>Das Gegenteil von schnell.</h2>
+      <p>An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche
+      lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.</p>
+      <p>Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes
+      Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.</p>
+      <div style="margin-top:1.5rem"><a class="link-underline" href="ueber-uns.html">Die Manufaktur besuchen</a></div>
+    </div>
+  </section>
+
+  <!-- Kategorien -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">Nach Raum</span>
+          <h2>Wo möchten Sie beginnen?</h2>
+        </div>
+      </div>
+      <div class="grid grid--3" id="cats"></div>
+    </div>
+  </section>
+
+  <!-- Zitat -->
+  <section class="section" style="background:var(--paper-2)">
+    <div class="wrap center">
+      <blockquote class="quote reveal">
+        „Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“
+        <cite>Elena Farber · Gestalterische Leitung</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Beratung -->
+  <section class="split">
+    <div class="split__text">
+      <span class="eyebrow">Service</span>
+      <h2>Wir planen Ihren Raum mit.</h2>
+      <p>Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit
+      und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>
+      <ul class="specs" style="margin:1.5rem 0 2rem">
+        <li><span>Erstgespräch</span><span>kostenfrei</span></li>
+        <li><span>Raumplanung inkl. 3D-Ansicht</span><span>ab 2 Wochen</span></li>
+        <li><span>Materialmuster nach Hause</span><span>inklusive</span></li>
+      </ul>
+      <div><a class="btn" href="kontakt.html">Termin vereinbaren</a></div>
+    </div>
+    <div class="split__media" id="service-art"></div>
+  </section>
+
+  <!-- Neuigkeiten -->
+  <section class="section newsletter">
+    <div class="wrap center">
+      <span class="eyebrow">Bleiben Sie in Verbindung</span>
+      <h2>Neue Entwürfe zuerst sehen</h2>
+      <p class="lede" style="margin-inline:auto;color:rgba(250,247,242,.75)">
+        Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>
+      <form data-demo>
+        <input type="email" name="email" placeholder="Ihre E-Mail-Adresse" required aria-label="E-Mail-Adresse">
+        <button class="btn btn--light" type="submit">Abonnieren</button>
+        <div class="form-msg" data-msg hidden style="flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)"></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+function initPage() {
+  // Bühnenbild
+  $("#hero-art").innerHTML   = heroScene();
+  $("#story-art").innerHTML  = ART.regal(TONES.clay);
+  $("#service-art").innerHTML = ART.tisch(TONES.sage);
+
+  // Ausgewählte Produkte
+  const featured = ["sofa-milano", "sessel-orsini", "tisch-atelier", "lampe-soleil", "sideboard-linea", "bett-sereno"]
+    .map(findProduct).filter(Boolean);
+  $("#featured").innerHTML = featured.map(productCard).join("");
+
+  // Kategorien
+  const tiles = [
+    { label: "Sofas & Sessel", cat: "Sofas",        shape: "sofa",      tone: "sand" },
+    { label: "Tische",         cat: "Tische",       shape: "tisch",     tone: "rose" },
+    { label: "Aufbewahrung",   cat: "Aufbewahrung", shape: "sideboard", tone: "stone" }
+  ];
+  $("#cats").innerHTML = tiles.map((t) => `
+    <a class="cat-tile reveal" href="kollektion.html?kategorie=${encodeURIComponent(t.cat)}">
+      ${ART[t.shape](TONES[t.tone])}
+      <span class="cat-tile__label">${t.label}</span>
+    </a>`).join("");
+}
+</script>
+</body>
+</html>
