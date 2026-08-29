@@ -38,7 +38,7 @@
 let current, chosenColor, chosenQty = 1, chosenVariant = 0;
 
 function initPage() {
-  const id = new URLSearchParams(location.search).get("id");
+  const id = queryParams().get("id");
   current = findProduct(id);
 
   if (!current) {
@@ -52,7 +52,7 @@ function initPage() {
     return;
   }
 
-  document.title = `${current.name} — Maison Noir`;
+  if (!isPreview()) document.title = `${current.name} — Maison Noir`;
   chosenColor = current.colors[0].name;
   renderPdp();
   renderRelated();
@@ -170,8 +170,7 @@ function renderPdp() {
 
   $("#add-to-cart").addEventListener("click", () => {
     Cart.add(current.id, chosenQty, chosenColor);
-    toast(`${current.name} (${chosenColor}) wurde hinzugefügt`);
-    document.dispatchEvent(new Event("cart:opened"));
+    toast(`${current.name} (${chosenColor}) wurde in den Warenkorb gelegt`);
   });
 
   initAccordions($("#pdp-root"));

@@ -12,6 +12,44 @@ const euro = (n) =>
 
 const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
 
+
+/* ---------- Adressparameter ----------
+   Funktioniert sowohl in der normalen Website (?id=…) als auch in der
+   Einzeldatei-Vorschau, die stattdessen die Raute nutzt (#produkt.html?id=…). */
+function isPreview() { return document.body.dataset.spa === "true"; }
+
+function queryParams() {
+  const hash = location.hash.replace(/^#/, "");
+  const q = hash.indexOf("?");
+  if (q > -1) return new URLSearchParams(hash.slice(q + 1));
+  return new URLSearchParams(location.search);
+}
+
+function setParam(key, value) {
+  if (isPreview()) {
+    const hash = location.hash.replace(/^#/, "") || "index.html";
+    const [path, search] = hash.split("?");
+    const params = new URLSearchParams(search || "");
+    if (value === null) params.delete(key); else params.set(key, value);
+    const str = params.toString();
+    history.replaceState(null, "", "#" + path + (str ? "?" + str : ""));
+  } else {
+    const url = new URL(location.href);
+    if (value === null) url.searchParams.delete(key); else url.searchParams.set(key, value);
+    history.replaceState(null, "", url);
+  }
+}
+
+/* Zuhörer, die beim Seitenwechsel wieder abgemeldet werden müssen */
+const pageListeners = [];
+function onCartChange(fn) {
+  document.addEventListener("cart:changed", fn);
+  pageListeners.push(fn);
+}
+function clearPageListeners() {
+  pageListeners.splice(0).forEach((fn) => document.removeEventListener("cart:changed", fn));
+}
+
 /* ---------- Warenkorb (im Browser gespeichert) ---------- */
 const CART_KEY = "maison-noir-cart";
 
@@ -177,11 +215,14 @@ function bindChrome() {
     backdrop.classList.add("is-open");
     drawer.setAttribute("aria-hidden", "false");
     renderDrawer();
+    $("#drawer-close")?.focus();
   };
   const closeDrawer = () => {
+    if (!drawer.classList.contains("is-open")) return;
     drawer.classList.remove("is-open");
     backdrop.classList.remove("is-open");
     drawer.setAttribute("aria-hidden", "true");
+    $("#cart-open")?.focus();
   };
 
   $("#cart-open")?.addEventListener("click", openDrawer);
@@ -189,7 +230,7 @@ function bindChrome() {
   $("#drawer-continue")?.addEventListener("click", closeDrawer);
   backdrop?.addEventListener("click", closeDrawer);
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
-  document.addEventListener("cart:opened", openDrawer);
+  document.addEventListener("route:changed", closeDrawer);
 
   updateCartCount();
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
@@ -258,14 +299,21 @@ function productCard(p) {
   </article>`;
 }
 
+/* Verhindert, dass ein Element seine Klick-Funktion doppelt erhält */
+function once(el, mark) {
+  if (el.dataset[mark] === "1") return false;
+  el.dataset[mark] = "1";
+  return true;
+}
+
 function bindAddButtons(root = document) {
   $$("[data-add]", root).forEach((btn) => {
+    if (!once(btn, "boundAdd")) return;
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       const p = findProduct(btn.dataset.add);
       Cart.add(p.id, 1, p.colors[0].name);
-      toast(`${p.name} wurde hinzugefügt`);
-      document.dispatchEvent(new Event("cart:opened"));
+      toast(`${p.name} wurde in den Warenkorb gelegt`);
     });
   });
 }
@@ -291,6 +339,7 @@ function initReveal() {
 /* ---------- Ziehharmonika (Produktdetail) ---------- */
 function initAccordions(root = document) {
   $$(".acc__btn", root).forEach((btn) => {
+    if (!once(btn, "boundAcc")) return;
     btn.addEventListener("click", () => {
       const open = btn.getAttribute("aria-expanded") === "true";
       btn.setAttribute("aria-expanded", String(!open));
@@ -302,6 +351,7 @@ function initAccordions(root = document) {
 /* ---------- Formulare (Demo ohne Server) ---------- */
 function initForms() {
   $$("form[data-demo]").forEach((form) => {
+    if (!once(form, "boundForm")) return;
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const box = form.querySelector("[data-msg]");

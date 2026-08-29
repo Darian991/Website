@@ -52,8 +52,7 @@
 let activeCat = "Alle";
 
 function initPage() {
-  const params = new URLSearchParams(location.search);
-  const wanted = params.get("kategorie");
+  const wanted = queryParams().get("kategorie");
   if (wanted && CATEGORIES.includes(wanted)) activeCat = wanted;
 
   $("#filters").innerHTML = CATEGORIES.map((c) =>
@@ -63,10 +62,7 @@ function initPage() {
     chip.addEventListener("click", () => {
       activeCat = chip.dataset.cat;
       $$("#filters .chip").forEach((c) => c.classList.toggle("is-active", c === chip));
-      const url = new URL(location.href);
-      if (activeCat === "Alle") url.searchParams.delete("kategorie");
-      else url.searchParams.set("kategorie", activeCat);
-      history.replaceState(null, "", url);
+      setParam("kategorie", activeCat === "Alle" ? null : activeCat);
       renderList();
     });
   });

@@ -101,7 +101,7 @@
 <script src="assets/js/app.js"></script>
 <script>
 function initPage() {
-  const topic = new URLSearchParams(location.search).get("thema");
+  const topic = queryParams().get("thema");
   if (topic) { const sel = $("#topic"); [...sel.options].forEach(o => { if (o.text === topic) sel.value = o.value; }); }
 }
 </script>

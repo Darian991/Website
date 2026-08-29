@@ -20,6 +20,7 @@ HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.
 assets/css/style.css   Gesamtes Design (Farben, Typografie, Layout, Responsive)
 assets/js/data.js      Produktkatalog + alle Abbildungen als SVG
 assets/js/app.js       Warenkorb, Kopf-/Fußzeile, Filter, Formulare
+tools/build-preview.js Baut daraus preview.html (alles in einer Datei)
 ```
 
 Kopf- und Fußzeile werden von `app.js` in die Platzhalter `#site-header` und
@@ -33,6 +34,18 @@ Einfach `index.html` im Browser öffnen. Oder mit einem lokalen Server:
 python3 -m http.server 8000
 # dann http://localhost:8000 aufrufen
 ```
+
+### Vorschau als einzelne Datei
+
+`preview.html` enthält die komplette Website in einer einzigen Datei — praktisch
+zum Verschicken oder Herzeigen. Die Datei wird aus denselben Quelldateien
+erzeugt, es gibt also keine zweite Version, die auseinanderlaufen kann:
+
+```bash
+node tools/build-preview.js
+```
+
+Statt eigener Adressen pro Seite nutzt sie die Raute (`#kollektion.html`).
 
 ## Produkte ändern
 

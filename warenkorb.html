@@ -33,7 +33,7 @@
 <script>
 function initPage() {
   renderCartPage();
-  document.addEventListener("cart:changed", renderCartPage);
+  onCartChange(renderCartPage);
 }
 
 function renderCartPage() {
