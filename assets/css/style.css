@@ -442,9 +442,17 @@ noscript .footer p { max-width: 60ch; }
 .card__quick {
   position: absolute; left: 1rem; right: 1rem; bottom: 1rem;
   opacity: 0; transform: translateY(10px);
+  /* Unsichtbar heißt auch unantastbar — sonst trifft eine Berührung auf
+     dem Mobilgerät den verborgenen Knopf statt die Karte. */
+  pointer-events: none;
   transition: opacity var(--t), transform var(--t);
 }
-.card:hover .card__quick, .card:focus-within .card__quick { opacity: 1; transform: none; }
+.card:hover .card__quick, .card:focus-within .card__quick { opacity: 1; transform: none; pointer-events: auto; }
+
+/* Ohne Mauszeiger gibt es kein Überfahren — dort steht der Knopf immer. */
+@media (hover: none) {
+  .card__quick { opacity: 1; transform: none; pointer-events: auto; }
+}
 .card__body { padding-top: 1.1rem; display: flex; flex-direction: column; gap: .25rem; }
 .card__cat { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 .card__title { font-size: 1.02rem; font-weight: 400; color: var(--ink); }
@@ -625,11 +633,12 @@ noscript .footer p { max-width: 60ch; }
   background: var(--paper);
   z-index: 100;
   transform: translateX(100%);
-  transition: transform var(--t);
+  visibility: hidden;
+  transition: transform var(--t), visibility var(--t);
   display: flex; flex-direction: column;
   box-shadow: var(--shadow);
 }
-.drawer.is-open { transform: none; }
+.drawer.is-open { transform: none; visibility: visible; }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 1.4rem var(--pad); border-bottom: 1px solid var(--line); }
 .drawer__head h3 { margin: 0; font-size: 1rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; }
 .drawer__body { flex: 1; overflow-y: auto; padding: 0 var(--pad); }
@@ -656,7 +665,10 @@ noscript .footer p { max-width: 60ch; }
 .value .num { font-size: 2.4rem; font-weight: 200; color: var(--greige); line-height: 1; display: block; margin-bottom: .8rem; }
 
 /* ---------- Animation beim Scrollen ---------- */
+/* Ohne JavaScript wird nichts eingeblendet — dann muss der Inhalt von
+   vornherein sichtbar sein, sonst bliebe die Seite leer. */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 800ms ease, transform 800ms cubic-bezier(.2,.7,.2,1); }
+@media (scripting: none) { .reveal { opacity: 1; transform: none; } }
 .reveal.is-visible { opacity: 1; transform: none; }
 
 /* ---------- Responsive ---------- */

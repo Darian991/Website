@@ -316,6 +316,7 @@ function bindChrome() {
     drawer.classList.add("is-open");
     backdrop.classList.add("is-open");
     drawer.setAttribute("aria-hidden", "false");
+    drawer.inert = false;
     renderDrawer();
     $("#drawer-close")?.focus();
   };
@@ -324,9 +325,11 @@ function bindChrome() {
     drawer.classList.remove("is-open");
     backdrop.classList.remove("is-open");
     drawer.setAttribute("aria-hidden", "true");
+    drawer.inert = true;
     $("#cart-open")?.focus();
   };
 
+  drawer.inert = true;
   $("#cart-open")?.addEventListener("click", openDrawer);
   $("#drawer-close")?.addEventListener("click", closeDrawer);
   $("#drawer-continue")?.addEventListener("click", closeDrawer);
@@ -502,7 +505,10 @@ function bindAddButtons(root = document) {
 
 /* ---------- Einblenden beim Scrollen ---------- */
 function initReveal() {
-  const items = $$(".reveal");
+  // Bereits beobachtete Elemente überspringen; sonst legt jeder
+  // Tastendruck in der Suche einen weiteren Beobachter an.
+  const items = $$(".reveal").filter((el) => once(el, "boundReveal"));
+  if (!items.length) return;
   if (!("IntersectionObserver" in window)) {
     items.forEach((el) => el.classList.add("is-visible"));
     return;

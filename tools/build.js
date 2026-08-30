@@ -88,6 +88,7 @@ function fillTexts(html) {
 /* Kopf- und Fußzeile für Besucher ohne JavaScript */
 function noscriptChrome(activeKey) {
   return `<noscript>
+  <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
   <div class="topbar">${esc(de["topbar"])}</div>
   <header class="header"><div class="wrap header__inner">
     <a class="logo" href="index.html"><span class="logo__mark">SL</span><span class="logo__name">Studio Lusso<small>${esc(de["logo.sub"])}</small></span></a>

@@ -1,8 +1,9 @@
 /* =========================================================
    MAISON NOIR — Sprachen
-   Alle Texte der Website liegen hier in Deutsch, Englisch
-   und Französisch. Eine neue Sprache ergänzt man, indem man
-   einen weiteren Block nach demselben Muster anlegt.
+   Alle Texte der Website liegen hier in Deutsch, Englisch,
+   Französisch und Spanisch. Eine neue Sprache ergänzt man, indem
+   man LANGS erweitert, einen weiteren Block nach demselben Muster
+   anlegt und bei jedem Produkt einen Eintrag unter t hinzufügt.
    ========================================================= */
 
 const LANGS = [
