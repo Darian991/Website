@@ -81,7 +81,9 @@ function renderCartPage() {
 
   const subtotal = Cart.subtotal();
   const versand = 0;
-  const mwst = Math.round(subtotal - subtotal / 1.19);
+  const rabatt = Discount.betrag(subtotal);
+  const gesamt = subtotal - rabatt + versand;
+  const mwst = Math.round(gesamt - gesamt / 1.19);
 
   root.innerHTML = `
   <div class="cart-layout">
@@ -119,8 +121,24 @@ function renderCartPage() {
       <h3>${t("cartpage.summary")}</h3>
       <div class="summary__row"><span>${t("cart.subtotal")}</span><span>${euro(subtotal)}</span></div>
       <div class="summary__row"><span>${t("cartpage.delivery")}</span><span>${versand === 0 ? t("cartpage.included") : euro(versand)}</span></div>
+      ${rabatt > 0 ? `<div class="summary__row summary__row--discount">
+        <span>${t("cartpage.discount")} · ${GUTSCHEIN.code}</span><span>−${euro(rabatt)}</span></div>` : ""}
       <div class="summary__row muted" style="font-size:.85rem"><span>${t("cartpage.vat")}</span><span>${euro(mwst)}</span></div>
-      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(subtotal + versand)}</span></div>
+      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(gesamt)}</span></div>
+
+      <div class="code-box">
+        ${rabatt > 0 ? `
+          <span class="caption"><b>${GUTSCHEIN.code}</b></span>
+          <button class="link-underline" id="code-remove">${t("cartpage.codeRemove")}</button>
+        ` : `
+          <label class="field" style="margin:0;flex:1">
+            <span class="visually-hidden">${t("cartpage.codeLabel")}</span>
+            <input type="text" id="code-input" placeholder="${t("cartpage.codePlaceholder")}" aria-label="${t("cartpage.codeLabel")}" autocomplete="off">
+          </label>
+          <button class="btn btn--ghost" id="code-apply">${t("cartpage.codeApply")}</button>
+        `}
+      </div>
+      <p class="form-msg" id="code-msg" hidden></p>
 
       <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">${t("cartpage.checkout")}</button>
       <p class="form-note" style="margin-top:1rem">${t("cartpage.note")}</p>
@@ -136,6 +154,17 @@ function renderCartPage() {
     Cart.remove(Number(b.dataset.del))));
 
   $("#cart-clear").addEventListener("click", () => Cart.clear());
+
+  $("#code-apply")?.addEventListener("click", () => {
+    const feld = $("#code-input");
+    const msg = $("#code-msg");
+    if (Discount.einloesen(feld.value)) return;      // löst ein Neuzeichnen aus
+    msg.hidden = false;
+    msg.textContent = t("cartpage.codeInvalid");
+    feld.focus();
+  });
+  $("#code-input")?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#code-apply").click(); });
+  $("#code-remove")?.addEventListener("click", () => Discount.entfernen());
 
   $("#checkout").addEventListener("click", () => {
     const msg = $("#checkout-msg");

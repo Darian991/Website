@@ -152,6 +152,39 @@ const Cart = {
   }
 };
 
+/* ---------- Gutschein ----------
+   Ein Willkommensgutschein über 50 €. Der Code wird im Browser
+   gespeichert und an der Kasse vom Zwischenbetrag abgezogen. */
+const GUTSCHEIN = { code: "WILLKOMMEN50", betrag: 50 };
+const PROMO_KEY = "studio-lusso-gutschein";
+const PROMO_SEEN = "studio-lusso-gutschein-gesehen";
+
+const Discount = {
+  aktiv() {
+    try { return localStorage.getItem(PROMO_KEY) === GUTSCHEIN.code; } catch (e) { return false; }
+  },
+  einloesen(code) {
+    if (String(code).trim().toUpperCase() !== GUTSCHEIN.code) return false;
+    try { localStorage.setItem(PROMO_KEY, GUTSCHEIN.code); } catch (e) { /* privater Modus */ }
+    document.dispatchEvent(new Event("cart:changed"));
+    return true;
+  },
+  entfernen() {
+    try { localStorage.removeItem(PROMO_KEY); } catch (e) { /* privater Modus */ }
+    document.dispatchEvent(new Event("cart:changed"));
+  },
+  /* Nie mehr als der Warenkorb wert ist */
+  betrag(zwischensumme) {
+    return Discount.aktiv() ? Math.min(GUTSCHEIN.betrag, zwischensumme) : 0;
+  },
+  gesehen() {
+    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return true; }
+  },
+  merken() {
+    try { localStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
+  }
+};
+
 /* ---------- Kopf- und Fußzeile ---------- */
 const NAV = [
   { href: "index.html",     label: "Startseite", key: "home" },
@@ -247,6 +280,37 @@ function renderChrome() {
     </div>
   </footer>`;
 
+  const promo = `
+  <aside class="promo" id="promo" aria-labelledby="promo-title" hidden>
+    <div class="wrap promo__inner">
+      <div class="promo__text" id="promo-form">
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h3 id="promo-title" data-i18n="promo.title"></h3>
+        <p data-i18n="promo.text"></p>
+      </div>
+      <div class="promo__text" id="promo-done" hidden>
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h3 data-i18n="promo.done.title"></h3>
+        <p data-i18n="promo.done.text"></p>
+      </div>
+      <div class="promo__action">
+        <form id="promo-form-el" novalidate>
+          <div class="promo__row">
+            <input type="email" id="promo-email" required data-i18n-placeholder="promo.placeholder" data-i18n-aria="promo.placeholder" autocomplete="email">
+            <button class="btn" type="submit" data-i18n="promo.cta"></button>
+          </div>
+          <p class="promo__error" id="promo-error" hidden></p>
+          <p class="form-note" data-i18n="promo.privacy"></p>
+        </form>
+        <div class="promo__code" id="promo-code" hidden>
+          <code>${GUTSCHEIN.code}</code>
+          <button class="link-underline" id="promo-copy" data-i18n="promo.copy"></button>
+        </div>
+      </div>
+      <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    </div>
+  </aside>`;
+
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
   <aside class="drawer" id="drawer" aria-hidden="true" aria-label="${t("cart.title")}">
@@ -266,7 +330,7 @@ function renderChrome() {
   const hostTop = $("#site-header");
   const hostBottom = $("#site-footer");
   if (hostTop) hostTop.innerHTML = header;
-  if (hostBottom) hostBottom.innerHTML = footer + drawer;
+  if (hostBottom) hostBottom.innerHTML = footer + drawer + promo;
 
   applyI18n(document);
   bindChrome();
@@ -343,6 +407,7 @@ function bindChrome() {
   });
 
   bindSearch();
+  bindPromo();
 
   updateCartCount();
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
@@ -381,6 +446,77 @@ function renderDrawer() {
   if (total) total.textContent = euro(Cart.subtotal());
 }
 
+
+/* ---------- Willkommensgutschein ---------- */
+function bindPromo() {
+  const box = $("#promo");
+  if (!box) return;
+
+  /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
+     übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
+  /* Die Leiste liegt fest am unteren Rand. Damit sie nichts verdeckt —
+     weder den Fuß der Seite noch einen Knopf auf der letzten Karte —
+     bekommt die Seite währenddessen unten entsprechend Platz. */
+  const platzSchaffen = () => {
+    document.body.style.paddingBottom = box.offsetHeight + "px";
+  };
+  const platzZurueck = () => { document.body.style.paddingBottom = ""; };
+
+  const zeigen = () => {
+    box.hidden = false;
+    requestAnimationFrame(() => {
+      box.classList.add("is-open");
+      platzSchaffen();
+    });
+    window.addEventListener("resize", platzSchaffen);
+  };
+  const schliessen = () => {
+    if (!box.classList.contains("is-open")) return;
+    box.classList.remove("is-open");
+    platzZurueck();
+    window.removeEventListener("resize", platzSchaffen);
+    Discount.merken();
+    setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
+  };
+
+  $("#promo-close")?.addEventListener("click", schliessen);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
+  });
+
+  $("#promo-form-el")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const feld = $("#promo-email");
+    const fehler = $("#promo-error");
+    const wert = feld.value.trim();
+    // Bewusst großzügig geprüft: eine Adresse mit @ und einem Punkt danach
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(wert)) {
+      fehler.hidden = false;
+      fehler.textContent = t("promo.invalid");
+      feld.focus();
+      return;
+    }
+    fehler.hidden = true;
+    Discount.einloesen(GUTSCHEIN.code);
+    Discount.merken();
+    $("#promo-form").hidden = true;
+    $("#promo-form-el").hidden = true;
+    $("#promo-done").hidden = false;
+    $("#promo-code").hidden = false;
+    $("#promo-copy")?.focus();
+    platzSchaffen();
+  });
+
+  $("#promo-copy")?.addEventListener("click", (e) => {
+    const knopf = e.currentTarget;
+    const fertig = () => { knopf.textContent = t("promo.copied"); setTimeout(() => { knopf.textContent = t("promo.copy"); }, 2000); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(GUTSCHEIN.code).then(fertig).catch(fertig);
+    else fertig();
+  });
+
+  // Nur beim ersten Besuch, und erst wenn die Seite steht
+  if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
+}
 
 /* ---------- Suche ---------- */
 function bindSearch() {

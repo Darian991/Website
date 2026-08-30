@@ -48,6 +48,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Das hidden-Attribut muss jede display-Regel schlagen. Ohne diese Zeile
+   zeigt etwa .promo__code { display: flex } den Gutscheincode auch dann,
+   wenn er noch gar nicht freigeschaltet ist. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
@@ -652,6 +657,69 @@ noscript .footer p { max-width: 60ch; }
 .drawer__foot { padding: 1.4rem var(--pad); border-top: 1px solid var(--line); display: grid; gap: .8rem; }
 .close-x { background: none; border: 0; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: .2rem .4rem; }
 
+/* ---------- Willkommensgutschein ----------
+   Bewusst eine Leiste und kein Dialog: sie unterbricht niemanden,
+   verdeckt den Inhalt nicht und nimmt der Tastatur nichts weg. */
+.promo {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -14px 40px -28px rgba(58,50,41,.5);
+  z-index: 105;
+  transform: translateY(100%);
+  transition: transform var(--t);
+}
+.promo.is-open { transform: none; }
+.promo__inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(1.2rem, 4vw, 3rem);
+  align-items: center;
+  padding: .95rem 0 1rem;
+  position: relative;
+}
+.promo__text { max-width: 46ch; }
+.promo__text h3 { font-size: 1rem; margin: 0 0 .15rem; }
+.promo__text p { font-size: .82rem; color: var(--muted); margin: 0; }
+.promo__text .eyebrow { margin-bottom: .2rem; font-size: .6rem; }
+.promo__action { min-width: min(360px, 100%); }
+.promo__row { display: flex; gap: .5rem; flex-wrap: wrap; }
+.promo .btn { padding: .72rem 1.5rem; }
+.promo__row input {
+  flex: 1 1 170px; font: inherit; padding: .7rem .9rem; font-size: .9rem;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink);
+}
+.promo__row input:focus { outline: none; border-color: var(--greige); box-shadow: 0 0 0 3px rgba(160,149,137,.16); }
+.promo__action .form-note { margin: .45rem 0 0; font-size: .68rem; }
+.promo__error { color: #8a3b32; font-size: .8rem; margin: .5rem 0 0; }
+.promo__close { position: absolute; top: -.2rem; right: -.4rem; font-size: 1.5rem; color: var(--muted); }
+.promo__close:hover { color: var(--ink); }
+.promo__code {
+  display: flex; align-items: center; gap: 1.2rem;
+  border: 1px dashed var(--greige); background: var(--paper-2);
+  padding: .7rem 1.1rem;
+}
+.promo__code code {
+  font-family: var(--sans); font-size: 1.05rem; font-weight: 700;
+  letter-spacing: .18em; color: var(--ink);
+}
+
+@media (max-width: 860px) {
+  /* Auf dem Handy bleibt nur das Nötige: die Zusage, das Feld, der Knopf. */
+  .promo__inner { grid-template-columns: 1fr; gap: .7rem; padding: .8rem 0 .9rem; padding-right: 1.8rem; }
+  .promo__text p, .promo__text .eyebrow, .promo__action .form-note { display: none; }
+  .promo__text h3 { font-size: .95rem; }
+  .promo__close { top: -.1rem; right: -.5rem; }
+}
+
+/* Gutscheinzeile und Eingabefeld im Warenkorb */
+.summary__row--discount { color: var(--greige-deep); }
+.code-box { display: flex; align-items: center; gap: .7rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.code-box input { text-transform: uppercase; letter-spacing: .1em; }
+.code-box .btn { padding: .8rem 1.4rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
 /* ---------- Toast ---------- */
 .toast {
   position: fixed; bottom: 1.5rem; left: 50%;
@@ -793,6 +861,25 @@ const I18N = {
     "home.used.eyebrow": "Vorbesitzt",
     "home.used.title": "Gute Stücke aus zweiter Hand.",
     "home.used.p": "Die Möbel unserer Kollektion stammen aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz. Jedes Stück wird geprüft, aufbereitet und mit seinem Zustand und Baujahr ausgewiesen — und ist nur einmal zu haben. Unsere Leuchten fertigen wir dagegen neu.",
+    "promo.eyebrow": "Willkommen",
+    "promo.title": "50 € auf Ihren ersten Einkauf",
+    "promo.text": "Eintragen und sofort 50 € auf die erste Bestellung sichern.",
+    "promo.placeholder": "Ihre E-Mail-Adresse",
+    "promo.cta": "Code anfordern",
+    "promo.later": "Vielleicht später",
+    "promo.privacy": "Wir verwenden Ihre Adresse für den Gutschein und unseren Newsletter. Abmeldung jederzeit möglich.",
+    "promo.invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "promo.done.title": "Ihr Gutscheincode",
+    "promo.done.text": "Notieren Sie ihn — beim Bezahlen wird er automatisch abgezogen. Wir haben ihn auch an Ihre E-Mail-Adresse geschickt.",
+    "promo.copy": "Kopieren",
+    "promo.copied": "Kopiert",
+    "promo.shop": "Jetzt einkaufen",
+    "cartpage.discount": "Gutschein",
+    "cartpage.codeLabel": "Gutscheincode",
+    "cartpage.codePlaceholder": "Code eingeben",
+    "cartpage.codeApply": "Einlösen",
+    "cartpage.codeRemove": "Entfernen",
+    "cartpage.codeInvalid": "Dieser Code ist nicht gültig.",
     "html.lang": "de",
 
     "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
@@ -1034,6 +1121,25 @@ const I18N = {
     "home.used.eyebrow": "Previously owned",
     "home.used.title": "Good pieces, second hand.",
     "home.used.p": "The furniture in our collection comes from completed projects, showrooms and private homes. Every piece is checked, refurbished and listed with its condition and year — and is available only once. Our lighting, by contrast, is made new.",
+    "promo.eyebrow": "Welcome",
+    "promo.title": "€50 off your first purchase",
+    "promo.text": "Sign up and get €50 off your first order right away.",
+    "promo.placeholder": "Your email address",
+    "promo.cta": "Get the code",
+    "promo.later": "Maybe later",
+    "promo.privacy": "We use your address for the voucher and our newsletter. You can unsubscribe at any time.",
+    "promo.invalid": "Please enter a valid email address.",
+    "promo.done.title": "Your voucher code",
+    "promo.done.text": "Note it down — it is deducted automatically at checkout. We have also sent it to your email address.",
+    "promo.copy": "Copy",
+    "promo.copied": "Copied",
+    "promo.shop": "Start shopping",
+    "cartpage.discount": "Voucher",
+    "cartpage.codeLabel": "Voucher code",
+    "cartpage.codePlaceholder": "Enter code",
+    "cartpage.codeApply": "Apply",
+    "cartpage.codeRemove": "Remove",
+    "cartpage.codeInvalid": "This code is not valid.",
     "html.lang": "en",
 
     "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
@@ -1275,6 +1381,25 @@ const I18N = {
     "home.used.eyebrow": "Seconde main",
     "home.used.title": "De belles pièces, en seconde main.",
     "home.used.p": "Le mobilier de notre collection provient de projets achevés, de showrooms et de particuliers. Chaque pièce est contrôlée, remise en état et présentée avec son état et son année — et n’est disponible qu’une fois. Nos luminaires, eux, sont fabriqués neufs.",
+    "promo.eyebrow": "Bienvenue",
+    "promo.title": "50 € sur votre premier achat",
+    "promo.text": "Inscrivez-vous et obtenez aussitôt 50 € sur votre première commande.",
+    "promo.placeholder": "Votre adresse e-mail",
+    "promo.cta": "Obtenir le code",
+    "promo.later": "Plus tard",
+    "promo.privacy": "Nous utilisons votre adresse pour le bon et notre lettre d’information. Désinscription à tout moment.",
+    "promo.invalid": "Veuillez saisir une adresse e-mail valide.",
+    "promo.done.title": "Votre code",
+    "promo.done.text": "Notez-le — il est déduit automatiquement au moment de payer. Nous l’avons également envoyé à votre adresse e-mail.",
+    "promo.copy": "Copier",
+    "promo.copied": "Copié",
+    "promo.shop": "Commencer les achats",
+    "cartpage.discount": "Bon d’achat",
+    "cartpage.codeLabel": "Code",
+    "cartpage.codePlaceholder": "Saisir le code",
+    "cartpage.codeApply": "Valider",
+    "cartpage.codeRemove": "Retirer",
+    "cartpage.codeInvalid": "Ce code n’est pas valide.",
     "html.lang": "fr",
 
     "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
@@ -1502,6 +1627,25 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "promo.eyebrow": "Bienvenida",
+    "promo.title": "50 € en su primera compra",
+    "promo.text": "Regístrese y consiga al instante 50 € en su primer pedido.",
+    "promo.placeholder": "Su correo electrónico",
+    "promo.cta": "Obtener el código",
+    "promo.later": "Quizá más tarde",
+    "promo.privacy": "Usamos su dirección para el vale y nuestro boletín. Puede darse de baja en cualquier momento.",
+    "promo.invalid": "Introduzca una dirección de correo válida.",
+    "promo.done.title": "Su código",
+    "promo.done.text": "Anótelo — se descuenta automáticamente al pagar. También se lo hemos enviado a su correo.",
+    "promo.copy": "Copiar",
+    "promo.copied": "Copiado",
+    "promo.shop": "Empezar a comprar",
+    "cartpage.discount": "Vale",
+    "cartpage.codeLabel": "Código",
+    "cartpage.codePlaceholder": "Introducir código",
+    "cartpage.codeApply": "Aplicar",
+    "cartpage.codeRemove": "Quitar",
+    "cartpage.codeInvalid": "Este código no es válido.",
     "html.lang": "es",
     "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
     "title.shop": "Colección — Studio Lusso",
@@ -2877,6 +3021,39 @@ const Cart = {
   }
 };
 
+/* ---------- Gutschein ----------
+   Ein Willkommensgutschein über 50 €. Der Code wird im Browser
+   gespeichert und an der Kasse vom Zwischenbetrag abgezogen. */
+const GUTSCHEIN = { code: "WILLKOMMEN50", betrag: 50 };
+const PROMO_KEY = "studio-lusso-gutschein";
+const PROMO_SEEN = "studio-lusso-gutschein-gesehen";
+
+const Discount = {
+  aktiv() {
+    try { return localStorage.getItem(PROMO_KEY) === GUTSCHEIN.code; } catch (e) { return false; }
+  },
+  einloesen(code) {
+    if (String(code).trim().toUpperCase() !== GUTSCHEIN.code) return false;
+    try { localStorage.setItem(PROMO_KEY, GUTSCHEIN.code); } catch (e) { /* privater Modus */ }
+    document.dispatchEvent(new Event("cart:changed"));
+    return true;
+  },
+  entfernen() {
+    try { localStorage.removeItem(PROMO_KEY); } catch (e) { /* privater Modus */ }
+    document.dispatchEvent(new Event("cart:changed"));
+  },
+  /* Nie mehr als der Warenkorb wert ist */
+  betrag(zwischensumme) {
+    return Discount.aktiv() ? Math.min(GUTSCHEIN.betrag, zwischensumme) : 0;
+  },
+  gesehen() {
+    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return true; }
+  },
+  merken() {
+    try { localStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
+  }
+};
+
 /* ---------- Kopf- und Fußzeile ---------- */
 const NAV = [
   { href: "index.html",     label: "Startseite", key: "home" },
@@ -2972,6 +3149,37 @@ function renderChrome() {
     </div>
   </footer>`;
 
+  const promo = `
+  <aside class="promo" id="promo" aria-labelledby="promo-title" hidden>
+    <div class="wrap promo__inner">
+      <div class="promo__text" id="promo-form">
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h3 id="promo-title" data-i18n="promo.title"></h3>
+        <p data-i18n="promo.text"></p>
+      </div>
+      <div class="promo__text" id="promo-done" hidden>
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h3 data-i18n="promo.done.title"></h3>
+        <p data-i18n="promo.done.text"></p>
+      </div>
+      <div class="promo__action">
+        <form id="promo-form-el" novalidate>
+          <div class="promo__row">
+            <input type="email" id="promo-email" required data-i18n-placeholder="promo.placeholder" data-i18n-aria="promo.placeholder" autocomplete="email">
+            <button class="btn" type="submit" data-i18n="promo.cta"></button>
+          </div>
+          <p class="promo__error" id="promo-error" hidden></p>
+          <p class="form-note" data-i18n="promo.privacy"></p>
+        </form>
+        <div class="promo__code" id="promo-code" hidden>
+          <code>${GUTSCHEIN.code}</code>
+          <button class="link-underline" id="promo-copy" data-i18n="promo.copy"></button>
+        </div>
+      </div>
+      <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    </div>
+  </aside>`;
+
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
   <aside class="drawer" id="drawer" aria-hidden="true" aria-label="${t("cart.title")}">
@@ -2991,7 +3199,7 @@ function renderChrome() {
   const hostTop = $("#site-header");
   const hostBottom = $("#site-footer");
   if (hostTop) hostTop.innerHTML = header;
-  if (hostBottom) hostBottom.innerHTML = footer + drawer;
+  if (hostBottom) hostBottom.innerHTML = footer + drawer + promo;
 
   applyI18n(document);
   bindChrome();
@@ -3068,6 +3276,7 @@ function bindChrome() {
   });
 
   bindSearch();
+  bindPromo();
 
   updateCartCount();
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
@@ -3106,6 +3315,77 @@ function renderDrawer() {
   if (total) total.textContent = euro(Cart.subtotal());
 }
 
+
+/* ---------- Willkommensgutschein ---------- */
+function bindPromo() {
+  const box = $("#promo");
+  if (!box) return;
+
+  /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
+     übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
+  /* Die Leiste liegt fest am unteren Rand. Damit sie nichts verdeckt —
+     weder den Fuß der Seite noch einen Knopf auf der letzten Karte —
+     bekommt die Seite währenddessen unten entsprechend Platz. */
+  const platzSchaffen = () => {
+    document.body.style.paddingBottom = box.offsetHeight + "px";
+  };
+  const platzZurueck = () => { document.body.style.paddingBottom = ""; };
+
+  const zeigen = () => {
+    box.hidden = false;
+    requestAnimationFrame(() => {
+      box.classList.add("is-open");
+      platzSchaffen();
+    });
+    window.addEventListener("resize", platzSchaffen);
+  };
+  const schliessen = () => {
+    if (!box.classList.contains("is-open")) return;
+    box.classList.remove("is-open");
+    platzZurueck();
+    window.removeEventListener("resize", platzSchaffen);
+    Discount.merken();
+    setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
+  };
+
+  $("#promo-close")?.addEventListener("click", schliessen);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
+  });
+
+  $("#promo-form-el")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const feld = $("#promo-email");
+    const fehler = $("#promo-error");
+    const wert = feld.value.trim();
+    // Bewusst großzügig geprüft: eine Adresse mit @ und einem Punkt danach
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(wert)) {
+      fehler.hidden = false;
+      fehler.textContent = t("promo.invalid");
+      feld.focus();
+      return;
+    }
+    fehler.hidden = true;
+    Discount.einloesen(GUTSCHEIN.code);
+    Discount.merken();
+    $("#promo-form").hidden = true;
+    $("#promo-form-el").hidden = true;
+    $("#promo-done").hidden = false;
+    $("#promo-code").hidden = false;
+    $("#promo-copy")?.focus();
+    platzSchaffen();
+  });
+
+  $("#promo-copy")?.addEventListener("click", (e) => {
+    const knopf = e.currentTarget;
+    const fertig = () => { knopf.textContent = t("promo.copied"); setTimeout(() => { knopf.textContent = t("promo.copy"); }, 2000); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(GUTSCHEIN.code).then(fertig).catch(fertig);
+    else fertig();
+  });
+
+  // Nur beim ersten Besuch, und erst wenn die Seite steht
+  if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
+}
 
 /* ---------- Suche ---------- */
 function bindSearch() {
@@ -3579,7 +3859,9 @@ function renderCartPage() {
 
   const subtotal = Cart.subtotal();
   const versand = 0;
-  const mwst = Math.round(subtotal - subtotal / 1.19);
+  const rabatt = Discount.betrag(subtotal);
+  const gesamt = subtotal - rabatt + versand;
+  const mwst = Math.round(gesamt - gesamt / 1.19);
 
   root.innerHTML = `
   <div class="cart-layout">
@@ -3617,8 +3899,24 @@ function renderCartPage() {
       <h3>${t("cartpage.summary")}</h3>
       <div class="summary__row"><span>${t("cart.subtotal")}</span><span>${euro(subtotal)}</span></div>
       <div class="summary__row"><span>${t("cartpage.delivery")}</span><span>${versand === 0 ? t("cartpage.included") : euro(versand)}</span></div>
+      ${rabatt > 0 ? `<div class="summary__row summary__row--discount">
+        <span>${t("cartpage.discount")} · ${GUTSCHEIN.code}</span><span>−${euro(rabatt)}</span></div>` : ""}
       <div class="summary__row muted" style="font-size:.85rem"><span>${t("cartpage.vat")}</span><span>${euro(mwst)}</span></div>
-      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(subtotal + versand)}</span></div>
+      <div class="summary__row summary__row--total"><span>${t("cartpage.total")}</span><span>${euro(gesamt)}</span></div>
+
+      <div class="code-box">
+        ${rabatt > 0 ? `
+          <span class="caption"><b>${GUTSCHEIN.code}</b></span>
+          <button class="link-underline" id="code-remove">${t("cartpage.codeRemove")}</button>
+        ` : `
+          <label class="field" style="margin:0;flex:1">
+            <span class="visually-hidden">${t("cartpage.codeLabel")}</span>
+            <input type="text" id="code-input" placeholder="${t("cartpage.codePlaceholder")}" aria-label="${t("cartpage.codeLabel")}" autocomplete="off">
+          </label>
+          <button class="btn btn--ghost" id="code-apply">${t("cartpage.codeApply")}</button>
+        `}
+      </div>
+      <p class="form-msg" id="code-msg" hidden></p>
 
       <button class="btn btn--block" id="checkout" style="margin-top:1.4rem">${t("cartpage.checkout")}</button>
       <p class="form-note" style="margin-top:1rem">${t("cartpage.note")}</p>
@@ -3634,6 +3932,17 @@ function renderCartPage() {
     Cart.remove(Number(b.dataset.del))));
 
   $("#cart-clear").addEventListener("click", () => Cart.clear());
+
+  $("#code-apply")?.addEventListener("click", () => {
+    const feld = $("#code-input");
+    const msg = $("#code-msg");
+    if (Discount.einloesen(feld.value)) return;      // löst ein Neuzeichnen aus
+    msg.hidden = false;
+    msg.textContent = t("cartpage.codeInvalid");
+    feld.focus();
+  });
+  $("#code-input")?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#code-apply").click(); });
+  $("#code-remove")?.addEventListener("click", () => Discount.entfernen());
 
   $("#checkout").addEventListener("click", () => {
     const msg = $("#checkout-msg");
