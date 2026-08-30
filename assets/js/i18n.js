@@ -85,7 +85,7 @@ const I18N = {
     "cart.empty": "Ihr Warenkorb ist noch leer.",
     "cart.subtotal": "Zwischensumme",
     "cart.checkout": "Zur Kasse",
-    "cart.continue": "Weiter stöbern",
+    "cart.continue": "Weiter einkaufen",
     "cart.remove": "Entfernen",
     "cart.added": "{name} wurde in den Warenkorb gelegt",
 
@@ -326,7 +326,7 @@ const I18N = {
     "cart.empty": "Your basket is still empty.",
     "cart.subtotal": "Subtotal",
     "cart.checkout": "Checkout",
-    "cart.continue": "Keep browsing",
+    "cart.continue": "Continue shopping",
     "cart.remove": "Remove",
     "cart.added": "{name} was added to your basket",
 
@@ -567,7 +567,7 @@ const I18N = {
     "cart.empty": "Votre panier est encore vide.",
     "cart.subtotal": "Sous-total",
     "cart.checkout": "Commander",
-    "cart.continue": "Continuer à parcourir",
+    "cart.continue": "Continuer les achats",
     "cart.remove": "Retirer",
     "cart.added": "{name} a été ajouté au panier",
 
