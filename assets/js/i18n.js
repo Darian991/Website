@@ -19,6 +19,13 @@ const I18N = {
   de: {
     "html.lang": "de",
 
+    "desc.home": "Maison Noir fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
+    "desc.shop": "Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.",
+    "desc.product": "Materialien, Maße und Ausführungen zu den Entwürfen von Maison Noir.",
+    "desc.cart": "Ihre Auswahl bei Maison Noir — mit Fertigungszeiten und Lieferung bis in den Raum.",
+    "desc.about": "Seit 1974 fertigt Maison Noir Möbel in Handarbeit. Über unsere Werkstätten, Materialien und Menschen.",
+    "desc.contact": "Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Maison Noir.",
+
     "title.home": "Maison Noir — Luxusmöbel aus europäischer Handarbeit",
     "title.shop": "Kollektion — Maison Noir",
     "title.product": "Entwurf — Maison Noir",
@@ -238,6 +245,13 @@ const I18N = {
   /* ------------------------------------------------------ English */
   en: {
     "html.lang": "en",
+
+    "desc.home": "Maison Noir makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
+    "desc.shop": "The complete Maison Noir collection: sofas, armchairs, tables, chairs, lighting, storage and beds, made by hand.",
+    "desc.product": "Materials, dimensions and finishes for the designs by Maison Noir.",
+    "desc.cart": "Your selection at Maison Noir — with production times and delivery into your room.",
+    "desc.about": "Maison Noir has been making furniture by hand since 1974. About our workshops, materials and people.",
+    "desc.contact": "Personal interior advice, the Munich showroom and how to reach Maison Noir.",
 
     "title.home": "Maison Noir — Handmade European Luxury Furniture",
     "title.shop": "Collection — Maison Noir",
@@ -459,6 +473,13 @@ const I18N = {
   fr: {
     "html.lang": "fr",
 
+    "desc.home": "Maison Noir fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
+    "desc.shop": "Toute la collection Maison Noir : canapés, fauteuils, tables, chaises, luminaires, rangement et lits, faits à la main.",
+    "desc.product": "Matières, dimensions et finitions des modèles Maison Noir.",
+    "desc.cart": "Votre sélection chez Maison Noir — avec les délais de fabrication et la livraison dans la pièce.",
+    "desc.about": "Maison Noir fabrique des meubles à la main depuis 1974. Nos ateliers, nos matières et nos gens.",
+    "desc.contact": "Conseil en aménagement, showroom de Munich et contact avec Maison Noir.",
+
     "title.home": "Maison Noir — Mobilier de luxe fait main en Europe",
     "title.shop": "Collection — Maison Noir",
     "title.product": "Modèle — Maison Noir",
@@ -676,6 +697,21 @@ const I18N = {
   }
 };
 
+/* Findet den Kategorieschlüssel zu einem Wert aus der Adresszeile.
+   Versteht auch die früheren Anzeigenamen (?kategorie=Sofas) sowie die
+   Bezeichnungen der anderen Sprachen, damit geteilte Verweise gültig bleiben. */
+function categoryKeyFrom(value) {
+  if (!value) return null;
+  const wanted = value.trim().toLowerCase();
+  if (CATEGORY_KEYS.includes(wanted)) return wanted;
+  for (const key of CATEGORY_KEYS) {
+    for (const lang of Object.keys(I18N)) {
+      if ((I18N[lang]["cat." + key] || "").toLowerCase() === wanted) return key;
+    }
+  }
+  return null;
+}
+
 /* --- Zugriff auf die Sprache --- */
 const LANG_KEY = "maison-noir-lang";
 
@@ -717,5 +753,6 @@ function applyI18n(root) {
   scope.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
   scope.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
   scope.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); });
+  scope.querySelectorAll("[data-i18n-content]").forEach((el) => { el.content = t(el.dataset.i18nContent); });
   document.documentElement.lang = t("html.lang");
 }

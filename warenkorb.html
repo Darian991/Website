@@ -4,20 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="title.cart">Warenkorb — Maison Noir</title>
-<meta name="description" content="Ihre Auswahl bei Maison Noir.">
+<meta name="description" data-i18n-content="desc.cart" content="Ihre Auswahl bei Maison Noir — mit Fertigungszeiten und Lieferung bis in den Raum.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="shop">
-<div id="site-header"></div>
+<div id="site-header">
+<noscript>
+  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <header class="header"><div class="wrap header__inner">
+    <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+    <nav class="nav-static">
+      <a href="index.html">Startseite</a>
+      <a href="kollektion.html" class="is-active">Kollektion</a>
+      <a href="ueber-uns.html">Manufaktur</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+  </div></header>
+</noscript>
+</div>
 
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="crumbs"><a href="index.html" data-i18n="nav.home"></a> · <span data-i18n="cart.title"></span></div>
-      <h1 data-i18n="cartpage.title"></h1>
+      <div class="crumbs"><a href="index.html" data-i18n="nav.home">Startseite</a> · <span data-i18n="cart.title">Warenkorb</span></div>
+      <h1 data-i18n="cartpage.title">Ihre Auswahl</h1>
     </div>
   </section>
 
@@ -26,7 +39,16 @@
   </section>
 </main>
 
-<div id="site-footer"></div>
+<div id="site-footer">
+<noscript>
+  <footer class="footer"><div class="wrap">
+    <p>Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.</p>
+    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
+       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
+  </div></footer>
+</noscript>
+</div>
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>

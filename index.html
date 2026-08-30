@@ -4,44 +4,57 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="title.home">Maison Noir — Luxusmöbel aus europäischer Handarbeit</title>
-<meta name="description" content="Maison Noir fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.">
+<meta name="description" data-i18n-content="desc.home" content="Maison Noir fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="home">
-<div id="site-header"></div>
+<div id="site-header">
+<noscript>
+  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <header class="header"><div class="wrap header__inner">
+    <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+    <nav class="nav-static">
+      <a href="index.html" class="is-active">Startseite</a>
+      <a href="kollektion.html">Kollektion</a>
+      <a href="ueber-uns.html">Manufaktur</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+  </div></header>
+</noscript>
+</div>
 
 <main>
   <section class="hero">
     <div class="hero__bg" id="hero-art"></div>
     <div class="wrap hero__content">
-      <span class="eyebrow" data-i18n="home.hero.eyebrow"></span>
-      <h1 data-i18n-html="home.hero.title"></h1>
-      <p class="lede" data-i18n="home.hero.lede"></p>
+      <span class="eyebrow" data-i18n="home.hero.eyebrow">Manufaktur seit 1974</span>
+      <h1 data-i18n-html="home.hero.title">Möbel für ein<br>ganzes Leben.</h1>
+      <p class="lede" data-i18n="home.hero.lede">Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern, Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.</p>
       <div class="hero__actions">
-        <a class="btn btn--light" href="kollektion.html" data-i18n="home.hero.cta1"></a>
-        <a class="btn btn--light" href="kontakt.html" data-i18n="home.hero.cta2"></a>
+        <a class="btn btn--light" href="kollektion.html" data-i18n="home.hero.cta1">Kollektion entdecken</a>
+        <a class="btn btn--light" href="kontakt.html" data-i18n="home.hero.cta2">Beratungstermin</a>
       </div>
     </div>
   </section>
 
   <div class="features">
-    <div class="feature"><h4 data-i18n="home.feat1.t"></h4><p data-i18n="home.feat1.p"></p></div>
-    <div class="feature"><h4 data-i18n="home.feat2.t"></h4><p data-i18n="home.feat2.p"></p></div>
-    <div class="feature"><h4 data-i18n="home.feat3.t"></h4><p data-i18n="home.feat3.p"></p></div>
-    <div class="feature"><h4 data-i18n="home.feat4.t"></h4><p data-i18n="home.feat4.p"></p></div>
+    <div class="feature"><h4 data-i18n="home.feat1.t">Handgefertigt</h4><p data-i18n="home.feat1.p">In Manufakturen in Italien, Dänemark und Deutschland</p></div>
+    <div class="feature"><h4 data-i18n="home.feat2.t">Lieferung bis in den Raum</h4><p data-i18n="home.feat2.p">Weißhandschuh-Service inklusive Montage</p></div>
+    <div class="feature"><h4 data-i18n="home.feat3.t">10 Jahre Garantie</h4><p data-i18n="home.feat3.p">Auf Rahmen, Federung und Verarbeitung</p></div>
+    <div class="feature"><h4 data-i18n="home.feat4.t">Persönliche Beratung</h4><p data-i18n="home.feat4.p">Im Showroom München oder bei Ihnen zu Hause</p></div>
   </div>
 
   <section class="section">
     <div class="wrap">
       <div class="section-head reveal">
         <div>
-          <span class="eyebrow" data-i18n="home.featured.eyebrow"></span>
-          <h2 data-i18n="home.featured.title"></h2>
+          <span class="eyebrow" data-i18n="home.featured.eyebrow">Ausgewählt</span>
+          <h2 data-i18n="home.featured.title">Die Stücke der Saison</h2>
         </div>
-        <a class="link-underline" href="kollektion.html" data-i18n="home.featured.link"></a>
+        <a class="link-underline" href="kollektion.html" data-i18n="home.featured.link">Alle 14 Entwürfe</a>
       </div>
       <div class="grid grid--3" id="featured"></div>
     </div>
@@ -50,11 +63,11 @@
   <section class="split">
     <div class="split__media" id="story-art"></div>
     <div class="split__text split--dark">
-      <span class="eyebrow" data-i18n="home.story.eyebrow"></span>
-      <h2 data-i18n="home.story.title"></h2>
-      <p data-i18n="home.story.p1"></p>
-      <p data-i18n="home.story.p2"></p>
-      <div style="margin-top:1.5rem"><a class="link-underline" href="ueber-uns.html" data-i18n="home.story.link"></a></div>
+      <span class="eyebrow" data-i18n="home.story.eyebrow">Unsere Haltung</span>
+      <h2 data-i18n="home.story.title">Das Gegenteil von schnell.</h2>
+      <p data-i18n="home.story.p1">An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.</p>
+      <p data-i18n="home.story.p2">Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.</p>
+      <div style="margin-top:1.5rem"><a class="link-underline" href="ueber-uns.html" data-i18n="home.story.link">Die Manufaktur besuchen</a></div>
     </div>
   </section>
 
@@ -62,8 +75,8 @@
     <div class="wrap">
       <div class="section-head reveal">
         <div>
-          <span class="eyebrow" data-i18n="home.cats.eyebrow"></span>
-          <h2 data-i18n="home.cats.title"></h2>
+          <span class="eyebrow" data-i18n="home.cats.eyebrow">Nach Raum</span>
+          <h2 data-i18n="home.cats.title">Wo möchten Sie beginnen?</h2>
         </div>
       </div>
       <div class="grid grid--3" id="cats"></div>
@@ -73,42 +86,51 @@
   <section class="section" style="background:var(--paper-2)">
     <div class="wrap center">
       <blockquote class="quote reveal">
-        <span data-i18n="home.quote"></span>
-        <cite data-i18n="home.quote.cite"></cite>
+        <span data-i18n="home.quote">„Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“</span>
+        <cite data-i18n="home.quote.cite">Elena Farber · Gestalterische Leitung</cite>
       </blockquote>
     </div>
   </section>
 
   <section class="split">
     <div class="split__text">
-      <span class="eyebrow" data-i18n="home.service.eyebrow"></span>
-      <h2 data-i18n="home.service.title"></h2>
-      <p data-i18n="home.service.p"></p>
+      <span class="eyebrow" data-i18n="home.service.eyebrow">Service</span>
+      <h2 data-i18n="home.service.title">Wir planen Ihren Raum mit.</h2>
+      <p data-i18n="home.service.p">Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>
       <ul class="specs" style="margin:1.5rem 0 2rem">
-        <li><span data-i18n="home.service.r1"></span><span data-i18n="home.service.v1"></span></li>
-        <li><span data-i18n="home.service.r2"></span><span data-i18n="home.service.v2"></span></li>
-        <li><span data-i18n="home.service.r3"></span><span data-i18n="home.service.v3"></span></li>
+        <li><span data-i18n="home.service.r1">Erstgespräch</span><span data-i18n="home.service.v1">kostenfrei</span></li>
+        <li><span data-i18n="home.service.r2">Raumplanung inkl. 3D-Ansicht</span><span data-i18n="home.service.v2">ab 2 Wochen</span></li>
+        <li><span data-i18n="home.service.r3">Materialmuster nach Hause</span><span data-i18n="home.service.v3">inklusive</span></li>
       </ul>
-      <div><a class="btn" href="kontakt.html" data-i18n="home.service.cta"></a></div>
+      <div><a class="btn" href="kontakt.html" data-i18n="home.service.cta">Termin vereinbaren</a></div>
     </div>
     <div class="split__media" id="service-art"></div>
   </section>
 
   <section class="section newsletter">
     <div class="wrap center">
-      <span class="eyebrow" data-i18n="home.news.eyebrow"></span>
-      <h2 data-i18n="home.news.title"></h2>
-      <p class="lede" style="margin-inline:auto;color:rgba(250,247,242,.75)" data-i18n="home.news.lede"></p>
+      <span class="eyebrow" data-i18n="home.news.eyebrow">Bleiben Sie in Verbindung</span>
+      <h2 data-i18n="home.news.title">Neue Entwürfe zuerst sehen</h2>
+      <p class="lede" style="margin-inline:auto;color:rgba(250,247,242,.75)" data-i18n="home.news.lede">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>
       <form data-demo>
-        <input type="email" name="email" required data-i18n-placeholder="home.news.placeholder" data-i18n-aria="home.news.placeholder">
-        <button class="btn btn--light" type="submit" data-i18n="home.news.cta"></button>
+        <input type="email" name="email" required data-i18n-placeholder="home.news.placeholder" data-i18n-aria="home.news.placeholder" placeholder="Ihre E-Mail-Adresse" aria-label="Ihre E-Mail-Adresse">
+        <button class="btn btn--light" type="submit" data-i18n="home.news.cta">Abonnieren</button>
         <div class="form-msg" data-msg hidden style="flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)"></div>
       </form>
     </div>
   </section>
 </main>
 
-<div id="site-footer"></div>
+<div id="site-footer">
+<noscript>
+  <footer class="footer"><div class="wrap">
+    <p>Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.</p>
+    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
+       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
+  </div></footer>
+</noscript>
+</div>
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>

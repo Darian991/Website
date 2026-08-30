@@ -205,6 +205,12 @@ p  { margin: 0 0 1.1em; }
 }
 .burger { display: none; }
 
+/* Navigation für Besucher ohne JavaScript — ohne die Auszugs-Regeln des Menüs */
+.nav-static { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+.nav-static a { font-size: .76rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.nav-static a:hover, .nav-static a.is-active { color: var(--brass); }
+noscript .footer p { max-width: 60ch; }
+
 .nav__close { display: none; }
 .nav-backdrop {
   position: fixed;
@@ -628,7 +634,9 @@ p  { margin: 0 0 1.1em; }
     z-index: 95;
     border-left: 1px solid var(--line);
   }
-  .nav.is-open { transform: none; }
+  /* Geschlossen ist das Menü auch für Tastatur und Vorlesehilfen weg. */
+  .nav { visibility: hidden; transition: transform var(--t), visibility var(--t); }
+  .nav.is-open { transform: none; visibility: visible; }
   .nav a { padding: 1.1rem 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
   .nav a::after { display: none; }
   .nav__close { display: block; position: absolute; top: 1.3rem; right: 1.1rem; font-size: 1.8rem; }

@@ -4,21 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="title.contact">Kontakt &amp; Beratung — Maison Noir</title>
-<meta name="description" content="Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Maison Noir.">
+<meta name="description" data-i18n-content="desc.contact" content="Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Maison Noir.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="contact">
-<div id="site-header"></div>
+<div id="site-header">
+<noscript>
+  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <header class="header"><div class="wrap header__inner">
+    <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+    <nav class="nav-static">
+      <a href="index.html">Startseite</a>
+      <a href="kollektion.html">Kollektion</a>
+      <a href="ueber-uns.html">Manufaktur</a>
+      <a href="kontakt.html" class="is-active">Kontakt</a>
+    </nav>
+  </div></header>
+</noscript>
+</div>
 
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="crumbs"><a href="index.html" data-i18n="nav.home"></a> · <span data-i18n="nav.contact"></span></div>
-      <h1 data-i18n-html="contact.title"></h1>
-      <p class="lede" data-i18n="contact.lede"></p>
+      <div class="crumbs"><a href="index.html" data-i18n="nav.home">Startseite</a> · <span data-i18n="nav.contact">Kontakt</span></div>
+      <h1 data-i18n-html="contact.title">Sprechen wir<br>über Ihren Raum.</h1>
+      <p class="lede" data-i18n="contact.lede">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>
     </div>
   </section>
 
@@ -27,62 +40,62 @@
       <div class="grid grid--form">
 
         <form data-demo>
-          <h3 data-i18n="contact.form.title"></h3>
+          <h3 data-i18n="contact.form.title">Anfrage senden</h3>
           <div class="form-row">
             <div class="field">
-              <label for="name" data-i18n="contact.name"></label>
+              <label for="name" data-i18n="contact.name">Name</label>
               <input id="name" name="name" type="text" required autocomplete="name">
             </div>
             <div class="field">
-              <label for="email" data-i18n="contact.email"></label>
+              <label for="email" data-i18n="contact.email">E-Mail</label>
               <input id="email" name="email" type="email" required autocomplete="email">
             </div>
           </div>
           <div class="form-row">
             <div class="field">
-              <label for="phone" data-i18n="contact.phone"></label>
+              <label for="phone" data-i18n="contact.phone">Telefon (optional)</label>
               <input id="phone" name="phone" type="tel" autocomplete="tel">
             </div>
             <div class="field">
-              <label for="topic" data-i18n="contact.topic"></label>
+              <label for="topic" data-i18n="contact.topic">Anliegen</label>
               <select id="topic" name="topic">
-                <option data-i18n="contact.topic1"></option>
-                <option data-i18n="contact.topic2"></option>
-                <option data-i18n="contact.topic3"></option>
-                <option data-i18n="contact.topic4"></option>
-                <option data-i18n="contact.topic5"></option>
-                <option data-i18n="contact.topic6"></option>
+                <option value="showroom" data-i18n="contact.topic1">Beratungstermin im Showroom</option>
+                <option value="zuhause" data-i18n="contact.topic2">Beratung bei mir zu Hause</option>
+                <option value="entwurf" data-i18n="contact.topic3">Frage zu einem Entwurf</option>
+                <option value="muster" data-i18n="contact.topic4">Materialmuster anfordern</option>
+                <option value="bestellung" data-i18n="contact.topic5">Bestehende Bestellung</option>
+                <option value="sonstiges" data-i18n="contact.topic6">Sonstiges</option>
               </select>
             </div>
           </div>
           <div class="field">
-            <label for="message" data-i18n="contact.message"></label>
-            <textarea id="message" name="message" required data-i18n-placeholder="contact.messagePlaceholder"></textarea>
+            <label for="message" data-i18n="contact.message">Ihre Nachricht</label>
+            <textarea id="message" name="message" required data-i18n-placeholder="contact.messagePlaceholder" placeholder="Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen."></textarea>
           </div>
-          <p class="form-note" data-i18n="contact.privacy"></p>
-          <button class="btn" type="submit" style="margin-top:1rem" data-i18n="contact.send"></button>
+          <p class="form-note" data-i18n="contact.privacy">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>
+          <button class="btn" type="submit" style="margin-top:1rem" data-i18n="contact.send">Anfrage senden</button>
           <div class="form-msg" data-msg hidden style="margin-top:1.2rem"></div>
         </form>
 
         <aside>
-          <h3 data-i18n="contact.reach"></h3>
+          <h3 data-i18n="contact.reach">Direkt erreichbar</h3>
           <ul class="specs" style="margin-bottom:2.5rem">
-            <li><span data-i18n="contact.phoneLabel"></span><a href="tel:+498912345678">+49 89 1234 5678</a></li>
-            <li><span data-i18n="contact.emailLabel"></span><a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></li>
-            <li><span data-i18n="contact.hoursLabel"></span><span data-i18n="contact.hours"></span></li>
+            <li><span data-i18n="contact.phoneLabel">Telefon</span><a href="tel:+498912345678">+49 89 1234 5678</a></li>
+            <li><span data-i18n="contact.emailLabel">E-Mail</span><a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></li>
+            <li><span data-i18n="contact.hoursLabel">Erreichbarkeit</span><span data-i18n="contact.hours">Mo–Fr 9–18 Uhr</span></li>
           </ul>
 
-          <h3 data-i18n="contact.showroom"></h3>
-          <p class="muted" data-i18n-html="contact.address"></p>
+          <h3 data-i18n="contact.showroom">Showroom</h3>
+          <p class="muted" data-i18n-html="contact.address">Maximilianstraße 12<br>80539 München<br>Deutschland</p>
           <ul class="specs" style="margin-bottom:2.5rem">
-            <li><span data-i18n="contact.monfri"></span><span data-i18n="contact.monfriH"></span></li>
-            <li><span data-i18n="contact.sat"></span><span data-i18n="contact.satH"></span></li>
-            <li><span data-i18n="contact.sun"></span><span data-i18n="contact.sunH"></span></li>
+            <li><span data-i18n="contact.monfri">Montag – Freitag</span><span data-i18n="contact.monfriH">10–19 Uhr</span></li>
+            <li><span data-i18n="contact.sat">Samstag</span><span data-i18n="contact.satH">11–17 Uhr</span></li>
+            <li><span data-i18n="contact.sun">Sonntag</span><span data-i18n="contact.sunH">geschlossen</span></li>
           </ul>
 
           <div style="border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)">
-            <span class="eyebrow" data-i18n="contact.hint"></span>
-            <p style="margin:0;font-size:.92rem" class="muted" data-i18n="contact.hint.p"></p>
+            <span class="eyebrow" data-i18n="contact.hint">Hinweis</span>
+            <p style="margin:0;font-size:.92rem" class="muted" data-i18n="contact.hint.p">Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen.</p>
           </div>
         </aside>
 
@@ -91,18 +104,27 @@
   </section>
 </main>
 
-<div id="site-footer"></div>
+<div id="site-footer">
+<noscript>
+  <footer class="footer"><div class="wrap">
+    <p>Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.</p>
+    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
+       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
+  </div></footer>
+</noscript>
+</div>
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
 function initPage() {
+  // Der Wert steht fest, die Beschriftung wechselt mit der Sprache —
+  // so bleibt ?thema=muster in jeder Sprache gültig.
   const topic = queryParams().get("thema");
-  if (topic) {
-    const sel = $("#topic");
-    [...sel.options].forEach((o) => { if (o.text === topic) sel.value = o.value; });
-  }
+  const sel = $("#topic");
+  if (topic && [...sel.options].some((o) => o.value === topic)) sel.value = topic;
 }
 </script>
 </body>

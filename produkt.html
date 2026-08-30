@@ -3,15 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-i18n="title.product">Produkt — Maison Noir</title>
-<meta name="description" content="Details, Materialien und Maße zu den Entwürfen von Maison Noir.">
+<title data-i18n="title.product">Entwurf — Maison Noir</title>
+<meta name="description" data-i18n-content="desc.product" content="Materialien, Maße und Ausführungen zu den Entwürfen von Maison Noir.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="shop">
-<div id="site-header"></div>
+<div id="site-header">
+<noscript>
+  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <header class="header"><div class="wrap header__inner">
+    <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+    <nav class="nav-static">
+      <a href="index.html">Startseite</a>
+      <a href="kollektion.html" class="is-active">Kollektion</a>
+      <a href="ueber-uns.html">Manufaktur</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+  </div></header>
+</noscript>
+</div>
 
 <main>
   <section class="section" style="padding-top:clamp(2rem,4vw,3.5rem)" id="pdp-root"></section>
@@ -20,17 +33,26 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="eyebrow" data-i18n="pdp.related.eyebrow"></span>
-          <h2 data-i18n="pdp.related.title"></h2>
+          <span class="eyebrow" data-i18n="pdp.related.eyebrow">Passt dazu</span>
+          <h2 data-i18n="pdp.related.title">Ebenfalls sehenswert</h2>
         </div>
-        <a class="link-underline" href="kollektion.html" data-i18n="pdp.related.link"></a>
+        <a class="link-underline" href="kollektion.html" data-i18n="pdp.related.link">Alle Entwürfe</a>
       </div>
       <div class="grid grid--3" id="related"></div>
     </div>
   </section>
 </main>
 
-<div id="site-footer"></div>
+<div id="site-footer">
+<noscript>
+  <footer class="footer"><div class="wrap">
+    <p>Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.</p>
+    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
+       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
+  </div></footer>
+</noscript>
+</div>
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>

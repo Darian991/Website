@@ -4,21 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-i18n="title.shop">Kollektion — Maison Noir</title>
-<meta name="description" content="Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.">
+<meta name="description" data-i18n-content="desc.shop" content="Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="shop">
-<div id="site-header"></div>
+<div id="site-header">
+<noscript>
+  <div class="topbar">Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678</div>
+  <header class="header"><div class="wrap header__inner">
+    <a class="logo" href="index.html">Maison Noir<small>Möbelmanufaktur</small></a>
+    <nav class="nav-static">
+      <a href="index.html">Startseite</a>
+      <a href="kollektion.html" class="is-active">Kollektion</a>
+      <a href="ueber-uns.html">Manufaktur</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+  </div></header>
+</noscript>
+</div>
 
 <main>
   <section class="page-head">
     <div class="wrap">
-      <div class="crumbs"><a href="index.html" data-i18n="nav.home"></a> · <span data-i18n="nav.shop"></span></div>
-      <h1 data-i18n="shop.title"></h1>
-      <p class="lede" data-i18n="shop.lede"></p>
+      <div class="crumbs"><a href="index.html" data-i18n="nav.home">Startseite</a> · <span data-i18n="nav.shop">Kollektion</span></div>
+      <h1 data-i18n="shop.title">Die Kollektion</h1>
+      <p class="lede" data-i18n="shop.lede">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung begonnen — in der Ausführung, die Sie wählen.</p>
     </div>
   </section>
 
@@ -31,16 +44,16 @@
             <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
               <circle cx="8.5" cy="8.5" r="5.5"/><line x1="12.6" y1="12.6" x2="17.5" y2="17.5" stroke-linecap="round"/>
             </svg>
-            <input type="search" id="shop-search" data-i18n-placeholder="shop.searchPlaceholder" data-i18n-aria="shop.search" autocomplete="off">
-            <button type="button" id="shop-search-clear" data-i18n-aria="search.clear" hidden>×</button>
+            <input type="search" id="shop-search" data-i18n-placeholder="shop.searchPlaceholder" data-i18n-aria="shop.search" autocomplete="off" placeholder="Name, Kategorie oder Material" aria-label="Suchen">
+            <button type="button" id="shop-search-clear" data-i18n-aria="search.clear" hidden aria-label="Suche zurücksetzen">×</button>
           </label>
           <div class="sort">
-            <label for="sort" data-i18n="shop.sort"></label>
+            <label for="sort" data-i18n="shop.sort">Sortieren</label>
             <select id="sort">
-              <option value="empfohlen" data-i18n="shop.sort.featured"></option>
-              <option value="preis-auf" data-i18n="shop.sort.priceUp"></option>
-              <option value="preis-ab" data-i18n="shop.sort.priceDown"></option>
-              <option value="name" data-i18n="shop.sort.name"></option>
+              <option value="empfohlen" data-i18n="shop.sort.featured">Empfohlen</option>
+              <option value="preis-auf" data-i18n="shop.sort.priceUp">Preis aufsteigend</option>
+              <option value="preis-ab" data-i18n="shop.sort.priceDown">Preis absteigend</option>
+              <option value="name" data-i18n="shop.sort.name">Name A–Z</option>
             </select>
           </div>
         </div>
@@ -52,7 +65,16 @@
   </section>
 </main>
 
-<div id="site-footer"></div>
+<div id="site-footer">
+<noscript>
+  <footer class="footer"><div class="wrap">
+    <p>Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.</p>
+    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
+       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
+  </div></footer>
+</noscript>
+</div>
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
@@ -63,8 +85,7 @@ let activeQuery = "";
 
 function initPage() {
   const params = queryParams();
-  const wantedCat = params.get("kategorie");
-  if (wantedCat && CATEGORY_KEYS.includes(wantedCat)) activeCat = wantedCat;
+  activeCat = categoryKeyFrom(params.get("kategorie")) || "alle";
   activeQuery = params.get("suche") || "";
 
   $("#filters").innerHTML = CATEGORY_KEYS.map((c) =>

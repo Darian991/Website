@@ -72,6 +72,14 @@ function setParam(key, value) {
   }
 }
 
+/* Wechselt auf eine andere Seite — in der Einzeldatei-Vorschau über die Raute */
+function goTo(href) {
+  if (!isPreview()) { location.href = href; return; }
+  const next = "#" + href;
+  if (location.hash === next) window.__renderRoute?.();
+  else location.hash = next;
+}
+
 /* Zuhörer, die beim Seitenwechsel wieder abgemeldet werden müssen */
 const pageListeners = [];
 function onCartChange(fn) {
@@ -95,14 +103,18 @@ const Cart = {
       return [];
     }
     if (!Array.isArray(items)) return [];
-    return items.filter((i) => findProduct(i.id)).map((i) => {
-      const p = findProduct(i.id);
+    // Fremde oder beschädigte Einträge werden übergangen, statt die Seite lahmzulegen.
+    return items.reduce((list, i) => {
+      const p = i && typeof i === "object" ? findProduct(i.id) : null;
+      if (!p) return list;
+      const qty = Math.min(Math.max(Math.round(Number(i.qty) || 1), 1), 99);
       // Ältere Warenkörbe haben den Farbnamen gespeichert — in eine Position umrechnen,
       // damit die Farbe die Sprache mitwechselt.
       let idx = Number.isInteger(i.colorIndex) ? i.colorIndex : nameToIndex(p, i.color);
       if (idx < 0 || idx >= p.swatches.length) idx = 0;
-      return { id: i.id, qty: i.qty, colorIndex: idx };
-    });
+      list.push({ id: p.id, qty, colorIndex: idx });
+      return list;
+    }, []);
   },
   write(items) {
     try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) { /* z. B. privater Modus */ }
@@ -266,7 +278,19 @@ function bindChrome() {
     nav.classList.toggle("is-open", open);
     navBackdrop?.classList.toggle("is-open", open);
     burger?.setAttribute("aria-expanded", String(open));
+    // Solange das Menü als Auszug daneben liegt, darf es weder mit der
+    // Tabulatortaste noch von Vorlesehilfen erreichbar sein.
+    syncNavReachability();
   };
+
+  /* Das Menü ist nur dann unerreichbar, wenn es als Auszug vorliegt und zu ist.
+     Ab 1240 px steht es als normale Navigation in der Kopfzeile. */
+  function syncNavReachability() {
+    const isPanel = window.matchMedia("(max-width: 1240px)").matches;
+    const hidden = isPanel && !nav.classList.contains("is-open");
+    nav.inert = hidden;
+    nav.setAttribute("aria-hidden", String(hidden));
+  }
 
   if (burger && nav) {
     burger.addEventListener("click", () => setNav(!nav.classList.contains("is-open")));
@@ -276,6 +300,8 @@ function bindChrome() {
     $$("#nav a").forEach((a) => a.addEventListener("click", () => setNav(false)));
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") setNav(false); });
     document.addEventListener("route:changed", () => setNav(false));
+    window.addEventListener("resize", syncNavReachability);
+    syncNavReachability();
   }
 
   const backdrop = $("#drawer-backdrop");
@@ -361,21 +387,25 @@ function bindSearch() {
     renderSearch(input.value);
   };
   const closeSearch = () => {
+    if (!bar.classList.contains("is-open")) return;
     bar.classList.remove("is-open");
     setTimeout(() => { if (!bar.classList.contains("is-open")) bar.hidden = true; }, 300);
     $("#search-open")?.focus();
   };
 
-  $("#search-open")?.addEventListener("click", () => (bar.hidden ? openSearch() : closeSearch()));
+  // Der Zustand hängt an der Klasse, nicht am verzögerten hidden-Attribut —
+  // sonst schließt ein Klick während des Zuklappens erneut, statt zu öffnen.
+  $("#search-open")?.addEventListener("click", () =>
+    (bar.classList.contains("is-open") ? closeSearch() : openSearch()));
   $("#search-close")?.addEventListener("click", closeSearch);
   input.addEventListener("input", () => renderSearch(input.value));
   input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeSearch();
     if (e.key === "Enter" && input.value.trim()) {
-      location.href = "kollektion.html?suche=" + encodeURIComponent(input.value.trim());
+      goTo("kollektion.html?suche=" + encodeURIComponent(input.value.trim()));
     }
   });
-  document.addEventListener("route:changed", () => { if (!bar.hidden) closeSearch(); });
+  document.addEventListener("route:changed", closeSearch);
 
   function renderSearch(query) {
     const q = query.trim();

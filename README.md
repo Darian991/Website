@@ -21,7 +21,8 @@ assets/css/style.css   Gesamtes Design (Farben, Typografie, Layout, Responsive)
 assets/js/i18n.js      Alle Texte in Deutsch, Englisch und Französisch
 assets/js/data.js      Produktkatalog + alle Abbildungen als SVG
 assets/js/app.js       Warenkorb, Suche, Kopf-/Fußzeile, Filter, Formulare
-tools/build-preview.js Baut daraus preview.html (alles in einer Datei)
+tools/build.js         Schreibt die deutschen Texte fest in die Seiten
+                       und baut preview.html (alles in einer Datei)
 ```
 
 Kopf- und Fußzeile werden von `app.js` in die Platzhalter `#site-header` und
@@ -43,7 +44,7 @@ zum Verschicken oder Herzeigen. Die Datei wird aus denselben Quelldateien
 erzeugt, es gibt also keine zweite Version, die auseinanderlaufen kann:
 
 ```bash
-node tools/build-preview.js
+node tools/build.js
 ```
 
 Statt eigener Adressen pro Seite nutzt sie die Raute (`#kollektion.html`).
@@ -56,7 +57,10 @@ Kopfzeile wird im Browser gespeichert. Preise, Datumsangaben und Zahlen
 folgen der jeweiligen Schreibweise (8.490 € · €8,490 · 8 490 €).
 
 **Texte ändern** — alle Oberflächen- und Seitentexte stehen in
-`assets/js/i18n.js`, jeweils unter demselben Schlüssel pro Sprache:
+`assets/js/i18n.js`, jeweils unter demselben Schlüssel pro Sprache.
+Nach jeder Änderung `node tools/build.js` ausführen: das schreibt die
+deutschen Fassungen fest in die Seiten (damit sie auch ohne JavaScript
+lesbar und für Suchmaschinen auffindbar sind) und baut die Vorschau neu.
 
 ```js
 de: { "home.hero.title": "Möbel für ein<br>ganzes Leben." },
@@ -119,12 +123,23 @@ externe Dateien funktioniert. Sobald echte Fotos vorliegen, lassen sie sich
 ersetzen: in `productCard()` (app.js) und auf der Produktseite `artFor(p)` durch
 ein `<img src="…" alt="…">` austauschen.
 
+## Ohne JavaScript
+
+Die Seiten enthalten alle Texte fest im Quelltext — Überschriften, Fließtext,
+Navigation und die Beschreibung für Suchmaschinen sind also auch ohne
+JavaScript da. Warenkorb, Suche, Sprachwahl und die Produktliste auf der
+Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
+
 ## Was noch fehlt für den echten Betrieb
 
 * **Zahlung**: Der Button „Verbindlich anfragen“ ist eine Demo. Für echte
   Zahlungen eignet sich Stripe Checkout oder ein Shop-System wie Shopify.
 * **Formulare**: Kontakt- und Newsletter-Formular zeigen nur eine Bestätigung an.
   Sie brauchen ein Backend oder einen Dienst wie Formspree.
+* **Mehrsprachige Adressen**: Die Sprache wird im Browser gespeichert, alle
+  Sprachen teilen sich dieselbe Adresse. Für Suchmaschinen bräuchte jede
+  Sprache eigene Adressen (`/en/kollektion`) samt `hreflang` — das geht mit
+  einer rein statischen Seite nicht und wäre der nächste Schritt.
 * **Rechtstexte**: Impressum, Datenschutzerklärung, AGB und Widerrufsbelehrung
   sind in der Fußzeile verlinkt, aber noch nicht geschrieben — in Deutschland
   sind sie für einen Shop Pflicht.
