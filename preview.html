@@ -756,7 +756,8 @@ noscript .footer p { max-width: 60ch; }
 const LANGS = [
   { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
   { code: "en", label: "EN", name: "English",  locale: "en-GB" },
-  { code: "fr", label: "FR", name: "Français", locale: "fr-FR" }
+  { code: "fr", label: "FR", name: "Français", locale: "fr-FR" },
+  { code: "es", label: "ES", name: "Español",  locale: "es-ES" }
 ];
 
 const CATEGORY_KEYS = ["alle", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "accessoires"];
@@ -1484,6 +1485,253 @@ const I18N = {
     "contact.sun": "Dimanche", "contact.sunH": "fermé",
     "contact.hint": "Remarque",
     "contact.hint.p": "Ceci est un site de démonstration. Le formulaire n'envoie pas encore de vrais messages — le raccordement à une boîte mail ou à un CRM peut être ajouté à tout moment."
+  },
+
+  /* ------------------------------------------------------ Español */
+  es: {
+    "html.lang": "es",
+    "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
+    "title.shop": "Colección — Studio Lusso",
+    "title.product": "Pieza — Studio Lusso",
+    "title.cart": "Cesta — Studio Lusso",
+    "title.about": "El estudio — Studio Lusso",
+    "title.contact": "Contacto y asesoramiento — Studio Lusso",
+    "desc.home": "Studio Lusso diseña espacios en Hamburgo y ofrece muebles de segunda mano cuidadosamente seleccionados, además de iluminación nueva.",
+    "desc.shop": "Toda la colección de Studio Lusso: sofás, butacas, mesas, sillas, iluminación, almacenaje y camas.",
+    "desc.product": "Materiales, medidas, estado y acabados de las piezas de Studio Lusso.",
+    "desc.cart": "Su selección en Studio Lusso — con estado, disponibilidad y entrega en la estancia.",
+    "desc.about": "Studio Lusso es un estudio de interiorismo en Hamburgo: planificación integral, diseño a medida y proyectos nacionales e internacionales.",
+    "desc.contact": "Asesoramiento de interiorismo, showroom en Hamburgo y contacto con Studio Lusso.",
+    "topbar": "Showroom Poliform Hamburgo · Cita previa en el +49 40 41 92 74 60",
+    "logo.sub": "Interior Design Concepts",
+    "nav.home": "Inicio",
+    "nav.shop": "Colección",
+    "nav.about": "Estudio",
+    "nav.contact": "Contacto",
+    "action.advice": "Asesoramiento",
+    "action.cart": "Cesta",
+    "action.cart.open": "Abrir la cesta",
+    "action.search": "Buscar",
+    "action.search.open": "Abrir la búsqueda",
+    "action.menu": "Abrir el menú",
+    "action.close": "Cerrar",
+    "action.language": "Elegir idioma",
+    "cat.alle": "Todo",
+    "cat.sofas": "Sofás",
+    "cat.sessel": "Butacas",
+    "cat.tische": "Mesas",
+    "cat.stuehle": "Sillas",
+    "cat.leuchten": "Iluminación",
+    "cat.aufbewahrung": "Almacenaje",
+    "cat.betten": "Camas",
+    "cat.accessoires": "Accesorios",
+    "search.title": "Buscar",
+    "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
+    "search.hint": "Busque por nombre, categoría o material.",
+    "search.results": "Resultados",
+    "search.none": "Sin resultados para",
+    "search.noneHint": "Pruebe con otra palabra — o recorra toda la colección.",
+    "search.all": "Ver todos los resultados",
+    "search.clear": "Borrar la búsqueda",
+    "cart.title": "Cesta",
+    "cart.empty": "Su cesta está vacía.",
+    "cart.subtotal": "Subtotal",
+    "cart.checkout": "Finalizar compra",
+    "cart.continue": "Seguir comprando",
+    "cart.remove": "Quitar",
+    "cart.added": "{name} se ha añadido a la cesta",
+    "footer.tagline": "Diseñamos espacios que van más allá de las modas: atemporales, meditados, elegantes y auténticos.",
+    "footer.collection": "Colección",
+    "footer.service": "Servicio",
+    "footer.showroom": "Showroom",
+    "footer.all": "Ver todo",
+    "footer.advice": "Asesoramiento personal",
+    "footer.delivery": "Entrega y montaje",
+    "footer.care": "Cuidados",
+    "footer.manufactory": "Sobre el estudio",
+    "footer.rights": "Studio Lusso Interior Design Concepts",
+    "footer.legal": "Aviso legal · Privacidad · Condiciones · Derecho de desistimiento",
+    "home.hero.eyebrow": "Interior Design Concepts",
+    "home.hero.title": "Espacios para vivir.<br>Diseño con fondo.",
+    "home.hero.lede": "Diseñamos espacios que van más allá de las modas. Como estudio de interiorismo centrado en la planificación integral, unimos la máxima exigencia estética con la precisión técnica.",
+    "home.hero.cta1": "Ver la colección",
+    "home.hero.cta2": "Visitar el showroom",
+    "home.feat1.t": "Hecho a mano",
+    "home.feat1.p": "En talleres de Italia, Dinamarca y Alemania",
+    "home.feat2.t": "Entrega en la estancia",
+    "home.feat2.p": "Servicio de guante blanco, montaje incluido",
+    "home.feat3.t": "10 años de garantía",
+    "home.feat3.p": "Sobre estructura, suspensión y acabado",
+    "home.feat4.t": "Asesoramiento personal",
+    "home.feat4.p": "En el showroom de Hamburgo o en su casa",
+    "home.used.eyebrow": "Segunda mano",
+    "home.used.title": "Buenas piezas, de segunda mano.",
+    "home.used.p": "Los muebles de nuestra colección provienen de proyectos finalizados, showrooms y particulares. Cada pieza se revisa, se restaura y se presenta con su estado y su año — y solo está disponible una vez. Nuestra iluminación, en cambio, se fabrica nueva.",
+    "home.featured.eyebrow": "Selección",
+    "home.featured.title": "Las piezas de la temporada",
+    "home.featured.link": "Las 16 piezas",
+    "home.story.eyebrow": "Nuestra filosofía",
+    "home.story.title": "Para espacios que funcionan.",
+    "home.story.p1": "Estamos convencidos: el buen interiorismo nace del diálogo — entre visión y viabilidad, entre creatividad y estructura, entre estética y uso cotidiano.",
+    "home.story.p2": "Con pasión, experiencia y una exigencia clara desarrollamos espacios que se convierten en lugares de vida. No cualesquiera, sino únicos.",
+    "home.story.link": "Conocer el estudio",
+    "home.cats.eyebrow": "Por estancia",
+    "home.cats.title": "¿Por dónde quiere empezar?",
+    "home.cats.sitting": "Sofás y butacas",
+    "home.quote": "«Studio Lusso. Para espacios que funcionan.»",
+    "home.quote.cite": "Studio Lusso · Hamburgo",
+    "home.service.eyebrow": "Servicio",
+    "home.service.title": "Planificamos su espacio con usted.",
+    "home.service.p": "Nuestro equipo de asesoramiento se desplaza hasta usted, toma medidas, lleva muestras y elabora un plan — sin coste ni compromiso, en toda Europa.",
+    "home.service.r1": "Primera conversación",
+    "home.service.v1": "sin coste",
+    "home.service.r2": "Plano con vista 3D",
+    "home.service.v2": "a partir de 2 semanas",
+    "home.service.r3": "Muestras de material en casa",
+    "home.service.v3": "incluidas",
+    "home.service.cta": "Pedir cita",
+    "home.news.eyebrow": "Sigamos en contacto",
+    "home.news.title": "Vea antes las novedades",
+    "home.news.lede": "Unas seis veces al año escribimos sobre piezas nuevas, visitas a talleres y el oficio que hay detrás.",
+    "home.news.placeholder": "Su dirección de correo",
+    "home.news.cta": "Suscribirse",
+    "shop.title": "La colección",
+    "shop.lede": "Dieciséis piezas disponibles ahora. Los muebles son de segunda mano y piezas únicas; la iluminación se fabrica nueva.",
+    "shop.search": "Buscar",
+    "shop.searchPlaceholder": "Nombre, categoría o material",
+    "shop.sort": "Ordenar",
+    "shop.sort.featured": "Recomendado",
+    "shop.sort.priceUp": "Precio de menor a mayor",
+    "shop.sort.priceDown": "Precio de mayor a menor",
+    "shop.sort.name": "Nombre A–Z",
+    "shop.count.one": "1 pieza",
+    "shop.count.many": "{n} piezas",
+    "shop.for": "para",
+    "shop.empty": "Ahora mismo no hay nada disponible en esta selección.",
+    "shop.add": "Añadir a la cesta",
+    "shop.used": "Segunda mano",
+    "shop.new": "Nuevo",
+    "pdp.variant": "Acabado",
+    "pdp.add": "Añadir a la cesta",
+    "pdp.less": "Menos",
+    "pdp.more": "Más",
+    "pdp.note": "Fabricación {lead} · Entrega en la estancia incluida · 30 días de devolución",
+    "pdp.note.used": "Pieza única, disponible ahora · Revisada y restaurada · Entrega en la estancia incluida · 14 días de devolución",
+    "pdp.unique": "Pieza única — disponible una sola vez",
+    "pdp.acc.desc": "Descripción",
+    "pdp.acc.spec": "Material y medidas",
+    "pdp.acc.delivery": "Entrega y montaje",
+    "pdp.acc.care": "Cuidados y garantía",
+    "pdp.spec.material": "Material",
+    "pdp.spec.dimensions": "Medidas",
+    "pdp.spec.weight": "Peso",
+    "pdp.spec.origin": "Fabricante",
+    "pdp.spec.condition": "Estado",
+    "pdp.spec.year": "Año",
+    "pdp.delivery.body": "Entregamos en toda Europa sin gastos de envío, directamente en la estancia que elija: desembalamos, montamos y nos llevamos el embalaje. Acordamos la fecha por teléfono en cuanto la pieza sale del taller.",
+    "pdp.care.body": "Garantizamos estructura, suspensión y acabado durante diez años. Cada pieza incluye instrucciones de cuidado; los productos para cuero y madera los enviamos gratuitamente si lo desea.",
+    "pdp.view": "Vista {n}",
+    "pdp.related.eyebrow": "Combina con",
+    "pdp.related.title": "También merece la pena",
+    "pdp.related.link": "Todas las piezas",
+    "pdp.missing.eyebrow": "No encontrado",
+    "pdp.missing.title": "Esta pieza no existe",
+    "pdp.missing.p": "Puede que se haya renombrado o que el enlace esté incompleto.",
+    "pdp.missing.cta": "Ir a la colección",
+    "cartpage.title": "Su selección",
+    "cartpage.empty.eyebrow": "Aún no ha elegido nada",
+    "cartpage.empty.title": "Su cesta está vacía",
+    "cartpage.empty.p": "Recorra la colección — o deje que le asesoremos personalmente.",
+    "cartpage.empty.cta1": "Ir a la colección",
+    "cartpage.empty.cta2": "Pedir asesoramiento",
+    "cartpage.production": "Fabricación",
+    "cartpage.clear": "Vaciar la cesta",
+    "cartpage.summary": "Resumen",
+    "cartpage.delivery": "Entrega y montaje",
+    "cartpage.included": "incluida",
+    "cartpage.vat": "IVA incluido (19 %)",
+    "cartpage.total": "Total",
+    "cartpage.checkout": "Enviar solicitud en firme",
+    "cartpage.note": "Confirmamos personalmente cada pedido antes de empezar. Anticipo del 30 %, resto en la entrega.",
+    "cartpage.demo": "Caja de demostración: aquí irá el pago en la versión definitiva. Su solicitud ya nos habría llegado.",
+    "cond.used": "Segunda mano",
+    "cond.new": "Nuevo",
+    "grade.wieneu": "Como nuevo — pieza de exposición",
+    "grade.sehrgut": "Muy bueno — apenas se aprecia el uso",
+    "grade.gut": "Bueno — leves señales de uso",
+    "about.eyebrow": "Estudio de interiorismo",
+    "about.title": "Diseñamos espacios<br>que van más allá de las modas.",
+    "about.lede": "Como estudio de interiorismo centrado en la planificación integral, unimos la máxima exigencia estética con la precisión técnica y un conocimiento profundo del contexto arquitectónico. Acompañamos los proyectos desde la primera idea hasta su realización completa.",
+    "about.mat.eyebrow": "Lo que nos distingue",
+    "about.mat.title": "Planificación integral.",
+    "about.mat.p1": "Para nosotros el interiorismo es más que amueblar o que una cocina. Es un juego orquestado entre espacio, luz, materia y función.",
+    "about.mat.p2": "Nuestro enfoque integra desde el principio la arquitectura y las necesidades de cada persona — para un resultado que convence tanto visualmente como en el fondo.",
+    "about.n1.t": "Planificación integral",
+    "about.n1.p": "Espacio, luz, materia y función se entrelazan en lugar de convivir sin más.",
+    "about.n2.t": "Diseño a medida",
+    "about.n2.p": "Cada proyecto es tan singular como su contexto — ajustado al lugar, al uso y a las personas.",
+    "about.n3.t": "Más allá de las fronteras",
+    "about.n3.p": "Junto a Poliform y Baxter trabajamos con todos los fabricantes de referencia — en Alemania y fuera.",
+    "about.proc.eyebrow": "Desarrollo del proyecto",
+    "about.proc.title": "De la necesidad al espacio.",
+    "about.proc.s1": "Análisis de necesidades y primera cita",
+    "about.proc.p1": "Entender lo que de verdad cuenta. Aclaramos expectativas, requisitos funcionales y la dirección estética.",
+    "about.proc.s2": "Concepto y anteproyecto",
+    "about.proc.p2": "Desarrollar ideas, pensar en espacios — con visualizaciones 3D, paneles de ambiente y propuestas de color y material.",
+    "about.proc.s3": "Planificación y detalle",
+    "about.proc.p3": "Del concepto a la solución concreta: planos de amueblamiento, iluminación, planos acotados y detalles de ejecución.",
+    "about.proc.s4": "Ejecución y dirección de obra",
+    "about.proc.p4": "El diseño se hace realidad. Coordinamos los oficios y velamos por plazos, costes y calidad.",
+    "about.proc.s5": "Amueblamiento y entrega",
+    "about.proc.p5": "El detalle marca la diferencia: muebles, luminarias, cortinas, alfombras, arte. Después seguimos siendo su interlocutor.",
+    "about.care.eyebrow": "Servicios",
+    "about.care.title": "De qué nos ocupamos",
+    "about.care.leather": "Interiorismo y conceptos de espacio",
+    "about.care.leather.p": "Ejecución de proyectos nacionales e internacionales, interiorismo, cocinas de alta gama y conceptos completos — desde la primera idea hasta la entrega.",
+    "about.care.wood": "Planificación técnica",
+    "about.care.wood.p": "Planos de ejecución y de detalle, amueblamiento e iluminación, y coordinación con el resto de agentes.",
+    "about.care.fabric": "Materiales y superficies",
+    "about.care.fabric.p": "Asesoramiento en materiales, colores y superficies, con un criterio seguro para la proporción, el tacto y la atmósfera.",
+    "about.care.metal": "Piezas a medida",
+    "about.care.metal.p": "Piezas únicas de altísimo nivel, realizadas con manufacturas seleccionadas — también a partir de diseños propios.",
+    "about.visit.eyebrow": "Showroom",
+    "about.visit.title": "Showroom Poliform Hamburgo",
+    "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburgo<br>Con cita previa",
+    "about.visit.cta": "Pedir cita",
+    "contact.title": "Hablemos<br>de su espacio.",
+    "contact.lede": "Ya sea una duda sobre un material o el equipamiento de una vivienda entera — nos tomamos el tiempo. Respuesta en un día laborable.",
+    "contact.form.title": "Enviar consulta",
+    "contact.name": "Nombre",
+    "contact.email": "Correo electrónico",
+    "contact.phone": "Teléfono (opcional)",
+    "contact.topic": "Asunto",
+    "contact.topic1": "Cita en el showroom",
+    "contact.topic2": "Asesoramiento en mi domicilio",
+    "contact.topic3": "Consulta sobre una pieza",
+    "contact.topic4": "Solicitar muestras",
+    "contact.topic5": "Pedido en curso",
+    "contact.topic6": "Otro",
+    "contact.message": "Su mensaje",
+    "contact.messagePlaceholder": "Cuéntenos brevemente cómo es su espacio, sus medidas y sus plazos.",
+    "contact.privacy": "Al enviar el formulario acepta que utilicemos sus datos para tramitar la consulta. No los cedemos a terceros.",
+    "contact.send": "Enviar consulta",
+    "contact.thanksNamed": "Gracias, {name}. Le responderemos en un día laborable.",
+    "contact.thanks": "Gracias — hemos recibido su consulta.",
+    "contact.reach": "Contacto directo",
+    "contact.phoneLabel": "Teléfono",
+    "contact.emailLabel": "Correo",
+    "contact.hoursLabel": "Disponibilidad",
+    "contact.hours": "Lun–vie 9–18 h",
+    "contact.showroom": "Showroom",
+    "contact.address": "Stadthausbrücke 8<br>20355 Hamburgo<br>Alemania",
+    "contact.monfri": "Lunes – viernes",
+    "contact.monfriH": "10–19 h",
+    "contact.sat": "Sábado",
+    "contact.satH": "11–17 h",
+    "contact.sun": "Domingo",
+    "contact.sunH": "cerrado",
+    "contact.hint": "Nota",
+    "contact.hint.p": "Esta es una página de demostración. El formulario aún no envía mensajes reales — la conexión con un buzón o un CRM puede añadirse en cualquier momento."
   }
 };
 
@@ -1895,7 +2143,11 @@ const PRODUCTS = [
       fr: { short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
         description: "Le Milano associe des proportions généreuses à une silhouette remarquablement légère. La carcasse est tendue à la main sur une structure en chêne séché à l'air ; les coussins d'assise ont une âme en mousse froide surmontée de duvet d'oie. Le cuir aniline à tannage végétal développe sa propre patine au fil des ans.",
         material: "Cuir aniline, chêne massif, duvet d'oie", dimensions: "L 240 × P 98 × H 72 cm",
-        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] }
+        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] },
+      es: { short: "Sofá de tres plazas en piel anilina italiana sobre estructura de roble macizo.",
+        description: "El Milano une unas proporciones generosas con una silueta notablemente ligera. El cuerpo se tensa a mano sobre una estructura de roble secado al aire; los cojines de asiento llevan un núcleo de espuma fría rematado con plumón de oca. La piel anilina de curtido vegetal desarrolla con los años su propia pátina.",
+        material: "Piel anilina, roble macizo, plumón de oca", dimensions: "An 240 × Pr 98 × Al 72 cm",
+        origin: "Taller de Brianza, Italia", lead: "10–12 semanas", colors: ["Coñac", "Beige arena", "Antracita"] }
     }
   },
   {
@@ -1913,7 +2165,11 @@ const PRODUCTS = [
       fr: { short: "Canapé deux places modulaire recouvert de lin belge.",
         description: "Riviera est conçu comme un système modulaire et peut être agrandi à tout moment. La housse en lin belge lavé s'enlève entièrement et passe en machine. Les pieds en laiton tournés coniques donnent de la légèreté au volume.",
         material: "Lin belge, hêtre, laiton", dimensions: "L 196 × P 94 × H 74 cm",
-        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] }
+        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] },
+      es: { short: "Sofá de dos plazas modular tapizado en lino belga.",
+        description: "Riviera está concebido como un sistema modular y puede ampliarse en cualquier momento. La funda de lino belga lavado se retira por completo y es lavable a máquina. Las patas torneadas cónicas de latón aportan ligereza visual al volumen.",
+        material: "Lino belga, haya, latón", dimensions: "An 196 × Pr 94 × Al 74 cm",
+        origin: "Taller de Flandes, Bélgica", lead: "8–10 semanas", colors: ["Salvia", "Marfil", "Azul tórtola"] }
     }
   },
   {
@@ -1931,7 +2187,11 @@ const PRODUCTS = [
       fr: { short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
         description: "Un fauteuil qui invite à rester. Le dossier enveloppant est moulé d'une seule pièce en bois lamellé, puis garni à la main. Le bouclé en laine vierge est particulièrement résistant et agréablement chaud.",
         material: "Bouclé en laine vierge, contreplaqué moulé, laiton", dimensions: "L 88 × P 84 × H 76 cm",
-        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] }
+        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] },
+      es: { short: "Butaca de salón con respaldo curvo y tapizado en bouclé.",
+        description: "Una butaca que invita a quedarse. El respaldo envolvente se moldea de una sola pieza de madera laminada y después se tapiza a mano. El bouclé de lana virgen es especialmente resistente y agradablemente cálido.",
+        material: "Bouclé de lana virgen, contrachapado moldeado, latón", dimensions: "An 88 × Pr 84 × Al 76 cm",
+        origin: "Taller de Copenhague, Dinamarca", lead: "6–8 semanas", colors: ["Terracota", "Crema", "Azul noche"] }
     }
   },
   {
@@ -1949,7 +2209,11 @@ const PRODUCTS = [
       fr: { short: "Bergère à oreilles en velours, dossier haut.",
         description: "Luca cite la forme classique de la bergère à oreilles et la traduit dans un langage contemporain épuré. Le velours de coton est résistant à la lumière et déperlant ; la suspension repose sur des ressorts d'acier guindés à la main.",
         material: "Velours de coton, noyer, ressorts d'acier", dimensions: "L 92 × P 90 × H 108 cm",
-        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] },
+      es: { short: "Butaca orejera de terciopelo con respaldo alto.",
+        description: "Luca cita la forma clásica de la orejera y la traduce a un lenguaje contemporáneo depurado. El terciopelo de algodón es resistente a la luz y repelente a las manchas; la suspensión emplea muelles de acero atados a mano.",
+        material: "Terciopelo de algodón, nogal, muelles de acero", dimensions: "An 92 × Pr 90 × Al 108 cm",
+        origin: "Taller del Rin, Alemania", lead: "8–10 semanas", colors: ["Verde abeto", "Burdeos", "Grafito"] }
     }
   },
   {
@@ -1967,7 +2231,11 @@ const PRODUCTS = [
       fr: { short: "Table de salle à manger en noyer massif, huit places.",
         description: "Le plateau est réalisé à partir de planches continues issues d'un seul tronc de noyer — chaque plateau est donc unique. La surface est traitée à l'huile-cire dure et peut être reprise localement à tout moment.",
         material: "Noyer massif, huile-cire dure", dimensions: "L 260 × P 100 × H 75 cm",
-        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] }
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] },
+      es: { short: "Mesa de comedor de nogal macizo para ocho personas.",
+        description: "El tablero se fabrica con tablas continuas de un único tronco de nogal — por eso cada tablero es único. La superficie está tratada con aceite-cera duro y puede repararse por zonas en cualquier momento.",
+        material: "Nogal macizo, aceite-cera duro", dimensions: "An 260 × Pr 100 × Al 75 cm",
+        origin: "Ebanistería de la Selva Negra, Alemania", lead: "12–14 semanas", colors: ["Nogal natural", "Roble ahumado", "Fresno blanco"] }
     }
   },
   {
@@ -1985,7 +2253,11 @@ const PRODUCTS = [
       fr: { short: "Table basse à plateau en travertin sur socle en laiton.",
         description: "Onda pose un contrepoint calme dans le séjour. Le plateau de 4 cm en travertin romain repose sur un socle en laiton brossé. La pierre est imperméabilisée contre les taches mais conserve sa structure ouverte et vivante.",
         material: "Travertin, laiton brossé", dimensions: "Ø 110 × H 34 cm",
-        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] }
+        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] },
+      es: { short: "Mesa de centro con tablero de travertino sobre base de latón.",
+        description: "Onda pone un contrapunto sereno en el salón. El tablero de 4 cm de travertino romano descansa sobre una base de latón cepillado. La piedra está sellada contra las manchas, pero conserva su estructura abierta y viva.",
+        material: "Travertino, latón cepillado", dimensions: "Ø 110 × Al 34 cm",
+        origin: "Canteros de Tívoli, Italia", lead: "10–12 semanas", colors: ["Travertino claro", "Mármol Nero", "Mármol Verde"] }
     }
   },
   {
@@ -2003,7 +2275,11 @@ const PRODUCTS = [
       fr: { short: "Chaise de salle à manger, assise garnie et piètement en chêne.",
         description: "Vela est réduite à l'essentiel : un piètement fin en chêne massif, un dossier de forme ergonomique et une assise généreusement garnie. Empilable jusqu'à quatre.",
         material: "Chêne massif, feutre de laine", dimensions: "L 48 × P 54 × H 82 cm",
-        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] }
+        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] },
+      es: { short: "Silla de comedor con asiento tapizado y estructura de roble.",
+        description: "Vela está reducida a lo esencial: una estructura esbelta de roble macizo, un respaldo de forma ergonómica y un asiento generosamente acolchado. Apilable hasta cuatro unidades.",
+        material: "Roble macizo, fieltro de lana", dimensions: "An 48 × Pr 54 × Al 82 cm",
+        origin: "Taller de Jutlandia, Dinamarca", lead: "4–6 semanas", colors: ["Blanco natural", "Caramelo", "Pizarra"] }
     }
   },
   {
@@ -2021,7 +2297,11 @@ const PRODUCTS = [
       fr: { short: "Chaise à accoudoirs, assise en cuir et cadre en noyer.",
         description: "La chaise Marchese a été dessinée pour les longues soirées à table. Les accoudoirs sont taillés dans le cadre lui-même ; l'assise en cuir de selle est tendue à la main sur un fond sanglé.",
         material: "Cuir de selle, noyer massif", dimensions: "L 58 × P 56 × H 84 cm",
-        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] }
+        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] },
+      es: { short: "Silla con brazos, asiento de cuero y marco de nogal.",
+        description: "La silla Marchese se diseñó para las sobremesas largas. Los brazos están tallados en el propio marco; el asiento de cuero de silla se tensa a mano sobre un fondo de cinchas.",
+        material: "Cuero de silla, nogal macizo", dimensions: "An 58 × Pr 56 × Al 84 cm",
+        origin: "Taller de Brianza, Italia", lead: "8–10 semanas", colors: ["Tabaco", "Negro", "Ocre"] }
     }
   },
   {
@@ -2039,7 +2319,11 @@ const PRODUCTS = [
       fr: { badge: "Édition limitée", short: "Lampadaire à abat-jour en parchemin plié à la main.",
         description: "L'abat-jour du Soleil est plié à la main dans du papier parchemin et tendu sur une armature en fil de laiton. La lumière est douce et chaude — idéale comme éclairage d'ambiance près du canapé. Variateur au pied.",
         material: "Papier parchemin, laiton, pied en marbre", dimensions: "Ø 46 × H 168 cm",
-        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] }
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] },
+      es: { badge: "Edición limitada", short: "Lámpara de pie con pantalla de pergamino plegada a mano.",
+        description: "La pantalla del Soleil se pliega a mano en papel pergamino y se tensa sobre una armadura de alambre de latón. La luz cae suave y cálida — ideal como luz ambiente junto al sofá. Regulable con interruptor de pie.",
+        material: "Papel pergamino, latón, base de mármol", dimensions: "Ø 46 × Al 168 cm",
+        origin: "Taller de Lyon, Francia", lead: "6–8 semanas", colors: ["Pergamino natural", "Alabastro", "Cobre"] }
     }
   },
   {
@@ -2057,7 +2341,11 @@ const PRODUCTS = [
       fr: { badge: "Sur mesure", short: "Suspension à cinq corps de verre soufflés à la bouche sur un support en laiton massif.",
         description: "Alba est réalisée sur mesure. Cinq corps de verre sont soufflés à la bouche un à un à Murano — aucun n\u2019est identique. Ils sont suspendus à un support en laiton massif dont la longueur s\u2019accorde à la pièce. La hauteur de chaque verre se règle librement à la pose, afin que la suspension épouse une table, un escalier ou un vide.",
         material: "Verre de Murano soufflé à la bouche, laiton massif", dimensions: "L 180 × P 30 × H 90–260 cm (hauteur sur mesure)",
-        origin: "Verrerie de Murano, Italie", lead: "16–20 semaines", colors: ["Laiton brossé", "Blanc albâtre", "Bronze foncé"] }
+        origin: "Verrerie de Murano, Italie", lead: "16–20 semaines", colors: ["Laiton brossé", "Blanc albâtre", "Bronze foncé"] },
+      es: { badge: "Hecho a medida", short: "Lámpara de suspensión con cinco cuerpos de vidrio soplados a boca sobre un soporte de latón macizo.",
+        description: "Alba se realiza a medida. Cinco cuerpos de vidrio se soplan a boca uno a uno en Murano — no hay dos iguales. Cuelgan de un soporte de latón macizo cuya longitud se ajusta a la estancia. La altura de cada vidrio se decide libremente durante el montaje, de modo que la lámpara siga una mesa, una escalera o un espacio a doble altura.",
+        material: "Vidrio de Murano soplado a boca, latón macizo", dimensions: "An 180 × Pr 30 × Al 90–260 cm (caída a medida)",
+        origin: "Vidriería de Murano, Italia", lead: "16–20 semanas", colors: ["Latón cepillado", "Blanco alabastro", "Bronce oscuro"] }
     }
   },
   {
@@ -2075,7 +2363,11 @@ const PRODUCTS = [
       fr: { short: "Lampadaire à abat-jour en albâtre taillé sur un socle en pierre bleue.",
         description: "L\u2019abat-jour du Vertice est taillé dans un seul bloc d\u2019albâtre, aminci jusqu\u2019à ce que la lumière traverse la pierre. Chaque veine est unique. Le socle en pierre bleue de Belgique tient la lampe sans fixation ; l\u2019alimentation est dissimulée dans le fût.",
         material: "Albâtre, pierre bleue de Belgique, laiton", dimensions: "Ø 52 × H 176 cm",
-        origin: "Tailleurs de pierre de Volterra, Italie", lead: "12–14 semaines", colors: ["Albâtre naturel", "Albâtre miel", "Pierre bleue foncée"] }
+        origin: "Tailleurs de pierre de Volterra, Italie", lead: "12–14 semaines", colors: ["Albâtre naturel", "Albâtre miel", "Pierre bleue foncée"] },
+      es: { short: "Lámpara de pie con pantalla de alabastro tallado sobre base de piedra azul.",
+        description: "La pantalla del Vertice se talla en un único bloque de alabastro y se adelgaza hasta que la luz atraviesa la piedra. Cada veta es única. La base de piedra azul belga sostiene la lámpara sin anclaje; el equipo va oculto en el fuste.",
+        material: "Alabastro, piedra azul belga, latón", dimensions: "Ø 52 × Al 176 cm",
+        origin: "Canteros de Volterra, Italia", lead: "12–14 semanas", colors: ["Alabastro natural", "Alabastro miel", "Piedra azul oscura"] }
     }
   },
   {
@@ -2093,7 +2385,11 @@ const PRODUCTS = [
       fr: { short: "Bibliothèque en chêne fumé, quatre niveaux.",
         description: "Biblio est une étagère pour les collections. Les tablettes sont réglables en hauteur et supportent jusqu'à 60 kg chacune. Les assemblages sont à queues d'aronde et se passent de ferrures visibles.",
         material: "Chêne fumé, tourillons en laiton", dimensions: "L 180 × P 38 × H 210 cm",
-        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] }
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] },
+      es: { short: "Estantería de biblioteca en roble ahumado, cuatro alturas.",
+        description: "Biblio es una estantería para colecciones. Los estantes son regulables en altura y soportan hasta 60 kg cada uno. Las uniones son de cola de milano y prescinden de herrajes visibles.",
+        material: "Roble ahumado, pasadores de latón", dimensions: "An 180 × Pr 38 × Al 210 cm",
+        origin: "Ebanistería de la Selva Negra, Alemania", lead: "10–12 semanas", colors: ["Roble ahumado", "Roble natural", "Negro teñido"] }
     }
   },
   {
@@ -2111,7 +2407,11 @@ const PRODUCTS = [
       fr: { short: "Buffet à portes coulissantes, intérieur en érable.",
         description: "Derrière les portes coulissantes sans poignée de Linea se cache un aménagement soigné en érable clair, avec tablettes réglables et deux tiroirs doublés de feutre.",
         material: "Noyer, érable, laiton", dimensions: "L 200 × P 45 × H 72 cm",
-        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] },
+      es: { short: "Aparador con puertas correderas e interior de arce.",
+        description: "Tras las puertas correderas sin tirador de Linea se esconde un interior cuidadosamente ejecutado en arce claro, con estantes regulables y dos cajones forrados de fieltro.",
+        material: "Nogal, arce, latón", dimensions: "An 200 × Pr 45 × Al 72 cm",
+        origin: "Taller del Rin, Alemania", lead: "10–12 semanas", colors: ["Nogal", "Roble natural", "Verde oliva"] }
     }
   },
   {
@@ -2129,7 +2429,11 @@ const PRODUCTS = [
       fr: { short: "Lit rembourré à haute tête de lit en lin.",
         description: "La généreuse tête de lit du Sereno est divisée en panneaux et doublée de crin. Le cadre est assemblé à tenons en hêtre massif et reçoit un sommier à 42 lattes.",
         material: "Lin, hêtre massif, crin", dimensions: "L 200 × P 220 × H 118 cm (couchage 180 × 200)",
-        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] },
+      es: { short: "Cama tapizada con cabecero alto de lino.",
+        description: "El generoso cabecero del Sereno se divide en paneles y va reforzado con crin. El armazón está ensamblado a espiga en haya maciza y sostiene un somier de 42 láminas.",
+        material: "Lino, haya maciza, crin", dimensions: "An 200 × La 220 × Al 118 cm (colchón 180 × 200)",
+        origin: "Taller del Rin, Alemania", lead: "12–14 semanas", colors: ["Salvia", "Lino natural", "Azul humo"] }
     }
   },
   {
@@ -2147,7 +2451,11 @@ const PRODUCTS = [
       fr: { short: "Tapis noué main en laine des hauts plateaux.",
         description: "Nomade est noué à la main en pure laine des hauts plateaux — environ 900 heures de travail par pièce. Les nuances légèrement changeantes viennent de la teinture végétale.",
         material: "Laine des hauts plateaux, teinture végétale", dimensions: "300 × 200 cm",
-        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] }
+        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] },
+      es: { short: "Alfombra anudada a mano en lana de altiplano.",
+        description: "Nomade se anuda a mano en pura lana de altiplano — unas 900 horas de trabajo por pieza. El color, levemente cambiante, procede del tinte vegetal.",
+        material: "Lana de altiplano, tinte vegetal", dimensions: "300 × 200 cm",
+        origin: "Anudadores de Anatolia, Turquía", lead: "8–10 semanas", colors: ["Óxido", "Arena", "Carbón"] }
     }
   },
   {
@@ -2165,7 +2473,11 @@ const PRODUCTS = [
       fr: { short: "Miroir sur pied encadré de laiton poli.",
         description: "Luna est un miroir en pied dans un cadre en laiton poli qui fonce doucement au fil des ans. Le verre cristal fait 6 mm d'épaisseur, à bord biseauté.",
         material: "Laiton poli, verre cristal", dimensions: "L 80 × H 190 cm",
-        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] }
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] },
+      es: { short: "Espejo de pie con marco de latón pulido.",
+        description: "Luna es un espejo de cuerpo entero con marco de latón pulido que se oscurece suavemente con los años. El cristal tiene 6 mm de grosor y canto biselado.",
+        material: "Latón pulido, cristal", dimensions: "An 80 × Al 190 cm",
+        origin: "Taller de Lyon, Francia", lead: "6–8 semanas", colors: ["Latón pulido", "Bronce", "Negro mate"] }
     }
   }
 ];

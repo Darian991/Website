@@ -344,7 +344,11 @@ const PRODUCTS = [
       fr: { short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
         description: "Le Milano associe des proportions généreuses à une silhouette remarquablement légère. La carcasse est tendue à la main sur une structure en chêne séché à l'air ; les coussins d'assise ont une âme en mousse froide surmontée de duvet d'oie. Le cuir aniline à tannage végétal développe sa propre patine au fil des ans.",
         material: "Cuir aniline, chêne massif, duvet d'oie", dimensions: "L 240 × P 98 × H 72 cm",
-        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] }
+        origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] },
+      es: { short: "Sofá de tres plazas en piel anilina italiana sobre estructura de roble macizo.",
+        description: "El Milano une unas proporciones generosas con una silueta notablemente ligera. El cuerpo se tensa a mano sobre una estructura de roble secado al aire; los cojines de asiento llevan un núcleo de espuma fría rematado con plumón de oca. La piel anilina de curtido vegetal desarrolla con los años su propia pátina.",
+        material: "Piel anilina, roble macizo, plumón de oca", dimensions: "An 240 × Pr 98 × Al 72 cm",
+        origin: "Taller de Brianza, Italia", lead: "10–12 semanas", colors: ["Coñac", "Beige arena", "Antracita"] }
     }
   },
   {
@@ -362,7 +366,11 @@ const PRODUCTS = [
       fr: { short: "Canapé deux places modulaire recouvert de lin belge.",
         description: "Riviera est conçu comme un système modulaire et peut être agrandi à tout moment. La housse en lin belge lavé s'enlève entièrement et passe en machine. Les pieds en laiton tournés coniques donnent de la légèreté au volume.",
         material: "Lin belge, hêtre, laiton", dimensions: "L 196 × P 94 × H 74 cm",
-        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] }
+        origin: "Atelier des Flandres, Belgique", lead: "8–10 semaines", colors: ["Sauge", "Ivoire", "Bleu tourterelle"] },
+      es: { short: "Sofá de dos plazas modular tapizado en lino belga.",
+        description: "Riviera está concebido como un sistema modular y puede ampliarse en cualquier momento. La funda de lino belga lavado se retira por completo y es lavable a máquina. Las patas torneadas cónicas de latón aportan ligereza visual al volumen.",
+        material: "Lino belga, haya, latón", dimensions: "An 196 × Pr 94 × Al 74 cm",
+        origin: "Taller de Flandes, Bélgica", lead: "8–10 semanas", colors: ["Salvia", "Marfil", "Azul tórtola"] }
     }
   },
   {
@@ -380,7 +388,11 @@ const PRODUCTS = [
       fr: { short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
         description: "Un fauteuil qui invite à rester. Le dossier enveloppant est moulé d'une seule pièce en bois lamellé, puis garni à la main. Le bouclé en laine vierge est particulièrement résistant et agréablement chaud.",
         material: "Bouclé en laine vierge, contreplaqué moulé, laiton", dimensions: "L 88 × P 84 × H 76 cm",
-        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] }
+        origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] },
+      es: { short: "Butaca de salón con respaldo curvo y tapizado en bouclé.",
+        description: "Una butaca que invita a quedarse. El respaldo envolvente se moldea de una sola pieza de madera laminada y después se tapiza a mano. El bouclé de lana virgen es especialmente resistente y agradablemente cálido.",
+        material: "Bouclé de lana virgen, contrachapado moldeado, latón", dimensions: "An 88 × Pr 84 × Al 76 cm",
+        origin: "Taller de Copenhague, Dinamarca", lead: "6–8 semanas", colors: ["Terracota", "Crema", "Azul noche"] }
     }
   },
   {
@@ -398,7 +410,11 @@ const PRODUCTS = [
       fr: { short: "Bergère à oreilles en velours, dossier haut.",
         description: "Luca cite la forme classique de la bergère à oreilles et la traduit dans un langage contemporain épuré. Le velours de coton est résistant à la lumière et déperlant ; la suspension repose sur des ressorts d'acier guindés à la main.",
         material: "Velours de coton, noyer, ressorts d'acier", dimensions: "L 92 × P 90 × H 108 cm",
-        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "8–10 semaines", colors: ["Vert sapin", "Bordeaux", "Graphite"] },
+      es: { short: "Butaca orejera de terciopelo con respaldo alto.",
+        description: "Luca cita la forma clásica de la orejera y la traduce a un lenguaje contemporáneo depurado. El terciopelo de algodón es resistente a la luz y repelente a las manchas; la suspensión emplea muelles de acero atados a mano.",
+        material: "Terciopelo de algodón, nogal, muelles de acero", dimensions: "An 92 × Pr 90 × Al 108 cm",
+        origin: "Taller del Rin, Alemania", lead: "8–10 semanas", colors: ["Verde abeto", "Burdeos", "Grafito"] }
     }
   },
   {
@@ -416,7 +432,11 @@ const PRODUCTS = [
       fr: { short: "Table de salle à manger en noyer massif, huit places.",
         description: "Le plateau est réalisé à partir de planches continues issues d'un seul tronc de noyer — chaque plateau est donc unique. La surface est traitée à l'huile-cire dure et peut être reprise localement à tout moment.",
         material: "Noyer massif, huile-cire dure", dimensions: "L 260 × P 100 × H 75 cm",
-        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] }
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "12–14 semaines", colors: ["Noyer naturel", "Chêne fumé", "Frêne blanc"] },
+      es: { short: "Mesa de comedor de nogal macizo para ocho personas.",
+        description: "El tablero se fabrica con tablas continuas de un único tronco de nogal — por eso cada tablero es único. La superficie está tratada con aceite-cera duro y puede repararse por zonas en cualquier momento.",
+        material: "Nogal macizo, aceite-cera duro", dimensions: "An 260 × Pr 100 × Al 75 cm",
+        origin: "Ebanistería de la Selva Negra, Alemania", lead: "12–14 semanas", colors: ["Nogal natural", "Roble ahumado", "Fresno blanco"] }
     }
   },
   {
@@ -434,7 +454,11 @@ const PRODUCTS = [
       fr: { short: "Table basse à plateau en travertin sur socle en laiton.",
         description: "Onda pose un contrepoint calme dans le séjour. Le plateau de 4 cm en travertin romain repose sur un socle en laiton brossé. La pierre est imperméabilisée contre les taches mais conserve sa structure ouverte et vivante.",
         material: "Travertin, laiton brossé", dimensions: "Ø 110 × H 34 cm",
-        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] }
+        origin: "Tailleurs de pierre de Tivoli, Italie", lead: "10–12 semaines", colors: ["Travertin clair", "Marbre Nero", "Marbre Verde"] },
+      es: { short: "Mesa de centro con tablero de travertino sobre base de latón.",
+        description: "Onda pone un contrapunto sereno en el salón. El tablero de 4 cm de travertino romano descansa sobre una base de latón cepillado. La piedra está sellada contra las manchas, pero conserva su estructura abierta y viva.",
+        material: "Travertino, latón cepillado", dimensions: "Ø 110 × Al 34 cm",
+        origin: "Canteros de Tívoli, Italia", lead: "10–12 semanas", colors: ["Travertino claro", "Mármol Nero", "Mármol Verde"] }
     }
   },
   {
@@ -452,7 +476,11 @@ const PRODUCTS = [
       fr: { short: "Chaise de salle à manger, assise garnie et piètement en chêne.",
         description: "Vela est réduite à l'essentiel : un piètement fin en chêne massif, un dossier de forme ergonomique et une assise généreusement garnie. Empilable jusqu'à quatre.",
         material: "Chêne massif, feutre de laine", dimensions: "L 48 × P 54 × H 82 cm",
-        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] }
+        origin: "Atelier du Jutland, Danemark", lead: "4–6 semaines", colors: ["Blanc naturel", "Caramel", "Ardoise"] },
+      es: { short: "Silla de comedor con asiento tapizado y estructura de roble.",
+        description: "Vela está reducida a lo esencial: una estructura esbelta de roble macizo, un respaldo de forma ergonómica y un asiento generosamente acolchado. Apilable hasta cuatro unidades.",
+        material: "Roble macizo, fieltro de lana", dimensions: "An 48 × Pr 54 × Al 82 cm",
+        origin: "Taller de Jutlandia, Dinamarca", lead: "4–6 semanas", colors: ["Blanco natural", "Caramelo", "Pizarra"] }
     }
   },
   {
@@ -470,7 +498,11 @@ const PRODUCTS = [
       fr: { short: "Chaise à accoudoirs, assise en cuir et cadre en noyer.",
         description: "La chaise Marchese a été dessinée pour les longues soirées à table. Les accoudoirs sont taillés dans le cadre lui-même ; l'assise en cuir de selle est tendue à la main sur un fond sanglé.",
         material: "Cuir de selle, noyer massif", dimensions: "L 58 × P 56 × H 84 cm",
-        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] }
+        origin: "Atelier de Brianza, Italie", lead: "8–10 semaines", colors: ["Tabac", "Noir", "Ocre"] },
+      es: { short: "Silla con brazos, asiento de cuero y marco de nogal.",
+        description: "La silla Marchese se diseñó para las sobremesas largas. Los brazos están tallados en el propio marco; el asiento de cuero de silla se tensa a mano sobre un fondo de cinchas.",
+        material: "Cuero de silla, nogal macizo", dimensions: "An 58 × Pr 56 × Al 84 cm",
+        origin: "Taller de Brianza, Italia", lead: "8–10 semanas", colors: ["Tabaco", "Negro", "Ocre"] }
     }
   },
   {
@@ -488,7 +520,11 @@ const PRODUCTS = [
       fr: { badge: "Édition limitée", short: "Lampadaire à abat-jour en parchemin plié à la main.",
         description: "L'abat-jour du Soleil est plié à la main dans du papier parchemin et tendu sur une armature en fil de laiton. La lumière est douce et chaude — idéale comme éclairage d'ambiance près du canapé. Variateur au pied.",
         material: "Papier parchemin, laiton, pied en marbre", dimensions: "Ø 46 × H 168 cm",
-        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] }
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Parchemin naturel", "Albâtre", "Cuivre"] },
+      es: { badge: "Edición limitada", short: "Lámpara de pie con pantalla de pergamino plegada a mano.",
+        description: "La pantalla del Soleil se pliega a mano en papel pergamino y se tensa sobre una armadura de alambre de latón. La luz cae suave y cálida — ideal como luz ambiente junto al sofá. Regulable con interruptor de pie.",
+        material: "Papel pergamino, latón, base de mármol", dimensions: "Ø 46 × Al 168 cm",
+        origin: "Taller de Lyon, Francia", lead: "6–8 semanas", colors: ["Pergamino natural", "Alabastro", "Cobre"] }
     }
   },
   {
@@ -506,7 +542,11 @@ const PRODUCTS = [
       fr: { badge: "Sur mesure", short: "Suspension à cinq corps de verre soufflés à la bouche sur un support en laiton massif.",
         description: "Alba est réalisée sur mesure. Cinq corps de verre sont soufflés à la bouche un à un à Murano — aucun n\u2019est identique. Ils sont suspendus à un support en laiton massif dont la longueur s\u2019accorde à la pièce. La hauteur de chaque verre se règle librement à la pose, afin que la suspension épouse une table, un escalier ou un vide.",
         material: "Verre de Murano soufflé à la bouche, laiton massif", dimensions: "L 180 × P 30 × H 90–260 cm (hauteur sur mesure)",
-        origin: "Verrerie de Murano, Italie", lead: "16–20 semaines", colors: ["Laiton brossé", "Blanc albâtre", "Bronze foncé"] }
+        origin: "Verrerie de Murano, Italie", lead: "16–20 semaines", colors: ["Laiton brossé", "Blanc albâtre", "Bronze foncé"] },
+      es: { badge: "Hecho a medida", short: "Lámpara de suspensión con cinco cuerpos de vidrio soplados a boca sobre un soporte de latón macizo.",
+        description: "Alba se realiza a medida. Cinco cuerpos de vidrio se soplan a boca uno a uno en Murano — no hay dos iguales. Cuelgan de un soporte de latón macizo cuya longitud se ajusta a la estancia. La altura de cada vidrio se decide libremente durante el montaje, de modo que la lámpara siga una mesa, una escalera o un espacio a doble altura.",
+        material: "Vidrio de Murano soplado a boca, latón macizo", dimensions: "An 180 × Pr 30 × Al 90–260 cm (caída a medida)",
+        origin: "Vidriería de Murano, Italia", lead: "16–20 semanas", colors: ["Latón cepillado", "Blanco alabastro", "Bronce oscuro"] }
     }
   },
   {
@@ -524,7 +564,11 @@ const PRODUCTS = [
       fr: { short: "Lampadaire à abat-jour en albâtre taillé sur un socle en pierre bleue.",
         description: "L\u2019abat-jour du Vertice est taillé dans un seul bloc d\u2019albâtre, aminci jusqu\u2019à ce que la lumière traverse la pierre. Chaque veine est unique. Le socle en pierre bleue de Belgique tient la lampe sans fixation ; l\u2019alimentation est dissimulée dans le fût.",
         material: "Albâtre, pierre bleue de Belgique, laiton", dimensions: "Ø 52 × H 176 cm",
-        origin: "Tailleurs de pierre de Volterra, Italie", lead: "12–14 semaines", colors: ["Albâtre naturel", "Albâtre miel", "Pierre bleue foncée"] }
+        origin: "Tailleurs de pierre de Volterra, Italie", lead: "12–14 semaines", colors: ["Albâtre naturel", "Albâtre miel", "Pierre bleue foncée"] },
+      es: { short: "Lámpara de pie con pantalla de alabastro tallado sobre base de piedra azul.",
+        description: "La pantalla del Vertice se talla en un único bloque de alabastro y se adelgaza hasta que la luz atraviesa la piedra. Cada veta es única. La base de piedra azul belga sostiene la lámpara sin anclaje; el equipo va oculto en el fuste.",
+        material: "Alabastro, piedra azul belga, latón", dimensions: "Ø 52 × Al 176 cm",
+        origin: "Canteros de Volterra, Italia", lead: "12–14 semanas", colors: ["Alabastro natural", "Alabastro miel", "Piedra azul oscura"] }
     }
   },
   {
@@ -542,7 +586,11 @@ const PRODUCTS = [
       fr: { short: "Bibliothèque en chêne fumé, quatre niveaux.",
         description: "Biblio est une étagère pour les collections. Les tablettes sont réglables en hauteur et supportent jusqu'à 60 kg chacune. Les assemblages sont à queues d'aronde et se passent de ferrures visibles.",
         material: "Chêne fumé, tourillons en laiton", dimensions: "L 180 × P 38 × H 210 cm",
-        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] }
+        origin: "Menuiserie de la Forêt-Noire, Allemagne", lead: "10–12 semaines", colors: ["Chêne fumé", "Chêne naturel", "Noir teinté"] },
+      es: { short: "Estantería de biblioteca en roble ahumado, cuatro alturas.",
+        description: "Biblio es una estantería para colecciones. Los estantes son regulables en altura y soportan hasta 60 kg cada uno. Las uniones son de cola de milano y prescinden de herrajes visibles.",
+        material: "Roble ahumado, pasadores de latón", dimensions: "An 180 × Pr 38 × Al 210 cm",
+        origin: "Ebanistería de la Selva Negra, Alemania", lead: "10–12 semanas", colors: ["Roble ahumado", "Roble natural", "Negro teñido"] }
     }
   },
   {
@@ -560,7 +608,11 @@ const PRODUCTS = [
       fr: { short: "Buffet à portes coulissantes, intérieur en érable.",
         description: "Derrière les portes coulissantes sans poignée de Linea se cache un aménagement soigné en érable clair, avec tablettes réglables et deux tiroirs doublés de feutre.",
         material: "Noyer, érable, laiton", dimensions: "L 200 × P 45 × H 72 cm",
-        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "10–12 semaines", colors: ["Noyer", "Chêne naturel", "Vert olive"] },
+      es: { short: "Aparador con puertas correderas e interior de arce.",
+        description: "Tras las puertas correderas sin tirador de Linea se esconde un interior cuidadosamente ejecutado en arce claro, con estantes regulables y dos cajones forrados de fieltro.",
+        material: "Nogal, arce, latón", dimensions: "An 200 × Pr 45 × Al 72 cm",
+        origin: "Taller del Rin, Alemania", lead: "10–12 semanas", colors: ["Nogal", "Roble natural", "Verde oliva"] }
     }
   },
   {
@@ -578,7 +630,11 @@ const PRODUCTS = [
       fr: { short: "Lit rembourré à haute tête de lit en lin.",
         description: "La généreuse tête de lit du Sereno est divisée en panneaux et doublée de crin. Le cadre est assemblé à tenons en hêtre massif et reçoit un sommier à 42 lattes.",
         material: "Lin, hêtre massif, crin", dimensions: "L 200 × P 220 × H 118 cm (couchage 180 × 200)",
-        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] }
+        origin: "Atelier du Rhin, Allemagne", lead: "12–14 semaines", colors: ["Sauge", "Lin naturel", "Bleu fumée"] },
+      es: { short: "Cama tapizada con cabecero alto de lino.",
+        description: "El generoso cabecero del Sereno se divide en paneles y va reforzado con crin. El armazón está ensamblado a espiga en haya maciza y sostiene un somier de 42 láminas.",
+        material: "Lino, haya maciza, crin", dimensions: "An 200 × La 220 × Al 118 cm (colchón 180 × 200)",
+        origin: "Taller del Rin, Alemania", lead: "12–14 semanas", colors: ["Salvia", "Lino natural", "Azul humo"] }
     }
   },
   {
@@ -596,7 +652,11 @@ const PRODUCTS = [
       fr: { short: "Tapis noué main en laine des hauts plateaux.",
         description: "Nomade est noué à la main en pure laine des hauts plateaux — environ 900 heures de travail par pièce. Les nuances légèrement changeantes viennent de la teinture végétale.",
         material: "Laine des hauts plateaux, teinture végétale", dimensions: "300 × 200 cm",
-        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] }
+        origin: "Noueurs d'Anatolie, Turquie", lead: "8–10 semaines", colors: ["Rouille", "Sable", "Charbon"] },
+      es: { short: "Alfombra anudada a mano en lana de altiplano.",
+        description: "Nomade se anuda a mano en pura lana de altiplano — unas 900 horas de trabajo por pieza. El color, levemente cambiante, procede del tinte vegetal.",
+        material: "Lana de altiplano, tinte vegetal", dimensions: "300 × 200 cm",
+        origin: "Anudadores de Anatolia, Turquía", lead: "8–10 semanas", colors: ["Óxido", "Arena", "Carbón"] }
     }
   },
   {
@@ -614,7 +674,11 @@ const PRODUCTS = [
       fr: { short: "Miroir sur pied encadré de laiton poli.",
         description: "Luna est un miroir en pied dans un cadre en laiton poli qui fonce doucement au fil des ans. Le verre cristal fait 6 mm d'épaisseur, à bord biseauté.",
         material: "Laiton poli, verre cristal", dimensions: "L 80 × H 190 cm",
-        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] }
+        origin: "Atelier de Lyon, France", lead: "6–8 semaines", colors: ["Laiton poli", "Bronze", "Noir mat"] },
+      es: { short: "Espejo de pie con marco de latón pulido.",
+        description: "Luna es un espejo de cuerpo entero con marco de latón pulido que se oscurece suavemente con los años. El cristal tiene 6 mm de grosor y canto biselado.",
+        material: "Latón pulido, cristal", dimensions: "An 80 × Al 190 cm",
+        origin: "Taller de Lyon, Francia", lead: "6–8 semanas", colors: ["Latón pulido", "Bronce", "Negro mate"] }
     }
   }
 ];
