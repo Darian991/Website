@@ -302,7 +302,7 @@ noscript .footer p { max-width: 60ch; }
 .hero::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(100deg, rgba(22,21,15,.78) 0%, rgba(22,21,15,.46) 38%, rgba(22,21,15,.06) 72%, rgba(22,21,15,0) 100%);
+  background: linear-gradient(100deg, rgba(22,21,15,.34) 0%, rgba(22,21,15,.16) 45%, rgba(22,21,15,0) 78%);
 }
 .hero__content { position: relative; z-index: 2; color: var(--paper); max-width: 640px; padding: 4rem 0; }
 .hero__content .eyebrow { color: #d9bd82; }

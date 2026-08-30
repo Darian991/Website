@@ -58,7 +58,7 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
-let current, chosenColorIndex = 0, chosenQty = 1, chosenVariant = 0;
+let current, chosenColorIndex = 0, chosenQty = 1;
 
 function initPage() {
   current = findProduct(queryParams().get("id"));
@@ -94,11 +94,11 @@ function renderPdp() {
 
     <div class="pdp">
       <div class="pdp__gallery">
-        <div class="pdp__main" id="pdp-main">${artFor(p, chosenVariant)}</div>
+        <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex)}</div>
         <div class="pdp__thumbs" id="pdp-thumbs">
-          ${[0, 1, 2].map((i) => `
-            <button data-variant="${i}" class="${i === chosenVariant ? "is-active" : ""}"
-                    aria-label="${t("pdp.view", { n: i + 1 })}">${artFor(p, i)}</button>`).join("")}
+          ${colors.map((c, i) => `
+            <button data-index="${i}" class="${i === chosenColorIndex ? "is-active" : ""}"
+                    aria-label="${c.name}" title="${c.name}">${artFor(p, i)}</button>`).join("")}
         </div>
       </div>
 
@@ -160,21 +160,20 @@ function renderPdp() {
     </div>
   </div>`;
 
-  $$("#pdp-thumbs button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      chosenVariant = Number(btn.dataset.variant);
-      $("#pdp-main").innerHTML = artFor(current, chosenVariant);
-      $$("#pdp-thumbs button").forEach((b) => b.classList.toggle("is-active", b === btn));
-    });
-  });
+  // Ausführung wählen — über die Farbfelder oder die Ansichten daneben.
+  // Beide Wege führen zum selben Ergebnis und färben das Bild um.
+  function chooseColor(index) {
+    chosenColorIndex = index;
+    $("#pdp-main").innerHTML = artFor(current, index);
+    $("#color-name").textContent = productColors(current)[index].name;
+    $$("#pdp-thumbs button").forEach((b) => b.classList.toggle("is-active", Number(b.dataset.index) === index));
+    $$("#swatches .swatch").forEach((s) => s.classList.toggle("is-active", Number(s.dataset.index) === index));
+  }
 
-  $$("#swatches .swatch").forEach((sw) => {
-    sw.addEventListener("click", () => {
-      chosenColorIndex = Number(sw.dataset.index);
-      $("#color-name").textContent = productColors(current)[chosenColorIndex].name;
-      $$("#swatches .swatch").forEach((s) => s.classList.toggle("is-active", s === sw));
-    });
-  });
+  $$("#pdp-thumbs button").forEach((btn) =>
+    btn.addEventListener("click", () => chooseColor(Number(btn.dataset.index))));
+  $$("#swatches .swatch").forEach((sw) =>
+    sw.addEventListener("click", () => chooseColor(Number(sw.dataset.index))));
 
   const qtyEl = $("#qty-value");
   $("#qty-minus").addEventListener("click", () => { chosenQty = Math.max(1, chosenQty - 1); qtyEl.textContent = chosenQty; });

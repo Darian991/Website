@@ -134,10 +134,11 @@
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/hero.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
 function initPage() {
-  $("#hero-art").innerHTML    = heroScene();
+  heroCanvas($("#hero-art"));
   $("#story-art").innerHTML   = ART.regal(TONES.clay);
   $("#service-art").innerHTML = ART.tisch(TONES.sage);
 

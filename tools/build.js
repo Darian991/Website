@@ -166,6 +166,9 @@ ${read("assets/js/i18n.js")}
 ${read("assets/js/data.js")}
 </script>
 <script>
+${read("assets/js/hero.js")}
+</script>
+<script>
 document.body.dataset.spa = "true";
 ${read("assets/js/app.js")}
 </script>

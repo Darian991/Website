@@ -19,7 +19,8 @@ HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.
 ```
 assets/css/style.css   Gesamtes Design (Farben, Typografie, Layout, Responsive)
 assets/js/i18n.js      Alle Texte in Deutsch, Englisch und Französisch
-assets/js/data.js      Produktkatalog + alle Abbildungen als SVG
+assets/js/data.js      Produktkatalog + Produktabbildungen als SVG
+assets/js/hero.js      Bühnenbild der Startseite, auf Canvas gezeichnet
 assets/js/app.js       Warenkorb, Suche, Kopf-/Fußzeile, Filter, Formulare
 tools/build.js         Schreibt die deutschen Texte fest in die Seiten
                        und baut preview.html (alles in einer Datei)
@@ -119,7 +120,17 @@ gewählte Farbe die Sprache mit.
 ## Abbildungen
 
 Die Produktbilder sind als SVG in `data.js` gezeichnet, damit die Seite ohne
-externe Dateien funktioniert. Sobald echte Fotos vorliegen, lassen sie sich
+externe Dateien funktioniert. Sie zeigen das Möbel in der gewählten
+Ausführung: `artFor(produkt, farbposition)` färbt den Korpus um. Helle Möbel
+bekommen dabei einen dunklen Raum und umgekehrt, sonst verschwindet ein
+cremefarbenes Sofa vor einer cremefarbenen Wand.
+
+Das Bühnenbild der Startseite (`hero.js`) wird dagegen auf Canvas gezeichnet.
+Erst damit sind echte Unschärfe, ein Lichtschacht aus dem Fenster, eine
+Spiegelung im Parkett und Staub im Licht möglich. Der Raum wird einmal in
+einen Zwischenspeicher gezeichnet; pro Bild kommen nur Staub und Korn hinzu.
+Die Bewegung ruht, sobald das Bild aus dem Sichtfeld scrollt, und entfällt
+ganz, wenn im Betriebssystem weniger Bewegung eingestellt ist. Sobald echte Fotos vorliegen, lassen sie sich
 ersetzen: in `productCard()` (app.js) und auf der Produktseite `artFor(p)` durch
 ein `<img src="…" alt="…">` austauschen.
 

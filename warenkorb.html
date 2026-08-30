@@ -89,7 +89,7 @@ function renderCartPage() {
         const x = pt(p);
         return `
         <div class="cart-item">
-          <a class="cart-item__media" href="produkt.html?id=${p.id}">${artFor(p)}</a>
+          <a class="cart-item__media" href="produkt.html?id=${p.id}">${artFor(p, item.colorIndex)}</a>
           <div>
             <a class="cart-item__title" href="produkt.html?id=${p.id}">${p.name}</a>
             <div class="cart-item__meta">${t("cat." + p.categoryKey)} · ${itemColor(p, item)} · ${t("cartpage.production")} ${x.lead}</div>

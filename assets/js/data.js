@@ -297,10 +297,20 @@ function heroScene() {
 </svg>`;
 }
 
-/* Liefert das SVG-Markup für ein Produkt (variant 0–2 = Farbvarianten) */
-function artFor(product, variant = 0) {
-  const order = [product.tone, "stone", "ink"];
-  const tone = TONES[order[variant % order.length]] || TONES.sand;
+/* Helligkeit eines Farbwerts (0 = schwarz, 1 = weiß) */
+function luminance(hex) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+/* Zeigt das Produkt in der gewählten Ausführung.
+   Helle Möbel stehen dabei in einem dunklen Raum und umgekehrt — sonst
+   verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
+function artFor(product, colorIndex = 0) {
+  const hex = product.swatches[colorIndex] || product.swatches[0];
+  const base = TONES[luminance(hex) > 0.7 ? "ink" : product.tone] || TONES.sand;
+  const tone = Object.assign({}, base, { obj: hex });
   return (ART[product.shape] || ART.sofa)(tone);
 }
 

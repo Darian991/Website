@@ -356,7 +356,7 @@ function renderDrawer() {
       const p = findProduct(item.id);
       return `
       <div class="cart-item" style="grid-template-columns:72px 1fr">
-        <div class="cart-item__media">${artFor(p)}</div>
+        <div class="cart-item__media">${artFor(p, item.colorIndex)}</div>
         <div>
           <div class="cart-item__title">${p.name}</div>
           <div class="cart-item__meta">${itemColor(p, item)} · ${item.qty} × ${euro(p.price)}</div>
