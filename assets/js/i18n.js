@@ -53,6 +53,8 @@ const I18N = {
     "cartpage.codeRemove": "Entfernen",
     "cartpage.codeInvalid": "Dieser Code ist nicht gültig.",
     "promo.reopen": "50 € Willkommensgutschein",
+    "pdp.care.used": "Auf gebrauchte Stücke gilt die gesetzliche Gewährleistung von zwölf Monaten. Jedes Stück wird vor dem Verkauf geprüft, aufbereitet und mit seinem Zustand ausgewiesen. Eine Pflegeanleitung liegt bei; Leder- und Holzpflegemittel senden wir auf Wunsch kostenfrei nach.",
+    "pdp.care.title.used": "Zustand & Gewährleistung",
     "html.lang": "de",
 
     "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
@@ -314,6 +316,8 @@ const I18N = {
     "cartpage.codeRemove": "Remove",
     "cartpage.codeInvalid": "This code is not valid.",
     "promo.reopen": "€50 welcome voucher",
+    "pdp.care.used": "Pre-owned pieces carry the statutory twelve-month warranty. Every piece is checked, refurbished and listed with its condition before sale. Care instructions are included; we send leather and wood care products free of charge on request.",
+    "pdp.care.title.used": "Condition & warranty",
     "html.lang": "en",
 
     "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
@@ -575,6 +579,8 @@ const I18N = {
     "cartpage.codeRemove": "Retirer",
     "cartpage.codeInvalid": "Ce code n’est pas valide.",
     "promo.reopen": "Bon de bienvenue de 50 €",
+    "pdp.care.used": "Les pièces d’occasion bénéficient de la garantie légale de douze mois. Chaque pièce est contrôlée, remise en état et présentée avec son état avant la vente. Une notice d’entretien est jointe ; sur demande, nous envoyons gratuitement les produits pour le cuir et le bois.",
+    "pdp.care.title.used": "État et garantie",
     "html.lang": "fr",
 
     "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
@@ -822,6 +828,8 @@ const I18N = {
     "cartpage.codeRemove": "Quitar",
     "cartpage.codeInvalid": "Este código no es válido.",
     "promo.reopen": "Vale de bienvenida de 50 €",
+    "pdp.care.used": "Las piezas de segunda mano cuentan con la garantía legal de doce meses. Cada pieza se revisa, se restaura y se presenta con su estado antes de la venta. Se incluyen instrucciones de cuidado; enviamos gratuitamente los productos para cuero y madera si lo desea.",
+    "pdp.care.title.used": "Estado y garantía",
     "html.lang": "es",
     "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
     "title.shop": "Colección — Studio Lusso",

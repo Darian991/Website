@@ -748,12 +748,6 @@ noscript .footer p { max-width: 60ch; }
 }
 
 /* Verweis in der Fußzeile, über den sich der Gutschein erneut öffnen lässt */
-.footer__promo {
-  background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
-  font: inherit; color: var(--greige); transition: color var(--t);
-}
-.footer__promo:hover { color: var(--paper); }
-
 /* Gutscheinzeile und Eingabefeld im Warenkorb */
 .summary__row--discount { color: var(--greige-deep); }
 .code-box { display: flex; align-items: center; gap: .7rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); flex-wrap: wrap; }
@@ -922,6 +916,8 @@ const I18N = {
     "cartpage.codeRemove": "Entfernen",
     "cartpage.codeInvalid": "Dieser Code ist nicht gültig.",
     "promo.reopen": "50 € Willkommensgutschein",
+    "pdp.care.used": "Auf gebrauchte Stücke gilt die gesetzliche Gewährleistung von zwölf Monaten. Jedes Stück wird vor dem Verkauf geprüft, aufbereitet und mit seinem Zustand ausgewiesen. Eine Pflegeanleitung liegt bei; Leder- und Holzpflegemittel senden wir auf Wunsch kostenfrei nach.",
+    "pdp.care.title.used": "Zustand & Gewährleistung",
     "html.lang": "de",
 
     "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
@@ -1183,6 +1179,8 @@ const I18N = {
     "cartpage.codeRemove": "Remove",
     "cartpage.codeInvalid": "This code is not valid.",
     "promo.reopen": "€50 welcome voucher",
+    "pdp.care.used": "Pre-owned pieces carry the statutory twelve-month warranty. Every piece is checked, refurbished and listed with its condition before sale. Care instructions are included; we send leather and wood care products free of charge on request.",
+    "pdp.care.title.used": "Condition & warranty",
     "html.lang": "en",
 
     "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
@@ -1444,6 +1442,8 @@ const I18N = {
     "cartpage.codeRemove": "Retirer",
     "cartpage.codeInvalid": "Ce code n’est pas valide.",
     "promo.reopen": "Bon de bienvenue de 50 €",
+    "pdp.care.used": "Les pièces d’occasion bénéficient de la garantie légale de douze mois. Chaque pièce est contrôlée, remise en état et présentée avec son état avant la vente. Une notice d’entretien est jointe ; sur demande, nous envoyons gratuitement les produits pour le cuir et le bois.",
+    "pdp.care.title.used": "État et garantie",
     "html.lang": "fr",
 
     "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
@@ -1691,6 +1691,8 @@ const I18N = {
     "cartpage.codeRemove": "Quitar",
     "cartpage.codeInvalid": "Este código no es válido.",
     "promo.reopen": "Vale de bienvenida de 50 €",
+    "pdp.care.used": "Las piezas de segunda mano cuentan con la garantía legal de doce meses. Cada pieza se revisa, se restaura y se presenta con su estado antes de la venta. Se incluyen instrucciones de cuidado; enviamos gratuitamente los productos para cuero y madera si lo desea.",
+    "pdp.care.title.used": "Estado y garantía",
     "html.lang": "es",
     "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
     "title.shop": "Colección — Studio Lusso",
@@ -3200,7 +3202,7 @@ function renderChrome() {
   const promo = `
   <div class="promo-backdrop" id="promo-backdrop"></div>
   <div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promo-title" hidden>
-    <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    <button class="close-x promo__close" id="promo-close" data-i18n-aria="action.close">×</button>
     <div class="promo__figure" aria-hidden="true"><span class="promo__num">50<em>€</em></span></div>
     <div class="promo__body">
       <div id="promo-form">
@@ -3220,7 +3222,7 @@ function renderChrome() {
       </div>
       <div id="promo-done" hidden>
         <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h2 data-i18n="promo.done.title"></h2>
+        <h2 id="promo-title-done" data-i18n="promo.done.title"></h2>
         <span class="rule"></span>
         <div class="promo__code" id="promo-code">
           <code>${GUTSCHEIN.code}</code>
@@ -3374,30 +3376,55 @@ function bindPromo() {
   const backdrop = $("#promo-backdrop");
   if (!box) return;
 
-  /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
-     übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
   /* Ein Dialog übernimmt die Seite, solange er offen ist: der Rest wird
-     für Tastatur und Vorlesehilfe stillgelegt, danach wieder freigegeben. */
+     für Tastatur und Vorlesehilfe stillgelegt. Der vorherige Zustand wird
+     gemerkt und zurückgegeben — sonst würde der Dialog das Menü oder die
+     Warenkorb-Schublade freischalten, die ihre Sperre selbst verwalten. */
   const umgebung = () => [$("#site-header"), document.querySelector("main"),
-                          document.querySelector(".footer"), $("#drawer")].filter(Boolean);
-  const sperren = (an) => umgebung().forEach((el) => { el.inert = an; });
+                          document.querySelector(".footer")].filter(Boolean);
+  let vorher = null;
+  const sperren = () => {
+    vorher = umgebung().map((el) => [el, el.inert === true]);
+    vorher.forEach(([el]) => { el.inert = true; });
+  };
+  const freigeben = () => {
+    (vorher || []).forEach(([el, alt]) => { el.inert = alt; });
+    vorher = null;
+  };
 
-  const zeigen = () => {
+  /* Wer den Dialog geöffnet hat, bekommt den Fokus zurück. Öffnet er sich
+     von selbst, wird der Fokus nicht verschoben — sonst springt die Seite. */
+  let ausloeser = null;
+
+  const ansichtSetzen = () => {
+    const eingeloest = Discount.aktiv();
+    $("#promo-form").hidden = eingeloest;
+    $("#promo-form-el").hidden = eingeloest;
+    $("#promo-done").hidden = !eingeloest;
+    box.setAttribute("aria-labelledby", eingeloest ? "promo-title-done" : "promo-title");
+  };
+
+  const zeigen = (vonHand) => {
+    ausloeser = vonHand || null;
+    ansichtSetzen();
     box.hidden = false;
     requestAnimationFrame(() => {
       box.classList.add("is-open");
       backdrop.classList.add("is-open");
+      // Erst wenn der Dialog sichtbar ist, nimmt er den Fokus an
+      (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
     });
-    sperren(true);
-    (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
+    sperren();
   };
+
   const schliessen = () => {
     if (!box.classList.contains("is-open")) return;
     box.classList.remove("is-open");
     backdrop.classList.remove("is-open");
-    sperren(false);
+    freigeben();
     Discount.merken();
-    $("#promo-reopen")?.focus();
+    if (ausloeser && document.contains(ausloeser)) ausloeser.focus();
+    ausloeser = null;
     setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
   };
 
@@ -3407,6 +3434,9 @@ function bindPromo() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
   });
+  // In der Einzeldatei-Vorschau wechselt ein Verweis die Seite, ohne neu zu
+  // laden — dann muss sich der Dialog mitschließen.
+  document.addEventListener("route:changed", schliessen);
 
   $("#promo-form-el")?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -3423,10 +3453,7 @@ function bindPromo() {
     fehler.hidden = true;
     Discount.einloesen(GUTSCHEIN.code);
     Discount.merken();
-    $("#promo-form").hidden = true;
-    $("#promo-form-el").hidden = true;
-    $("#promo-done").hidden = false;
-    $("#promo-code").hidden = false;
+    ansichtSetzen();
     $("#promo-copy")?.focus();
   });
 
@@ -3438,19 +3465,23 @@ function bindPromo() {
   });
 
   // Über die Fußzeile jederzeit wieder erreichbar
-  $("#promo-reopen")?.addEventListener("click", () => {
-    if (Discount.aktiv()) {
-      $("#promo-form").hidden = true;
-      $("#promo-form-el").hidden = true;
-      $("#promo-done").hidden = false;
-      $("#promo-code").hidden = false;
-    }
-    zeigen();
-    if (!Discount.aktiv()) $("#promo-email")?.focus();
-  });
+  $("#promo-reopen")?.addEventListener("click", (e) => zeigen(e.currentTarget));
 
-  // Von selbst nur beim ersten Besuch, und erst wenn die Seite steht
-  if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
+  /* Von selbst nur beim ersten Besuch. Wer gerade in ein Feld schreibt,
+     wird nicht unterbrochen — der Dialog wartet dann. */
+  const schreibtGerade = () => {
+    const el = document.activeElement;
+    return !!el && (el.matches("input, textarea, select") || el.isContentEditable);
+  };
+  if (!Discount.gesehen() && !Discount.aktiv()) {
+    let versuche = 0;
+    const spaeter = () => {
+      if (Discount.gesehen() || Discount.aktiv()) return;
+      if (schreibtGerade() && versuche++ < 10) { setTimeout(spaeter, 4000); return; }
+      zeigen();
+    };
+    setTimeout(spaeter, 2500);
+  }
 }
 
 /* ---------- Suche ---------- */
@@ -3843,8 +3874,8 @@ function renderPdp() {
             <div class="acc__panel"><p>${t("pdp.delivery.body")}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.care")} <i>+</i></button>
-            <div class="acc__panel"><p>${t("pdp.care.body")}</p></div>
+            <button class="acc__btn" aria-expanded="false">${p.used ? t("pdp.care.title.used") : t("pdp.acc.care")} <i>+</i></button>
+            <div class="acc__panel"><p>${p.used ? t("pdp.care.used") : t("pdp.care.body")}</p></div>
           </div>
         </div>
       </div>

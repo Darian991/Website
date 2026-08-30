@@ -741,12 +741,6 @@ noscript .footer p { max-width: 60ch; }
 }
 
 /* Verweis in der Fußzeile, über den sich der Gutschein erneut öffnen lässt */
-.footer__promo {
-  background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
-  font: inherit; color: var(--greige); transition: color var(--t);
-}
-.footer__promo:hover { color: var(--paper); }
-
 /* Gutscheinzeile und Eingabefeld im Warenkorb */
 .summary__row--discount { color: var(--greige-deep); }
 .code-box { display: flex; align-items: center; gap: .7rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); flex-wrap: wrap; }

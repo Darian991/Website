@@ -286,7 +286,7 @@ function renderChrome() {
   const promo = `
   <div class="promo-backdrop" id="promo-backdrop"></div>
   <div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promo-title" hidden>
-    <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    <button class="close-x promo__close" id="promo-close" data-i18n-aria="action.close">×</button>
     <div class="promo__figure" aria-hidden="true"><span class="promo__num">50<em>€</em></span></div>
     <div class="promo__body">
       <div id="promo-form">
@@ -306,7 +306,7 @@ function renderChrome() {
       </div>
       <div id="promo-done" hidden>
         <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h2 data-i18n="promo.done.title"></h2>
+        <h2 id="promo-title-done" data-i18n="promo.done.title"></h2>
         <span class="rule"></span>
         <div class="promo__code" id="promo-code">
           <code>${GUTSCHEIN.code}</code>
@@ -460,30 +460,55 @@ function bindPromo() {
   const backdrop = $("#promo-backdrop");
   if (!box) return;
 
-  /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
-     übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
   /* Ein Dialog übernimmt die Seite, solange er offen ist: der Rest wird
-     für Tastatur und Vorlesehilfe stillgelegt, danach wieder freigegeben. */
+     für Tastatur und Vorlesehilfe stillgelegt. Der vorherige Zustand wird
+     gemerkt und zurückgegeben — sonst würde der Dialog das Menü oder die
+     Warenkorb-Schublade freischalten, die ihre Sperre selbst verwalten. */
   const umgebung = () => [$("#site-header"), document.querySelector("main"),
-                          document.querySelector(".footer"), $("#drawer")].filter(Boolean);
-  const sperren = (an) => umgebung().forEach((el) => { el.inert = an; });
+                          document.querySelector(".footer")].filter(Boolean);
+  let vorher = null;
+  const sperren = () => {
+    vorher = umgebung().map((el) => [el, el.inert === true]);
+    vorher.forEach(([el]) => { el.inert = true; });
+  };
+  const freigeben = () => {
+    (vorher || []).forEach(([el, alt]) => { el.inert = alt; });
+    vorher = null;
+  };
 
-  const zeigen = () => {
+  /* Wer den Dialog geöffnet hat, bekommt den Fokus zurück. Öffnet er sich
+     von selbst, wird der Fokus nicht verschoben — sonst springt die Seite. */
+  let ausloeser = null;
+
+  const ansichtSetzen = () => {
+    const eingeloest = Discount.aktiv();
+    $("#promo-form").hidden = eingeloest;
+    $("#promo-form-el").hidden = eingeloest;
+    $("#promo-done").hidden = !eingeloest;
+    box.setAttribute("aria-labelledby", eingeloest ? "promo-title-done" : "promo-title");
+  };
+
+  const zeigen = (vonHand) => {
+    ausloeser = vonHand || null;
+    ansichtSetzen();
     box.hidden = false;
     requestAnimationFrame(() => {
       box.classList.add("is-open");
       backdrop.classList.add("is-open");
+      // Erst wenn der Dialog sichtbar ist, nimmt er den Fokus an
+      (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
     });
-    sperren(true);
-    (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
+    sperren();
   };
+
   const schliessen = () => {
     if (!box.classList.contains("is-open")) return;
     box.classList.remove("is-open");
     backdrop.classList.remove("is-open");
-    sperren(false);
+    freigeben();
     Discount.merken();
-    $("#promo-reopen")?.focus();
+    if (ausloeser && document.contains(ausloeser)) ausloeser.focus();
+    ausloeser = null;
     setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
   };
 
@@ -493,6 +518,9 @@ function bindPromo() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
   });
+  // In der Einzeldatei-Vorschau wechselt ein Verweis die Seite, ohne neu zu
+  // laden — dann muss sich der Dialog mitschließen.
+  document.addEventListener("route:changed", schliessen);
 
   $("#promo-form-el")?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -509,10 +537,7 @@ function bindPromo() {
     fehler.hidden = true;
     Discount.einloesen(GUTSCHEIN.code);
     Discount.merken();
-    $("#promo-form").hidden = true;
-    $("#promo-form-el").hidden = true;
-    $("#promo-done").hidden = false;
-    $("#promo-code").hidden = false;
+    ansichtSetzen();
     $("#promo-copy")?.focus();
   });
 
@@ -524,19 +549,23 @@ function bindPromo() {
   });
 
   // Über die Fußzeile jederzeit wieder erreichbar
-  $("#promo-reopen")?.addEventListener("click", () => {
-    if (Discount.aktiv()) {
-      $("#promo-form").hidden = true;
-      $("#promo-form-el").hidden = true;
-      $("#promo-done").hidden = false;
-      $("#promo-code").hidden = false;
-    }
-    zeigen();
-    if (!Discount.aktiv()) $("#promo-email")?.focus();
-  });
+  $("#promo-reopen")?.addEventListener("click", (e) => zeigen(e.currentTarget));
 
-  // Von selbst nur beim ersten Besuch, und erst wenn die Seite steht
-  if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
+  /* Von selbst nur beim ersten Besuch. Wer gerade in ein Feld schreibt,
+     wird nicht unterbrochen — der Dialog wartet dann. */
+  const schreibtGerade = () => {
+    const el = document.activeElement;
+    return !!el && (el.matches("input, textarea, select") || el.isContentEditable);
+  };
+  if (!Discount.gesehen() && !Discount.aktiv()) {
+    let versuche = 0;
+    const spaeter = () => {
+      if (Discount.gesehen() || Discount.aktiv()) return;
+      if (schreibtGerade() && versuche++ < 10) { setTimeout(spaeter, 4000); return; }
+      zeigen();
+    };
+    setTimeout(spaeter, 2500);
+  }
 }
 
 /* ---------- Suche ---------- */

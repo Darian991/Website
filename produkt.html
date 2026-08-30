@@ -158,8 +158,8 @@ function renderPdp() {
             <div class="acc__panel"><p>${t("pdp.delivery.body")}</p></div>
           </div>
           <div class="acc__item">
-            <button class="acc__btn" aria-expanded="false">${t("pdp.acc.care")} <i>+</i></button>
-            <div class="acc__panel"><p>${t("pdp.care.body")}</p></div>
+            <button class="acc__btn" aria-expanded="false">${p.used ? t("pdp.care.title.used") : t("pdp.acc.care")} <i>+</i></button>
+            <div class="acc__panel"><p>${p.used ? t("pdp.care.used") : t("pdp.care.body")}</p></div>
           </div>
         </div>
       </div>
