@@ -120,6 +120,19 @@ const ART = {
     <rect x="392" y="404" width="16" height="292" fill="${t.obj}"/>
     <ellipse cx="400" cy="700" rx="96" ry="20" fill="${t.obj}"/>`),
 
+  haengeleuchte: (t) => scene(t, (t, id) => `
+    <ellipse cx="400" cy="820" rx="230" ry="60" fill="${t.light}" opacity="0.5"/>
+    <ellipse cx="400" cy="118" rx="62" ry="9" fill="${t.obj}" opacity="0.55"/>
+    <rect x="395" y="118" width="10" height="132" fill="${t.obj}" opacity="0.75"/>
+    <rect x="196" y="250" width="408" height="11" rx="5" fill="${t.obj}"/>
+    ${[0,1,2,3,4].map((i) => {
+      const x = 226 + i * 87;
+      const len = [206, 292, 158, 268, 194][i];
+      return `<rect x="${x - 2}" y="261" width="4" height="${len}" fill="${t.obj}" opacity="0.6"/>
+              <ellipse cx="${x}" cy="${261 + len + 34}" rx="35" ry="42" fill="${t.accent}" opacity="0.55"/>
+              <ellipse cx="${x - 11}" cy="${261 + len + 22}" rx="11" ry="14" fill="${t.light}" opacity="0.6"/>`;
+    }).join("")}`),
+
   regal: (t) => scene(t, (t, id) => `
     ${shadow(id, 400, 210)}
     <rect x="206" y="206" width="388" height="512" fill="${t.obj}" opacity="0.10"/>
@@ -317,25 +330,25 @@ function artFor(product, colorIndex = 0) {
    Farbwerte. Alles Sprachliche steht unter t.<sprache>. --- */
 const PRODUCTS = [
   {
-    id: "sofa-milano", name: "Milano", categoryKey: "sofas", shape: "sofa", tone: "sand",
+    id: "sofa-milano", used: true, grade: "sehrgut", year: "2021", name: "Milano", categoryKey: "sofas", shape: "sofa", tone: "sand",
     price: 8490, weight: "68 kg", swatches: ["#9a6a3f", "#d9c9ae", "#3a3a38"],
     t: {
-      de: { badge: "Neuheit", short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
+      de: { short: "Dreisitzer aus italienischem Anilinleder auf einem Rahmen aus massiver Eiche.",
         description: "Das Sofa Milano verbindet großzügige Proportionen mit einer bemerkenswert leichten Silhouette. Der Korpus wird in Handarbeit über einen Rahmen aus lufttrockneter Eiche gespannt, die Sitzkissen bestehen aus einem Kern aus Kaltschaum mit einer Auflage aus Gänsedaunen. Das pflanzlich gegerbte Anilinleder entwickelt über die Jahre eine eigene Patina.",
         material: "Anilinleder, Eiche massiv, Gänsedaunen", dimensions: "B 240 × T 98 × H 72 cm",
         origin: "Manufaktur Brianza, Italien", lead: "10–12 Wochen", colors: ["Cognac", "Sandbeige", "Anthrazit"] },
-      en: { badge: "New", short: "Three-seater in Italian aniline leather on a solid oak frame.",
+      en: { short: "Three-seater in Italian aniline leather on a solid oak frame.",
         description: "Milano pairs generous proportions with a remarkably light silhouette. The body is drawn by hand over a frame of air-dried oak; the seat cushions have a cold-foam core topped with goose down. The vegetable-tanned aniline leather develops a patina of its own over the years.",
         material: "Aniline leather, solid oak, goose down", dimensions: "W 240 × D 98 × H 72 cm",
         origin: "Brianza workshop, Italy", lead: "10–12 weeks", colors: ["Cognac", "Sand beige", "Anthracite"] },
-      fr: { badge: "Nouveauté", short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
+      fr: { short: "Canapé trois places en cuir aniline italien sur une structure en chêne massif.",
         description: "Le Milano associe des proportions généreuses à une silhouette remarquablement légère. La carcasse est tendue à la main sur une structure en chêne séché à l'air ; les coussins d'assise ont une âme en mousse froide surmontée de duvet d'oie. Le cuir aniline à tannage végétal développe sa propre patine au fil des ans.",
         material: "Cuir aniline, chêne massif, duvet d'oie", dimensions: "L 240 × P 98 × H 72 cm",
         origin: "Atelier de Brianza, Italie", lead: "10–12 semaines", colors: ["Cognac", "Beige sable", "Anthracite"] }
     }
   },
   {
-    id: "sofa-riviera", name: "Riviera", categoryKey: "sofas", shape: "sofa", tone: "sage",
+    id: "sofa-riviera", used: true, grade: "gut", year: "2018", name: "Riviera", categoryKey: "sofas", shape: "sofa", tone: "sage",
     price: 6950, weight: "52 kg", swatches: ["#9aa78d", "#e8e0d2", "#7d8a99"],
     t: {
       de: { short: "Modularer Zweisitzer mit Bezug aus belgischem Leinen.",
@@ -353,25 +366,25 @@ const PRODUCTS = [
     }
   },
   {
-    id: "sessel-orsini", name: "Orsini", categoryKey: "sessel", shape: "sessel", tone: "clay",
+    id: "sessel-orsini", used: true, grade: "wieneu", year: "2022", name: "Orsini", categoryKey: "sessel", shape: "sessel", tone: "clay",
     price: 3280, weight: "24 kg", swatches: ["#b2705a", "#e6dcc9", "#38445c"],
     t: {
-      de: { badge: "Bestseller", short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
+      de: { short: "Loungesessel mit geschwungener Rückenlehne und Bouclé-Bezug.",
         description: "Ein Sessel, der zum Verweilen einlädt. Die umlaufende Rückenlehne wird aus einem Stück formverleimt und anschließend von Hand gepolstert. Der Bouclé-Bezug aus Schurwolle ist besonders strapazierfähig und angenehm warm.",
         material: "Bouclé aus Schurwolle, Formsperrholz, Messing", dimensions: "B 88 × T 84 × H 76 cm",
         origin: "Werkstatt Kopenhagen, Dänemark", lead: "6–8 Wochen", colors: ["Terrakotta", "Creme", "Nachtblau"] },
-      en: { badge: "Bestseller", short: "Lounge chair with a curved back and bouclé cover.",
+      en: { short: "Lounge chair with a curved back and bouclé cover.",
         description: "A chair that invites you to stay. The wrap-around back is moulded from a single piece of laminated wood and then upholstered by hand. The new-wool bouclé is particularly hard-wearing and pleasantly warm.",
         material: "New-wool bouclé, moulded plywood, brass", dimensions: "W 88 × D 84 × H 76 cm",
         origin: "Copenhagen workshop, Denmark", lead: "6–8 weeks", colors: ["Terracotta", "Cream", "Midnight blue"] },
-      fr: { badge: "Best-seller", short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
+      fr: { short: "Fauteuil lounge à dossier galbé, revêtement bouclé.",
         description: "Un fauteuil qui invite à rester. Le dossier enveloppant est moulé d'une seule pièce en bois lamellé, puis garni à la main. Le bouclé en laine vierge est particulièrement résistant et agréablement chaud.",
         material: "Bouclé en laine vierge, contreplaqué moulé, laiton", dimensions: "L 88 × P 84 × H 76 cm",
         origin: "Atelier de Copenhague, Danemark", lead: "6–8 semaines", colors: ["Terre cuite", "Crème", "Bleu nuit"] }
     }
   },
   {
-    id: "sessel-luca", name: "Luca", categoryKey: "sessel", shape: "sessel", tone: "ink",
+    id: "sessel-luca", used: true, grade: "sehrgut", year: "2019", name: "Luca", categoryKey: "sessel", shape: "sessel", tone: "ink",
     price: 4150, weight: "31 kg", swatches: ["#2f4438", "#5d2b30", "#33322e"],
     t: {
       de: { short: "Ohrensessel in Samt mit hoher Rückenlehne.",
@@ -389,7 +402,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "tisch-atelier", name: "Atelier", categoryKey: "tische", shape: "tisch", tone: "stone",
+    id: "tisch-atelier", used: true, grade: "sehrgut", year: "2020", name: "Atelier", categoryKey: "tische", shape: "tisch", tone: "stone",
     price: 5890, weight: "94 kg", swatches: ["#6b4a30", "#4a3b2c", "#d5c8b2"],
     t: {
       de: { short: "Esstisch aus Nussbaum massiv für acht Personen.",
@@ -407,7 +420,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "tisch-onda", name: "Onda", categoryKey: "tische", shape: "tisch", tone: "rose",
+    id: "tisch-onda", used: true, grade: "wieneu", year: "2022", name: "Onda", categoryKey: "tische", shape: "tisch", tone: "rose",
     price: 2740, weight: "58 kg", swatches: ["#d8c6ad", "#3b3a38", "#5b6b58"],
     t: {
       de: { short: "Couchtisch mit Platte aus Travertin und Sockel aus Messing.",
@@ -425,7 +438,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "stuhl-vela", name: "Vela", categoryKey: "stuehle", shape: "stuhl", tone: "sand",
+    id: "stuhl-vela", used: true, grade: "gut", year: "2017", name: "Vela", categoryKey: "stuehle", shape: "stuhl", tone: "sand",
     price: 690, weight: "6 kg", swatches: ["#e3dccb", "#b98d5c", "#4d5157"],
     t: {
       de: { short: "Esszimmerstuhl mit gepolsterter Sitzfläche und Eichengestell.",
@@ -443,7 +456,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "stuhl-marchese", name: "Marchese", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
+    id: "stuhl-marchese", used: true, grade: "sehrgut", year: "2020", name: "Marchese", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
     price: 980, weight: "8 kg", swatches: ["#7d5636", "#2b2a27", "#a97f42"],
     t: {
       de: { short: "Armlehnstuhl mit Lederbezug und Rahmen aus Nussbaum.",
@@ -461,7 +474,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "lampe-soleil", name: "Soleil", categoryKey: "leuchten", shape: "lampe", tone: "sand",
+    id: "lampe-soleil", used: false, name: "Soleil", categoryKey: "leuchten", shape: "lampe", tone: "sand",
     price: 1290, weight: "9 kg", swatches: ["#e5d3ab", "#ece7dc", "#a6663f"],
     t: {
       de: { badge: "Limitiert", short: "Stehleuchte mit handgefaltetem Schirm aus Pergamentpapier.",
@@ -479,7 +492,43 @@ const PRODUCTS = [
     }
   },
   {
-    id: "regal-biblio", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
+    id: "leuchte-alba", used: false, name: "Alba", categoryKey: "leuchten", shape: "haengeleuchte", tone: "studio",
+    price: 15000, weight: "34 kg", swatches: ["#c8b48a", "#e7e2d8", "#7d6a4e"],
+    t: {
+      de: { badge: "Sonderanfertigung", short: "Hängeleuchte mit fünf mundgeblasenen Glaskörpern an einem Träger aus massivem Messing.",
+        description: "Alba entsteht als Sonderanfertigung nach Maß. Fünf Glaskörper werden in Murano einzeln mundgeblasen — keiner gleicht dem anderen. Sie hängen an einem Träger aus massivem Messing, dessen Länge auf den Raum abgestimmt wird. Die Höhe jedes einzelnen Glases lässt sich beim Aufbau frei bestimmen, sodass die Leuchte einer Tafel, einer Treppe oder einem Luftraum folgt.",
+        material: "Mundgeblasenes Muranoglas, massives Messing", dimensions: "B 180 × T 30 × H 90–260 cm (Abhängung nach Maß)",
+        origin: "Glashütte Murano, Italien", lead: "16–20 Wochen", colors: ["Messing gebürstet", "Alabasterweiß", "Bronze dunkel"] },
+      en: { badge: "Made to order", short: "Pendant with five mouth-blown glass bodies on a solid brass carrier.",
+        description: "Alba is made to order and to measure. Five glass bodies are individually mouth-blown in Murano — no two alike. They hang from a solid brass carrier whose length is matched to the room. The height of each glass is set freely during installation, so the piece can follow a table, a staircase or an atrium.",
+        material: "Mouth-blown Murano glass, solid brass", dimensions: "W 180 × D 30 × H 90–260 cm (drop made to measure)",
+        origin: "Murano glassworks, Italy", lead: "16–20 weeks", colors: ["Brushed brass", "Alabaster white", "Dark bronze"] },
+      fr: { badge: "Sur mesure", short: "Suspension à cinq corps de verre soufflés à la bouche sur un support en laiton massif.",
+        description: "Alba est réalisée sur mesure. Cinq corps de verre sont soufflés à la bouche un à un à Murano — aucun n\u2019est identique. Ils sont suspendus à un support en laiton massif dont la longueur s\u2019accorde à la pièce. La hauteur de chaque verre se règle librement à la pose, afin que la suspension épouse une table, un escalier ou un vide.",
+        material: "Verre de Murano soufflé à la bouche, laiton massif", dimensions: "L 180 × P 30 × H 90–260 cm (hauteur sur mesure)",
+        origin: "Verrerie de Murano, Italie", lead: "16–20 semaines", colors: ["Laiton brossé", "Blanc albâtre", "Bronze foncé"] }
+    }
+  },
+  {
+    id: "leuchte-vertice", used: false, name: "Vertice", categoryKey: "leuchten", shape: "lampe", tone: "studio",
+    price: 11400, weight: "46 kg", swatches: ["#e8e0d0", "#cfc3ae", "#4a4239"],
+    t: {
+      de: { short: "Stehleuchte mit Schirm aus geschliffenem Alabaster auf einem Fuß aus Blaustein.",
+        description: "Der Schirm der Vertice wird aus einem einzigen Block Alabaster geschliffen und so weit ausgedünnt, dass das Licht durch den Stein hindurchtritt. Jede Maserung ist ein Unikat. Der Fuß aus belgischem Blaustein hält die Leuchte ohne Verankerung; das Vorschaltgerät ist im Schaft verborgen.",
+        material: "Alabaster, belgischer Blaustein, Messing", dimensions: "Ø 52 × H 176 cm",
+        origin: "Steinmetz Volterra, Italien", lead: "12–14 Wochen", colors: ["Alabaster natur", "Alabaster honig", "Blaustein dunkel"] },
+      en: { short: "Floor lamp with a ground alabaster shade on a bluestone base.",
+        description: "The Vertice shade is ground from a single block of alabaster and thinned until the light passes through the stone. Every vein is unique. The Belgian bluestone base holds the lamp without fixing; the driver is concealed in the stem.",
+        material: "Alabaster, Belgian bluestone, brass", dimensions: "Ø 52 × H 176 cm",
+        origin: "Volterra stonemasons, Italy", lead: "12–14 weeks", colors: ["Natural alabaster", "Honey alabaster", "Dark bluestone"] },
+      fr: { short: "Lampadaire à abat-jour en albâtre taillé sur un socle en pierre bleue.",
+        description: "L\u2019abat-jour du Vertice est taillé dans un seul bloc d\u2019albâtre, aminci jusqu\u2019à ce que la lumière traverse la pierre. Chaque veine est unique. Le socle en pierre bleue de Belgique tient la lampe sans fixation ; l\u2019alimentation est dissimulée dans le fût.",
+        material: "Albâtre, pierre bleue de Belgique, laiton", dimensions: "Ø 52 × H 176 cm",
+        origin: "Tailleurs de pierre de Volterra, Italie", lead: "12–14 semaines", colors: ["Albâtre naturel", "Albâtre miel", "Pierre bleue foncée"] }
+    }
+  },
+  {
+    id: "regal-biblio", used: true, grade: "sehrgut", year: "2019", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
     price: 3960, weight: "86 kg", swatches: ["#4a3b2c", "#c1a37a", "#2e2c28"],
     t: {
       de: { short: "Bibliotheksregal aus geräucherter Eiche, vier Ebenen.",
@@ -497,7 +546,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "sideboard-linea", name: "Linea", categoryKey: "aufbewahrung", shape: "sideboard", tone: "clay",
+    id: "sideboard-linea", used: true, grade: "wieneu", year: "2021", name: "Linea", categoryKey: "aufbewahrung", shape: "sideboard", tone: "clay",
     price: 4480, weight: "74 kg", swatches: ["#6b4a30", "#c1a37a", "#5a5f45"],
     t: {
       de: { short: "Sideboard mit Schiebetüren und Innenausbau aus Ahorn.",
@@ -515,7 +564,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "bett-sereno", name: "Sereno", categoryKey: "betten", shape: "bett", tone: "sage",
+    id: "bett-sereno", used: true, grade: "gut", year: "2018", name: "Sereno", categoryKey: "betten", shape: "bett", tone: "sage",
     price: 5240, weight: "88 kg", swatches: ["#9aa78d", "#ded3bd", "#6e7d8a"],
     t: {
       de: { short: "Polsterbett mit hohem Kopfteil in Leinen.",
@@ -533,7 +582,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "teppich-nomade", name: "Nomade", categoryKey: "accessoires", shape: "teppich", tone: "clay",
+    id: "teppich-nomade", used: true, grade: "sehrgut", year: "2016", name: "Nomade", categoryKey: "accessoires", shape: "teppich", tone: "clay",
     price: 2180, weight: "22 kg", swatches: ["#a5643f", "#d4c2a4", "#484540"],
     t: {
       de: { short: "Handgeknüpfter Teppich aus Hochlandwolle.",
@@ -551,7 +600,7 @@ const PRODUCTS = [
     }
   },
   {
-    id: "spiegel-luna", name: "Luna", categoryKey: "accessoires", shape: "spiegel", tone: "rose",
+    id: "spiegel-luna", used: true, grade: "wieneu", year: "2022", name: "Luna", categoryKey: "accessoires", shape: "spiegel", tone: "rose",
     price: 1480, weight: "34 kg", swatches: ["#b08d4a", "#7d6144", "#2e2c28"],
     t: {
       de: { short: "Standspiegel mit Rahmen aus poliertem Messing.",
@@ -569,6 +618,9 @@ const PRODUCTS = [
     }
   }
 ];
+
+/* Ein gebrauchtes Stück ist ein Einzelstück und nur einmal zu haben. */
+const bestand = (product) => (product.used ? 1 : 99);
 
 /* Liefert die Texte eines Produkts in der aktiven Sprache. */
 function pt(product) {

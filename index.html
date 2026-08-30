@@ -58,7 +58,7 @@
           <h2 data-i18n="home.featured.title">Die Stücke der Saison</h2>
           <span class="rule"></span>
         </div>
-        <a class="link-underline" href="kollektion.html" data-i18n="home.featured.link">Alle 14 Entwürfe</a>
+        <a class="link-underline" href="kollektion.html" data-i18n="home.featured.link">Alle 16 Stücke</a>
       </div>
       <div class="grid grid--3" id="featured"></div>
     </div>
@@ -150,7 +150,7 @@ function initPage() {
   $("#story-art").innerHTML   = ART.regal(TONES.studio);
   $("#service-art").innerHTML = ART.tisch(TONES.studio);
 
-  const featured = ["sofa-milano", "sessel-orsini", "tisch-atelier", "lampe-soleil", "sideboard-linea", "bett-sereno"]
+  const featured = ["sofa-milano", "leuchte-alba", "sessel-orsini", "tisch-atelier", "leuchte-vertice", "sideboard-linea"]
     .map(findProduct).filter(Boolean);
   $("#featured").innerHTML = featured.map(productCard).join("");
 

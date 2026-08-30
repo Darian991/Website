@@ -107,7 +107,7 @@ const Cart = {
     return items.reduce((list, i) => {
       const p = i && typeof i === "object" ? findProduct(i.id) : null;
       if (!p) return list;
-      const qty = Math.min(Math.max(Math.round(Number(i.qty) || 1), 1), 99);
+      const qty = Math.min(Math.max(Math.round(Number(i.qty) || 1), 1), bestand(p));
       // Ältere Warenkörbe haben den Farbnamen gespeichert — in eine Position umrechnen,
       // damit die Farbe die Sprache mitwechselt.
       let idx = Number.isInteger(i.colorIndex) ? i.colorIndex : nameToIndex(p, i.color);
@@ -121,17 +121,20 @@ const Cart = {
     document.dispatchEvent(new CustomEvent("cart:changed", { detail: items }));
   },
   add(id, qty = 1, colorIndex = 0) {
+    const p = findProduct(id);
+    if (!p) return;
+    const max = bestand(p);
     const items = Cart.read();
     const existing = items.find((i) => i.id === id && i.colorIndex === colorIndex);
-    if (existing) existing.qty += qty;
-    else items.push({ id, qty, colorIndex });
+    if (existing) existing.qty = Math.min(existing.qty + qty, max);
+    else items.push({ id, qty: Math.min(qty, max), colorIndex });
     Cart.write(items);
   },
   setQty(index, qty) {
     const items = Cart.read();
     if (!items[index]) return;
     if (qty <= 0) items.splice(index, 1);
-    else items[index].qty = Math.min(qty, 99);
+    else items[index].qty = Math.min(qty, bestand(findProduct(items[index].id)));
     Cart.write(items);
   },
   remove(index) {
@@ -465,7 +468,7 @@ function productCard(p) {
   <article class="card reveal">
     <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name}">
       ${artFor(p)}
-      ${x.badge ? `<span class="card__tag">${x.badge}</span>` : ""}
+      <span class="card__tag ${p.used ? "card__tag--used" : ""}">${p.used ? t("shop.used") : (x.badge || t("shop.new"))}</span>
       <div class="card__quick">
         <button class="btn btn--block" data-add="${p.id}">${t("shop.add")}</button>
       </div>

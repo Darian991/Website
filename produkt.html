@@ -104,7 +104,7 @@ function renderPdp() {
       </div>
 
       <div class="pdp__info">
-        <span class="eyebrow">${t("cat." + p.categoryKey)}${x.badge ? " · " + x.badge : ""}</span>
+        <span class="eyebrow">${t("cat." + p.categoryKey)} · ${p.used ? t("cond.used") : (x.badge || t("cond.new"))}</span>
         <h1 style="font-size:clamp(2.2rem,4vw,3.2rem)">${p.name}</h1>
         <div class="price">${euro(p.price)}</div>
         <p class="lede">${x.short}</p>
@@ -121,14 +121,15 @@ function renderPdp() {
         </div>
 
         <div class="buy-row" style="margin-top:1.6rem">
+          ${p.used ? `<span class="claim" style="align-self:center">${t("pdp.unique")}</span>` : `
           <div class="qty">
             <button id="qty-minus" aria-label="${t("pdp.less")}">−</button>
             <span id="qty-value">1</span>
             <button id="qty-plus" aria-label="${t("pdp.more")}">+</button>
-          </div>
+          </div>`}
           <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
-        <p class="form-note" style="margin-top:1rem">${t("pdp.note", { lead: x.lead })}</p>
+        <p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>
 
         <hr class="divider">
 
@@ -141,6 +142,9 @@ function renderPdp() {
             <button class="acc__btn" aria-expanded="false">${t("pdp.acc.spec")} <i>+</i></button>
             <div class="acc__panel">
               <ul class="specs">
+                ${p.used ? `
+                <li><span>${t("pdp.spec.condition")}</span><span>${t("grade." + p.grade)}</span></li>
+                <li><span>${t("pdp.spec.year")}</span><span>${p.year}</span></li>` : ""}
                 <li><span>${t("pdp.spec.material")}</span><span>${x.material}</span></li>
                 <li><span>${t("pdp.spec.dimensions")}</span><span>${x.dimensions}</span></li>
                 <li><span>${t("pdp.spec.weight")}</span><span>${p.weight}</span></li>
@@ -176,9 +180,15 @@ function renderPdp() {
   $$("#swatches .swatch").forEach((sw) =>
     sw.addEventListener("click", () => chooseColor(Number(sw.dataset.index))));
 
+  // Bei Einzelstücken gibt es keine Mengenauswahl
   const qtyEl = $("#qty-value");
-  $("#qty-minus").addEventListener("click", () => { chosenQty = Math.max(1, chosenQty - 1); qtyEl.textContent = chosenQty; });
-  $("#qty-plus").addEventListener("click",  () => { chosenQty = Math.min(99, chosenQty + 1); qtyEl.textContent = chosenQty; });
+  if (qtyEl) {
+    const max = bestand(current);
+    $("#qty-minus").addEventListener("click", () => { chosenQty = Math.max(1, chosenQty - 1); qtyEl.textContent = chosenQty; });
+    $("#qty-plus").addEventListener("click",  () => { chosenQty = Math.min(max, chosenQty + 1); qtyEl.textContent = chosenQty; });
+  } else {
+    chosenQty = 1;
+  }
 
   $("#add-to-cart").addEventListener("click", () => {
     Cart.add(current.id, chosenQty, chosenColorIndex);
