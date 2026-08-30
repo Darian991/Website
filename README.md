@@ -1,4 +1,4 @@
-# Maison Noir — Website für Luxusmöbel
+# Studio Lusso — Website für Luxusmöbel
 
 Eine vollständige Website für den Verkauf hochwertiger Möbel. Gebaut mit reinem
 HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.

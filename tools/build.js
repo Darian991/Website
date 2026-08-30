@@ -52,11 +52,13 @@ function fillTexts(html) {
     }
   );
 
-  // Vorhandene Texte auffrischen, falls sich die Sprachdatei geändert hat
+  // Vorhandene Texte auffrischen, falls sich die Sprachdatei geändert hat.
+  // Auch Texte mit Formatierung (data-i18n-html, etwa mit <br>) — die
+  // Sprachdatei ist die Quelle, der Inhalt im HTML nur ihr Abbild.
   html = html.replace(
     /<(\w+)([^>]*?\sdata-i18n(?:-html)?="([^"]+)"[^>]*)>([\s\S]*?)<\/\1>/g,
-    (match, tag, attrs, key, inner) => {
-      if (de[key] === undefined || /<\w/.test(inner)) return match;
+    (match, tag, attrs, key) => {
+      if (de[key] === undefined) return match;
       const isHtml = /\sdata-i18n-html="/.test(attrs);
       return `<${tag}${attrs}>${isHtml ? de[key] : esc(de[key])}</${tag}>`;
     }
@@ -88,7 +90,7 @@ function noscriptChrome(activeKey) {
   return `<noscript>
   <div class="topbar">${esc(de["topbar"])}</div>
   <header class="header"><div class="wrap header__inner">
-    <a class="logo" href="index.html">Maison Noir<small>${esc(de["logo.sub"])}</small></a>
+    <a class="logo" href="index.html"><span class="logo__mark">SL</span><span class="logo__name">Studio Lusso<small>${esc(de["logo.sub"])}</small></span></a>
     <nav class="nav-static">
       ${NAV.map((n) => `<a href="${n.href}"${n.key === activeKey ? ' class="is-active"' : ""}>${esc(de["nav." + n.key])}</a>`).join("\n      ")}
     </nav>
@@ -100,8 +102,8 @@ function noscriptFooter() {
   return `<noscript>
   <footer class="footer"><div class="wrap">
     <p>${esc(de["footer.tagline"])}</p>
-    <p>Maximilianstraße 12 · 80539 München · <a href="tel:+498912345678">+49 89 1234 5678</a> ·
-       <a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></p>
+    <p>Stadthausbrücke 8 · 20355 Hamburg · <a href="tel:+4940419274600">+49 40 41 92 74 60</a> ·
+       <a href="mailto:info@studio-lusso.de">info@studio-lusso.de</a></p>
     <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
   </div></footer>
 </noscript>`;
@@ -147,10 +149,10 @@ ${scriptOf(html)}
 
   const out = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maison Noir Möbelmanufaktur</title>
+<title>Studio Lusso Interior Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
 <style>
 ${read("assets/css/style.css")}
 </style>

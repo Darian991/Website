@@ -164,7 +164,7 @@ function renderChrome() {
   <div class="topbar" data-i18n="topbar"></div>
   <header class="header">
     <div class="wrap header__inner">
-      <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+      <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
       <nav class="nav" id="nav">
         <button class="close-x nav__close" id="nav-close" data-i18n-aria="action.close">×</button>
         ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
@@ -205,7 +205,7 @@ function renderChrome() {
     <div class="wrap">
       <div class="footer__grid">
         <div>
-          <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+          <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
           <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem" data-i18n="footer.tagline"></p>
         </div>
         <div>
@@ -230,10 +230,10 @@ function renderChrome() {
         <div>
           <h5 data-i18n="footer.showroom"></h5>
           <ul>
-            <li>Maximilianstraße 12</li>
-            <li>80539 München</li>
-            <li><a href="tel:+498912345678">+49 89 1234 5678</a></li>
-            <li><a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></li>
+            <li>Stadthausbrücke 8</li>
+            <li>20355 Hamburg</li>
+            <li><a href="tel:+4940419274600">+49 40 41 92 74 60</a></li>
+            <li><a href="mailto:info@studio-lusso.de">info@studio-lusso.de</a></li>
           </ul>
         </div>
       </div>
@@ -275,6 +275,9 @@ function bindChrome() {
   const navBackdrop = $("#nav-backdrop");
 
   const setNav = (open) => {
+    // Beim Schließen darf der Tastaturfokus nicht im unerreichbaren Menü
+    // zurückbleiben — er wandert zurück auf den Menüknopf.
+    if (!open && nav.contains(document.activeElement)) burger?.focus();
     nav.classList.toggle("is-open", open);
     navBackdrop?.classList.toggle("is-open", open);
     burger?.setAttribute("aria-expanded", String(open));

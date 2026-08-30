@@ -1,30 +1,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maison Noir Möbelmanufaktur</title>
+<title>Studio Lusso Interior Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   MAISON NOIR — Luxusmöbel
+   STUDIO LUSSO — Interior Design Concepts
    Design-System & Layout
+
+   Farben, Schrift und Gliederung folgen der Imagebroschüre:
+   weißer Grund, warmes Greige als Hausfarbe, dunkles Warmbraun
+   für das Signet, eine leichte Grotesk ohne Serifen, viel Weißraum
+   und der Gedankenstrich als wiederkehrendes Trennzeichen.
    ========================================================= */
 
 :root {
   /* Farben */
-  --ink:        #16150f;
-  --ink-soft:   #35322a;
-  --muted:      #7a7367;
-  --line:       #e0d9cd;
-  --paper:      #faf7f2;
-  --paper-2:    #f2ece2;
+  --ink:        #3a3229;   /* dunkles Warmbraun — Signet, starke Schrift */
+  --ink-soft:   #5c5347;   /* Fließtext */
+  --greige:     #a09589;   /* Hausfarbe der Broschüre */
+  --greige-deep:#7d7268;   /* Überschriften, damit sie lesbar bleiben */
+  --muted:      #8d8579;
+  --line:       #e6e2dc;
+  --paper:      #ffffff;
+  --paper-2:    #f5f3f0;
   --card:       #ffffff;
-  --brass:      #a9863f;
-  --brass-deep: #8a6c2d;
+  --brass:      #a09589;   /* Akzent = Hausfarbe, kein Messing mehr */
+  --brass-deep: #7d7268;
 
-  /* Typografie */
-  --serif: "Cormorant Garamond", "Iowan Old Style", Georgia, "Times New Roman", serif;
-  --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Typografie — die Broschüre setzt durchgehend eine leichte Grotesk.
+     Arimo ist maßgleich zu Helvetica und springt ein, wo diese fehlt. */
+  --sans:    "Helvetica Neue", "Arimo", Helvetica, Arial, sans-serif;
+  --display: "Bodoni Moda", "Didot", "Bodoni MT", Georgia, serif;  /* nur das Signet */
+  --serif:   var(--sans);
 
   /* Feine Körnung, die den Bildern Materialität gibt */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -43,6 +52,9 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
+  /* Der Menü-Auszug liegt rechts außerhalb des Bildes. „clip“ schneidet
+     ihn ab, ohne — anders als „hidden“ — die haftende Kopfzeile zu lösen. */
+  overflow-x: clip;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
@@ -56,15 +68,40 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; }
 
 h1, h2, h3, h4 {
-  font-family: var(--serif);
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -.01em;
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.16;
+  letter-spacing: -.005em;
+  color: var(--greige-deep);
   margin: 0 0 .5em;
+  text-wrap: balance;
 }
-h1 { font-size: clamp(2.6rem, 6vw, 4.6rem); }
-h2 { font-size: clamp(2rem, 4vw, 3rem); }
-h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
+h1 { font-size: clamp(2.1rem, 4.4vw, 3.4rem); font-weight: 200; }
+h2 { font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 200; }
+h3 { font-size: clamp(1.15rem, 1.7vw, 1.4rem); }
+
+/* Der Gedankenstrich unter der Überschrift — Erkennungszeichen der Broschüre */
+.rule { display: block; width: 34px; height: 1px; background: var(--greige); margin: 0 0 2.6rem; border: 0; }
+.center .rule { margin-inline: auto; }
+
+/* Aussage in gesperrten Großbuchstaben, wie „S T U D I O  L U S S O .“ */
+.claim {
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--greige);
+  line-height: 1.9;
+}
+
+/* Bildunterschrift „/ Marke Beschreibung“ */
+.caption { font-size: .74rem; color: var(--muted); letter-spacing: .01em; }
+.caption b { font-weight: 700; color: var(--greige-deep); }
+
+/* Aufzählung mit Schrägstrich */
+.list-slash { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.list-slash li { display: grid; grid-template-columns: 22px 1fr; color: var(--ink-soft); }
+.list-slash li::before { content: "/"; color: var(--greige); }
 p  { margin: 0 0 1.1em; }
 
 .wrap { width: min(100% - (2 * var(--pad)), var(--wrap)); margin-inline: auto; }
@@ -72,15 +109,16 @@ p  { margin: 0 0 1.1em; }
 .center { text-align: center; }
 
 .eyebrow {
-  font-size: .72rem;
-  letter-spacing: .28em;
+  font-size: .68rem;
+  letter-spacing: .3em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--greige);
+  font-weight: 500;
   font-weight: 500;
   margin-bottom: 1rem;
   display: block;
 }
-.lede { font-size: 1.08rem; color: var(--ink-soft); max-width: 60ch; }
+.lede { font-size: 1.02rem; color: var(--ink-soft); max-width: 56ch; font-weight: 400; }
 .muted { color: var(--muted); }
 
 /* ---------- Buttons ---------- */
@@ -89,18 +127,19 @@ p  { margin: 0 0 1.1em; }
   align-items: center;
   justify-content: center;
   gap: .6rem;
-  padding: .95rem 2rem;
+  padding: .95rem 2.2rem;
   border: 1px solid var(--ink);
   background: var(--ink);
-  color: var(--paper);
-  border-radius: var(--radius);
-  font-size: .78rem;
-  letter-spacing: .16em;
+  color: #fff;
+  border-radius: 0;
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .22em;
   text-transform: uppercase;
   cursor: pointer;
   transition: background var(--t), color var(--t), border-color var(--t), transform var(--t);
 }
-.btn:hover { background: var(--brass-deep); border-color: var(--brass-deep); }
+.btn:hover { background: var(--greige-deep); border-color: var(--greige-deep); }
 .btn:active { transform: translateY(1px); }
 .btn--ghost { background: transparent; color: var(--ink); }
 .btn--ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
@@ -111,8 +150,9 @@ p  { margin: 0 0 1.1em; }
 
 .link-underline {
   display: inline-block;
-  font-size: .78rem;
-  letter-spacing: .16em;
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .22em;
   text-transform: uppercase;
   padding-bottom: .35rem;
   border-bottom: 1px solid var(--brass);
@@ -146,21 +186,16 @@ p  { margin: 0 0 1.1em; }
   gap: 1.5rem;
   min-height: 78px;
 }
-.logo {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  white-space: nowrap;
+.logo { display: inline-flex; align-items: center; gap: .8rem; white-space: nowrap; }
+.logo__mark {
+  font-family: var(--display);
+  font-size: 1.85rem;
+  line-height: 1;
+  letter-spacing: -.08em;
+  color: var(--ink);
 }
-.logo small {
-  display: block;
-  font-family: var(--sans);
-  font-size: .55rem;
-  letter-spacing: .38em;
-  color: var(--brass);
-  margin-top: -.15rem;
-}
+.logo__name { display: block; font-size: .74rem; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); }
+.logo__name small { display: block; font-size: .54rem; font-weight: 400; letter-spacing: .26em; color: var(--greige); margin-top: .18rem; }
 
 .nav { display: flex; gap: 2rem; }
 .nav a {
@@ -290,31 +325,46 @@ noscript .footer p { max-width: 60ch; }
 .search__thumb svg { width: 100%; height: 100%; object-fit: cover; }
 .search__text { display: grid; gap: .1rem; min-width: 0; }
 .search__cat { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-.search__name { font-family: var(--serif); font-size: 1.15rem; }
+.search__name { font-size: .98rem; color: var(--ink); }
 .search__desc { font-size: .84rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .search__price { font-size: .9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .searchbar .link-underline { margin-bottom: 1.6rem; display: inline-block; }
 
 /* ---------- Hero ---------- */
+/* Wie die Broschüre: großformatiges Material neben einer weißen
+   Textfläche. Kein Text auf dem Bild — das hält beides ruhig. */
 .hero {
-  position: relative;
-  min-height: clamp(560px, 82vh, 820px);
   display: grid;
-  align-items: center;
-  background: var(--paper-2);
-  overflow: hidden;
+  grid-template-columns: 1fr 1fr;
+  min-height: clamp(520px, 78vh, 780px);
+  background: var(--paper);
 }
-.hero__bg { position: absolute; inset: 0; }
-.hero__bg img, .hero__bg svg { width: 100%; height: 100%; object-fit: cover; }
-.hero::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(100deg, rgba(22,21,15,.34) 0%, rgba(22,21,15,.16) 45%, rgba(22,21,15,0) 78%);
+.hero__bg { position: relative; overflow: hidden; background: var(--paper-2); }
+.hero__bg img, .hero__bg svg, .hero__bg canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero__caption {
+  position: absolute;
+  left: clamp(1rem, 2vw, 1.6rem);
+  bottom: clamp(1rem, 2vw, 1.6rem);
+  color: rgba(255,255,255,.9);
+  z-index: 2;
+  text-shadow: 0 1px 6px rgba(58,50,41,.5);
 }
-.hero__content { position: relative; z-index: 2; color: var(--paper); max-width: 640px; padding: 4rem 0; }
-.hero__content .eyebrow { color: #d9bd82; }
-.hero__content p { color: rgba(250,247,242,.85); }
-.hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+.hero__caption b { color: #fff; }
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2.5rem, 6vw, 6rem) clamp(1.5rem, 5vw, 5rem);
+  max-width: 100%;
+}
+.hero__content h1 { margin-bottom: 1.6rem; }
+.hero__actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.4rem; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; }
+  .hero__bg { aspect-ratio: 4 / 3; }
+  .hero__content { padding: clamp(2.5rem, 8vw, 4rem) var(--pad) clamp(3rem, 9vw, 4.5rem); }
+}
 
 
 /* ---------- Körnung über den Bildflächen ----------
@@ -401,7 +451,7 @@ noscript .footer p { max-width: 60ch; }
 .card:hover .card__quick, .card:focus-within .card__quick { opacity: 1; transform: none; }
 .card__body { padding-top: 1.1rem; display: flex; flex-direction: column; gap: .25rem; }
 .card__cat { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
-.card__title { font-family: var(--serif); font-size: 1.35rem; }
+.card__title { font-size: 1.02rem; font-weight: 400; color: var(--ink); }
 .card__price { font-size: .95rem; color: var(--ink-soft); }
 
 /* ---------- Split-Banner ---------- */
@@ -418,16 +468,18 @@ noscript .footer p { max-width: 60ch; }
 .cat-tile:hover svg, .cat-tile:hover img { transform: scale(1.06); }
 .cat-tile__label {
   position: absolute; inset: auto 0 0 0;
-  padding: 2.5rem 1.5rem 1.4rem;
-  background: linear-gradient(transparent, rgba(22,21,15,.75));
-  color: var(--paper);
-  font-family: var(--serif);
-  font-size: 1.5rem;
+  padding: 3rem 1.4rem 1.3rem;
+  background: linear-gradient(transparent, rgba(58,50,41,.62));
+  color: #fff;
+  font-size: .74rem;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
   text-align: center;
 }
 
 /* ---------- Zitat ---------- */
-.quote { max-width: 46ch; margin-inline: auto; font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.3rem); line-height: 1.35; }
+.quote { max-width: 44ch; margin-inline: auto; font-size: clamp(1.25rem, 2.2vw, 1.8rem); font-weight: 200; line-height: 1.45; color: var(--greige-deep); }
 .quote cite { display: block; font-family: var(--sans); font-style: normal; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: 1.8rem; }
 
 /* ---------- Formulare ---------- */
@@ -523,7 +575,7 @@ noscript .footer p { max-width: 60ch; }
 .pdp__thumbs button { border: 1px solid var(--line); background: var(--paper-2); padding: 0; border-radius: var(--radius); overflow: hidden; cursor: pointer; aspect-ratio: 1/1; transition: border-color var(--t); }
 .pdp__thumbs button.is-active, .pdp__thumbs button:hover { border-color: var(--brass); }
 .pdp__info { position: sticky; top: 110px; }
-.price { font-family: var(--serif); font-size: 2rem; margin: .4rem 0 1.2rem; }
+.price { font-size: 1.35rem; font-weight: 300; color: var(--ink); margin: .4rem 0 1.4rem; }
 .divider { height: 1px; background: var(--line); margin: 2rem 0; border: 0; }
 
 .swatches { display: flex; gap: .7rem; }
@@ -554,7 +606,7 @@ noscript .footer p { max-width: 60ch; }
 .cart-item { display: grid; grid-template-columns: 110px 1fr auto; gap: 1.4rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); align-items: center; }
 .cart-item__media { aspect-ratio: 1/1; background: var(--paper-2); border-radius: var(--radius); overflow: hidden; }
 .cart-item__media svg { width: 100%; height: 100%; object-fit: cover; }
-.cart-item__title { font-family: var(--serif); font-size: 1.2rem; }
+.cart-item__title { font-size: 1rem; color: var(--ink); }
 .cart-item__meta { font-size: .8rem; color: var(--muted); }
 .cart-item__remove { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; padding: 0; margin-top: .5rem; transition: color var(--t); }
 .cart-item__remove:hover { color: #a33; }
@@ -562,7 +614,7 @@ noscript .footer p { max-width: 60ch; }
 
 .summary { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.5rem, 3vw, 2.2rem); position: sticky; top: 110px; }
 .summary__row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; font-size: .95rem; }
-.summary__row--total { border-top: 1px solid var(--line); margin-top: .8rem; padding-top: 1.1rem; font-family: var(--serif); font-size: 1.5rem; }
+.summary__row--total { border-top: 1px solid var(--line); margin-top: .8rem; padding-top: 1.1rem; font-size: 1.15rem; color: var(--ink); }
 .empty-state { text-align: center; padding: clamp(3rem, 8vw, 6rem) 1rem; }
 
 /* ---------- Warenkorb-Schublade ---------- */
@@ -583,7 +635,7 @@ noscript .footer p { max-width: 60ch; }
 }
 .drawer.is-open { transform: none; }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 1.4rem var(--pad); border-bottom: 1px solid var(--line); }
-.drawer__head h3 { margin: 0; font-size: 1.3rem; }
+.drawer__head h3 { margin: 0; font-size: 1rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; }
 .drawer__body { flex: 1; overflow-y: auto; padding: 0 var(--pad); }
 .drawer__foot { padding: 1.4rem var(--pad); border-top: 1px solid var(--line); display: grid; gap: .8rem; }
 .close-x { background: none; border: 0; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: .2rem .4rem; }
@@ -605,7 +657,7 @@ noscript .footer p { max-width: 60ch; }
 /* ---------- Team / Werte ---------- */
 .value { padding: 2rem 0; border-top: 1px solid var(--line); }
 .value h3 { margin-bottom: .4rem; }
-.value .num { font-family: var(--serif); font-size: 2.6rem; color: var(--brass); line-height: 1; display: block; margin-bottom: .6rem; }
+.value .num { font-size: 2.4rem; font-weight: 200; color: var(--greige); line-height: 1; display: block; margin-bottom: .8rem; }
 
 /* ---------- Animation beim Scrollen ---------- */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity 800ms ease, transform 800ms cubic-bezier(.2,.7,.2,1); }
@@ -656,7 +708,16 @@ noscript .footer p { max-width: 60ch; }
   .icon-btn span.label { display: none; }
   .header__actions { gap: .85rem; }
   .header__inner { gap: .8rem; }
-  .logo { font-size: 1.25rem; letter-spacing: .16em; }
+  .logo { gap: .6rem; }
+  .logo__mark { font-size: 1.55rem; }
+  .logo__name { font-size: .64rem; letter-spacing: .22em; }
+  .logo__name small { font-size: .46rem; letter-spacing: .2em; }
+}
+
+/* Auf sehr schmalen Geräten trägt nur noch das Signet — der Schriftzug
+   würde die Kopfzeile über den Bildrand schieben. */
+@media (max-width: 420px) {
+  .logo__name { display: none; }
   .form-row { grid-template-columns: 1fr; }
   .footer__grid { grid-template-columns: 1fr; }
   .cart-item { grid-template-columns: 84px 1fr; }
@@ -703,25 +764,25 @@ const I18N = {
   de: {
     "html.lang": "de",
 
-    "desc.home": "Maison Noir fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
-    "desc.shop": "Die gesamte Kollektion von Maison Noir: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.",
-    "desc.product": "Materialien, Maße und Ausführungen zu den Entwürfen von Maison Noir.",
-    "desc.cart": "Ihre Auswahl bei Maison Noir — mit Fertigungszeiten und Lieferung bis in den Raum.",
-    "desc.about": "Seit 1974 fertigt Maison Noir Möbel in Handarbeit. Über unsere Werkstätten, Materialien und Menschen.",
-    "desc.contact": "Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Maison Noir.",
+    "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
+    "desc.shop": "Die gesamte Kollektion von Studio Lusso: Sofas, Sessel, Tische, Stühle, Leuchten, Aufbewahrung und Betten aus handwerklicher Fertigung.",
+    "desc.product": "Materialien, Maße und Ausführungen zu den Entwürfen von Studio Lusso.",
+    "desc.cart": "Ihre Auswahl bei Studio Lusso — mit Fertigungszeiten und Lieferung bis in den Raum.",
+    "desc.about": "Studio Lusso ist ein Interior Design Studio in Hamburg: ganzheitliche Planung, individuelles Design und Projekte im In- und Ausland.",
+    "desc.contact": "Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Studio Lusso.",
 
-    "title.home": "Maison Noir — Luxusmöbel aus europäischer Handarbeit",
-    "title.shop": "Kollektion — Maison Noir",
-    "title.product": "Entwurf — Maison Noir",
-    "title.cart": "Warenkorb — Maison Noir",
-    "title.about": "Die Manufaktur — Maison Noir",
-    "title.contact": "Kontakt & Beratung — Maison Noir",
+    "title.home": "Studio Lusso — Luxusmöbel aus europäischer Handarbeit",
+    "title.shop": "Kollektion — Studio Lusso",
+    "title.product": "Entwurf — Studio Lusso",
+    "title.cart": "Warenkorb — Studio Lusso",
+    "title.about": "Das Studio — Studio Lusso",
+    "title.contact": "Kontakt & Beratung — Studio Lusso",
 
-    "topbar": "Versandkostenfrei innerhalb Europas · Persönliche Beratung unter +49 89 1234 5678",
-    "logo.sub": "Möbelmanufaktur",
+    "topbar": "Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
+    "logo.sub": "Interior Design Concepts",
     "nav.home": "Startseite",
     "nav.shop": "Kollektion",
-    "nav.about": "Manufaktur",
+    "nav.about": "Studio",
     "nav.contact": "Kontakt",
     "action.advice": "Beratung",
     "action.cart": "Warenkorb",
@@ -759,7 +820,7 @@ const I18N = {
     "cart.remove": "Entfernen",
     "cart.added": "{name} wurde in den Warenkorb gelegt",
 
-    "footer.tagline": "Möbel, die in Handarbeit entstehen und über Generationen bleiben. Gefertigt in Europa, seit 1974.",
+    "footer.tagline": "Wir gestalten Räume, die über Trends hinausgehen: zeitlos, durchdacht, elegant und authentisch.",
     "footer.collection": "Kollektion",
     "footer.service": "Service",
     "footer.showroom": "Showroom",
@@ -767,15 +828,15 @@ const I18N = {
     "footer.advice": "Persönliche Beratung",
     "footer.delivery": "Lieferung & Montage",
     "footer.care": "Pflegehinweise",
-    "footer.manufactory": "Manufaktur",
-    "footer.rights": "Maison Noir Möbelmanufaktur",
+    "footer.manufactory": "Über das Studio",
+    "footer.rights": "Studio Lusso Interior Design Concepts",
     "footer.legal": "Impressum · Datenschutz · AGB · Widerrufsrecht",
 
-    "home.hero.eyebrow": "Manufaktur seit 1974",
-    "home.hero.title": "Möbel für ein<br>ganzes Leben.",
-    "home.hero.lede": "Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern, Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.",
-    "home.hero.cta1": "Kollektion entdecken",
-    "home.hero.cta2": "Beratungstermin",
+    "home.hero.eyebrow": "Interior Design Concepts",
+    "home.hero.title": "Räume als Lebensräume.<br>Design mit Substanz.",
+    "home.hero.lede": "Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.",
+    "home.hero.cta1": "Kollektion ansehen",
+    "home.hero.cta2": "Showroom besuchen",
     "home.feat1.t": "Handgefertigt", "home.feat1.p": "In Manufakturen in Italien, Dänemark und Deutschland",
     "home.feat2.t": "Lieferung bis in den Raum", "home.feat2.p": "Weißhandschuh-Service inklusive Montage",
     "home.feat3.t": "10 Jahre Garantie", "home.feat3.p": "Auf Rahmen, Federung und Verarbeitung",
@@ -783,16 +844,16 @@ const I18N = {
     "home.featured.eyebrow": "Ausgewählt",
     "home.featured.title": "Die Stücke der Saison",
     "home.featured.link": "Alle 14 Entwürfe",
-    "home.story.eyebrow": "Unsere Haltung",
-    "home.story.title": "Das Gegenteil von schnell.",
-    "home.story.p1": "An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.",
-    "home.story.p2": "Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.",
-    "home.story.link": "Die Manufaktur besuchen",
+    "home.story.eyebrow": "Unsere Philosophie",
+    "home.story.title": "Für Räume, die wirken.",
+    "home.story.p1": "Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.",
+    "home.story.p2": "Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.",
+    "home.story.link": "Das Studio kennenlernen",
     "home.cats.eyebrow": "Nach Raum",
     "home.cats.title": "Wo möchten Sie beginnen?",
     "home.cats.sitting": "Sofas & Sessel",
-    "home.quote": "„Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“",
-    "home.quote.cite": "Elena Farber · Gestalterische Leitung",
+    "home.quote": "„Studio Lusso. Für Räume, die wirken.“",
+    "home.quote.cite": "Studio Lusso · Hamburg",
     "home.service.eyebrow": "Service",
     "home.service.title": "Wir planen Ihren Raum mit.",
     "home.service.p": "Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.",
@@ -861,36 +922,36 @@ const I18N = {
     "cartpage.note": "Wir bestätigen jede Bestellung persönlich, bevor die Fertigung beginnt. Anzahlung 30 %, Restbetrag bei Lieferung.",
     "cartpage.demo": "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.",
 
-    "about.eyebrow": "Seit 1974",
-    "about.title": "Eine Werkstatt,<br>keine Fabrik.",
-    "about.lede": "Maison Noir wurde von Anna und Josef Farber als kleine Polsterei in München gegründet. Heute arbeiten wir mit sieben Werkstätten in vier Ländern — nach denselben Regeln wie damals.",
-    "about.mat.eyebrow": "Material",
-    "about.mat.title": "Wir kaufen dort ein, wo wir hinfahren können.",
-    "about.mat.p1": "Unser Holz stammt aus Wäldern, die wir kennen. Die Leder kommen von zwei Gerbereien in der Toskana, die noch pflanzlich gerben — ein Verfahren, das Wochen dauert statt Stunden.",
-    "about.mat.p2": "Wir verwenden keine Spanplatten, keine geklebten Furnierschichten in tragenden Teilen und keine Schäume, die nach fünf Jahren zusammenfallen. Das macht unsere Möbel teurer. Und deutlich langlebiger.",
-    "about.n1.t": "Jahre Erfahrung", "about.n1.p": "Gegründet 1974 in München, seither in Familienhand.",
-    "about.n2.t": "Partnerwerkstätten", "about.n2.p": "In Deutschland, Italien, Dänemark und Belgien.",
-    "about.n3.t": "Jahre Garantie", "about.n3.p": "Auf Rahmen, Federung und Verarbeitung — reparieren statt ersetzen.",
-    "about.proc.eyebrow": "Verfahren",
-    "about.proc.title": "Wie ein Sofa entsteht.",
-    "about.proc.s1": "Auswahl", "about.proc.p1": "Sie wählen Modell, Bezug und Maße. Muster senden wir vorab nach Hause.",
-    "about.proc.s2": "Rahmen", "about.proc.p2": "Der Schreiner baut den Rahmen aus zwei Jahre lang lufttrockneter Eiche.",
-    "about.proc.s3": "Polsterung", "about.proc.p3": "Federn werden von Hand gebunden, Rosshaar und Schaum in Lagen aufgebaut.",
-    "about.proc.s4": "Bezug", "about.proc.p4": "Der Bezug wird zugeschnitten, genäht und nass über den Korpus gezogen.",
-    "about.proc.s5": "Lieferung", "about.proc.p5": "Zwei Monteure bringen das Stück in den Raum und nehmen die Verpackung mit.",
-    "about.care.eyebrow": "Pflege",
-    "about.care.title": "Damit es lange schön bleibt",
-    "about.care.leather": "Leder",
-    "about.care.leather.p": "Anilinleder einmal im Monat mit einem trockenen, weichen Tuch abstauben und zweimal jährlich mit Lederbalsam pflegen. Direkte Sonne meiden — sie bleicht das Leder ungleichmäßig aus. Flecken nie mit Wasser reiben, sondern tupfen.",
-    "about.care.wood": "Massivholz",
-    "about.care.wood.p": "Geölte Oberflächen mit klarem Wasser und wenig Seife reinigen. Einmal jährlich mit Hartwachsöl in Faserrichtung nachölen. Kleine Kratzer verschwinden dabei fast vollständig — anders als bei lackierten Flächen.",
-    "about.care.fabric": "Leinen und Wolle",
-    "about.care.fabric.p": "Wöchentlich mit geringer Saugkraft absaugen. Abnehmbare Bezüge bei 30 °C im Schonwaschgang waschen und leicht feucht wieder aufziehen. Bouclé nicht bürsten — die Schlingen reißen sonst auf.",
-    "about.care.metal": "Messing und Stein",
-    "about.care.metal.p": "Unbehandeltes Messing dunkelt bewusst nach. Wer den hellen Glanz halten möchte, poliert es alle paar Monate mit Messingpolitur. Travertin und Marmor vertragen keine Säuren — Zitrone, Essig und Rotwein sofort abnehmen.",
-    "about.visit.eyebrow": "Besuchen Sie uns",
-    "about.visit.title": "Showroom München",
-    "about.visit.p": "Maximilianstraße 12 · 80539 München<br>Montag bis Freitag 10–19 Uhr, Samstag 11–17 Uhr",
+    "about.eyebrow": "Interior Design Studio",
+    "about.title": "Wir gestalten Räume,<br>die über Trends hinausgehen.",
+    "about.lede": "Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision und tiefem Verständnis für architektonische Zusammenhänge. Wir begleiten Projekte von der ersten Idee bis zur vollständigen Umsetzung.",
+    "about.mat.eyebrow": "Was uns auszeichnet",
+    "about.mat.title": "Ganzheitliche Planung.",
+    "about.mat.p1": "Interior Design ist für uns mehr als Möblierung oder nur eine Küche. Es ist ein orchestriertes Zusammenspiel aus Raum, Licht, Materialität und Funktion.",
+    "about.mat.p2": "Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.",
+    "about.n1.t": "Ganzheitliche Planung", "about.n1.p": "Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.",
+    "about.n2.t": "Individuelles Design", "about.n2.p": "Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.",
+    "about.n3.t": "Über Grenzen hinaus", "about.n3.p": "Neben Poliform und Baxter arbeiten wir mit allen renommierten Herstellern — national und international.",
+    "about.proc.eyebrow": "Projektverlauf",
+    "about.proc.title": "Vom Bedürfnis zum Raum.",
+    "about.proc.s1": "Bedarfsanalyse & Erstberatung", "about.proc.p1": "Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.",
+    "about.proc.s2": "Konzeption & Entwurf", "about.proc.p2": "Ideen entwickeln, Räume denken — mit 3D-Visualisierungen, Moodboards, Farb- und Materialvorschlägen.",
+    "about.proc.s3": "Planung & Detailentwicklung", "about.proc.p3": "Vom Konzept zur konkreten Lösung: Möblierungspläne, Lichtplanung, Maßzeichnungen, Detailplanungen.",
+    "about.proc.s4": "Umsetzung & Bauleitung", "about.proc.p4": "Gestaltung wird Realität. Wir koordinieren die Gewerke und achten auf Zeit-, Kosten- und Qualitätspläne.",
+    "about.proc.s5": "Möblierung & Übergabe", "about.proc.p5": "Das Detail macht den Unterschied: Möbel, Leuchten, Vorhänge, Teppiche, Kunst. Danach bleiben wir Ansprechpartner.",
+    "about.care.eyebrow": "Leistungen",
+    "about.care.title": "Was wir übernehmen",
+    "about.care.leather": "Interior Design & Raumkonzepte",
+    "about.care.leather.p": "Nationale und internationale Projektrealisation, Interior Design, high-end Küchen und vollständige Raumkonzepte — von der ersten Idee bis zur Übergabe.",
+    "about.care.wood": "Technische Planung",
+    "about.care.wood.p": "Ausführungs- und Detailplanung, Möblierungs- und Lichtplanung sowie die Koordination der Schnittstellen mit externen Planern.",
+    "about.care.fabric": "Material & Oberflächen",
+    "about.care.fabric.p": "Material-, Farb- und Oberflächenberatung mit einem sicheren Gespür für Proportion, Haptik und Atmosphäre.",
+    "about.care.metal": "Sonderanfertigungen",
+    "about.care.metal.p": "Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.",
+    "about.visit.eyebrow": "Showroom",
+    "about.visit.title": "Poliform Showroom Hamburg",
+    "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung",
     "about.visit.cta": "Termin vereinbaren",
 
     "contact.title": "Sprechen wir<br>über Ihren Raum.",
@@ -918,7 +979,7 @@ const I18N = {
     "contact.hoursLabel": "Erreichbarkeit",
     "contact.hours": "Mo–Fr 9–18 Uhr",
     "contact.showroom": "Showroom",
-    "contact.address": "Maximilianstraße 12<br>80539 München<br>Deutschland",
+    "contact.address": "Stadthausbrücke 8<br>20355 Hamburg<br>Deutschland",
     "contact.monfri": "Montag – Freitag", "contact.monfriH": "10–19 Uhr",
     "contact.sat": "Samstag", "contact.satH": "11–17 Uhr",
     "contact.sun": "Sonntag", "contact.sunH": "geschlossen",
@@ -930,25 +991,25 @@ const I18N = {
   en: {
     "html.lang": "en",
 
-    "desc.home": "Maison Noir makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
-    "desc.shop": "The complete Maison Noir collection: sofas, armchairs, tables, chairs, lighting, storage and beds, made by hand.",
-    "desc.product": "Materials, dimensions and finishes for the designs by Maison Noir.",
-    "desc.cart": "Your selection at Maison Noir — with production times and delivery into your room.",
-    "desc.about": "Maison Noir has been making furniture by hand since 1974. About our workshops, materials and people.",
-    "desc.contact": "Personal interior advice, the Munich showroom and how to reach Maison Noir.",
+    "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
+    "desc.shop": "The complete Studio Lusso collection: sofas, armchairs, tables, chairs, lighting, storage and beds, made by hand.",
+    "desc.product": "Materials, dimensions and finishes for the designs by Studio Lusso.",
+    "desc.cart": "Your selection at Studio Lusso — with production times and delivery into your room.",
+    "desc.about": "Studio Lusso is an interior design studio in Hamburg: holistic planning, individual design and projects at home and abroad.",
+    "desc.contact": "Personal interior advice, the Munich showroom and how to reach Studio Lusso.",
 
-    "title.home": "Maison Noir — Handmade European Luxury Furniture",
-    "title.shop": "Collection — Maison Noir",
-    "title.product": "Design — Maison Noir",
-    "title.cart": "Basket — Maison Noir",
-    "title.about": "The Workshop — Maison Noir",
-    "title.contact": "Contact & Advice — Maison Noir",
+    "title.home": "Studio Lusso — Handmade European Luxury Furniture",
+    "title.shop": "Collection — Studio Lusso",
+    "title.product": "Design — Studio Lusso",
+    "title.cart": "Basket — Studio Lusso",
+    "title.about": "The Studio — Studio Lusso",
+    "title.contact": "Contact & Advice — Studio Lusso",
 
-    "topbar": "Free delivery across Europe · Personal advice on +49 89 1234 5678",
-    "logo.sub": "Furniture Makers",
+    "topbar": "Poliform showroom Hamburg · Appointments on +49 40 41 92 74 60",
+    "logo.sub": "Interior Design Concepts",
     "nav.home": "Home",
     "nav.shop": "Collection",
-    "nav.about": "Workshop",
+    "nav.about": "Studio",
     "nav.contact": "Contact",
     "action.advice": "Advice",
     "action.cart": "Basket",
@@ -986,7 +1047,7 @@ const I18N = {
     "cart.remove": "Remove",
     "cart.added": "{name} was added to your basket",
 
-    "footer.tagline": "Furniture made by hand, meant to be passed on. Made in Europe since 1974.",
+    "footer.tagline": "We design rooms that outlast trends: timeless, considered, elegant and authentic.",
     "footer.collection": "Collection",
     "footer.service": "Service",
     "footer.showroom": "Showroom",
@@ -994,15 +1055,15 @@ const I18N = {
     "footer.advice": "Personal advice",
     "footer.delivery": "Delivery & assembly",
     "footer.care": "Care instructions",
-    "footer.manufactory": "Workshop",
-    "footer.rights": "Maison Noir Furniture Makers",
+    "footer.manufactory": "About the studio",
+    "footer.rights": "Studio Lusso Interior Design Concepts",
     "footer.legal": "Imprint · Privacy · Terms · Right of withdrawal",
 
-    "home.hero.eyebrow": "Making furniture since 1974",
-    "home.hero.title": "Furniture for<br>a whole life.",
-    "home.hero.lede": "Every piece is made by hand in small European workshops — from woods, leathers and fabrics we choose ourselves. No production runs. No hurry.",
-    "home.hero.cta1": "Explore the collection",
-    "home.hero.cta2": "Book a consultation",
+    "home.hero.eyebrow": "Interior Design Concepts",
+    "home.hero.title": "Rooms as living spaces.<br>Design with substance.",
+    "home.hero.lede": "We design rooms that outlast trends. As an interior design studio focused on holistic planning, we combine the highest design standards with technical precision.",
+    "home.hero.cta1": "See the collection",
+    "home.hero.cta2": "Visit the showroom",
     "home.feat1.t": "Made by hand", "home.feat1.p": "In workshops in Italy, Denmark and Germany",
     "home.feat2.t": "Delivered to your room", "home.feat2.p": "White-glove service, assembly included",
     "home.feat3.t": "10-year guarantee", "home.feat3.p": "On frame, suspension and workmanship",
@@ -1010,16 +1071,16 @@ const I18N = {
     "home.featured.eyebrow": "Selected",
     "home.featured.title": "Pieces of the season",
     "home.featured.link": "All 14 designs",
-    "home.story.eyebrow": "How we work",
-    "home.story.title": "The opposite of fast.",
-    "home.story.p1": "Our upholsterers spend up to nine days on a single sofa. The air-dried oak frame has seasoned for two years before that. The suspension is tied by hand, as it was a century ago.",
-    "home.story.p2": "The result is a piece that gets handed on rather than replaced. We repair every piece that has left our workshop — no matter when you bought it.",
-    "home.story.link": "Visit the workshop",
+    "home.story.eyebrow": "Our philosophy",
+    "home.story.title": "For rooms that work.",
+    "home.story.p1": "We are convinced that excellent interior design emerges in dialogue — between vision and feasibility, creativity and structure, aesthetics and everyday use.",
+    "home.story.p2": "With passion, expertise and a clear design standard we develop rooms that become living spaces. Not arbitrary, but singular.",
+    "home.story.link": "Get to know the studio",
     "home.cats.eyebrow": "By room",
     "home.cats.title": "Where would you like to begin?",
     "home.cats.sitting": "Sofas & armchairs",
-    "home.quote": "“Good furniture doesn't demand attention. It keeps a room calm — and you with it.”",
-    "home.quote.cite": "Elena Farber · Head of Design",
+    "home.quote": "“Studio Lusso. For rooms that work.”",
+    "home.quote.cite": "Studio Lusso · Hamburg",
     "home.service.eyebrow": "Service",
     "home.service.title": "We plan your room with you.",
     "home.service.p": "Our interior advisers come to you, take measurements, bring samples and draw up a plan — free of charge and without obligation, anywhere in Europe.",
@@ -1088,37 +1149,37 @@ const I18N = {
     "cartpage.note": "We confirm every order personally before production starts. 30% deposit, the balance on delivery.",
     "cartpage.demo": "Demo checkout: payment goes here in the finished version. Your request would now have reached us.",
 
-    "about.eyebrow": "Since 1974",
-    "about.title": "A workshop,<br>not a factory.",
-    "about.lede": "Maison Noir was founded by Anna and Josef Farber as a small upholstery shop in Munich. Today we work with seven workshops in four countries — by the same rules as back then.",
-    "about.mat.eyebrow": "Material",
-    "about.mat.title": "We buy where we can drive to.",
-    "about.mat.p1": "Our timber comes from forests we know. The leather comes from two tanneries in Tuscany that still tan with plant extracts — a process that takes weeks rather than hours.",
-    "about.mat.p2": "We use no chipboard, no glued veneer layers in load-bearing parts and no foams that collapse after five years. That makes our furniture more expensive. And considerably longer-lived.",
-    "about.n1.t": "Years of experience", "about.n1.p": "Founded in Munich in 1974, family-owned ever since.",
-    "about.n2.t": "Partner workshops", "about.n2.p": "In Germany, Italy, Denmark and Belgium.",
-    "about.n3.t": "Years of guarantee", "about.n3.p": "On frame, suspension and workmanship — we repair rather than replace.",
-    "about.proc.eyebrow": "Process",
-    "about.proc.title": "How a sofa comes about.",
-    "about.proc.s1": "Choice", "about.proc.p1": "You choose model, cover and dimensions. We send samples to your home first.",
-    "about.proc.s2": "Frame", "about.proc.p2": "The joiner builds the frame from oak air-dried for two years.",
-    "about.proc.s3": "Upholstery", "about.proc.p3": "Springs are tied by hand, horsehair and foam built up in layers.",
-    "about.proc.s4": "Cover", "about.proc.p4": "The cover is cut, sewn and drawn damp over the body.",
-    "about.proc.s5": "Delivery", "about.proc.p5": "Two fitters carry the piece into the room and take the packaging with them.",
-    "about.care.eyebrow": "Care",
-    "about.care.title": "So it stays beautiful",
-    "about.care.leather": "Leather",
-    "about.care.leather.p": "Dust aniline leather once a month with a dry, soft cloth and treat it with leather balm twice a year. Avoid direct sun — it bleaches leather unevenly. Never rub stains with water; blot them.",
-    "about.care.wood": "Solid wood",
-    "about.care.wood.p": "Clean oiled surfaces with clear water and a little soap. Re-oil once a year with hard wax oil, along the grain. Small scratches all but disappear in the process — unlike on lacquered surfaces.",
-    "about.care.fabric": "Linen and wool",
-    "about.care.fabric.p": "Vacuum weekly on low suction. Wash removable covers at 30 °C on a gentle cycle and put them back on slightly damp. Don't brush bouclé — the loops tear open.",
-    "about.care.metal": "Brass and stone",
-    "about.care.metal.p": "Untreated brass darkens on purpose. To keep the bright shine, polish it every few months with brass polish. Travertine and marble don't tolerate acids — remove lemon, vinegar and red wine at once.",
-    "about.visit.eyebrow": "Come and see us",
-    "about.visit.title": "Munich showroom",
-    "about.visit.p": "Maximilianstrasse 12 · 80539 Munich<br>Monday to Friday 10–19, Saturday 11–17",
-    "about.visit.cta": "Book an appointment",
+    "about.eyebrow": "Interior design studio",
+    "about.title": "We design rooms<br>that outlast trends.",
+    "about.lede": "As an interior design studio focused on holistic planning, we combine the highest design standards with technical precision and a deep understanding of architectural context. We accompany projects from the first idea to full completion.",
+    "about.mat.eyebrow": "What sets us apart",
+    "about.mat.title": "Holistic planning.",
+    "about.mat.p1": "For us, interior design is more than furnishing or a kitchen. It is an orchestrated interplay of space, light, materiality and function.",
+    "about.mat.p2": "Our approach brings architecture and individual needs together early on — for a result that convinces visually and in substance.",
+    "about.n1.t": "Holistic planning", "about.n1.p": "Space, light, materiality and function interlock rather than sit side by side.",
+    "about.n2.t": "Individual design", "about.n2.p": "Every project is as singular as its context — tuned to place, use and people.",
+    "about.n3.t": "Beyond borders", "about.n3.p": "Alongside Poliform and Baxter we work with every renowned maker — nationally and internationally.",
+    "about.proc.eyebrow": "Project process",
+    "about.proc.title": "From need to room.",
+    "about.proc.s1": "Needs analysis & first meeting", "about.proc.p1": "Understanding what really counts. We clarify expectations, functional requirements and the design direction.",
+    "about.proc.s2": "Concept & design", "about.proc.p2": "Developing ideas, thinking in rooms — with 3D visuals, mood boards, colour and material proposals.",
+    "about.proc.s3": "Planning & detailing", "about.proc.p3": "From concept to concrete solution: furnishing plans, lighting design, measured drawings, detailing.",
+    "about.proc.s4": "Delivery & site management", "about.proc.p4": "Design becomes reality. We coordinate the trades and keep to schedule, budget and quality.",
+    "about.proc.s5": "Furnishing & handover", "about.proc.p5": "The detail makes the difference: furniture, lighting, curtains, rugs, art. Afterwards we stay your contact.",
+    "about.care.eyebrow": "Services",
+    "about.care.title": "What we take on",
+    "about.care.leather": "Interior design & room concepts",
+    "about.care.leather.p": "National and international project delivery, interior design, high-end kitchens and complete room concepts — from first idea to handover.",
+    "about.care.wood": "Technical planning",
+    "about.care.wood.p": "Construction and detail drawings, furnishing and lighting design, plus coordination with external planners.",
+    "about.care.fabric": "Material & surfaces",
+    "about.care.fabric.p": "Advice on materials, colours and surfaces, with a sure feel for proportion, texture and atmosphere.",
+    "about.care.metal": "Bespoke pieces",
+    "about.care.metal.p": "Unique bespoke pieces at the highest level, made with selected workshops — including our own designs.",
+    "about.visit.eyebrow": "Showroom",
+    "about.visit.title": "Poliform showroom Hamburg",
+    "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>By appointment",
+    "about.visit.cta": "Make an appointment",
 
     "contact.title": "Let's talk<br>about your room.",
     "contact.lede": "Whether it's a single question about a material or furnishing a whole flat — we take our time. An answer within one working day.",
@@ -1145,7 +1206,7 @@ const I18N = {
     "contact.hoursLabel": "Available",
     "contact.hours": "Mon–Fri 9–18",
     "contact.showroom": "Showroom",
-    "contact.address": "Maximilianstrasse 12<br>80539 Munich<br>Germany",
+    "contact.address": "Stadthausbrücke 8<br>20355 Hamburg<br>Germany",
     "contact.monfri": "Monday – Friday", "contact.monfriH": "10–19",
     "contact.sat": "Saturday", "contact.satH": "11–17",
     "contact.sun": "Sunday", "contact.sunH": "closed",
@@ -1157,25 +1218,25 @@ const I18N = {
   fr: {
     "html.lang": "fr",
 
-    "desc.home": "Maison Noir fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
-    "desc.shop": "Toute la collection Maison Noir : canapés, fauteuils, tables, chaises, luminaires, rangement et lits, faits à la main.",
-    "desc.product": "Matières, dimensions et finitions des modèles Maison Noir.",
-    "desc.cart": "Votre sélection chez Maison Noir — avec les délais de fabrication et la livraison dans la pièce.",
-    "desc.about": "Maison Noir fabrique des meubles à la main depuis 1974. Nos ateliers, nos matières et nos gens.",
-    "desc.contact": "Conseil en aménagement, showroom de Munich et contact avec Maison Noir.",
+    "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
+    "desc.shop": "Toute la collection Studio Lusso : canapés, fauteuils, tables, chaises, luminaires, rangement et lits, faits à la main.",
+    "desc.product": "Matières, dimensions et finitions des modèles Studio Lusso.",
+    "desc.cart": "Votre sélection chez Studio Lusso — avec les délais de fabrication et la livraison dans la pièce.",
+    "desc.about": "Studio Lusso est un studio d’architecture intérieure à Hambourg : planification globale, design sur mesure et projets en Allemagne et à l’étranger.",
+    "desc.contact": "Conseil en aménagement, showroom de Munich et contact avec Studio Lusso.",
 
-    "title.home": "Maison Noir — Mobilier de luxe fait main en Europe",
-    "title.shop": "Collection — Maison Noir",
-    "title.product": "Modèle — Maison Noir",
-    "title.cart": "Panier — Maison Noir",
-    "title.about": "L'atelier — Maison Noir",
-    "title.contact": "Contact et conseil — Maison Noir",
+    "title.home": "Studio Lusso — Mobilier de luxe fait main en Europe",
+    "title.shop": "Collection — Studio Lusso",
+    "title.product": "Modèle — Studio Lusso",
+    "title.cart": "Panier — Studio Lusso",
+    "title.about": "Le studio — Studio Lusso",
+    "title.contact": "Contact et conseil — Studio Lusso",
 
-    "topbar": "Livraison offerte partout en Europe · Conseil personnalisé au +49 89 1234 5678",
-    "logo.sub": "Manufacture de meubles",
+    "topbar": "Showroom Poliform Hambourg · Rendez-vous au +49 40 41 92 74 60",
+    "logo.sub": "Interior Design Concepts",
     "nav.home": "Accueil",
     "nav.shop": "Collection",
-    "nav.about": "Atelier",
+    "nav.about": "Studio",
     "nav.contact": "Contact",
     "action.advice": "Conseil",
     "action.cart": "Panier",
@@ -1213,7 +1274,7 @@ const I18N = {
     "cart.remove": "Retirer",
     "cart.added": "{name} a été ajouté au panier",
 
-    "footer.tagline": "Des meubles faits à la main, faits pour être transmis. Fabriqués en Europe depuis 1974.",
+    "footer.tagline": "Nous concevons des espaces qui dépassent les tendances : intemporels, réfléchis, élégants et authentiques.",
     "footer.collection": "Collection",
     "footer.service": "Service",
     "footer.showroom": "Showroom",
@@ -1221,15 +1282,15 @@ const I18N = {
     "footer.advice": "Conseil personnalisé",
     "footer.delivery": "Livraison et montage",
     "footer.care": "Conseils d'entretien",
-    "footer.manufactory": "Atelier",
-    "footer.rights": "Maison Noir Manufacture de meubles",
+    "footer.manufactory": "À propos du studio",
+    "footer.rights": "Studio Lusso Interior Design Concepts",
     "footer.legal": "Mentions légales · Confidentialité · CGV · Droit de rétractation",
 
-    "home.hero.eyebrow": "Manufacture depuis 1974",
-    "home.hero.title": "Des meubles pour<br>toute une vie.",
-    "home.hero.lede": "Chaque pièce est faite à la main dans de petits ateliers européens — avec des bois, des cuirs et des tissus que nous choisissons nous-mêmes. Aucune série. Aucune hâte.",
-    "home.hero.cta1": "Découvrir la collection",
-    "home.hero.cta2": "Prendre rendez-vous",
+    "home.hero.eyebrow": "Interior Design Concepts",
+    "home.hero.title": "Des espaces à vivre.<br>Un design qui a du fond.",
+    "home.hero.lede": "Nous concevons des espaces qui dépassent les tendances. Studio d\u2019architecture intérieure attaché à une planification globale, nous allions exigence esthétique et précision technique.",
+    "home.hero.cta1": "Voir la collection",
+    "home.hero.cta2": "Visiter le showroom",
     "home.feat1.t": "Fait à la main", "home.feat1.p": "Dans des ateliers en Italie, au Danemark et en Allemagne",
     "home.feat2.t": "Livré dans la pièce", "home.feat2.p": "Service gants blancs, montage compris",
     "home.feat3.t": "Garantie 10 ans", "home.feat3.p": "Sur la structure, la suspension et la finition",
@@ -1237,16 +1298,16 @@ const I18N = {
     "home.featured.eyebrow": "Sélection",
     "home.featured.title": "Les pièces de la saison",
     "home.featured.link": "Les 14 modèles",
-    "home.story.eyebrow": "Notre façon de faire",
-    "home.story.title": "Le contraire de la vitesse.",
-    "home.story.p1": "Nos tapissiers passent jusqu'à neuf jours sur un seul canapé. La structure en chêne séché à l'air a reposé deux ans auparavant. La suspension est guindée à la main, comme il y a cent ans.",
-    "home.story.p2": "Le résultat est un meuble que l'on transmet au lieu de le remplacer. Nous réparons chaque pièce sortie de notre atelier — quelle que soit sa date d'achat.",
-    "home.story.link": "Visiter l'atelier",
+    "home.story.eyebrow": "Notre philosophie",
+    "home.story.title": "Pour des espaces qui agissent.",
+    "home.story.p1": "Nous en sommes convaincus : un excellent design d’intérieur naît du dialogue — entre vision et faisabilité, créativité et structure, esthétique et usage quotidien.",
+    "home.story.p2": "Avec passion, expertise et une exigence claire, nous développons des espaces qui deviennent des lieux de vie. Non pas quelconques, mais uniques.",
+    "home.story.link": "Découvrir le studio",
     "home.cats.eyebrow": "Par pièce",
     "home.cats.title": "Par où souhaitez-vous commencer ?",
     "home.cats.sitting": "Canapés et fauteuils",
-    "home.quote": "« Un bon meuble ne s'impose pas. Il garde la pièce calme — et vous aussi. »",
-    "home.quote.cite": "Elena Farber · Direction artistique",
+    "home.quote": "« Studio Lusso. Pour des espaces qui agissent. »",
+    "home.quote.cite": "Studio Lusso · Hambourg",
     "home.service.eyebrow": "Service",
     "home.service.title": "Nous pensons la pièce avec vous.",
     "home.service.p": "Nos conseillères et conseillers se déplacent chez vous, prennent les mesures, apportent des échantillons et dessinent un plan — gratuitement et sans engagement, partout en Europe.",
@@ -1315,36 +1376,36 @@ const I18N = {
     "cartpage.note": "Nous confirmons chaque commande personnellement avant le début de la fabrication. Acompte de 30 %, solde à la livraison.",
     "cartpage.demo": "Caisse de démonstration : le paiement prendra place ici dans la version finale. Votre demande nous serait parvenue.",
 
-    "about.eyebrow": "Depuis 1974",
-    "about.title": "Un atelier,<br>pas une usine.",
-    "about.lede": "Maison Noir a été fondée par Anna et Josef Farber comme un petit atelier de tapisserie à Munich. Aujourd'hui, nous travaillons avec sept ateliers dans quatre pays — selon les mêmes règles qu'alors.",
-    "about.mat.eyebrow": "Matière",
-    "about.mat.title": "Nous achetons là où nous pouvons nous rendre.",
-    "about.mat.p1": "Notre bois vient de forêts que nous connaissons. Les cuirs proviennent de deux tanneries de Toscane qui tannent encore aux extraits végétaux — un procédé qui prend des semaines, pas des heures.",
-    "about.mat.p2": "Nous n'utilisons ni panneaux de particules, ni placages collés dans les parties porteuses, ni mousses qui s'affaissent au bout de cinq ans. Cela rend nos meubles plus chers. Et nettement plus durables.",
-    "about.n1.t": "Ans d'expérience", "about.n1.p": "Fondée à Munich en 1974, familiale depuis.",
-    "about.n2.t": "Ateliers partenaires", "about.n2.p": "En Allemagne, en Italie, au Danemark et en Belgique.",
-    "about.n3.t": "Ans de garantie", "about.n3.p": "Sur la structure, la suspension et la finition — réparer plutôt que remplacer.",
-    "about.proc.eyebrow": "Procédé",
-    "about.proc.title": "Comment naît un canapé.",
-    "about.proc.s1": "Choix", "about.proc.p1": "Vous choisissez le modèle, le revêtement et les dimensions. Nous envoyons d'abord des échantillons chez vous.",
-    "about.proc.s2": "Structure", "about.proc.p2": "Le menuisier construit la structure en chêne séché à l'air pendant deux ans.",
-    "about.proc.s3": "Garnissage", "about.proc.p3": "Les ressorts sont guindés à la main, crin et mousse montés en couches.",
-    "about.proc.s4": "Revêtement", "about.proc.p4": "Le revêtement est coupé, cousu et tendu humide sur la carcasse.",
-    "about.proc.s5": "Livraison", "about.proc.p5": "Deux monteurs portent la pièce dans la pièce et remportent l'emballage.",
-    "about.care.eyebrow": "Entretien",
-    "about.care.title": "Pour que cela reste beau",
-    "about.care.leather": "Cuir",
-    "about.care.leather.p": "Dépoussiérez le cuir aniline une fois par mois avec un chiffon doux et sec, et nourrissez-le deux fois par an avec un baume. Évitez le soleil direct — il décolore le cuir de façon inégale. Ne frottez jamais une tache à l'eau : tamponnez-la.",
-    "about.care.wood": "Bois massif",
-    "about.care.wood.p": "Nettoyez les surfaces huilées à l'eau claire avec un peu de savon. Huilez une fois par an à l'huile-cire dure, dans le sens du fil. Les petites rayures disparaissent presque entièrement — contrairement aux surfaces vernies.",
-    "about.care.fabric": "Lin et laine",
-    "about.care.fabric.p": "Aspirez chaque semaine à faible puissance. Lavez les housses amovibles à 30 °C en cycle délicat et remettez-les légèrement humides. Ne brossez pas le bouclé — les boucles se déchirent.",
-    "about.care.metal": "Laiton et pierre",
-    "about.care.metal.p": "Le laiton brut fonce volontairement. Pour garder l'éclat clair, polissez-le tous les quelques mois. Le travertin et le marbre ne supportent pas les acides — retirez aussitôt citron, vinaigre et vin rouge.",
-    "about.visit.eyebrow": "Venez nous voir",
-    "about.visit.title": "Showroom de Munich",
-    "about.visit.p": "Maximilianstrasse 12 · 80539 Munich<br>Du lundi au vendredi 10h–19h, samedi 11h–17h",
+    "about.eyebrow": "Studio d\u2019architecture intérieure",
+    "about.title": "Nous concevons des espaces<br>qui dépassent les tendances.",
+    "about.lede": "Studio d’architecture intérieure attaché à une planification globale, nous allions la plus haute exigence esthétique à la précision technique et à une compréhension fine du contexte architectural. Nous accompagnons les projets de la première idée à la réalisation complète.",
+    "about.mat.eyebrow": "Ce qui nous distingue",
+    "about.mat.title": "Une planification globale.",
+    "about.mat.p1": "Pour nous, l’architecture intérieure dépasse l’ameublement ou la cuisine. C’est un jeu orchestré entre l’espace, la lumière, la matière et la fonction.",
+    "about.mat.p2": "Notre approche intègre très tôt l’architecture et les besoins de chacun — pour un résultat qui convainc autant visuellement que sur le fond.",
+    "about.n1.t": "Planification globale", "about.n1.p": "Espace, lumière, matière et fonction s’imbriquent au lieu de coexister.",
+    "about.n2.t": "Design sur mesure", "about.n2.p": "Chaque projet est aussi singulier que son contexte — accordé au lieu, à l’usage et aux personnes.",
+    "about.n3.t": "Au-delà des frontières", "about.n3.p": "Outre Poliform et Baxter, nous travaillons avec tous les grands fabricants — en Allemagne et à l’international.",
+    "about.proc.eyebrow": "Déroulé du projet",
+    "about.proc.title": "Du besoin à l’espace.",
+    "about.proc.s1": "Analyse des besoins & premier échange", "about.proc.p1": "Comprendre ce qui compte vraiment. Nous clarifions les attentes, les exigences fonctionnelles et la direction esthétique.",
+    "about.proc.s2": "Conception & projet", "about.proc.p2": "Développer des idées, penser les espaces — visuels 3D, planches d’ambiance, propositions de couleurs et de matières.",
+    "about.proc.s3": "Planification & détails", "about.proc.p3": "Du concept à la solution : plans d’ameublement, éclairage, plans cotés, détails d’exécution.",
+    "about.proc.s4": "Réalisation & suivi de chantier", "about.proc.p4": "Le projet devient réalité. Nous coordonnons les corps de métier et veillons aux délais, aux coûts et à la qualité.",
+    "about.proc.s5": "Ameublement & remise", "about.proc.p5": "Le détail fait la différence : mobilier, luminaires, rideaux, tapis, art. Ensuite, nous restons votre interlocuteur.",
+    "about.care.eyebrow": "Prestations",
+    "about.care.title": "Ce dont nous nous chargeons",
+    "about.care.leather": "Architecture intérieure & concepts d’espace",
+    "about.care.leather.p": "Réalisation de projets nationaux et internationaux, architecture intérieure, cuisines haut de gamme et concepts complets — de la première idée à la remise.",
+    "about.care.wood": "Planification technique",
+    "about.care.wood.p": "Plans d’exécution et de détail, ameublement et éclairage, ainsi que la coordination avec les autres intervenants.",
+    "about.care.fabric": "Matières & surfaces",
+    "about.care.fabric.p": "Conseil en matières, couleurs et surfaces, avec un sens sûr de la proportion, du toucher et de l’atmosphère.",
+    "about.care.metal": "Pièces sur mesure",
+    "about.care.metal.p": "Pièces sur mesure d’exception, réalisées avec des manufactures choisies — y compris d’après nos propres dessins.",
+    "about.visit.eyebrow": "Showroom",
+    "about.visit.title": "Showroom Poliform Hambourg",
+    "about.visit.p": "Stadthausbrücke 8 · 20355 Hambourg<br>Sur rendez-vous",
     "about.visit.cta": "Prendre rendez-vous",
 
     "contact.title": "Parlons<br>de votre pièce.",
@@ -1372,7 +1433,7 @@ const I18N = {
     "contact.hoursLabel": "Disponibilité",
     "contact.hours": "Lun–ven 9h–18h",
     "contact.showroom": "Showroom",
-    "contact.address": "Maximilianstrasse 12<br>80539 Munich<br>Allemagne",
+    "contact.address": "Stadthausbrücke 8<br>20355 Hambourg<br>Allemagne",
     "contact.monfri": "Lundi – vendredi", "contact.monfriH": "10h–19h",
     "contact.sat": "Samedi", "contact.satH": "11h–17h",
     "contact.sun": "Dimanche", "contact.sunH": "fermé",
@@ -1449,20 +1510,17 @@ function applyI18n(root) {
    Seite ohne externe Bilddateien überall funktioniert.
    ========================================================= */
 
-/* --- Farbstimmungen für die Produktbilder ---
-   Jede Stimmung beschreibt einen kleinen Raum: Wand, Lichtkegel, Boden
-   und das Möbel selbst. Daraus baut scene() unten die Abbildung. --- */
+/* --- Zwei Aufnahmestimmungen ---
+   Die Broschüre zeigt Möbel wie im Studio fotografiert: heller,
+   neutraler Grund, weiches Licht, ein ruhiger Schatten. Dunkle Möbel
+   stehen hell, helle Möbel dunkel — sonst verschwinden sie. --- */
 const TONES = {
-  sand:  { bg1:"#f3ecdf", bg2:"#e2d6c1", bg3:"#cabb9f", floor:"#c3b195", floorDeep:"#9e8c72", light:"#fff7e8", obj:"#3f3a30", accent:"#a9863f" },
-  clay:  { bg1:"#f4e7dc", bg2:"#e3cabb", bg3:"#c9ac99", floor:"#c2a28f", floorDeep:"#9e7f69", light:"#fff2e7", obj:"#42332b", accent:"#96603c" },
-  sage:  { bg1:"#ecefe4", bg2:"#d4dcca", bg3:"#b6c2a8", floor:"#afbba2", floorDeep:"#8b977e", light:"#f8fbf0", obj:"#333a31", accent:"#7d8a6a" },
-  stone: { bg1:"#efeeea", bg2:"#dad9d3", bg3:"#bebdb5", floor:"#b8b6ae", floorDeep:"#95938b", light:"#fdfcf9", obj:"#35342f", accent:"#8b8778" },
-  ink:   { bg1:"#46423a", bg2:"#2b2823", bg3:"#17160f", floor:"#201e17", floorDeep:"#0e0d09", light:"#e2c795", obj:"#e8e1d4", accent:"#c8a463" },
-  rose:  { bg1:"#f6e9e5", bg2:"#e4ccc6", bg3:"#ccaea7", floor:"#c5a8a1", floorDeep:"#9f857f", light:"#fff1ec", obj:"#3d3230", accent:"#a4726a" }
+  studio: { bg1:"#ffffff", bg2:"#f4f2ef", bg3:"#e4e0d9", floor:"#eae6e0", floorDeep:"#d3cec6",
+            light:"#ffffff", obj:"#3a3229", accent:"#a09589" },
+  tief:   { bg1:"#6b6259", bg2:"#4a423a", bg3:"#302a24", floor:"#3a332c", floorDeep:"#221d18",
+            light:"#d6cec3", obj:"#f0ece5", accent:"#a09589" }
 };
 
-/* Jede Abbildung braucht eigene Verlaufs-Kennungen, sonst greifen mehrere
-   Bilder auf denselben Verlauf zu und zeigen dieselbe Farbe. */
 let artSeq = 0;
 
 /* --- Der Raum, in dem jedes Möbel steht --- */
@@ -1754,7 +1812,8 @@ function luminance(hex) {
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
 function artFor(product, colorIndex = 0) {
   const hex = product.swatches[colorIndex] || product.swatches[0];
-  const base = TONES[luminance(hex) > 0.7 ? "ink" : product.tone] || TONES.sand;
+  // Helle Möbel vor dunklem Grund, dunkle vor hellem.
+  const base = luminance(hex) > 0.62 ? TONES.tief : TONES.studio;
   const tone = Object.assign({}, base, { obj: hex });
   return (ART[product.shape] || ART.sofa)(tone);
 }
@@ -2031,38 +2090,33 @@ function productColors(product) {
 </script>
 <script>
 /* =========================================================
-   MAISON NOIR — Bühnenbild der Startseite
-   Auf Canvas gezeichnet, weil erst damit möglich wird, was ein
-   Raum glaubwürdig macht: echte Unschärfe, ein Lichtschacht aus
-   dem Fenster, eine Spiegelung im Parkett, Staub im Licht.
-   Das Bild wird einmal in einen Zwischenspeicher gezeichnet;
-   pro Bild kommen nur Staub und Korn hinzu.
+   STUDIO LUSSO — Bühnenbild der Startseite
+
+   Die Broschüre öffnet mit einer großformatigen Materialaufnahme
+   neben einer weißen Textfläche. Genau das bildet diese Datei nach:
+   links eine auf Canvas berechnete Steinmaserung, rechts die Aussage
+   auf Weiß. Canvas deshalb, weil eine glaubwürdige Maserung aus
+   überlagerten Störungen entsteht — als Vektorgrafik bliebe sie flach.
    ========================================================= */
 
-const HERO_W = 1600;
-const HERO_H = 900;
+const HERO_W = 1200;
+const HERO_H = 1400;
 
-/* Warme und kühle Töne getrennt — Licht ist warm, Schatten kühl.
-   Dieser Gegensatz lässt einen Raum teuer aussehen. */
+/* Farben der Broschüre: warmes Greige, gebrochenes Weiß, dunkles Braun */
 const HERO = {
-  wallTop:   "#3a352b",
-  wallDeep:  "#0f0e0a",
-  shadowCool:"#141821",
-  glassLow:  "#43321e",
-  glassMid:  "#946b3a",
-  glassHigh: "#d8b880",
-  light:     "#ffdc9e",
-  floorNear: "#2a251c",
-  floorFar:  "#4a3f30",
-  wood:      "#1e1a14",
-  brass:     "#c39a52"
+  hell:   [246, 244, 241],
+  greige: [168, 158, 148],
+  tief:   [ 92,  82,  73],
+  dunkel: [ 58,  50,  41],
+  ader:   [232, 228, 222]
 };
 
 function heroCanvas(host) {
+  if (typeof host.__heroCleanup === "function") host.__heroCleanup();
+
   const canvas = document.createElement("canvas");
   canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label",
-    "Abendlicher Wohnraum: Licht fällt durch ein hohes Bogenfenster auf Parkett, davor ein Sofa und eine Stehleuchte");
+  canvas.setAttribute("aria-label", "Großformatige Aufnahme eines geäderten Natursteins in warmen Grautönen");
   canvas.style.width = "100%";
   canvas.style.height = "100%";
   canvas.style.display = "block";
@@ -2070,278 +2124,113 @@ function heroCanvas(host) {
   host.appendChild(canvas);
 
   const ctx = canvas.getContext("2d");
-  if (!ctx) { host.innerHTML = heroScene(); return; }          // Rückfall auf die SVG-Fassung
+  if (!ctx) { host.style.background = "#a89e94"; return; }
 
-  const canBlur = typeof ctx.filter === "string";
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  let scene = null;      // fertig gezeichneter Raum
-  let grain = null;      // Kornmuster
-  let motes = [];        // Staub im Licht
-  let view = { scale: 1, dx: 0, dy: 0, w: 0, h: 0 };
+  let stein = null;
+  let view = { scale: 1, dx: 0, dy: 0 };
+  let drift = 0;
   let running = false;
 
-  /* ---------- Bausteine ---------- */
-
-  function windowPath(c) {
-    c.beginPath();
-    c.moveTo(1002, 664);
-    c.lineTo(1002, 330);
-    c.arc(1198, 330, 196, Math.PI, 0);
-    c.lineTo(1394, 664);
-    c.closePath();
+  /* --- Wertrauschen: geglättete Zufallszahlen, daraus entsteht die Maserung --- */
+  function rauschFeld(groesse, saat) {
+    const f = new Float32Array(groesse * groesse);
+    let z = saat;
+    const zufall = () => { z = (z * 1103515245 + 12345) & 0x7fffffff; return z / 0x7fffffff; };
+    for (let i = 0; i < f.length; i++) f[i] = zufall();
+    return f;
   }
 
-  function roundRect(c, x, y, w, h, r) {
-    c.beginPath();
-    c.moveTo(x + r, y);
-    c.arcTo(x + w, y, x + w, y + h, r);
-    c.arcTo(x + w, y + h, x, y + h, r);
-    c.arcTo(x, y + h, x, y, r);
-    c.arcTo(x, y, x + w, y, r);
-    c.closePath();
+  function abtasten(feld, groesse, x, y) {
+    const xi = Math.floor(x), yi = Math.floor(y);
+    const fx = x - xi, fy = y - yi;
+    const g = (a, b) => feld[((b % groesse) + groesse) % groesse * groesse + ((a % groesse) + groesse) % groesse];
+    const s = (t) => t * t * (3 - 2 * t);                 // weiche Blende
+    const u = s(fx), v = s(fy);
+    return (g(xi, yi) * (1 - u) + g(xi + 1, yi) * u) * (1 - v)
+         + (g(xi, yi + 1) * (1 - u) + g(xi + 1, yi + 1) * u) * v;
   }
 
-  /* Sofa und Leuchte — einmal beschrieben, mehrfach benutzt
-     (aufrecht für den Raum, gespiegelt für den Boden). */
-  function drawFurniture(c) {
-    c.save();
-    c.translate(62, 0);
-    // Sofa
-    c.fillStyle = HERO.wood;
-    roundRect(c, 768, 464, 484, 106, 26); c.fill();
-    c.fillStyle = "#2b261d";
-    roundRect(c, 784, 520, 452, 124, 24); c.fill();
-    c.fillStyle = "rgba(180,142,74,.42)";
-    roundRect(c, 812, 546, 186, 68, 16); c.fill();
-    roundRect(c, 1022, 546, 186, 68, 16); c.fill();
-    c.fillStyle = HERO.wood;
-    roundRect(c, 748, 492, 48, 152, 22); c.fill();
-    roundRect(c, 1216, 492, 48, 152, 22); c.fill();
-    // Lichtkante auf der Fensterseite
-    c.fillStyle = "rgba(255,220,158,.24)";
-    roundRect(c, 1240, 496, 12, 144, 6); c.fill();
-    c.fillStyle = HERO.brass;
-    c.fillRect(806, 642, 13, 62);
-    c.fillRect(1193, 642, 13, 62);
-
-    // Stehleuchte
-    c.fillStyle = HERO.brass;
-    c.fillRect(1415, 392, 9, 300);
-    c.beginPath(); c.ellipse(1420, 692, 54, 11, 0, 0, Math.PI * 2); c.fill();
-    c.restore();
-  }
-
-  function drawShade(c) {
-    const g = c.createLinearGradient(0, 296, 0, 392);
-    g.addColorStop(0, "#f0dcae");
-    g.addColorStop(1, "#c39a52");
-    c.fillStyle = g;
-    c.beginPath();
-    c.moveTo(1422, 296); c.lineTo(1542, 296); c.lineTo(1574, 392); c.lineTo(1390, 392);
-    c.closePath(); c.fill();
-    c.fillStyle = "rgba(255,255,255,.10)";
-    c.beginPath();
-    c.moveTo(1422, 296); c.lineTo(1466, 296); c.lineTo(1446, 392); c.lineTo(1390, 392);
-    c.closePath(); c.fill();
-  }
-
-  /* ---------- Der Raum ---------- */
-
-  function paintScene() {
-    const c = scene.getContext("2d");
-    c.setTransform(1, 0, 0, 1, 0, 0);
-    c.clearRect(0, 0, HERO_W, HERO_H);
-
-    /* Wand — leicht unscharf, damit das Sofa davor schärfer wirkt */
-    const wall = c.createLinearGradient(0, 0, 420, HERO_H);
-    wall.addColorStop(0, HERO.wallTop);
-    wall.addColorStop(0.55, "#221d16");
-    wall.addColorStop(1, HERO.wallDeep);
-    c.fillStyle = wall;
-    c.fillRect(0, 0, HERO_W, HERO_H);
-
-    // Kühler Schatten in der linken Hälfte — Gegenspieler zum warmen Licht
-    const cool = c.createLinearGradient(0, 0, 900, 300);
-    cool.addColorStop(0, "rgba(20,24,33,.55)");
-    cool.addColorStop(1, "rgba(20,24,33,0)");
-    c.fillStyle = cool;
-    c.fillRect(0, 0, HERO_W, HERO_H);
-
-    // Wandfelder, sehr zurückgenommen
-    if (canBlur) c.filter = "blur(1.5px)";
-    c.strokeStyle = "rgba(231,211,170,.045)";
-    c.lineWidth = 2;
-    for (let i = 0; i < 3; i++) { c.strokeRect(96 + i * 190, 150, 150, 430); }
-    c.beginPath(); c.moveTo(0, 118); c.lineTo(HERO_W, 118); c.stroke();
-    if (canBlur) c.filter = "none";
-
-    /* Fenster */
-    const glass = c.createLinearGradient(1000, 140, 1200, 664);
-    glass.addColorStop(0, HERO.glassLow);
-    glass.addColorStop(0.42, HERO.glassMid);
-    glass.addColorStop(1, HERO.glassHigh);
-    c.save(); windowPath(c); c.fillStyle = glass; c.fill();
-    // Sprossen
-    c.strokeStyle = "rgba(24,20,15,.5)"; c.lineWidth = 7;
-    c.beginPath(); c.moveTo(1198, 140); c.lineTo(1198, 664); c.stroke();
-    c.beginPath(); c.moveTo(1002, 392); c.lineTo(1394, 392); c.stroke();
-    c.restore();
-    c.save(); windowPath(c);
-    c.strokeStyle = "rgba(243,222,182,.28)"; c.lineWidth = 5; c.stroke();
-    c.restore();
-
-    /* Lichtschacht — der eigentliche Grund für Canvas: ohne echte
-       Unschärfe sieht ein Lichtstrahl immer nach Papierschnitt aus. */
-    c.save();
-    c.globalCompositeOperation = "lighter";
-    if (canBlur) c.filter = "blur(60px)";
-    const shaft = c.createLinearGradient(1200, 200, 700, 900);
-    shaft.addColorStop(0, "rgba(255,220,158,.13)");
-    shaft.addColorStop(0.55, "rgba(255,220,158,.045)");
-    shaft.addColorStop(1, "rgba(255,220,158,0)");
-    c.fillStyle = shaft;
-    c.beginPath();
-    c.moveTo(1002, 200); c.lineTo(1394, 200); c.lineTo(1560, 900); c.lineTo(560, 900);
-    c.closePath(); c.fill();
-    c.restore();
-
-    /* Boden */
-    const floor = c.createLinearGradient(0, 640, 0, HERO_H);
-    floor.addColorStop(0, "#16130e");
-    floor.addColorStop(0.18, HERO.floorFar);
-    floor.addColorStop(0.5, "#332c22");
-    floor.addColorStop(1, HERO.floorNear);
-    c.save();
-    if (canBlur) c.filter = "blur(6px)";       // weicher Übergang zur Wand
-    c.fillStyle = floor;
-    c.fillRect(-20, 640, HERO_W + 40, HERO_H - 620);
-    c.restore();
-
-    // Dielenfugen, nach vorn breiter werdend
-    c.strokeStyle = "rgba(196,163,110,.10)";
-    c.lineWidth = 1.5;
-    for (let i = 0; i < 10; i++) {
-      const y = 664 + Math.pow(i / 9, 1.8) * 236;
-      c.beginPath(); c.moveTo(0, y); c.lineTo(HERO_W, y); c.stroke();
+  function fbm(feld, groesse, x, y, lagen) {
+    let summe = 0, gewicht = 0, amp = 1, frq = 1;
+    for (let i = 0; i < lagen; i++) {
+      summe += amp * abtasten(feld, groesse, x * frq, y * frq);
+      gewicht += amp;
+      amp *= 0.5; frq *= 2.07;
     }
+    return summe / gewicht;
+  }
 
-    /* Spiegelung im Parkett: dieselben Möbel gestaucht, gespiegelt,
-       stark unscharf und fast durchsichtig. */
-    c.save();
-    c.beginPath(); c.rect(0, 664, HERO_W, HERO_H - 664); c.clip();
-    c.globalAlpha = 0.20;
-    if (canBlur) c.filter = "blur(9px)";
-    c.translate(0, 1328);          // 2 × Bodenkante
-    c.scale(1, -0.55);
-    c.translate(0, 664 * (1 / 0.55) - 664);
-    drawFurniture(c);
-    c.restore();
+  const misch = (a, b, t) => [
+    Math.round(a[0] + (b[0] - a[0]) * t),
+    Math.round(a[1] + (b[1] - a[1]) * t),
+    Math.round(a[2] + (b[2] - a[2]) * t)
+  ];
 
-    // Lichtteppich unter dem Fenster
-    c.save();
-    c.globalCompositeOperation = "lighter";
-    if (canBlur) c.filter = "blur(50px)";
-    const pool = c.createRadialGradient(1180, 760, 20, 1180, 760, 460);
-    pool.addColorStop(0, "rgba(255,220,158,.11)");
-    pool.addColorStop(1, "rgba(255,220,158,0)");
-    c.fillStyle = pool;
-    c.fillRect(600, 664, 1000, 236);
-    c.restore();
+  /* --- Die Steinplatte einmal berechnen --- */
+  function malStein() {
+    stein = document.createElement("canvas");
+    stein.width = HERO_W;
+    stein.height = HERO_H;
+    const c = stein.getContext("2d");
+    const bild = c.createImageData(HERO_W, HERO_H);
+    const d = bild.data;
 
-    /* Teppich */
-    c.save();
-    if (canBlur) c.filter = "blur(3px)";
-    c.fillStyle = "rgba(138,116,84,.14)";
-    c.beginPath(); c.ellipse(1060, 790, 500, 96, 0, 0, Math.PI * 2); c.fill();
-    c.restore();
+    const G = 128;
+    const grob = rauschFeld(G, 20250830);
+    const fein = rauschFeld(G, 77123);
 
-    /* Weicher Schattenwurf, dann die Möbel scharf darüber */
-    c.save();
-    if (canBlur) c.filter = "blur(26px)";
-    c.fillStyle = "rgba(0,0,0,.72)";
-    c.beginPath(); c.ellipse(1072, 706, 290, 30, 0, 0, Math.PI * 2); c.fill();
-    c.beginPath(); c.ellipse(1482, 700, 80, 16, 0, 0, Math.PI * 2); c.fill();
-    c.restore();
+    for (let y = 0; y < HERO_H; y++) {
+      for (let x = 0; x < HERO_W; x++) {
+        const nx = x / HERO_W, ny = y / HERO_H;
 
-    /* Schein der Leuchte — hinter den Möbeln, damit das Sofa lesbar bleibt */
-    c.save();
-    c.globalCompositeOperation = "lighter";
-    const lamp = c.createRadialGradient(1420, 368, 10, 1420, 368, 380);
-    lamp.addColorStop(0, "rgba(255,230,180,.15)");
-    lamp.addColorStop(0.35, "rgba(255,230,180,.055)");
-    lamp.addColorStop(1, "rgba(255,230,180,0)");
-    c.fillStyle = lamp;
-    c.fillRect(1040, 0, 560, 760);
-    c.restore();
+        // Zwei Störungsfelder verziehen die Adern. Ohne diese Verzerrung
+        // entstünden gleichmäßige Wellen — Stein ist nie gleichmäßig.
+        const warp  = fbm(grob, G, nx * 1.8, ny * 0.9, 5);
+        const warp2 = fbm(fein, G, nx * 4.0 + 5, ny * 2.0 + 3, 4);
 
-    drawFurniture(c);
-    drawShade(c);
+        // Grundton: heller Stein mit weichen Wolken
+        const wolke = fbm(fein, G, nx * 2.2 + 11, ny * 1.1 + 7, 5);
+        let farbe = misch(HERO.hell, HERO.greige, Math.min(1, wolke * 0.9));
 
-    /* Nur der Schirm selbst leuchtet noch, eng begrenzt */
-    c.save();
-    c.globalCompositeOperation = "lighter";
-    const bulb = c.createRadialGradient(1482, 344, 10, 1482, 344, 150);
-    bulb.addColorStop(0, "rgba(255,232,186,.18)");
-    bulb.addColorStop(1, "rgba(255,232,186,0)");
-    c.fillStyle = bulb;
-    c.fillRect(1312, 200, 288, 280);
-    c.restore();
+        // breite, weiche Verschattung
+        const schatten = Math.max(0, fbm(grob, G, nx * 1.2 + 3, ny * 0.6 + 9, 4) - 0.45) / 0.55;
+        farbe = misch(farbe, HERO.tief, Math.pow(schatten, 1.6) * 0.3);
 
-    /* Die linke Seite läuft ins Dunkle aus. Dort steht die Schrift,
-       und das Sofa taucht so aus dem Schatten auf, statt abgeschnitten
-       neben dem Text zu enden. */
-    const fade = c.createLinearGradient(0, 0, 1120, 0);
-    fade.addColorStop(0, "rgba(12,11,8,.88)");
-    fade.addColorStop(0.45, "rgba(12,11,8,.52)");
-    fade.addColorStop(1, "rgba(12,11,8,0)");
-    c.fillStyle = fade;
-    c.fillRect(0, 0, HERO_W, HERO_H);
+        // Hauptadern: durch die hohe Potenz bleiben nur schmale Linien übrig
+        const s1 = Math.sin((nx * 2.6 + ny * 1.2 + warp * 3.6) * Math.PI * 2);
+        const ader1 = Math.pow(1 - Math.min(1, Math.abs(s1)), 14);
+        farbe = misch(farbe, HERO.dunkel, ader1 * 0.55);
 
-    /* Vignette */
-    const vig = c.createRadialGradient(960, 396, 240, 960, 396, 1120);
-    vig.addColorStop(0, "rgba(0,0,0,0)");
-    vig.addColorStop(1, "rgba(0,0,0,.70)");
-    c.fillStyle = vig;
+        // zweite, feinere Aderschar quer dazu
+        const s2 = Math.sin((nx * 1.1 - ny * 3.1 + warp2 * 2.4) * Math.PI * 2);
+        const ader2 = Math.pow(1 - Math.min(1, Math.abs(s2)), 22);
+        farbe = misch(farbe, HERO.tief, ader2 * 0.4);
+
+        // helle Kalkspur neben der Hauptader
+        const hell = Math.pow(1 - Math.min(1, Math.abs(s1 - 0.28) * 2.2), 18);
+        farbe = misch(farbe, HERO.ader, hell * 0.5);
+
+        // Korn
+        const korn = (fbm(fein, G, nx * 120, ny * 120, 2) - 0.5) * 9;
+
+        const i = (y * HERO_W + x) * 4;
+        d[i]     = Math.max(0, Math.min(255, farbe[0] + korn));
+        d[i + 1] = Math.max(0, Math.min(255, farbe[1] + korn));
+        d[i + 2] = Math.max(0, Math.min(255, farbe[2] + korn));
+        d[i + 3] = 255;
+      }
+    }
+    c.putImageData(bild, 0, 0);
+
+    // Licht von oben links, wie bei einer Aufnahme im Studio
+    const licht = c.createLinearGradient(0, 0, HERO_W, HERO_H);
+    licht.addColorStop(0, "rgba(255,255,255,.26)");
+    licht.addColorStop(0.5, "rgba(255,255,255,0)");
+    licht.addColorStop(1, "rgba(58,50,41,.22)");
+    c.fillStyle = licht;
     c.fillRect(0, 0, HERO_W, HERO_H);
   }
-
-  /* ---------- Korn ---------- */
-
-  function makeGrain() {
-    const size = 180;
-    const g = document.createElement("canvas");
-    g.width = g.height = size;
-    const gc = g.getContext("2d");
-    const img = gc.createImageData(size, size);
-    for (let i = 0; i < img.data.length; i += 4) {
-      const v = 120 + Math.random() * 135;
-      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
-      img.data[i + 3] = 26;
-    }
-    gc.putImageData(img, 0, 0);
-    return g;
-  }
-
-  /* ---------- Staub im Licht ---------- */
-
-  function makeMotes() {
-    const list = [];
-    for (let i = 0; i < 34; i++) {
-      list.push({
-        x: 620 + Math.random() * 900,
-        y: 180 + Math.random() * 700,
-        r: 0.7 + Math.random() * 1.5,
-        a: 0.06 + Math.random() * 0.16,
-        vy: -(0.04 + Math.random() * 0.10),
-        vx: 0.02 + Math.random() * 0.05,
-        phase: Math.random() * Math.PI * 2
-      });
-    }
-    return list;
-  }
-
-  /* ---------- Ausgabe ---------- */
 
   function resize() {
     const rect = host.getBoundingClientRect();
@@ -2350,104 +2239,63 @@ function heroCanvas(host) {
     const h = Math.max(1, Math.round(rect.height));
     canvas.width = w * dpr;
     canvas.height = h * dpr;
-
-    const scale = Math.max(w / HERO_W, h / HERO_H);
-    /* Im Hochformat bliebe bei mittiger Ausrichtung nur die leere linke
-       Wand übrig. Der Ausschnitt wandert deshalb nach rechts, wo Fenster,
-       Sofa und Leuchte stehen. */
-    const hochformat = w / h < 1.15;
-    const ax = hochformat ? 0.70 : 0.5;
-    view = {
-      scale: scale * dpr,
-      dx: (w * dpr - HERO_W * scale * dpr) * ax,
-      dy: (h * dpr - HERO_H * scale * dpr) / 2,
-      w, h
-    };
-
-    if (!scene) {
-      scene = document.createElement("canvas");
-      scene.width = HERO_W;
-      scene.height = HERO_H;
-      paintScene();
-    }
-    draw(0);
+    const scale = Math.max((w * dpr) / HERO_W, (h * dpr) / HERO_H) * 1.06;   // Reserve für die Bewegung
+    view = { scale, w, h };
+    if (!stein) malStein();
+    draw();
   }
 
-  function draw(time) {
+  /* Ganz langsames Wandern des Ausschnitts — der Stein „atmet“ */
+  function draw() {
+    const bw = HERO_W * view.scale;
+    const bh = HERO_H * view.scale;
+    const dx = (canvas.width - bw) / 2 + Math.sin(drift) * (bw - canvas.width) * 0.4;
+    const dy = (canvas.height - bh) / 2 + Math.cos(drift * 0.7) * 8;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.setTransform(view.scale, 0, 0, view.scale, view.dx, view.dy);
-
-    ctx.drawImage(scene, 0, 0);
-
-    /* Im Hochformat liegt die Schrift über dem hellen Fenster — dort
-       braucht es einen zusätzlichen Schleier. */
-    if (view.w / view.h < 1.15) {
-      const sichtbarLinks = -view.dx / view.scale;
-      const veil = ctx.createLinearGradient(sichtbarLinks, 0, sichtbarLinks + view.w / view.scale, 0);
-      veil.addColorStop(0, "rgba(12,11,8,.82)");
-      veil.addColorStop(0.75, "rgba(12,11,8,.58)");
-      veil.addColorStop(1, "rgba(12,11,8,.40)");
-      ctx.fillStyle = veil;
-      ctx.fillRect(0, 0, HERO_W, HERO_H);
-    }
-
-    // Staub
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    motes.forEach((m) => {
-      const flicker = 0.65 + 0.35 * Math.sin(time / 1400 + m.phase);
-      ctx.fillStyle = "rgba(255,226,176," + (m.a * flicker).toFixed(3) + ")";
-      ctx.beginPath();
-      ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    ctx.restore();
-
-    // Korn
-    ctx.save();
-    ctx.globalCompositeOperation = "overlay";
-    const pattern = ctx.createPattern(grain, "repeat");
-    if (pattern) { ctx.fillStyle = pattern; ctx.fillRect(0, 0, HERO_W, HERO_H); }
-    ctx.restore();
+    ctx.drawImage(stein, dx, dy, bw, bh);
   }
 
-  function step(time) {
+  function step() {
     if (!running) return;
-    motes.forEach((m) => {
-      m.y += m.vy;
-      m.x += m.vx;
-      if (m.y < 140) { m.y = 900; m.x = 620 + Math.random() * 900; }
-      if (m.x > 1560) m.x = 620;
-    });
-    draw(time);
+    drift += 0.00035;
+    draw();
     requestAnimationFrame(step);
   }
 
-  grain = makeGrain();
-  motes = makeMotes();
   resize();
 
+  let ro = null, io = null;
   if (typeof ResizeObserver === "function") {
-    let last = 0;
-    new ResizeObserver(() => {
-      const w = Math.round(host.getBoundingClientRect().width);
-      if (w === last) return;                 // Adressleiste auf dem Handy löst sonst dauernd aus
-      last = w;
+    let lastW = 0, lastH = 0;
+    ro = new ResizeObserver(() => {
+      const box = host.getBoundingClientRect();
+      const w = Math.round(box.width), h = Math.round(box.height);
+      if (w === lastW && Math.abs(h - lastH) < 40) return;
+      lastW = w; lastH = h;
       resize();
-    }).observe(host);
+    });
+    ro.observe(host);
   } else {
     window.addEventListener("resize", resize);
   }
 
-  // Bewegung nur, solange das Bild zu sehen ist
   if (!still && typeof IntersectionObserver === "function") {
-    new IntersectionObserver((entries) => {
-      const visible = entries.some((e) => e.isIntersecting);
-      if (visible && !running) { running = true; requestAnimationFrame(step); }
-      else if (!visible) running = false;
-    }, { threshold: 0.02 }).observe(host);
+    io = new IntersectionObserver((entries) => {
+      const sichtbar = entries.some((e) => e.isIntersecting);
+      if (sichtbar && !running) { running = true; requestAnimationFrame(step); }
+      else if (!sichtbar) running = false;
+    }, { threshold: 0.02 });
+    io.observe(host);
   }
+
+  host.__heroCleanup = function () {
+    running = false;
+    if (ro) ro.disconnect();
+    if (io) io.disconnect();
+    window.removeEventListener("resize", resize);
+    host.__heroCleanup = null;
+  };
 }
 
 </script>
@@ -2619,7 +2467,7 @@ function renderChrome() {
   <div class="topbar" data-i18n="topbar"></div>
   <header class="header">
     <div class="wrap header__inner">
-      <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+      <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
       <nav class="nav" id="nav">
         <button class="close-x nav__close" id="nav-close" data-i18n-aria="action.close">×</button>
         ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
@@ -2660,7 +2508,7 @@ function renderChrome() {
     <div class="wrap">
       <div class="footer__grid">
         <div>
-          <a class="logo" href="index.html">Maison Noir<small data-i18n="logo.sub"></small></a>
+          <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
           <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem" data-i18n="footer.tagline"></p>
         </div>
         <div>
@@ -2685,10 +2533,10 @@ function renderChrome() {
         <div>
           <h5 data-i18n="footer.showroom"></h5>
           <ul>
-            <li>Maximilianstraße 12</li>
-            <li>80539 München</li>
-            <li><a href="tel:+498912345678">+49 89 1234 5678</a></li>
-            <li><a href="mailto:salon@maison-noir.de">salon@maison-noir.de</a></li>
+            <li>Stadthausbrücke 8</li>
+            <li>20355 Hamburg</li>
+            <li><a href="tel:+4940419274600">+49 40 41 92 74 60</a></li>
+            <li><a href="mailto:info@studio-lusso.de">info@studio-lusso.de</a></li>
           </ul>
         </div>
       </div>
@@ -2730,6 +2578,9 @@ function bindChrome() {
   const navBackdrop = $("#nav-backdrop");
 
   const setNav = (open) => {
+    // Beim Schließen darf der Tastaturfokus nicht im unerreichbaren Menü
+    // zurückbleiben — er wandert zurück auf den Menüknopf.
+    if (!open && nav.contains(document.activeElement)) burger?.focus();
     nav.classList.toggle("is-open", open);
     navBackdrop?.classList.toggle("is-open", open);
     burger?.setAttribute("aria-expanded", String(open));
@@ -3012,21 +2863,21 @@ document.addEventListener("DOMContentLoaded", () => {
 const ROUTES = {
   "index.html": {
     page: "home",
-    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\"></div>\n    <div class=\"wrap hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Manufaktur seit 1974</span>\n      <h1 data-i18n-html=\"home.hero.title\">Möbel für ein<br>ganzes Leben.</h1>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Jedes Stück entsteht in Handarbeit in kleinen europäischen Werkstätten — aus Hölzern, Ledern und Stoffen, die wir selbst auswählen. Keine Serie. Keine Eile.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn btn--light\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion entdecken</a>\n        <a class=\"btn btn--light\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Beratungstermin</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Handgefertigt</h4><p data-i18n=\"home.feat1.p\">In Manufakturen in Italien, Dänemark und Deutschland</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">10 Jahre Garantie</h4><p data-i18n=\"home.feat3.p\">Auf Rahmen, Federung und Verarbeitung</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom München oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 14 Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Haltung</span>\n      <h2 data-i18n=\"home.story.title\">Das Gegenteil von schnell.</h2>\n      <p data-i18n=\"home.story.p1\">An einem Sofa arbeiten unsere Polsterer bis zu neun Tage. Der Rahmen aus lufttrockneter Eiche lagert vorher zwei Jahre. Die Federung wird von Hand gebunden, wie vor hundert Jahren.</p>\n      <p data-i18n=\"home.story.p2\">Das Ergebnis ist ein Möbel, das nicht ersetzt, sondern weitergegeben wird. Wir reparieren jedes Stück, das unsere Werkstatt verlassen hat — unabhängig davon, wann Sie es gekauft haben.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Die Manufaktur besuchen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Gute Möbel drängen sich nicht auf. Sie halten den Raum ruhig — und einen selbst auch.“</span>\n        <cite data-i18n=\"home.quote.cite\">Elena Farber · Gestalterische Leitung</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n      <p data-i18n=\"home.service.p\">Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
+    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Studio Lusso</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Handgefertigt</h4><p data-i18n=\"home.feat1.p\">In Manufakturen in Italien, Dänemark und Deutschland</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">10 Jahre Garantie</h4><p data-i18n=\"home.feat3.p\">Auf Rahmen, Federung und Verarbeitung</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom München oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 14 Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Studio Lusso. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Studio Lusso · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   heroCanvas($("#hero-art"));
-  $("#story-art").innerHTML   = ART.regal(TONES.clay);
-  $("#service-art").innerHTML = ART.tisch(TONES.sage);
+  $("#story-art").innerHTML   = ART.regal(TONES.studio);
+  $("#service-art").innerHTML = ART.tisch(TONES.studio);
 
   const featured = ["sofa-milano", "sessel-orsini", "tisch-atelier", "lampe-soleil", "sideboard-linea", "bett-sereno"]
     .map(findProduct).filter(Boolean);
   $("#featured").innerHTML = featured.map(productCard).join("");
 
   const tiles = [
-    { label: t("home.cats.sitting"), cat: "sofas",        shape: "sofa",      tone: "sand" },
-    { label: t("cat.tische"),        cat: "tische",       shape: "tisch",     tone: "rose" },
-    { label: t("cat.aufbewahrung"),  cat: "aufbewahrung", shape: "sideboard", tone: "stone" }
+    { label: t("home.cats.sitting"), cat: "sofas",        shape: "sofa",      tone: "studio" },
+    { label: t("cat.tische"),        cat: "tische",       shape: "tisch",     tone: "tief" },
+    { label: t("cat.aufbewahrung"),  cat: "aufbewahrung", shape: "sideboard", tone: "studio" }
   ];
   $("#cats").innerHTML = tiles.map((tile) => `
     <a class="cat-tile reveal" href="kollektion.html?kategorie=${tile.cat}">
@@ -3039,7 +2890,7 @@ function initPage() {
   },
   "kollektion.html": {
     page: "shop",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.shop\">Kollektion</span></div>\n      <h1 data-i18n=\"shop.title\">Die Kollektion</h1>\n      <p class=\"lede\" data-i18n=\"shop.lede\">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung begonnen — in der Ausführung, die Sie wählen.</p>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"padding-top:clamp(2.5rem,5vw,4rem)\">\n    <div class=\"wrap\">\n      <div class=\"toolbar\">\n        <div class=\"filters\" id=\"filters\"></div>\n        <div style=\"display:flex;gap:1rem;flex-wrap:wrap;align-items:center\">\n          <label class=\"shop-search\">\n            <svg viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\">\n              <circle cx=\"8.5\" cy=\"8.5\" r=\"5.5\"/><line x1=\"12.6\" y1=\"12.6\" x2=\"17.5\" y2=\"17.5\" stroke-linecap=\"round\"/>\n            </svg>\n            <input type=\"search\" id=\"shop-search\" data-i18n-placeholder=\"shop.searchPlaceholder\" data-i18n-aria=\"shop.search\" autocomplete=\"off\" placeholder=\"Name, Kategorie oder Material\" aria-label=\"Suchen\">\n            <button type=\"button\" id=\"shop-search-clear\" data-i18n-aria=\"search.clear\" hidden aria-label=\"Suche zurücksetzen\">×</button>\n          </label>\n          <div class=\"sort\">\n            <label for=\"sort\" data-i18n=\"shop.sort\">Sortieren</label>\n            <select id=\"sort\">\n              <option value=\"empfohlen\" data-i18n=\"shop.sort.featured\">Empfohlen</option>\n              <option value=\"preis-auf\" data-i18n=\"shop.sort.priceUp\">Preis aufsteigend</option>\n              <option value=\"preis-ab\" data-i18n=\"shop.sort.priceDown\">Preis absteigend</option>\n              <option value=\"name\" data-i18n=\"shop.sort.name\">Name A–Z</option>\n            </select>\n          </div>\n        </div>\n      </div>\n\n      <p class=\"muted\" id=\"result-count\" style=\"font-size:.85rem;letter-spacing:.1em;text-transform:uppercase\"></p>\n      <div class=\"grid grid--3\" id=\"products\" style=\"margin-top:1.5rem\"></div>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.shop\">Kollektion</span></div>\n      <h1 data-i18n=\"shop.title\">Die Kollektion</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"shop.lede\">Vierzehn Entwürfe, die wir dauerhaft fertigen. Jedes Stück wird nach Ihrer Bestellung begonnen — in der Ausführung, die Sie wählen.</p>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"padding-top:clamp(2.5rem,5vw,4rem)\">\n    <div class=\"wrap\">\n      <div class=\"toolbar\">\n        <div class=\"filters\" id=\"filters\"></div>\n        <div style=\"display:flex;gap:1rem;flex-wrap:wrap;align-items:center\">\n          <label class=\"shop-search\">\n            <svg viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\">\n              <circle cx=\"8.5\" cy=\"8.5\" r=\"5.5\"/><line x1=\"12.6\" y1=\"12.6\" x2=\"17.5\" y2=\"17.5\" stroke-linecap=\"round\"/>\n            </svg>\n            <input type=\"search\" id=\"shop-search\" data-i18n-placeholder=\"shop.searchPlaceholder\" data-i18n-aria=\"shop.search\" autocomplete=\"off\" placeholder=\"Name, Kategorie oder Material\" aria-label=\"Suchen\">\n            <button type=\"button\" id=\"shop-search-clear\" data-i18n-aria=\"search.clear\" hidden aria-label=\"Suche zurücksetzen\">×</button>\n          </label>\n          <div class=\"sort\">\n            <label for=\"sort\" data-i18n=\"shop.sort\">Sortieren</label>\n            <select id=\"sort\">\n              <option value=\"empfohlen\" data-i18n=\"shop.sort.featured\">Empfohlen</option>\n              <option value=\"preis-auf\" data-i18n=\"shop.sort.priceUp\">Preis aufsteigend</option>\n              <option value=\"preis-ab\" data-i18n=\"shop.sort.priceDown\">Preis absteigend</option>\n              <option value=\"name\" data-i18n=\"shop.sort.name\">Name A–Z</option>\n            </select>\n          </div>\n        </div>\n      </div>\n\n      <p class=\"muted\" id=\"result-count\" style=\"font-size:.85rem;letter-spacing:.1em;text-transform:uppercase\"></p>\n      <div class=\"grid grid--3\" id=\"products\" style=\"margin-top:1.5rem\"></div>\n    </div>\n  </section>",
     init: function () {
 let activeCat = "alle";
 let activeQuery = "";
@@ -3111,7 +2962,7 @@ function renderList() {
   },
   "produkt.html": {
     page: "shop",
-    html: "<section class=\"section\" style=\"padding-top:clamp(2rem,4vw,3.5rem)\" id=\"pdp-root\"></section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\" id=\"related-section\" hidden>\n    <div class=\"wrap\">\n      <div class=\"section-head\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"pdp.related.eyebrow\">Passt dazu</span>\n          <h2 data-i18n=\"pdp.related.title\">Ebenfalls sehenswert</h2>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"pdp.related.link\">Alle Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"related\"></div>\n    </div>\n  </section>",
+    html: "<section class=\"section\" style=\"padding-top:clamp(2rem,4vw,3.5rem)\" id=\"pdp-root\"></section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\" id=\"related-section\" hidden>\n    <div class=\"wrap\">\n      <div class=\"section-head\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"pdp.related.eyebrow\">Passt dazu</span>\n          <h2 data-i18n=\"pdp.related.title\">Ebenfalls sehenswert</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"pdp.related.link\">Alle Entwürfe</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"related\"></div>\n    </div>\n  </section>",
     init: function () {
 let current, chosenColorIndex = 0, chosenQty = 1;
 
@@ -3256,7 +3107,7 @@ function renderRelated() {
   },
   "warenkorb.html": {
     page: "shop",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"cart.title\">Warenkorb</span></div>\n      <h1 data-i18n=\"cartpage.title\">Ihre Auswahl</h1>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\" id=\"cart-root\"></div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"cart.title\">Warenkorb</span></div>\n      <h1 data-i18n=\"cartpage.title\">Ihre Auswahl</h1>\n      <span class=\"rule\"></span>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\" id=\"cart-root\"></div>\n  </section>",
     init: function () {
 function initPage() {
   renderCartPage();
@@ -3349,18 +3200,18 @@ function renderCartPage() {
   },
   "ueber-uns.html": {
     page: "about",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.about\">Manufaktur</span></div>\n      <span class=\"eyebrow\" data-i18n=\"about.eyebrow\">Seit 1974</span>\n      <h1 data-i18n-html=\"about.title\">Eine Werkstatt,<br>keine Fabrik.</h1>\n      <p class=\"lede\" data-i18n=\"about.lede\">Maison Noir wurde von Anna und Josef Farber als kleine Polsterei in München gegründet. Heute arbeiten wir mit sieben Werkstätten in vier Ländern — nach denselben Regeln wie damals.</p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"about.mat.eyebrow\">Material</span>\n      <h2 data-i18n=\"about.mat.title\">Wir kaufen dort ein, wo wir hinfahren können.</h2>\n      <p data-i18n=\"about.mat.p1\">Unser Holz stammt aus Wäldern, die wir kennen. Die Leder kommen von zwei Gerbereien in der Toskana, die noch pflanzlich gerben — ein Verfahren, das Wochen dauert statt Stunden.</p>\n      <p data-i18n=\"about.mat.p2\">Wir verwenden keine Spanplatten, keine geklebten Furnierschichten in tragenden Teilen und keine Schäume, die nach fünf Jahren zusammenfallen. Das macht unsere Möbel teurer. Und deutlich langlebiger.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <span class=\"num\">52</span>\n          <h3 data-i18n=\"about.n1.t\">Jahre Erfahrung</h3>\n          <p class=\"muted\" data-i18n=\"about.n1.p\">Gegründet 1974 in München, seither in Familienhand.</p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">7</span>\n          <h3 data-i18n=\"about.n2.t\">Partnerwerkstätten</h3>\n          <p class=\"muted\" data-i18n=\"about.n2.p\">In Deutschland, Italien, Dänemark und Belgien.</p>\n        </div>\n        <div class=\"value reveal\">\n          <span class=\"num\">10</span>\n          <h3 data-i18n=\"about.n3.t\">Jahre Garantie</h3>\n          <p class=\"muted\" data-i18n=\"about.n3.p\">Auf Rahmen, Federung und Verarbeitung — reparieren statt ersetzen.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"about.proc.eyebrow\">Verfahren</span>\n      <h2 data-i18n=\"about.proc.title\">Wie ein Sofa entsteht.</h2>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — <span data-i18n=\"about.proc.s1\">Auswahl</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p1\">Sie wählen Modell, Bezug und Maße. Muster senden wir vorab nach Hause.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — <span data-i18n=\"about.proc.s2\">Rahmen</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p2\">Der Schreiner baut den Rahmen aus zwei Jahre lang lufttrockneter Eiche.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — <span data-i18n=\"about.proc.s3\">Polsterung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p3\">Federn werden von Hand gebunden, Rosshaar und Schaum in Lagen aufgebaut.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — <span data-i18n=\"about.proc.s4\">Bezug</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p4\">Der Bezug wird zugeschnitten, genäht und nass über den Korpus gezogen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — <span data-i18n=\"about.proc.s5\">Lieferung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p5\">Zwei Monteure bringen das Stück in den Raum und nehmen die Verpackung mit.</p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"about.care.eyebrow\">Pflege</span>\n          <h2 data-i18n=\"about.care.title\">Damit es lange schön bleibt</h2>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\"><span data-i18n=\"about.care.leather\">Leder</span> <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p data-i18n=\"about.care.leather.p\">Anilinleder einmal im Monat mit einem trockenen, weichen Tuch abstauben und zweimal jährlich mit Lederbalsam pflegen. Direkte Sonne meiden — sie bleicht das Leder ungleichmäßig aus. Flecken nie mit Wasser reiben, sondern tupfen.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.wood\">Massivholz</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.wood.p\">Geölte Oberflächen mit klarem Wasser und wenig Seife reinigen. Einmal jährlich mit Hartwachsöl in Faserrichtung nachölen. Kleine Kratzer verschwinden dabei fast vollständig — anders als bei lackierten Flächen.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.fabric\">Leinen und Wolle</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.fabric.p\">Wöchentlich mit geringer Saugkraft absaugen. Abnehmbare Bezüge bei 30 °C im Schonwaschgang waschen und leicht feucht wieder aufziehen. Bouclé nicht bürsten — die Schlingen reißen sonst auf.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.metal\">Messing und Stein</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.metal.p\">Unbehandeltes Messing dunkelt bewusst nach. Wer den hellen Glanz halten möchte, poliert es alle paar Monate mit Messingpolitur. Travertin und Marmor vertragen keine Säuren — Zitrone, Essig und Rotwein sofort abnehmen.</p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"about.visit.eyebrow\">Besuchen Sie uns</span>\n      <h2 data-i18n=\"about.visit.title\">Showroom München</h2>\n      <p class=\"lede\" style=\"margin-inline:auto\" data-i18n-html=\"about.visit.p\">Maximilianstraße 12 · 80539 München<br>Montag bis Freitag 10–19 Uhr, Samstag 11–17 Uhr</p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\" data-i18n=\"about.visit.cta\">Termin vereinbaren</a>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.about\">Studio</span></div>\n      <span class=\"eyebrow\" data-i18n=\"about.eyebrow\">Interior Design Studio</span>\n      <h1 data-i18n-html=\"about.title\">Wir gestalten Räume,<br>die über Trends hinausgehen.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"about.lede\">Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision und tiefem Verständnis für architektonische Zusammenhänge. Wir begleiten Projekte von der ersten Idee bis zur vollständigen Umsetzung.</p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"about.mat.eyebrow\">Was uns auszeichnet</span>\n      <h2 data-i18n=\"about.mat.title\">Ganzheitliche Planung.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"about.mat.p1\">Interior Design ist für uns mehr als Möblierung oder nur eine Küche. Es ist ein orchestriertes Zusammenspiel aus Raum, Licht, Materialität und Funktion.</p>\n      <p data-i18n=\"about.mat.p2\">Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n1.t\">Ganzheitliche Planung</h3>\n          <p class=\"muted\" data-i18n=\"about.n1.p\">Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n2.t\">Individuelles Design</h3>\n          <p class=\"muted\" data-i18n=\"about.n2.p\">Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n3.t\">Über Grenzen hinaus</h3>\n          <p class=\"muted\" data-i18n=\"about.n3.p\">Neben Poliform und Baxter arbeiten wir mit allen renommierten Herstellern — national und international.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"about.proc.eyebrow\">Projektverlauf</span>\n      <h2 data-i18n=\"about.proc.title\">Vom Bedürfnis zum Raum.</h2>\n          <span class=\"rule\"></span>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — <span data-i18n=\"about.proc.s1\">Bedarfsanalyse &amp; Erstberatung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p1\">Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — <span data-i18n=\"about.proc.s2\">Konzeption &amp; Entwurf</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p2\">Ideen entwickeln, Räume denken — mit 3D-Visualisierungen, Moodboards, Farb- und Materialvorschlägen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — <span data-i18n=\"about.proc.s3\">Planung &amp; Detailentwicklung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p3\">Vom Konzept zur konkreten Lösung: Möblierungspläne, Lichtplanung, Maßzeichnungen, Detailplanungen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — <span data-i18n=\"about.proc.s4\">Umsetzung &amp; Bauleitung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p4\">Gestaltung wird Realität. Wir koordinieren die Gewerke und achten auf Zeit-, Kosten- und Qualitätspläne.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — <span data-i18n=\"about.proc.s5\">Möblierung &amp; Übergabe</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p5\">Das Detail macht den Unterschied: Möbel, Leuchten, Vorhänge, Teppiche, Kunst. Danach bleiben wir Ansprechpartner.</p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"about.care.eyebrow\">Leistungen</span>\n          <h2 data-i18n=\"about.care.title\">Was wir übernehmen</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\"><span data-i18n=\"about.care.leather\">Interior Design &amp; Raumkonzepte</span> <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p data-i18n=\"about.care.leather.p\">Nationale und internationale Projektrealisation, Interior Design, high-end Küchen und vollständige Raumkonzepte — von der ersten Idee bis zur Übergabe.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.wood\">Technische Planung</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.wood.p\">Ausführungs- und Detailplanung, Möblierungs- und Lichtplanung sowie die Koordination der Schnittstellen mit externen Planern.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.fabric\">Material &amp; Oberflächen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.fabric.p\">Material-, Farb- und Oberflächenberatung mit einem sicheren Gespür für Proportion, Haptik und Atmosphäre.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.metal\">Sonderanfertigungen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.metal.p\">Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.</p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"about.visit.eyebrow\">Showroom</span>\n      <h2 data-i18n=\"about.visit.title\">Poliform Showroom Hamburg</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto\" data-i18n-html=\"about.visit.p\">Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung</p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\" data-i18n=\"about.visit.cta\">Termin vereinbaren</a>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
-  $("#art-1").innerHTML = ART.sessel(TONES.clay);
-  $("#art-2").innerHTML = ART.sofa(TONES.sand);
+  $("#art-1").innerHTML = ART.sessel(TONES.studio);
+  $("#art-2").innerHTML = ART.sofa(TONES.studio);
 }
       initPage();
     }
   },
   "kontakt.html": {
     page: "contact",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.contact\">Kontakt</span></div>\n      <h1 data-i18n-html=\"contact.title\">Sprechen wir<br>über Ihren Raum.</h1>\n      <p class=\"lede\" data-i18n=\"contact.lede\">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo>\n          <h3 data-i18n=\"contact.form.title\">Anfrage senden</h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\" data-i18n=\"contact.name\">Name</label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\" data-i18n=\"contact.email\">E-Mail</label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\" data-i18n=\"contact.phone\">Telefon (optional)</label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\" data-i18n=\"contact.topic\">Anliegen</label>\n              <select id=\"topic\" name=\"topic\">\n                <option value=\"showroom\" data-i18n=\"contact.topic1\">Beratungstermin im Showroom</option>\n                <option value=\"zuhause\" data-i18n=\"contact.topic2\">Beratung bei mir zu Hause</option>\n                <option value=\"entwurf\" data-i18n=\"contact.topic3\">Frage zu einem Entwurf</option>\n                <option value=\"muster\" data-i18n=\"contact.topic4\">Materialmuster anfordern</option>\n                <option value=\"bestellung\" data-i18n=\"contact.topic5\">Bestehende Bestellung</option>\n                <option value=\"sonstiges\" data-i18n=\"contact.topic6\">Sonstiges</option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\" data-i18n=\"contact.message\">Ihre Nachricht</label>\n            <textarea id=\"message\" name=\"message\" required data-i18n-placeholder=\"contact.messagePlaceholder\" placeholder=\"Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.\"></textarea>\n          </div>\n          <p class=\"form-note\" data-i18n=\"contact.privacy\">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\" data-i18n=\"contact.send\">Anfrage senden</button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3 data-i18n=\"contact.reach\">Direkt erreichbar</h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.phoneLabel\">Telefon</span><a href=\"tel:+498912345678\">+49 89 1234 5678</a></li>\n            <li><span data-i18n=\"contact.emailLabel\">E-Mail</span><a href=\"mailto:salon@maison-noir.de\">salon@maison-noir.de</a></li>\n            <li><span data-i18n=\"contact.hoursLabel\">Erreichbarkeit</span><span data-i18n=\"contact.hours\">Mo–Fr 9–18 Uhr</span></li>\n          </ul>\n\n          <h3 data-i18n=\"contact.showroom\">Showroom</h3>\n          <p class=\"muted\" data-i18n-html=\"contact.address\">Maximilianstraße 12<br>80539 München<br>Deutschland</p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.monfri\">Montag – Freitag</span><span data-i18n=\"contact.monfriH\">10–19 Uhr</span></li>\n            <li><span data-i18n=\"contact.sat\">Samstag</span><span data-i18n=\"contact.satH\">11–17 Uhr</span></li>\n            <li><span data-i18n=\"contact.sun\">Sonntag</span><span data-i18n=\"contact.sunH\">geschlossen</span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\" data-i18n=\"contact.hint\">Hinweis</span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\" data-i18n=\"contact.hint.p\">Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen.</p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.contact\">Kontakt</span></div>\n      <h1 data-i18n-html=\"contact.title\">Sprechen wir<br>über Ihren Raum.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"contact.lede\">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo>\n          <h3 data-i18n=\"contact.form.title\">Anfrage senden</h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\" data-i18n=\"contact.name\">Name</label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\" data-i18n=\"contact.email\">E-Mail</label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\" data-i18n=\"contact.phone\">Telefon (optional)</label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\" data-i18n=\"contact.topic\">Anliegen</label>\n              <select id=\"topic\" name=\"topic\">\n                <option value=\"showroom\" data-i18n=\"contact.topic1\">Beratungstermin im Showroom</option>\n                <option value=\"zuhause\" data-i18n=\"contact.topic2\">Beratung bei mir zu Hause</option>\n                <option value=\"entwurf\" data-i18n=\"contact.topic3\">Frage zu einem Entwurf</option>\n                <option value=\"muster\" data-i18n=\"contact.topic4\">Materialmuster anfordern</option>\n                <option value=\"bestellung\" data-i18n=\"contact.topic5\">Bestehende Bestellung</option>\n                <option value=\"sonstiges\" data-i18n=\"contact.topic6\">Sonstiges</option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\" data-i18n=\"contact.message\">Ihre Nachricht</label>\n            <textarea id=\"message\" name=\"message\" required data-i18n-placeholder=\"contact.messagePlaceholder\" placeholder=\"Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.\"></textarea>\n          </div>\n          <p class=\"form-note\" data-i18n=\"contact.privacy\">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\" data-i18n=\"contact.send\">Anfrage senden</button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3 data-i18n=\"contact.reach\">Direkt erreichbar</h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.phoneLabel\">Telefon</span><a href=\"tel:+4940419274600\">+49 40 41 92 74 60</a></li>\n            <li><span data-i18n=\"contact.emailLabel\">E-Mail</span><a href=\"mailto:info@studio-lusso.de\">info@studio-lusso.de</a></li>\n            <li><span data-i18n=\"contact.hoursLabel\">Erreichbarkeit</span><span data-i18n=\"contact.hours\">Mo–Fr 9–18 Uhr</span></li>\n          </ul>\n\n          <h3 data-i18n=\"contact.showroom\">Showroom</h3>\n          <p class=\"muted\" data-i18n-html=\"contact.address\">Stadthausbrücke 8<br>20355 Hamburg<br>Deutschland</p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.monfri\">Montag – Freitag</span><span data-i18n=\"contact.monfriH\">10–19 Uhr</span></li>\n            <li><span data-i18n=\"contact.sat\">Samstag</span><span data-i18n=\"contact.satH\">11–17 Uhr</span></li>\n            <li><span data-i18n=\"contact.sun\">Sonntag</span><span data-i18n=\"contact.sunH\">geschlossen</span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\" data-i18n=\"contact.hint\">Hinweis</span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\" data-i18n=\"contact.hint.p\">Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen.</p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   // Der Wert steht fest, die Beschriftung wechselt mit der Sprache —

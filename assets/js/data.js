@@ -4,20 +4,17 @@
    Seite ohne externe Bilddateien überall funktioniert.
    ========================================================= */
 
-/* --- Farbstimmungen für die Produktbilder ---
-   Jede Stimmung beschreibt einen kleinen Raum: Wand, Lichtkegel, Boden
-   und das Möbel selbst. Daraus baut scene() unten die Abbildung. --- */
+/* --- Zwei Aufnahmestimmungen ---
+   Die Broschüre zeigt Möbel wie im Studio fotografiert: heller,
+   neutraler Grund, weiches Licht, ein ruhiger Schatten. Dunkle Möbel
+   stehen hell, helle Möbel dunkel — sonst verschwinden sie. --- */
 const TONES = {
-  sand:  { bg1:"#f3ecdf", bg2:"#e2d6c1", bg3:"#cabb9f", floor:"#c3b195", floorDeep:"#9e8c72", light:"#fff7e8", obj:"#3f3a30", accent:"#a9863f" },
-  clay:  { bg1:"#f4e7dc", bg2:"#e3cabb", bg3:"#c9ac99", floor:"#c2a28f", floorDeep:"#9e7f69", light:"#fff2e7", obj:"#42332b", accent:"#96603c" },
-  sage:  { bg1:"#ecefe4", bg2:"#d4dcca", bg3:"#b6c2a8", floor:"#afbba2", floorDeep:"#8b977e", light:"#f8fbf0", obj:"#333a31", accent:"#7d8a6a" },
-  stone: { bg1:"#efeeea", bg2:"#dad9d3", bg3:"#bebdb5", floor:"#b8b6ae", floorDeep:"#95938b", light:"#fdfcf9", obj:"#35342f", accent:"#8b8778" },
-  ink:   { bg1:"#46423a", bg2:"#2b2823", bg3:"#17160f", floor:"#201e17", floorDeep:"#0e0d09", light:"#e2c795", obj:"#e8e1d4", accent:"#c8a463" },
-  rose:  { bg1:"#f6e9e5", bg2:"#e4ccc6", bg3:"#ccaea7", floor:"#c5a8a1", floorDeep:"#9f857f", light:"#fff1ec", obj:"#3d3230", accent:"#a4726a" }
+  studio: { bg1:"#ffffff", bg2:"#f4f2ef", bg3:"#e4e0d9", floor:"#eae6e0", floorDeep:"#d3cec6",
+            light:"#ffffff", obj:"#3a3229", accent:"#a09589" },
+  tief:   { bg1:"#6b6259", bg2:"#4a423a", bg3:"#302a24", floor:"#3a332c", floorDeep:"#221d18",
+            light:"#d6cec3", obj:"#f0ece5", accent:"#a09589" }
 };
 
-/* Jede Abbildung braucht eigene Verlaufs-Kennungen, sonst greifen mehrere
-   Bilder auf denselben Verlauf zu und zeigen dieselbe Farbe. */
 let artSeq = 0;
 
 /* --- Der Raum, in dem jedes Möbel steht --- */
@@ -309,7 +306,8 @@ function luminance(hex) {
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
 function artFor(product, colorIndex = 0) {
   const hex = product.swatches[colorIndex] || product.swatches[0];
-  const base = TONES[luminance(hex) > 0.7 ? "ink" : product.tone] || TONES.sand;
+  // Helle Möbel vor dunklem Grund, dunkle vor hellem.
+  const base = luminance(hex) > 0.62 ? TONES.tief : TONES.studio;
   const tone = Object.assign({}, base, { obj: hex });
   return (ART[product.shape] || ART.sofa)(tone);
 }
