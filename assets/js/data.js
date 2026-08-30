@@ -18,25 +18,44 @@ const TONES = {
 let artSeq = 0;
 
 /* --- Der Raum, in dem jedes Möbel steht --- */
-function scene(t, build) {
+/* --- Die vier Ansichten eines Stücks ---
+   Dieselbe Zeichnung, vier Blickwinkel: von vorn, leicht gedreht, als
+   Ausschnitt und aus der Entfernung im Raum. Umgesetzt über Bildausschnitt
+   und eine Verformung — so gilt es für jede Möbelform gleichermaßen. */
+const VIEWS = [
+  { key: "front",  box: "0 0 800 1000" },
+  { key: "winkel", box: "0 0 800 1000",
+    // Seitlich gestaucht statt geschert: so wirkt das Stück gedreht,
+    // ohne dass die Senkrechten kippen.
+    tf: "translate(400 720) rotate(-1) scale(0.82 1.02) translate(-400 -720)", licht: 0.78 },
+  { key: "detail", box: "215 400 380 380" },
+  { key: "raum",   box: "-230 -150 1260 1575", licht: 1.25 }
+];
+
+function scene(t, build, viewIndex) {
   const id = "a" + (++artSeq);
-  return `<svg viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img">
+  const v = VIEWS[viewIndex] || VIEWS[0];
+  // Der Grund reicht weit über das Bild hinaus, damit auch der weite
+  // Ausschnitt („im Raum“) keine leeren Ränder zeigt.
+  const G = { x: -400, y: -400, w: 1700, h: 2000 };
+  const inhalt = build(t, id);
+  return `<svg viewBox="${v.box}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img">
   <defs>
     <linearGradient id="${id}w" x1="0.1" y1="0" x2="0.8" y2="1">
       <stop offset="0" stop-color="${t.bg1}"/>
       <stop offset="0.52" stop-color="${t.bg2}"/>
       <stop offset="1" stop-color="${t.bg3}"/>
     </linearGradient>
-    <radialGradient id="${id}p" cx="0.54" cy="0.34" r="0.52">
+    <radialGradient id="${id}p" gradientUnits="userSpaceOnUse" cx="430" cy="340" r="${520 * (v.licht || 1)}">
       <stop offset="0" stop-color="${t.light}" stop-opacity="0.9"/>
       <stop offset="0.5" stop-color="${t.light}" stop-opacity="0.32"/>
       <stop offset="1" stop-color="${t.light}" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="${id}f" gradientUnits="userSpaceOnUse" x1="0" y1="720" x2="0" y2="1200">
       <stop offset="0" stop-color="${t.floor}"/>
       <stop offset="1" stop-color="${t.floorDeep}"/>
     </linearGradient>
-    <radialGradient id="${id}r" cx="0.5" cy="0.5" r="0.5">
+    <radialGradient id="${id}r" gradientUnits="userSpaceOnUse" cx="400" cy="800" r="420">
       <stop offset="0" stop-color="${t.light}" stop-opacity="0.5"/>
       <stop offset="0.55" stop-color="${t.light}" stop-opacity="0.18"/>
       <stop offset="1" stop-color="${t.light}" stop-opacity="0"/>
@@ -46,22 +65,22 @@ function scene(t, build) {
       <stop offset="0.45" stop-color="#000" stop-opacity="0.18"/>
       <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="${id}v" cx="0.5" cy="0.4" r="0.78">
+    <radialGradient id="${id}v" gradientUnits="userSpaceOnUse" cx="400" cy="400" r="820">
       <stop offset="0.42" stop-color="#000" stop-opacity="0"/>
       <stop offset="1" stop-color="#000" stop-opacity="0.26"/>
     </radialGradient>
   </defs>
 
-  <rect width="800" height="1000" fill="url(#${id}w)"/>
-  <rect width="800" height="1000" fill="url(#${id}p)"/>
+  <rect x="${G.x}" y="${G.y}" width="${G.w}" height="${G.h}" fill="url(#${id}w)"/>
+  <rect x="${G.x}" y="${G.y}" width="${G.w}" height="${G.h}" fill="url(#${id}p)"/>
 
-  <rect x="0" y="720" width="800" height="280" fill="url(#${id}f)"/>
+  <rect x="${G.x}" y="720" width="${G.w}" height="${G.h + G.y - 720}" fill="url(#${id}f)"/>
   <ellipse cx="400" cy="800" rx="420" ry="160" fill="url(#${id}r)"/>
-  <line x1="0" y1="720" x2="800" y2="720" stroke="${t.light}" stroke-opacity="0.35" stroke-width="1.5"/>
+  <line x1="${G.x}" y1="720" x2="${G.x + G.w}" y2="720" stroke="${t.light}" stroke-opacity="0.35" stroke-width="1.5"/>
 
-  ${build(t, id)}
+  ${v.tf ? `<g transform="${v.tf}">${inhalt}</g>` : inhalt}
 
-  <rect width="800" height="1000" fill="url(#${id}v)"/>
+  <rect x="${G.x}" y="${G.y}" width="${G.w}" height="${G.h}" fill="url(#${id}v)"/>
 </svg>`;
 }
 
@@ -71,7 +90,7 @@ const shadow = (id, x, w) =>
 
 /* --- Möbel-Silhouetten --- */
 const ART = {
-  sofa: (t) => scene(t, (t, id) => `
+  sofa: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 250)}
     <rect x="150" y="400" width="500" height="112" rx="26" fill="${t.obj}" opacity="0.84"/>
     <rect x="150" y="470" width="500" height="150" rx="28" fill="${t.obj}"/>
@@ -82,45 +101,45 @@ const ART = {
     <rect x="620" y="430" width="52" height="190" rx="24" fill="${t.obj}"/>
     <rect x="128" y="430" width="16" height="190" rx="8" fill="${t.light}" opacity="0.10"/>
     <rect x="196" y="618" width="16" height="100" rx="6" fill="${t.accent}"/>
-    <rect x="588" y="618" width="16" height="100" rx="6" fill="${t.accent}"/>`),
+    <rect x="588" y="618" width="16" height="100" rx="6" fill="${t.accent}"/>`, v),
 
-  sessel: (t) => scene(t, (t, id) => `
+  sessel: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 165)}
     <path d="M262 430c0-62 46-104 138-104s138 42 138 104v86H262z" fill="${t.obj}" opacity="0.86"/>
     <path d="M262 430c0-62 46-104 138-104v190h-138z" fill="${t.light}" opacity="0.07"/>
     <rect x="252" y="500" width="296" height="130" rx="30" fill="${t.obj}"/>
     <rect x="286" y="524" width="228" height="72" rx="20" fill="${t.accent}" opacity="0.45"/>
     <rect x="296" y="628" width="15" height="92" rx="6" fill="${t.accent}"/>
-    <rect x="489" y="628" width="15" height="92" rx="6" fill="${t.accent}"/>`),
+    <rect x="489" y="628" width="15" height="92" rx="6" fill="${t.accent}"/>`, v),
 
-  tisch: (t) => scene(t, (t, id) => `
+  tisch: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 240)}
     <rect x="150" y="452" width="500" height="30" rx="12" fill="${t.obj}"/>
     <rect x="150" y="452" width="500" height="9" rx="4" fill="${t.light}" opacity="0.18"/>
     <rect x="176" y="482" width="448" height="12" fill="${t.obj}" opacity="0.5"/>
     <rect x="214" y="494" width="20" height="226" fill="${t.obj}"/>
     <rect x="566" y="494" width="20" height="226" fill="${t.obj}"/>
-    <rect x="214" y="588" width="372" height="14" fill="${t.accent}" opacity="0.72"/>`),
+    <rect x="214" y="588" width="372" height="14" fill="${t.accent}" opacity="0.72"/>`, v),
 
-  stuhl: (t) => scene(t, (t, id) => `
+  stuhl: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 120)}
     <path d="M320 268h160c14 0 22 12 18 26l-44 176H346l-44-176c-4-14 4-26 18-26z" fill="${t.obj}" opacity="0.9"/>
     <path d="M320 268h56l-24 202h-6l-44-176c-4-14 4-26 18-26z" fill="${t.light}" opacity="0.08"/>
     <rect x="300" y="470" width="200" height="26" rx="10" fill="${t.obj}"/>
     <rect x="314" y="496" width="14" height="224" fill="${t.accent}"/>
     <rect x="472" y="496" width="14" height="224" fill="${t.accent}"/>
-    <rect x="314" y="614" width="172" height="11" fill="${t.obj}" opacity="0.55"/>`),
+    <rect x="314" y="614" width="172" height="11" fill="${t.obj}" opacity="0.55"/>`, v),
 
-  lampe: (t) => scene(t, (t, id) => `
+  lampe: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 110)}
     <ellipse cx="400" cy="420" rx="250" ry="180" fill="${t.light}" opacity="0.28"/>
     <path d="M296 236h208l58 168H238z" fill="${t.accent}" opacity="0.72"/>
     <path d="M296 236h104v168H238z" fill="${t.light}" opacity="0.2"/>
     <path d="M296 236h208l58 168H238z" fill="none" stroke="${t.obj}" stroke-opacity="0.3" stroke-width="4"/>
     <rect x="392" y="404" width="16" height="292" fill="${t.obj}"/>
-    <ellipse cx="400" cy="700" rx="96" ry="20" fill="${t.obj}"/>`),
+    <ellipse cx="400" cy="700" rx="96" ry="20" fill="${t.obj}"/>`, v),
 
-  haengeleuchte: (t) => scene(t, (t, id) => `
+  haengeleuchte: (t, v) => scene(t, (t, id) => `
     <ellipse cx="400" cy="820" rx="230" ry="60" fill="${t.light}" opacity="0.5"/>
     <ellipse cx="400" cy="118" rx="62" ry="9" fill="${t.obj}" opacity="0.55"/>
     <rect x="395" y="118" width="10" height="132" fill="${t.obj}" opacity="0.75"/>
@@ -131,9 +150,9 @@ const ART = {
       return `<rect x="${x - 2}" y="261" width="4" height="${len}" fill="${t.obj}" opacity="0.6"/>
               <ellipse cx="${x}" cy="${261 + len + 34}" rx="35" ry="42" fill="${t.accent}" opacity="0.55"/>
               <ellipse cx="${x - 11}" cy="${261 + len + 22}" rx="11" ry="14" fill="${t.light}" opacity="0.6"/>`;
-    }).join("")}`),
+    }).join("")}`, v),
 
-  regal: (t) => scene(t, (t, id) => `
+  regal: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 210)}
     <rect x="206" y="206" width="388" height="512" fill="${t.obj}" opacity="0.10"/>
     <rect x="206" y="206" width="18" height="512" fill="${t.obj}"/>
@@ -145,9 +164,9 @@ const ART = {
     <rect x="240" y="292" width="86" height="76" fill="${t.accent}" opacity="0.6"/>
     <circle cx="500" cy="330" r="36" fill="${t.accent}" opacity="0.42"/>
     <rect x="404" y="470" width="60" height="60" fill="${t.accent}" opacity="0.48"/>
-    <rect x="252" y="466" width="54" height="64" fill="${t.obj}" opacity="0.5"/>`),
+    <rect x="252" y="466" width="54" height="64" fill="${t.obj}" opacity="0.5"/>`, v),
 
-  bett: (t) => scene(t, (t, id) => `
+  bett: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 268)}
     <rect x="212" y="272" width="376" height="198" rx="18" fill="${t.obj}" opacity="0.86"/>
     <line x1="400" y1="278" x2="400" y2="464" stroke="${t.light}" stroke-opacity="0.14" stroke-width="2"/>
@@ -156,30 +175,30 @@ const ART = {
     <rect x="340" y="440" width="150" height="58" rx="18" fill="${t.accent}" opacity="0.55"/>
     <rect x="140" y="600" width="520" height="26" rx="8" fill="${t.accent}" opacity="0.58"/>
     <rect x="164" y="626" width="16" height="94" fill="${t.obj}"/>
-    <rect x="620" y="626" width="16" height="94" fill="${t.obj}"/>`),
+    <rect x="620" y="626" width="16" height="94" fill="${t.obj}"/>`, v),
 
-  sideboard: (t) => scene(t, (t, id) => `
+  sideboard: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 230)}
     <rect x="164" y="404" width="472" height="234" rx="10" fill="${t.obj}"/>
     <rect x="164" y="404" width="472" height="10" rx="5" fill="${t.light}" opacity="0.14"/>
     <line x1="400" y1="414" x2="400" y2="638" stroke="${t.bg1}" stroke-opacity="0.3" stroke-width="3"/>
     <rect x="336" y="506" width="128" height="9" rx="4" fill="${t.accent}"/>
     <rect x="196" y="638" width="16" height="82" fill="${t.accent}"/>
-    <rect x="588" y="638" width="16" height="82" fill="${t.accent}"/>`),
+    <rect x="588" y="638" width="16" height="82" fill="${t.accent}"/>`, v),
 
-  teppich: (t) => scene(t, (t, id) => `
+  teppich: (t, v) => scene(t, (t, id) => `
     <ellipse cx="400" cy="566" rx="272" ry="152" fill="#000" opacity="0.12"/>
     <ellipse cx="400" cy="560" rx="270" ry="150" fill="${t.obj}" opacity="0.85"/>
     <ellipse cx="400" cy="560" rx="212" ry="115" fill="none" stroke="${t.accent}" stroke-width="10" opacity="0.75"/>
     <ellipse cx="400" cy="560" rx="140" ry="72" fill="none" stroke="${t.bg1}" stroke-width="8" opacity="0.45"/>
-    <ellipse cx="400" cy="560" rx="66" ry="32" fill="${t.accent}" opacity="0.7"/>`),
+    <ellipse cx="400" cy="560" rx="66" ry="32" fill="${t.accent}" opacity="0.7"/>`, v),
 
-  spiegel: (t) => scene(t, (t, id) => `
+  spiegel: (t, v) => scene(t, (t, id) => `
     ${shadow(id, 400, 130)}
     <rect x="272" y="180" width="256" height="472" rx="128" fill="${t.accent}" opacity="0.82"/>
     <rect x="294" y="202" width="212" height="428" rx="106" fill="${t.bg1}" opacity="0.88"/>
     <path d="M330 560c0-108 34-206 92-282" stroke="#fff" stroke-opacity="0.45" stroke-width="14" fill="none" stroke-linecap="round"/>
-    <rect x="356" y="652" width="88" height="68" rx="8" fill="${t.obj}"/>`)
+    <rect x="356" y="652" width="88" height="68" rx="8" fill="${t.obj}"/>`, v)
 };
 
 /* --- Bühnenbild für die Startseite ---
@@ -317,12 +336,12 @@ function luminance(hex) {
 /* Zeigt das Produkt in der gewählten Ausführung.
    Helle Möbel stehen dabei in einem dunklen Raum und umgekehrt — sonst
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
-function artFor(product, colorIndex = 0) {
+function artFor(product, colorIndex = 0, viewIndex = 0) {
   const hex = product.swatches[colorIndex] || product.swatches[0];
   // Helle Möbel vor dunklem Grund, dunkle vor hellem.
   const base = luminance(hex) > 0.62 ? TONES.tief : TONES.studio;
   const tone = Object.assign({}, base, { obj: hex });
-  return (ART[product.shape] || ART.sofa)(tone);
+  return (ART[product.shape] || ART.sofa)(tone, viewIndex);
 }
 
 /* --- Katalog ---

@@ -60,7 +60,7 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
-let current, chosenColorIndex = 0, chosenQty = 1;
+let current, chosenColorIndex = 0, chosenQty = 1, chosenView = 0;
 
 function initPage() {
   current = findProduct(queryParams().get("id"));
@@ -78,6 +78,7 @@ function initPage() {
 
   if (!isPreview()) document.title = current.name + " — Studio Lusso";
   chosenColorIndex = 0;
+  chosenView = 0;
   renderPdp();
   renderRelated();
 }
@@ -96,11 +97,17 @@ function renderPdp() {
 
     <div class="pdp">
       <div class="pdp__gallery">
-        <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex)}</div>
+        <div class="gallery" id="gallery" role="group" aria-roledescription="carousel" aria-label="${t("gallery.label")}">
+          <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView)}</div>
+          <button class="gallery__arrow gallery__arrow--prev" id="gal-prev" aria-label="${t("gallery.prev")}" aria-controls="pdp-main">‹</button>
+          <button class="gallery__arrow gallery__arrow--next" id="gal-next" aria-label="${t("gallery.next")}" aria-controls="pdp-main">›</button>
+          <span class="gallery__count" id="gal-count" aria-live="polite"></span>
+        </div>
         <div class="pdp__thumbs" id="pdp-thumbs">
-          ${colors.map((c, i) => `
-            <button data-index="${i}" class="${i === chosenColorIndex ? "is-active" : ""}"
-                    aria-label="${c.name}" title="${c.name}">${artFor(p, i)}</button>`).join("")}
+          ${VIEWS.map((v, i) => `
+            <button data-view="${i}" class="${i === chosenView ? "is-active" : ""}"
+                    aria-label="${t("view." + v.key)}" title="${t("view." + v.key)}"
+                    >${artFor(p, chosenColorIndex, i)}</button>`).join("")}
         </div>
       </div>
 
@@ -166,20 +173,41 @@ function renderPdp() {
     </div>
   </div>`;
 
-  // Ausführung wählen — über die Farbfelder oder die Ansichten daneben.
-  // Beide Wege führen zum selben Ergebnis und färben das Bild um.
+  /* Galerie: vier Ansichten desselben Stücks, immer in der gewählten
+     Ausführung. Bedienbar über die kleinen Bilder, die Pfeile und die
+     Pfeiltasten der Tastatur. */
+  function zeigeAnsicht(index) {
+    chosenView = (index + VIEWS.length) % VIEWS.length;
+    $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView);
+    $$("#pdp-thumbs button").forEach((b) =>
+      b.classList.toggle("is-active", Number(b.dataset.view) === chosenView));
+    $("#gal-count").textContent = t("gallery.count", { n: chosenView + 1, m: VIEWS.length });
+  }
+
   function chooseColor(index) {
     chosenColorIndex = index;
-    $("#pdp-main").innerHTML = artFor(current, index);
     $("#color-name").textContent = productColors(current)[index].name;
-    $$("#pdp-thumbs button").forEach((b) => b.classList.toggle("is-active", Number(b.dataset.index) === index));
     $$("#swatches .swatch").forEach((s) => s.classList.toggle("is-active", Number(s.dataset.index) === index));
+    // Alle Bilder der Galerie in der neuen Ausführung neu zeichnen
+    $$("#pdp-thumbs button").forEach((b) => {
+      b.innerHTML = artFor(current, index, Number(b.dataset.view));
+    });
+    zeigeAnsicht(chosenView);
   }
 
   $$("#pdp-thumbs button").forEach((btn) =>
-    btn.addEventListener("click", () => chooseColor(Number(btn.dataset.index))));
+    btn.addEventListener("click", () => zeigeAnsicht(Number(btn.dataset.view))));
   $$("#swatches .swatch").forEach((sw) =>
     sw.addEventListener("click", () => chooseColor(Number(sw.dataset.index))));
+
+  $("#gal-prev").addEventListener("click", () => zeigeAnsicht(chosenView - 1));
+  $("#gal-next").addEventListener("click", () => zeigeAnsicht(chosenView + 1));
+  $("#gallery").addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") { e.preventDefault(); zeigeAnsicht(chosenView - 1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); zeigeAnsicht(chosenView + 1); }
+  });
+
+  zeigeAnsicht(chosenView);
 
   // Bei Einzelstücken gibt es keine Mengenauswahl
   const qtyEl = $("#qty-value");
