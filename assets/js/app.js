@@ -178,7 +178,9 @@ const Discount = {
     return Discount.aktiv() ? Math.min(GUTSCHEIN.betrag, zwischensumme) : 0;
   },
   gesehen() {
-    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return true; }
+    // Wenn der Browser den Speicher sperrt, lieber einmal zu viel zeigen als
+    // gar nicht — sonst wäre das Angebot dort unsichtbar.
+    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return false; }
   },
   merken() {
     try { localStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
@@ -261,6 +263,7 @@ function renderChrome() {
             <li><a href="kontakt.html" data-i18n="footer.delivery"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.care"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.manufactory"></a></li>
+            <li><button class="footer__promo" id="promo-reopen" data-i18n="promo.reopen"></button></li>
           </ul>
         </div>
         <div>
@@ -281,35 +284,39 @@ function renderChrome() {
   </footer>`;
 
   const promo = `
-  <aside class="promo" id="promo" aria-labelledby="promo-title" hidden>
-    <div class="wrap promo__inner">
-      <div class="promo__text" id="promo-form">
+  <div class="promo-backdrop" id="promo-backdrop"></div>
+  <div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promo-title" hidden>
+    <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    <div class="promo__figure" aria-hidden="true"><span class="promo__num">50<em>€</em></span></div>
+    <div class="promo__body">
+      <div id="promo-form">
         <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h3 id="promo-title" data-i18n="promo.title"></h3>
+        <h2 id="promo-title" data-i18n="promo.title"></h2>
+        <span class="rule"></span>
         <p data-i18n="promo.text"></p>
-      </div>
-      <div class="promo__text" id="promo-done" hidden>
-        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h3 data-i18n="promo.done.title"></h3>
-        <p data-i18n="promo.done.text"></p>
-      </div>
-      <div class="promo__action">
         <form id="promo-form-el" novalidate>
           <div class="promo__row">
             <input type="email" id="promo-email" required data-i18n-placeholder="promo.placeholder" data-i18n-aria="promo.placeholder" autocomplete="email">
-            <button class="btn" type="submit" data-i18n="promo.cta"></button>
+            <button class="btn btn--block" type="submit" data-i18n="promo.cta"></button>
           </div>
           <p class="promo__error" id="promo-error" hidden></p>
-          <p class="form-note" data-i18n="promo.privacy"></p>
         </form>
-        <div class="promo__code" id="promo-code" hidden>
+        <p class="form-note" data-i18n="promo.privacy"></p>
+        <button class="promo__later" id="promo-later" data-i18n="promo.later"></button>
+      </div>
+      <div id="promo-done" hidden>
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h2 data-i18n="promo.done.title"></h2>
+        <span class="rule"></span>
+        <div class="promo__code" id="promo-code">
           <code>${GUTSCHEIN.code}</code>
           <button class="link-underline" id="promo-copy" data-i18n="promo.copy"></button>
         </div>
+        <p data-i18n="promo.done.text"></p>
+        <a class="btn" href="kollektion.html" data-i18n="promo.shop"></a>
       </div>
-      <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
     </div>
-  </aside>`;
+  </div>`;
 
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
@@ -450,36 +457,39 @@ function renderDrawer() {
 /* ---------- Willkommensgutschein ---------- */
 function bindPromo() {
   const box = $("#promo");
+  const backdrop = $("#promo-backdrop");
   if (!box) return;
 
   /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
      übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
-  /* Die Leiste liegt fest am unteren Rand. Damit sie nichts verdeckt —
-     weder den Fuß der Seite noch einen Knopf auf der letzten Karte —
-     bekommt die Seite währenddessen unten entsprechend Platz. */
-  const platzSchaffen = () => {
-    document.body.style.paddingBottom = box.offsetHeight + "px";
-  };
-  const platzZurueck = () => { document.body.style.paddingBottom = ""; };
+  /* Ein Dialog übernimmt die Seite, solange er offen ist: der Rest wird
+     für Tastatur und Vorlesehilfe stillgelegt, danach wieder freigegeben. */
+  const umgebung = () => [$("#site-header"), document.querySelector("main"),
+                          document.querySelector(".footer"), $("#drawer")].filter(Boolean);
+  const sperren = (an) => umgebung().forEach((el) => { el.inert = an; });
 
   const zeigen = () => {
     box.hidden = false;
     requestAnimationFrame(() => {
       box.classList.add("is-open");
-      platzSchaffen();
+      backdrop.classList.add("is-open");
     });
-    window.addEventListener("resize", platzSchaffen);
+    sperren(true);
+    (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
   };
   const schliessen = () => {
     if (!box.classList.contains("is-open")) return;
     box.classList.remove("is-open");
-    platzZurueck();
-    window.removeEventListener("resize", platzSchaffen);
+    backdrop.classList.remove("is-open");
+    sperren(false);
     Discount.merken();
+    $("#promo-reopen")?.focus();
     setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
   };
 
   $("#promo-close")?.addEventListener("click", schliessen);
+  $("#promo-later")?.addEventListener("click", schliessen);
+  backdrop?.addEventListener("click", schliessen);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
   });
@@ -504,7 +514,6 @@ function bindPromo() {
     $("#promo-done").hidden = false;
     $("#promo-code").hidden = false;
     $("#promo-copy")?.focus();
-    platzSchaffen();
   });
 
   $("#promo-copy")?.addEventListener("click", (e) => {
@@ -514,7 +523,19 @@ function bindPromo() {
     else fertig();
   });
 
-  // Nur beim ersten Besuch, und erst wenn die Seite steht
+  // Über die Fußzeile jederzeit wieder erreichbar
+  $("#promo-reopen")?.addEventListener("click", () => {
+    if (Discount.aktiv()) {
+      $("#promo-form").hidden = true;
+      $("#promo-form-el").hidden = true;
+      $("#promo-done").hidden = false;
+      $("#promo-code").hidden = false;
+    }
+    zeigen();
+    if (!Discount.aktiv()) $("#promo-email")?.focus();
+  });
+
+  // Von selbst nur beim ersten Besuch, und erst wenn die Seite steht
   if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
 }
 

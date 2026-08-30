@@ -544,6 +544,11 @@ noscript .footer p { max-width: 60ch; }
 .footer .logo { color: var(--paper); }
 .footer h5 { font-family: var(--sans); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--paper); margin: 0 0 1.1rem; }
 .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; font-size: .92rem; }
+.footer__promo {
+  background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
+  font: inherit; color: var(--greige); transition: color var(--t);
+}
+.footer__promo:hover { color: var(--paper); }
 .footer__bottom {
   margin-top: 3.5rem; padding-top: 1.6rem;
   border-top: 1px solid rgba(250,247,242,.14);
@@ -658,60 +663,96 @@ noscript .footer p { max-width: 60ch; }
 .close-x { background: none; border: 0; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: .2rem .4rem; }
 
 /* ---------- Willkommensgutschein ----------
-   Bewusst eine Leiste und kein Dialog: sie unterbricht niemanden,
-   verdeckt den Inhalt nicht und nimmt der Tastatur nichts weg. */
+   Großer Dialog in der Bildmitte, im Stil der Broschüre: weiße Fläche,
+   die Zahl als Blickfang in der Hausfarbe, Gedankenstrich, viel Raum. */
+.promo-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(58,50,41,.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t);
+  z-index: 110;
+}
+.promo-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
 .promo {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
-  background: var(--paper);
-  border-top: 1px solid var(--line);
-  box-shadow: 0 -14px 40px -28px rgba(58,50,41,.5);
-  z-index: 105;
-  transform: translateY(100%);
-  transition: transform var(--t);
-}
-.promo.is-open { transform: none; }
-.promo__inner {
+  left: 50%; top: 50%;
+  transform: translate(-50%, -47%) scale(.985);
+  width: min(680px, calc(100% - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: clamp(1.2rem, 4vw, 3rem);
-  align-items: center;
-  padding: .95rem 0 1rem;
-  position: relative;
+  grid-template-columns: 230px 1fr;
+  background: var(--paper);
+  z-index: 115;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t), transform var(--t), visibility var(--t);
+  box-shadow: 0 40px 100px -40px rgba(58,50,41,.55);
 }
-.promo__text { max-width: 46ch; }
-.promo__text h3 { font-size: 1rem; margin: 0 0 .15rem; }
-.promo__text p { font-size: .82rem; color: var(--muted); margin: 0; }
-.promo__text .eyebrow { margin-bottom: .2rem; font-size: .6rem; }
-.promo__action { min-width: min(360px, 100%); }
-.promo__row { display: flex; gap: .5rem; flex-wrap: wrap; }
-.promo .btn { padding: .72rem 1.5rem; }
+.promo.is-open { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+
+/* Die Zahl als Blickfang */
+.promo__figure {
+  background: var(--paper-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .15rem;
+  color: var(--greige);
+  border-right: 1px solid var(--line);
+}
+.promo__num {
+  display: flex; align-items: flex-start; gap: .1em;
+  font-size: clamp(3.4rem, 7vw, 5rem); font-weight: 200; line-height: 1; letter-spacing: -.03em;
+}
+.promo__num em { font-style: normal; font-size: .34em; font-weight: 300; margin-top: .28em; }
+
+.promo__body { padding: clamp(1.8rem, 4vw, 2.8rem); }
+.promo__body h2 { font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin-bottom: .5rem; }
+.promo__body p { font-size: .94rem; color: var(--ink-soft); }
+.promo__body .rule { margin-bottom: 1.5rem; }
+.promo__close { position: absolute; top: .4rem; right: .6rem; font-size: 1.7rem; color: var(--muted); z-index: 2; }
+.promo__close:hover { color: var(--ink); }
+
+.promo__row { display: grid; gap: .7rem; margin: 1.5rem 0 .2rem; }
 .promo__row input {
-  flex: 1 1 170px; font: inherit; padding: .7rem .9rem; font-size: .9rem;
+  font: inherit; padding: .9rem 1.1rem;
   border: 1px solid var(--line); background: var(--card); color: var(--ink);
 }
 .promo__row input:focus { outline: none; border-color: var(--greige); box-shadow: 0 0 0 3px rgba(160,149,137,.16); }
-.promo__action .form-note { margin: .45rem 0 0; font-size: .68rem; }
-.promo__error { color: #8a3b32; font-size: .8rem; margin: .5rem 0 0; }
-.promo__close { position: absolute; top: -.2rem; right: -.4rem; font-size: 1.5rem; color: var(--muted); }
-.promo__close:hover { color: var(--ink); }
+.promo__error { color: #8a3b32; font-size: .84rem; margin: .6rem 0 0; }
+.promo__body .form-note { margin-top: 1rem; }
+.promo__later {
+  background: none; border: 0; border-bottom: 1px solid var(--line);
+  padding: 0 0 .3rem; margin-top: 1.3rem; cursor: pointer;
+  font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+  transition: color var(--t), border-color var(--t);
+}
+.promo__later:hover { color: var(--ink); border-color: var(--greige); }
+
 .promo__code {
-  display: flex; align-items: center; gap: 1.2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   border: 1px dashed var(--greige); background: var(--paper-2);
-  padding: .7rem 1.1rem;
+  padding: 1rem 1.3rem; margin-bottom: 1.3rem;
 }
 .promo__code code {
-  font-family: var(--sans); font-size: 1.05rem; font-weight: 700;
+  font-family: var(--sans); font-size: 1.15rem; font-weight: 700;
   letter-spacing: .18em; color: var(--ink);
 }
 
-@media (max-width: 860px) {
-  /* Auf dem Handy bleibt nur das Nötige: die Zusage, das Feld, der Knopf. */
-  .promo__inner { grid-template-columns: 1fr; gap: .7rem; padding: .8rem 0 .9rem; padding-right: 1.8rem; }
-  .promo__text p, .promo__text .eyebrow, .promo__action .form-note { display: none; }
-  .promo__text h3 { font-size: .95rem; }
-  .promo__close { top: -.1rem; right: -.5rem; }
+@media (max-width: 640px) {
+  .promo { grid-template-columns: 1fr; }
+  .promo__figure { border-right: 0; border-bottom: 1px solid var(--line); padding: 1.3rem 0; }
+  .promo__num { font-size: 3rem; }
 }
+
+/* Verweis in der Fußzeile, über den sich der Gutschein erneut öffnen lässt */
+.footer__promo {
+  background: none; border: 0; padding: 0; cursor: pointer; text-align: left;
+  font: inherit; color: var(--greige); transition: color var(--t);
+}
+.footer__promo:hover { color: var(--paper); }
 
 /* Gutscheinzeile und Eingabefeld im Warenkorb */
 .summary__row--discount { color: var(--greige-deep); }
@@ -880,6 +921,7 @@ const I18N = {
     "cartpage.codeApply": "Einlösen",
     "cartpage.codeRemove": "Entfernen",
     "cartpage.codeInvalid": "Dieser Code ist nicht gültig.",
+    "promo.reopen": "50 € Willkommensgutschein",
     "html.lang": "de",
 
     "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
@@ -887,7 +929,7 @@ const I18N = {
     "desc.product": "Materialien, Maße und Ausführungen zu den Entwürfen von Studio Lusso.",
     "desc.cart": "Ihre Auswahl bei Studio Lusso — mit Fertigungszeiten und Lieferung bis in den Raum.",
     "desc.about": "Studio Lusso ist ein Interior Design Studio in Hamburg: ganzheitliche Planung, individuelles Design und Projekte im In- und Ausland.",
-    "desc.contact": "Persönliche Einrichtungsberatung, Showroom München und Kontakt zu Studio Lusso.",
+    "desc.contact": "Persönliche Einrichtungsberatung, Showroom Hamburg und Kontakt zu Studio Lusso.",
 
     "title.home": "Studio Lusso — Luxusmöbel aus europäischer Handarbeit",
     "title.shop": "Kollektion — Studio Lusso",
@@ -955,10 +997,10 @@ const I18N = {
     "home.hero.lede": "Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.",
     "home.hero.cta1": "Kollektion ansehen",
     "home.hero.cta2": "Showroom besuchen",
-    "home.feat1.t": "Handgefertigt", "home.feat1.p": "In Manufakturen in Italien, Dänemark und Deutschland",
+    "home.feat1.t": "Geprüft & aufbereitet", "home.feat1.p": "Jedes gebrauchte Stück wird von Hand kontrolliert",
     "home.feat2.t": "Lieferung bis in den Raum", "home.feat2.p": "Weißhandschuh-Service inklusive Montage",
-    "home.feat3.t": "10 Jahre Garantie", "home.feat3.p": "Auf Rahmen, Federung und Verarbeitung",
-    "home.feat4.t": "Persönliche Beratung", "home.feat4.p": "Im Showroom München oder bei Ihnen zu Hause",
+    "home.feat3.t": "Einzelstücke", "home.feat3.p": "Jedes Möbel gibt es nur einmal",
+    "home.feat4.t": "Persönliche Beratung", "home.feat4.p": "Im Showroom Hamburg oder bei Ihnen zu Hause",
     "home.featured.eyebrow": "Ausgewählt",
     "home.featured.title": "Die Stücke der Saison",
     "home.featured.link": "Alle 16 Stücke",
@@ -974,7 +1016,7 @@ const I18N = {
     "home.quote.cite": "Studio Lusso · Hamburg",
     "home.service.eyebrow": "Service",
     "home.service.title": "Wir planen Ihren Raum mit.",
-    "home.service.p": "Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.",
+    "home.service.p": "Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.",
     "home.service.r1": "Erstgespräch", "home.service.v1": "kostenfrei",
     "home.service.r2": "Raumplanung inkl. 3D-Ansicht", "home.service.v2": "ab 2 Wochen",
     "home.service.r3": "Materialmuster nach Hause", "home.service.v3": "inklusive",
@@ -1140,6 +1182,7 @@ const I18N = {
     "cartpage.codeApply": "Apply",
     "cartpage.codeRemove": "Remove",
     "cartpage.codeInvalid": "This code is not valid.",
+    "promo.reopen": "€50 welcome voucher",
     "html.lang": "en",
 
     "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
@@ -1147,7 +1190,7 @@ const I18N = {
     "desc.product": "Materials, dimensions and finishes for the designs by Studio Lusso.",
     "desc.cart": "Your selection at Studio Lusso — with production times and delivery into your room.",
     "desc.about": "Studio Lusso is an interior design studio in Hamburg: holistic planning, individual design and projects at home and abroad.",
-    "desc.contact": "Personal interior advice, the Munich showroom and how to reach Studio Lusso.",
+    "desc.contact": "Personal interior advice, the Hamburg showroom and how to reach Studio Lusso.",
 
     "title.home": "Studio Lusso — Handmade European Luxury Furniture",
     "title.shop": "Collection — Studio Lusso",
@@ -1215,10 +1258,10 @@ const I18N = {
     "home.hero.lede": "We design rooms that outlast trends. As an interior design studio focused on holistic planning, we combine the highest design standards with technical precision.",
     "home.hero.cta1": "See the collection",
     "home.hero.cta2": "Visit the showroom",
-    "home.feat1.t": "Made by hand", "home.feat1.p": "In workshops in Italy, Denmark and Germany",
+    "home.feat1.t": "Checked & refurbished", "home.feat1.p": "Every pre-owned piece is checked by hand",
     "home.feat2.t": "Delivered to your room", "home.feat2.p": "White-glove service, assembly included",
-    "home.feat3.t": "10-year guarantee", "home.feat3.p": "On frame, suspension and workmanship",
-    "home.feat4.t": "Personal advice", "home.feat4.p": "In our Munich showroom or at your home",
+    "home.feat3.t": "One of a kind", "home.feat3.p": "Each piece is available only once",
+    "home.feat4.t": "Personal advice", "home.feat4.p": "In our Hamburg showroom or at your home",
     "home.featured.eyebrow": "Selected",
     "home.featured.title": "Pieces of the season",
     "home.featured.link": "All 16 pieces",
@@ -1234,7 +1277,7 @@ const I18N = {
     "home.quote.cite": "Studio Lusso · Hamburg",
     "home.service.eyebrow": "Service",
     "home.service.title": "We plan your room with you.",
-    "home.service.p": "Our interior advisers come to you, take measurements, bring samples and draw up a plan — free of charge and without obligation, anywhere in Europe.",
+    "home.service.p": "Our advisers come to you, take measurements, bring samples and draw up a plan — free of charge and without obligation.",
     "home.service.r1": "First conversation", "home.service.v1": "free of charge",
     "home.service.r2": "Room plan incl. 3D view", "home.service.v2": "from 2 weeks",
     "home.service.r3": "Material samples by post", "home.service.v3": "included",
@@ -1400,6 +1443,7 @@ const I18N = {
     "cartpage.codeApply": "Valider",
     "cartpage.codeRemove": "Retirer",
     "cartpage.codeInvalid": "Ce code n’est pas valide.",
+    "promo.reopen": "Bon de bienvenue de 50 €",
     "html.lang": "fr",
 
     "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
@@ -1407,7 +1451,7 @@ const I18N = {
     "desc.product": "Matières, dimensions et finitions des modèles Studio Lusso.",
     "desc.cart": "Votre sélection chez Studio Lusso — avec les délais de fabrication et la livraison dans la pièce.",
     "desc.about": "Studio Lusso est un studio d’architecture intérieure à Hambourg : planification globale, design sur mesure et projets en Allemagne et à l’étranger.",
-    "desc.contact": "Conseil en aménagement, showroom de Munich et contact avec Studio Lusso.",
+    "desc.contact": "Conseil en aménagement, showroom de Hambourg et contact avec Studio Lusso.",
 
     "title.home": "Studio Lusso — Mobilier de luxe fait main en Europe",
     "title.shop": "Collection — Studio Lusso",
@@ -1475,10 +1519,10 @@ const I18N = {
     "home.hero.lede": "Nous concevons des espaces qui dépassent les tendances. Studio d\u2019architecture intérieure attaché à une planification globale, nous allions exigence esthétique et précision technique.",
     "home.hero.cta1": "Voir la collection",
     "home.hero.cta2": "Visiter le showroom",
-    "home.feat1.t": "Fait à la main", "home.feat1.p": "Dans des ateliers en Italie, au Danemark et en Allemagne",
+    "home.feat1.t": "Contrôlé et remis en état", "home.feat1.p": "Chaque pièce d’occasion est contrôlée à la main",
     "home.feat2.t": "Livré dans la pièce", "home.feat2.p": "Service gants blancs, montage compris",
-    "home.feat3.t": "Garantie 10 ans", "home.feat3.p": "Sur la structure, la suspension et la finition",
-    "home.feat4.t": "Conseil personnalisé", "home.feat4.p": "Au showroom de Munich ou chez vous",
+    "home.feat3.t": "Pièces uniques", "home.feat3.p": "Chaque meuble n’existe qu’une fois",
+    "home.feat4.t": "Conseil personnalisé", "home.feat4.p": "Au showroom de Hambourg ou chez vous",
     "home.featured.eyebrow": "Sélection",
     "home.featured.title": "Les pièces de la saison",
     "home.featured.link": "Les 16 pièces",
@@ -1494,7 +1538,7 @@ const I18N = {
     "home.quote.cite": "Studio Lusso · Hambourg",
     "home.service.eyebrow": "Service",
     "home.service.title": "Nous pensons la pièce avec vous.",
-    "home.service.p": "Nos conseillères et conseillers se déplacent chez vous, prennent les mesures, apportent des échantillons et dessinent un plan — gratuitement et sans engagement, partout en Europe.",
+    "home.service.p": "Nos conseillers se déplacent chez vous, prennent les mesures, apportent des échantillons et dessinent un plan — gratuitement et sans engagement.",
     "home.service.r1": "Premier entretien", "home.service.v1": "gratuit",
     "home.service.r2": "Plan de la pièce avec vue 3D", "home.service.v2": "à partir de 2 semaines",
     "home.service.r3": "Échantillons envoyés chez vous", "home.service.v3": "compris",
@@ -1646,6 +1690,7 @@ const I18N = {
     "cartpage.codeApply": "Aplicar",
     "cartpage.codeRemove": "Quitar",
     "cartpage.codeInvalid": "Este código no es válido.",
+    "promo.reopen": "Vale de bienvenida de 50 €",
     "html.lang": "es",
     "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
     "title.shop": "Colección — Studio Lusso",
@@ -1713,12 +1758,12 @@ const I18N = {
     "home.hero.lede": "Diseñamos espacios que van más allá de las modas. Como estudio de interiorismo centrado en la planificación integral, unimos la máxima exigencia estética con la precisión técnica.",
     "home.hero.cta1": "Ver la colección",
     "home.hero.cta2": "Visitar el showroom",
-    "home.feat1.t": "Hecho a mano",
-    "home.feat1.p": "En talleres de Italia, Dinamarca y Alemania",
+    "home.feat1.t": "Revisado y restaurado",
+    "home.feat1.p": "Cada pieza de segunda mano se revisa a mano",
     "home.feat2.t": "Entrega en la estancia",
     "home.feat2.p": "Servicio de guante blanco, montaje incluido",
-    "home.feat3.t": "10 años de garantía",
-    "home.feat3.p": "Sobre estructura, suspensión y acabado",
+    "home.feat3.t": "Piezas únicas",
+    "home.feat3.p": "Cada mueble está disponible una sola vez",
     "home.feat4.t": "Asesoramiento personal",
     "home.feat4.p": "En el showroom de Hamburgo o en su casa",
     "home.used.eyebrow": "Segunda mano",
@@ -1739,7 +1784,7 @@ const I18N = {
     "home.quote.cite": "Studio Lusso · Hamburgo",
     "home.service.eyebrow": "Servicio",
     "home.service.title": "Planificamos su espacio con usted.",
-    "home.service.p": "Nuestro equipo de asesoramiento se desplaza hasta usted, toma medidas, lleva muestras y elabora un plan — sin coste ni compromiso, en toda Europa.",
+    "home.service.p": "Nuestro equipo se desplaza hasta usted, toma medidas, lleva muestras y elabora un plan — sin coste ni compromiso.",
     "home.service.r1": "Primera conversación",
     "home.service.v1": "sin coste",
     "home.service.r2": "Plano con vista 3D",
@@ -3047,7 +3092,9 @@ const Discount = {
     return Discount.aktiv() ? Math.min(GUTSCHEIN.betrag, zwischensumme) : 0;
   },
   gesehen() {
-    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return true; }
+    // Wenn der Browser den Speicher sperrt, lieber einmal zu viel zeigen als
+    // gar nicht — sonst wäre das Angebot dort unsichtbar.
+    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return false; }
   },
   merken() {
     try { localStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
@@ -3130,6 +3177,7 @@ function renderChrome() {
             <li><a href="kontakt.html" data-i18n="footer.delivery"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.care"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.manufactory"></a></li>
+            <li><button class="footer__promo" id="promo-reopen" data-i18n="promo.reopen"></button></li>
           </ul>
         </div>
         <div>
@@ -3150,35 +3198,39 @@ function renderChrome() {
   </footer>`;
 
   const promo = `
-  <aside class="promo" id="promo" aria-labelledby="promo-title" hidden>
-    <div class="wrap promo__inner">
-      <div class="promo__text" id="promo-form">
+  <div class="promo-backdrop" id="promo-backdrop"></div>
+  <div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promo-title" hidden>
+    <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
+    <div class="promo__figure" aria-hidden="true"><span class="promo__num">50<em>€</em></span></div>
+    <div class="promo__body">
+      <div id="promo-form">
         <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h3 id="promo-title" data-i18n="promo.title"></h3>
+        <h2 id="promo-title" data-i18n="promo.title"></h2>
+        <span class="rule"></span>
         <p data-i18n="promo.text"></p>
-      </div>
-      <div class="promo__text" id="promo-done" hidden>
-        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h3 data-i18n="promo.done.title"></h3>
-        <p data-i18n="promo.done.text"></p>
-      </div>
-      <div class="promo__action">
         <form id="promo-form-el" novalidate>
           <div class="promo__row">
             <input type="email" id="promo-email" required data-i18n-placeholder="promo.placeholder" data-i18n-aria="promo.placeholder" autocomplete="email">
-            <button class="btn" type="submit" data-i18n="promo.cta"></button>
+            <button class="btn btn--block" type="submit" data-i18n="promo.cta"></button>
           </div>
           <p class="promo__error" id="promo-error" hidden></p>
-          <p class="form-note" data-i18n="promo.privacy"></p>
         </form>
-        <div class="promo__code" id="promo-code" hidden>
+        <p class="form-note" data-i18n="promo.privacy"></p>
+        <button class="promo__later" id="promo-later" data-i18n="promo.later"></button>
+      </div>
+      <div id="promo-done" hidden>
+        <span class="eyebrow" data-i18n="promo.eyebrow"></span>
+        <h2 data-i18n="promo.done.title"></h2>
+        <span class="rule"></span>
+        <div class="promo__code" id="promo-code">
           <code>${GUTSCHEIN.code}</code>
           <button class="link-underline" id="promo-copy" data-i18n="promo.copy"></button>
         </div>
+        <p data-i18n="promo.done.text"></p>
+        <a class="btn" href="kollektion.html" data-i18n="promo.shop"></a>
       </div>
-      <button class="close-x promo__close" id="promo-close" data-i18n-aria="promo.later">×</button>
     </div>
-  </aside>`;
+  </div>`;
 
   const drawer = `
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
@@ -3319,36 +3371,39 @@ function renderDrawer() {
 /* ---------- Willkommensgutschein ---------- */
 function bindPromo() {
   const box = $("#promo");
+  const backdrop = $("#promo-backdrop");
   if (!box) return;
 
   /* Die Leiste sperrt nichts und nimmt keinen Fokus weg. Wer sie
      übersieht, kann die Seite trotzdem uneingeschränkt benutzen. */
-  /* Die Leiste liegt fest am unteren Rand. Damit sie nichts verdeckt —
-     weder den Fuß der Seite noch einen Knopf auf der letzten Karte —
-     bekommt die Seite währenddessen unten entsprechend Platz. */
-  const platzSchaffen = () => {
-    document.body.style.paddingBottom = box.offsetHeight + "px";
-  };
-  const platzZurueck = () => { document.body.style.paddingBottom = ""; };
+  /* Ein Dialog übernimmt die Seite, solange er offen ist: der Rest wird
+     für Tastatur und Vorlesehilfe stillgelegt, danach wieder freigegeben. */
+  const umgebung = () => [$("#site-header"), document.querySelector("main"),
+                          document.querySelector(".footer"), $("#drawer")].filter(Boolean);
+  const sperren = (an) => umgebung().forEach((el) => { el.inert = an; });
 
   const zeigen = () => {
     box.hidden = false;
     requestAnimationFrame(() => {
       box.classList.add("is-open");
-      platzSchaffen();
+      backdrop.classList.add("is-open");
     });
-    window.addEventListener("resize", platzSchaffen);
+    sperren(true);
+    (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
   };
   const schliessen = () => {
     if (!box.classList.contains("is-open")) return;
     box.classList.remove("is-open");
-    platzZurueck();
-    window.removeEventListener("resize", platzSchaffen);
+    backdrop.classList.remove("is-open");
+    sperren(false);
     Discount.merken();
+    $("#promo-reopen")?.focus();
     setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
   };
 
   $("#promo-close")?.addEventListener("click", schliessen);
+  $("#promo-later")?.addEventListener("click", schliessen);
+  backdrop?.addEventListener("click", schliessen);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && box.classList.contains("is-open")) schliessen();
   });
@@ -3373,7 +3428,6 @@ function bindPromo() {
     $("#promo-done").hidden = false;
     $("#promo-code").hidden = false;
     $("#promo-copy")?.focus();
-    platzSchaffen();
   });
 
   $("#promo-copy")?.addEventListener("click", (e) => {
@@ -3383,7 +3437,19 @@ function bindPromo() {
     else fertig();
   });
 
-  // Nur beim ersten Besuch, und erst wenn die Seite steht
+  // Über die Fußzeile jederzeit wieder erreichbar
+  $("#promo-reopen")?.addEventListener("click", () => {
+    if (Discount.aktiv()) {
+      $("#promo-form").hidden = true;
+      $("#promo-form-el").hidden = true;
+      $("#promo-done").hidden = false;
+      $("#promo-code").hidden = false;
+    }
+    zeigen();
+    if (!Discount.aktiv()) $("#promo-email")?.focus();
+  });
+
+  // Von selbst nur beim ersten Besuch, und erst wenn die Seite steht
   if (!Discount.gesehen() && !Discount.aktiv()) setTimeout(zeigen, 2500);
 }
 
@@ -3574,7 +3640,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const ROUTES = {
   "index.html": {
     page: "home",
-    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Studio Lusso</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Handgefertigt</h4><p data-i18n=\"home.feat1.p\">In Manufakturen in Italien, Dänemark und Deutschland</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">10 Jahre Garantie</h4><p data-i18n=\"home.feat3.p\">Auf Rahmen, Federung und Verarbeitung</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom München oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Studio Lusso. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Studio Lusso · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Einrichtungsberaterinnen und -berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich, in ganz Europa.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
+    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Studio Lusso</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Geprüft &amp; aufbereitet</h4><p data-i18n=\"home.feat1.p\">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">Einzelstücke</h4><p data-i18n=\"home.feat3.p\">Jedes Möbel gibt es nur einmal</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Studio Lusso. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Studio Lusso · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   heroCanvas($("#hero-art"));
