@@ -159,6 +159,15 @@ p  { margin: 0 0 1.1em; }
 .link-underline:hover { color: var(--brass); }
 
 /* ---------- Kopfzeile ---------- */
+.topbar__promo {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit;
+  border-bottom: 1px solid rgba(255,255,255,.35);
+  transition: color var(--t), border-color var(--t);
+}
+.topbar__promo:hover { color: #fff; border-color: #fff; }
+.topbar--action { cursor: pointer; }
+
 .topbar {
   background: var(--ink);
   color: rgba(250,247,242,.82);

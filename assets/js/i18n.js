@@ -63,6 +63,8 @@ const I18N = {
     "gallery.next": "Nächstes Bild",
     "gallery.count": "Bild {n} von {m}",
     "gallery.label": "Bildergalerie",
+    "topbar.promo": "50 € auf Ihren ersten Einkauf — Gutschein sichern",
+    "topbar.promoActive": "Gutschein {code} aktiv — 50 € werden an der Kasse abgezogen",
     "html.lang": "de",
 
     "desc.home": "Studio Lusso fertigt Luxusmöbel in Handarbeit: Sofas, Sessel, Tische und Leuchten aus den besten Materialien Europas. Persönliche Beratung und Lieferung bis in den Raum.",
@@ -334,6 +336,8 @@ const I18N = {
     "gallery.next": "Next image",
     "gallery.count": "Image {n} of {m}",
     "gallery.label": "Image gallery",
+    "topbar.promo": "€50 off your first purchase — get the voucher",
+    "topbar.promoActive": "Voucher {code} active — €50 is deducted at checkout",
     "html.lang": "en",
 
     "desc.home": "Studio Lusso makes luxury furniture by hand: sofas, armchairs, tables and lighting from the finest European materials. Personal advice and delivery into your room.",
@@ -605,6 +609,8 @@ const I18N = {
     "gallery.next": "Image suivante",
     "gallery.count": "Image {n} sur {m}",
     "gallery.label": "Galerie d’images",
+    "topbar.promo": "50 € sur votre premier achat — obtenir le bon",
+    "topbar.promoActive": "Bon {code} actif — 50 € déduits au moment de payer",
     "html.lang": "fr",
 
     "desc.home": "Studio Lusso fabrique du mobilier de luxe à la main : canapés, fauteuils, tables et luminaires dans les meilleures matières d'Europe. Conseil personnalisé et livraison dans la pièce.",
@@ -862,6 +868,8 @@ const I18N = {
     "gallery.next": "Imagen siguiente",
     "gallery.count": "Imagen {n} de {m}",
     "gallery.label": "Galería de imágenes",
+    "topbar.promo": "50 € en su primera compra — consiga el vale",
+    "topbar.promoActive": "Vale {code} activo — se descuentan 50 € al pagar",
     "html.lang": "es",
     "title.home": "Studio Lusso — Interiorismo y muebles de segunda mano",
     "title.shop": "Colección — Studio Lusso",

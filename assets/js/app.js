@@ -199,7 +199,7 @@ function renderChrome() {
   const page = document.body.dataset.page || "";
 
   const header = `
-  <div class="topbar" data-i18n="topbar"></div>
+  <div class="topbar" id="topbar"></div>
   <header class="header">
     <div class="wrap header__inner">
       <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
@@ -340,7 +340,9 @@ function renderChrome() {
   if (hostBottom) hostBottom.innerHTML = footer + drawer + promo;
 
   applyI18n(document);
+  renderTopbar();
   bindChrome();
+  document.addEventListener("cart:changed", renderTopbar);
 }
 
 function bindChrome() {
@@ -420,6 +422,22 @@ function bindChrome() {
   document.addEventListener("cart:changed", () => { updateCartCount(); renderDrawer(); });
 }
 
+/* Der Streifen ganz oben zeigt den Gutschein, solange er nicht eingelöst
+   ist — sonst fände ihn nach dem ersten Besuch niemand mehr wieder. */
+function renderTopbar() {
+  const bar = $("#topbar");
+  if (!bar) return;
+  if (Discount.aktiv()) {
+    bar.innerHTML = `<span>${t("topbar.promoActive", { code: GUTSCHEIN.code })}</span>`;
+    bar.classList.remove("topbar--action");
+  } else {
+    bar.innerHTML = `<button class="topbar__promo" id="topbar-promo">${t("topbar.promo")}</button>`;
+    bar.classList.add("topbar--action");
+    $("#topbar-promo").addEventListener("click", (e) =>
+      document.dispatchEvent(new CustomEvent("promo:open", { detail: e.currentTarget })));
+  }
+}
+
 function updateCartCount() {
   const el = $("#cart-count");
   if (el) el.textContent = Cart.count();
@@ -495,11 +513,21 @@ function bindPromo() {
     requestAnimationFrame(() => {
       box.classList.add("is-open");
       backdrop.classList.add("is-open");
-      // Erst wenn der Dialog sichtbar ist, nimmt er den Fokus an
-      (Discount.aktiv() ? $("#promo-copy") : $("#promo-email"))?.focus();
+      fokusSetzen();
     });
     sperren();
   };
+
+  /* Der Fokus muss im Dialog landen. Je nachdem, was ihn geöffnet hat,
+     kann der erste Versuch verpuffen — deshalb wird er kurz darauf
+     nachgeprüft und notfalls wiederholt. */
+  function fokusSetzen() {
+    const ziel = Discount.aktiv() ? $("#promo-copy") : $("#promo-email");
+    ziel?.focus();
+    setTimeout(() => {
+      if (box.classList.contains("is-open") && !box.contains(document.activeElement)) ziel?.focus();
+    }, 60);
+  }
 
   const schliessen = () => {
     if (!box.classList.contains("is-open")) return;
@@ -550,6 +578,7 @@ function bindPromo() {
 
   // Über die Fußzeile jederzeit wieder erreichbar
   $("#promo-reopen")?.addEventListener("click", (e) => zeigen(e.currentTarget));
+  document.addEventListener("promo:open", (e) => zeigen(e.detail || null));
 
   /* Von selbst nur beim ersten Besuch. Wer gerade in ein Feld schreibt,
      wird nicht unterbrochen — der Dialog wartet dann. */
