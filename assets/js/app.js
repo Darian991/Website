@@ -153,9 +153,10 @@ const Cart = {
 };
 
 /* ---------- Gutschein ----------
-   Ein Willkommensgutschein über 50 €. Der Code wird im Browser
+   Ein Willkommensgutschein. Betrag und Code stehen nur hier —
+   alle Texte setzen ihn über den Platzhalter {betrag} ein. Der Code wird im Browser
    gespeichert und an der Kasse vom Zwischenbetrag abgezogen. */
-const GUTSCHEIN = { code: "WILLKOMMEN50", betrag: 50 };
+const GUTSCHEIN = { code: "WILLKOMMEN75", betrag: 75 };
 const PROMO_KEY = "studio-lusso-gutschein";
 const PROMO_SEEN = "studio-lusso-gutschein-gesehen";
 
@@ -177,13 +178,16 @@ const Discount = {
   betrag(zwischensumme) {
     return Discount.aktiv() ? Math.min(GUTSCHEIN.betrag, zwischensumme) : 0;
   },
+  /* Bewusst der Sitzungsspeicher, nicht der dauerhafte: Der Gutschein
+     zeigt sich bei jedem Öffnen der Website erneut, solange er nicht
+     eingelöst ist — innerhalb eines Besuchs aber nur einmal, sonst
+     ginge er bei jedem Seitenwechsel wieder auf. */
   gesehen() {
-    // Wenn der Browser den Speicher sperrt, lieber einmal zu viel zeigen als
-    // gar nicht — sonst wäre das Angebot dort unsichtbar.
-    try { return localStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return false; }
+    // Sperrt der Browser den Speicher, lieber einmal zu viel zeigen.
+    try { return sessionStorage.getItem(PROMO_SEEN) === "1"; } catch (e) { return false; }
   },
   merken() {
-    try { localStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
+    try { sessionStorage.setItem(PROMO_SEEN, "1"); } catch (e) { /* privater Modus */ }
   }
 };
 
@@ -263,7 +267,7 @@ function renderChrome() {
             <li><a href="kontakt.html" data-i18n="footer.delivery"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.care"></a></li>
             <li><a href="ueber-uns.html" data-i18n="footer.manufactory"></a></li>
-            <li><button class="footer__promo" id="promo-reopen" data-i18n="promo.reopen"></button></li>
+            <li><button class="footer__promo" id="promo-reopen">${t("promo.reopen", { betrag: euro(GUTSCHEIN.betrag) })}</button></li>
           </ul>
         </div>
         <div>
@@ -283,17 +287,18 @@ function renderChrome() {
     </div>
   </footer>`;
 
+  const betrag = euro(GUTSCHEIN.betrag);
   const promo = `
   <div class="promo-backdrop" id="promo-backdrop"></div>
   <div class="promo" id="promo" role="dialog" aria-modal="true" aria-labelledby="promo-title" hidden>
     <button class="close-x promo__close" id="promo-close" data-i18n-aria="action.close">×</button>
-    <div class="promo__figure" aria-hidden="true"><span class="promo__num">50<em>€</em></span></div>
+    <div class="promo__figure" aria-hidden="true"><span class="promo__num">${GUTSCHEIN.betrag}<em>€</em></span></div>
     <div class="promo__body">
       <div id="promo-form">
         <span class="eyebrow" data-i18n="promo.eyebrow"></span>
-        <h2 id="promo-title" data-i18n="promo.title"></h2>
+        <h2 id="promo-title">${t("promo.title", { betrag })}</h2>
         <span class="rule"></span>
-        <p data-i18n="promo.text"></p>
+        <p>${t("promo.text", { betrag })}</p>
         <form id="promo-form-el" novalidate>
           <div class="promo__row">
             <input type="email" id="promo-email" required data-i18n-placeholder="promo.placeholder" data-i18n-aria="promo.placeholder" autocomplete="email">
@@ -428,10 +433,10 @@ function renderTopbar() {
   const bar = $("#topbar");
   if (!bar) return;
   if (Discount.aktiv()) {
-    bar.innerHTML = `<span>${t("topbar.promoActive", { code: GUTSCHEIN.code })}</span>`;
+    bar.innerHTML = `<span>${t("topbar.promoActive", { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) })}</span>`;
     bar.classList.remove("topbar--action");
   } else {
-    bar.innerHTML = `<button class="topbar__promo" id="topbar-promo">${t("topbar.promo")}</button>`;
+    bar.innerHTML = `<button class="topbar__promo" id="topbar-promo">${t("topbar.promo", { betrag: euro(GUTSCHEIN.betrag) })}</button>`;
     bar.classList.add("topbar--action");
     $("#topbar-promo").addEventListener("click", (e) =>
       document.dispatchEvent(new CustomEvent("promo:open", { detail: e.currentTarget })));
