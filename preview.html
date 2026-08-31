@@ -3915,14 +3915,17 @@ function bindPromo() {
     const el = document.activeElement;
     return !!el && (el.matches("input, textarea, select") || el.isContentEditable);
   };
-  if (!Discount.gesehen() && !Discount.aktiv()) {
+  if (!Discount.gesehen()) {
     let versuche = 0;
     const spaeter = () => {
-      if (Discount.gesehen() || Discount.aktiv()) return;
+      // Nur einmal je Besuch — wer ihn weggeklickt hat, bekommt ihn nicht
+      // gleich wieder vorgesetzt. Wer den Code schon hat, sieht ihn hier
+      // noch einmal, statt sich zu fragen, wo er geblieben ist.
+      if (Discount.gesehen()) return;
       if (schreibtGerade() && versuche++ < 10) { setTimeout(spaeter, 4000); return; }
       zeigen();
     };
-    setTimeout(spaeter, 2500);
+    setTimeout(spaeter, 900);
   }
 }
 
