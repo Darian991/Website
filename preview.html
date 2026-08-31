@@ -3827,6 +3827,16 @@ function bindPromo() {
      von selbst, wird der Fokus nicht verschoben — sonst springt die Seite. */
   let ausloeser = null;
 
+  /* Weggeklickt heißt: für diesen Seitenaufruf erledigt. Der Merker liegt
+     bewusst im Arbeitsspeicher und nicht im Browserspeicher — sonst bliebe
+     der Gutschein aus, wenn jemand die Seite schließt und in derselben
+     Sitzung wieder öffnet. In der Einzeldatei ist ein Seitenaufruf zugleich
+     der ganze Besuch; die klassische Website merkt es sich zusätzlich für
+     die Sitzung, damit der Dialog nicht auf jeder Unterseite erscheint. */
+  let wegGeklickt = false;
+  const promoGesehen = () => wegGeklickt || (!isPreview() && Discount.gesehen());
+  const promoMerken = () => { wegGeklickt = true; if (!isPreview()) Discount.merken(); };
+
   const ansichtSetzen = () => {
     const eingeloest = Discount.aktiv();
     $("#promo-form").hidden = eingeloest;
@@ -3839,11 +3849,16 @@ function bindPromo() {
     ausloeser = vonHand || null;
     ansichtSetzen();
     box.hidden = false;
-    requestAnimationFrame(() => {
+    const oeffnen = () => {
+      if (box.hidden) return;
       box.classList.add("is-open");
       backdrop.classList.add("is-open");
       fokusSetzen();
-    });
+    };
+    requestAnimationFrame(oeffnen);
+    /* In einem verborgenen Rahmen ruht requestAnimationFrame. Ohne diese
+       zweite Chance bliebe der Dialog auf Dauer durchsichtig stehen. */
+    setTimeout(oeffnen, 500);
     sperren();
   };
 
@@ -3863,7 +3878,7 @@ function bindPromo() {
     box.classList.remove("is-open");
     backdrop.classList.remove("is-open");
     freigeben();
-    Discount.merken();
+    promoMerken();
     if (ausloeser && document.contains(ausloeser)) ausloeser.focus();
     ausloeser = null;
     setTimeout(() => { if (!box.classList.contains("is-open")) box.hidden = true; }, 400);
@@ -3893,7 +3908,7 @@ function bindPromo() {
     }
     fehler.hidden = true;
     Discount.einloesen(GUTSCHEIN.code);
-    Discount.merken();
+    promoMerken();
     ansichtSetzen();
     $("#promo-copy")?.focus();
   });
@@ -3915,13 +3930,10 @@ function bindPromo() {
     const el = document.activeElement;
     return !!el && (el.matches("input, textarea, select") || el.isContentEditable);
   };
-  if (!Discount.gesehen()) {
+  if (!promoGesehen()) {
     let versuche = 0;
     const spaeter = () => {
-      // Nur einmal je Besuch — wer ihn weggeklickt hat, bekommt ihn nicht
-      // gleich wieder vorgesetzt. Wer den Code schon hat, sieht ihn hier
-      // noch einmal, statt sich zu fragen, wo er geblieben ist.
-      if (Discount.gesehen()) return;
+      if (promoGesehen()) return;
       if (schreibtGerade() && versuche++ < 10) { setTimeout(spaeter, 4000); return; }
       zeigen();
     };
