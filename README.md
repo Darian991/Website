@@ -18,10 +18,11 @@ HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.
 
 ```
 assets/css/style.css   Gesamtes Design (Farben, Typografie, Layout, Responsive)
-assets/js/i18n.js      Alle Texte in Deutsch, Englisch und Französisch
+assets/js/i18n.js      Alle Texte in Deutsch, Englisch, Französisch und Spanisch
 assets/js/data.js      Produktkatalog + Produktabbildungen als SVG
 assets/js/hero.js      Bühnenbild der Startseite, auf Canvas gezeichnet
 assets/js/app.js       Warenkorb, Suche, Kopf-/Fußzeile, Filter, Formulare
+assets/js/berater.js   Berater: beantwortet Fragen aus Katalog und Texten
 tools/build.js         Schreibt die deutschen Texte fest in die Seiten
                        und baut preview.html (alles in einer Datei)
 ```
@@ -52,8 +53,8 @@ Statt eigener Adressen pro Seite nutzt sie die Raute (`#kollektion.html`).
 
 ## Sprachen
 
-Die Website gibt es in Deutsch, Englisch und Französisch. Beim ersten Besuch
-wird die Sprache des Browsers verwendet; die Wahl über DE/EN/FR in der
+Die Website gibt es in Deutsch, Englisch, Französisch und Spanisch. Beim ersten
+Besuch wird die Sprache des Browsers verwendet; die Wahl über DE/EN/FR/ES in der
 Kopfzeile wird im Browser gespeichert. Preise, Datumsangaben und Zahlen
 folgen der jeweiligen Schreibweise (8.490 € · €8,490 · 8 490 €).
 
@@ -78,6 +79,33 @@ Formatierung über `data-i18n-html`, Platzhalter in Feldern über
 denselben Schlüsseln in `I18N` ergänzen und bei jedem Produkt einen
 weiteren Eintrag unter `t`. Fehlt ein Schlüssel, wird die deutsche Fassung
 angezeigt — die Seite bleibt also immer benutzbar.
+
+## Berater
+
+Unten rechts liegt auf jeder Seite ein Berater, der Fragen beantwortet:
+zu einzelnen Stücken, zu einem Budget, zu Lieferung, Rückgabe, Gewährleistung,
+Zahlung, Gutschein, Showroom und Zustand. Er kommt ohne Server, ohne
+Fremddienst und ohne Schlüssel aus — Eingaben verlassen den Browser nicht.
+
+Die Antworten stammen aus denselben Daten wie die Seite: Preise, Zustand und
+Verfügbarkeit kommen live aus `PRODUCTS`, die festen Auskünfte aus `I18N`.
+Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
+
+**Erweitern** — in `assets/js/berater.js`:
+
+* `BOT_INTENTS` — je Thema eine Liste von Stichwörtern (alle vier Sprachen in
+  einem Topf, damit auch deutsche Fragen auf der englischen Seite ankommen).
+  Ein Stichwort trifft am Wortanfang. Die Antwort steht unter `bot.a.<thema>`
+  in `assets/js/i18n.js` und muss in allen vier Sprachen vorhanden sein.
+* `BOT_CATEGORIES` — Alltagswörter je Rubrik („couch“ → Sofas).
+* `botAnswer()` — die Reihenfolge der Prüfungen: Produktname, Superlativ,
+  Budget, Thema, Rubrik, Volltextsuche, Rückfall.
+
+Ein echtes Sprachmodell wäre der nächste Schritt, braucht aber einen kleinen
+Server: Ein API-Schlüssel darf niemals in einer statischen Seite stehen, weil
+er dort für jeden lesbar wäre. Der Berater ist so gebaut, dass `botAnswer()`
+gegen einen Aufruf an dieses Backend getauscht werden kann, ohne dass die
+Oberfläche sich ändert.
 
 ## Suche
 
@@ -155,6 +183,8 @@ Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
   sind in der Fußzeile verlinkt, aber noch nicht geschrieben — in Deutschland
   sind sie für einen Shop Pflicht.
 * **Fotos**: echte Produktfotos statt der SVG-Illustrationen.
+* **Berater mit Sprachmodell**: heute beantwortet er Fragen aus den eigenen
+  Daten. Für freie Antworten braucht es ein Backend mit API-Schlüssel.
 
 ## Hinweis
 

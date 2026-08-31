@@ -910,6 +910,109 @@ noscript .footer p { max-width: 60ch; }
 .grid--form { grid-template-columns: 1.4fr 1fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
 @media (max-width: 900px) { .grid--form { grid-template-columns: 1fr; } }
 
+/* ---------- Berater ----------
+   Ein ruhiger Papierbogen unten rechts, im Stil der Broschüre: weiße
+   Fläche, Haarlinien, Versalien im Kopf, der Gedankenstrich als Trenner.
+   Geschlossen ist er weder sichtbar noch antippbar. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.bot-launch {
+  position: fixed; right: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 85;
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .85rem 1.15rem;
+  background: var(--ink); color: var(--paper);
+  border: 1px solid var(--ink); border-radius: var(--radius);
+  font: inherit; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; box-shadow: var(--shadow);
+  transition: background var(--t), color var(--t), transform var(--t), opacity var(--t);
+}
+.bot-launch:hover { background: var(--greige-deep); border-color: var(--greige-deep); }
+.bot-launch.is-open { opacity: 0; pointer-events: none; transform: translateY(8px); }
+.bot-launch__label { white-space: nowrap; }
+
+.bot {
+  position: fixed; right: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 88;
+  width: min(384px, calc(100vw - 2rem));
+  max-height: min(620px, calc(100vh - 2rem));
+  display: flex; flex-direction: column;
+  background: var(--paper); border: 1px solid var(--line);
+  box-shadow: 0 30px 80px -34px rgba(58,50,41,.5);
+  opacity: 0; visibility: hidden; transform: translateY(14px) scale(.99);
+  transition: opacity var(--t), transform var(--t), visibility var(--t);
+}
+.bot.is-open { opacity: 1; visibility: visible; transform: none; }
+
+.bot__head { display: flex; align-items: center; gap: .7rem; padding: 1rem 1.1rem; border-bottom: 1px solid var(--line); }
+.bot__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--greige); flex: none; }
+.bot__id { flex: 1; min-width: 0; display: grid; }
+.bot__id strong { font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; }
+.bot__id small { font-size: .72rem; color: var(--muted); }
+
+.bot__log { flex: 1; overflow-y: auto; padding: 1.1rem; display: grid; gap: 1.1rem; align-content: start; }
+.bot__msg { display: grid; gap: .3rem; font-size: .88rem; line-height: 1.6; }
+.bot__msg p { margin: 0; }
+.bot__who { font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.bot__msg--you { justify-items: end; text-align: right; }
+.bot__msg--you p {
+  background: var(--paper-2); border: 1px solid var(--line);
+  padding: .55rem .8rem; max-width: 92%;
+}
+
+.bot__list { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .4rem; }
+.bot__list a {
+  display: grid; grid-template-columns: 1fr auto; gap: 0 .8rem;
+  padding: .55rem .7rem; border: 1px solid var(--line);
+  text-decoration: none; color: inherit; transition: border-color var(--t), background var(--t);
+}
+.bot__list a:hover { border-color: var(--greige); background: var(--paper-2); }
+.bot__list em { font-style: normal; white-space: nowrap; }
+.bot__list small { grid-column: 1 / -1; font-size: .72rem; color: var(--muted); }
+
+.bot__cta { display: flex; flex-wrap: wrap; gap: .9rem; margin-top: .6rem !important; }
+.bot__cta a { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--greige); text-decoration: none; color: var(--ink); }
+
+.bot__typing { display: inline-flex; gap: .28rem; align-items: center; height: 1.2rem; }
+.bot__typing i { width: 5px; height: 5px; border-radius: 50%; background: var(--greige); animation: botBlink 1.1s infinite; }
+.bot__typing i:nth-child(2) { animation-delay: .18s; }
+.bot__typing i:nth-child(3) { animation-delay: .36s; }
+@keyframes botBlink { 0%, 60%, 100% { opacity: .28; } 30% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .bot__typing i { animation: none; opacity: .5; } }
+
+.bot__chips { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0 1.1rem .8rem; }
+.bot__chip {
+  font: inherit; font-size: .74rem; cursor: pointer;
+  padding: .38rem .65rem; background: transparent;
+  border: 1px solid var(--line); color: var(--ink-soft);
+  transition: border-color var(--t), color var(--t);
+}
+.bot__chip:hover { border-color: var(--greige); color: var(--ink); }
+
+.bot__form { display: flex; gap: .5rem; align-items: center; padding: .8rem 1.1rem; border-top: 1px solid var(--line); }
+.bot__form input {
+  flex: 1; min-width: 0; font: inherit; font-size: .88rem;
+  border: 0; border-bottom: 1px solid var(--line); background: transparent;
+  padding: .45rem .1rem; color: var(--ink);
+}
+.bot__form input:focus { outline: none; border-bottom-color: var(--greige); }
+.bot__send {
+  flex: none; width: 38px; height: 38px; display: grid; place-items: center;
+  background: var(--ink); color: var(--paper); border: 1px solid var(--ink);
+  cursor: pointer; transition: background var(--t), border-color var(--t);
+}
+.bot__send:hover { background: var(--greige-deep); border-color: var(--greige-deep); }
+.bot__hint { margin: 0; padding: 0 1.1rem 1rem; font-size: .68rem; line-height: 1.5; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .bot { right: .5rem; left: .5rem; bottom: .5rem; width: auto; max-height: calc(100vh - 1rem); }
+  .bot-launch { padding: .8rem; }
+  .bot-launch__label { display: none; }
+}
+
 </style>
 
 <div id="site-header"></div>
@@ -938,6 +1041,53 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    /* ---- Berater (bot) ---- */
+    "bot.launch": "Fragen? Ich antworte sofort",
+    "bot.open": "Berater öffnen",
+    "bot.close": "Berater schließen",
+    "bot.title": "Berater",
+    "bot.sub": "Antwortet sofort — rund um die Uhr",
+    "bot.name": "Studio Lusso",
+    "bot.you": "Sie",
+    "bot.log": "Gesprächsverlauf",
+    "bot.placeholder": "Ihre Frage eingeben …",
+    "bot.send": "Senden",
+    "bot.typing": "schreibt …",
+    "bot.hint": "Automatische Antworten aus unseren eigenen Angaben. Alles Persönliche beantwortet unser Team.",
+    "bot.intro": "Guten Tag. Ich beantworte Fragen zu unseren Stücken, zu Lieferung, Zustand und Gewährleistung — und finde das Passende zu Ihrem Budget.",
+    "bot.suggest.budget": "Was gibt es unter 3.000 €?",
+    "bot.suggest.delivery": "Wie läuft die Lieferung?",
+    "bot.suggest.used": "Sind die Stücke gebraucht?",
+    "bot.suggest.voucher": "Gibt es einen Gutschein?",
+    "bot.a.greeting": "Guten Tag. Fragen Sie mich nach einem Stück, einem Budget, nach Lieferung, Zustand, Gewährleistung oder unserem Showroom.",
+    "bot.a.thanks": "Sehr gern. Wenn Sie ein Stück reservieren möchten, legen Sie es in den Warenkorb — wir bestätigen jede Bestellung persönlich.",
+    "bot.a.delivery": "Wir liefern europaweit versandkostenfrei bis in den gewünschten Raum, packen aus, montieren und nehmen das Verpackungsmaterial wieder mit. Den Termin stimmen wir telefonisch mit Ihnen ab, sobald Ihr Stück unsere Aufbereitung durchlaufen hat.",
+    "bot.a.returns": "Sie haben 14 Tage Rückgaberecht. Melden Sie sich einfach bei uns — wir holen das Stück dort ab, wo wir es aufgestellt haben.",
+    "bot.a.warranty": "Auf gebrauchte Stücke gilt die gesetzliche Gewährleistung von zwölf Monaten. Jedes Stück wird vor dem Verkauf geprüft, aufbereitet und mit seinem Zustand ausgewiesen.",
+    "bot.a.payment": "Anzahlung 30 %, der Restbetrag ist bei Lieferung fällig. Alle Preise verstehen sich inklusive 19 % MwSt. Diese Seite ist eine Demonstration — an der Kasse wird noch nicht wirklich abgerechnet.",
+    "bot.a.voucher": "Ja. Mit dem Code {code} ziehen wir {betrag} von Ihrer Bestellung ab. Sie bekommen ihn, sobald Sie im Willkommensfenster Ihre E-Mail-Adresse hinterlassen — unten in der Fußzeile lässt es sich jederzeit wieder öffnen.",
+    "bot.a.showroom": "Unser Showroom liegt in der Stadthausbrücke 8, 20355 Hamburg. Geöffnet Montag bis Freitag 10–19 Uhr, Samstag 11–17 Uhr, Sonntag geschlossen.",
+    "bot.a.contact": "Am schnellsten erreichen Sie uns unter +49 40 41 92 74 60 oder info@studio-lusso.de. Über das Kontaktformular können Sie auch einen Termin vorschlagen.",
+    "bot.a.used": "Alles bei uns ist gebraucht — Möbel wie Leuchten. Die Stücke stammen aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz, werden geprüft, aufbereitet und mit Zustand und Baujahr ausgewiesen. Jedes gibt es nur einmal.",
+    "bot.a.care": "Zu jedem Stück liegt eine Pflegeanleitung bei; Leder- und Holzpflegemittel senden wir auf Wunsch kostenfrei nach. Welches Material Sie erwartet, steht auf jeder Produktseite unter „Angaben“.",
+    "bot.a.sustain": "Ein gebrauchtes Stück weiterzugeben ist der sparsamste Umgang mit gutem Handwerk: kein neues Material, keine neue Fertigung. Wir setzen instand, wo es nötig ist, statt zu ersetzen.",
+    "bot.a.stock": "Jedes Stück ist ein Einzelstück und nur einmal verfügbar. Was in der Kollektion steht, ist da und sofort lieferbar; verkaufte Stücke nehmen wir heraus.",
+    "bot.a.cart": "Legen Sie ein Stück über „In den Warenkorb“ ab; oben rechts öffnen Sie den Warenkorb jederzeit wieder. Da jedes Stück ein Einzelstück ist, lässt es sich nur einmal ablegen.",
+    "bot.a.lang": "Diese Seite gibt es auf Deutsch, Englisch, Französisch und Spanisch. Oben rechts wechseln Sie die Sprache.",
+    "bot.a.sizes": "Maße, Gewicht, Material und Herkunft stehen auf jeder Produktseite unter „Angaben“. Sagen Sie mir, welches Stück Sie meinen — dann nenne ich sie Ihnen.",
+    "bot.a.price.one": "{name} kostet {price} — {cond}.",
+    "bot.a.budget.one": "Unter {max} habe ich ein Stück gefunden:",
+    "bot.a.cat.one": "In der Rubrik {cat} haben wir ein Stück:",
+    "bot.a.budget": "Unter {max} habe ich {n} Stück gefunden:",
+    "bot.a.budget.none": "Unter {max} habe ich derzeit nichts. Am günstigsten ist {name} für {price}.",
+    "bot.a.cat": "In der Rubrik {cat} haben wir {n} Stück:",
+    "bot.a.cat.none": "In der Rubrik {cat} ist gerade nichts frei.",
+    "bot.a.cheapest": "Am günstigsten ist {name} für {price}.",
+    "bot.a.dearest": "Das teuerste Stück ist {name} für {price}.",
+    "bot.a.found": "Das könnte gemeint sein:",
+    "bot.a.fallback": "Da bin ich mir nicht sicher. Fragen Sie mich nach einem Stück, einem Budget, nach Lieferung, Rückgabe, Gewährleistung, Zahlung, Gutschein oder Showroom — oder schreiben Sie unserem Team.",
+    "bot.cta.contact": "Zum Kontakt",
+    "bot.cta.all": "Ganze Kollektion",
     "cond.used": "Gebraucht",
     "cond.new": "Neu",
     "grade.wieneu": "Wie neu — Ausstellungsstück",
@@ -1211,6 +1361,53 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    /* ---- Berater (bot) ---- */
+    "bot.launch": "Questions? I answer right away",
+    "bot.open": "Open the advisor",
+    "bot.close": "Close the advisor",
+    "bot.title": "Advisor",
+    "bot.sub": "Answers instantly — around the clock",
+    "bot.name": "Studio Lusso",
+    "bot.you": "You",
+    "bot.log": "Conversation",
+    "bot.placeholder": "Type your question …",
+    "bot.send": "Send",
+    "bot.typing": "typing …",
+    "bot.hint": "Automatic answers drawn from our own listings. Anything personal is answered by our team.",
+    "bot.intro": "Hello. I answer questions about our pieces, about delivery, condition and warranty — and I find what fits your budget.",
+    "bot.suggest.budget": "What is under €3,000?",
+    "bot.suggest.delivery": "How does delivery work?",
+    "bot.suggest.used": "Are the pieces pre-owned?",
+    "bot.suggest.voucher": "Is there a voucher?",
+    "bot.a.greeting": "Hello. Ask me about a piece, a budget, delivery, condition, warranty or our showroom.",
+    "bot.a.thanks": "My pleasure. If you would like to reserve a piece, put it in the cart — we confirm every order personally.",
+    "bot.a.delivery": "We deliver across Europe free of charge, right into the room you choose, unpack, assemble and take the packaging away with us. We agree the date with you by phone as soon as your piece has been through our refurbishment.",
+    "bot.a.returns": "You have a 14-day return period. Just get in touch — we collect the piece from where we set it up.",
+    "bot.a.warranty": "Pre-owned pieces carry the statutory twelve-month warranty. Every piece is checked, refurbished and listed with its condition before sale.",
+    "bot.a.payment": "30% deposit, the balance falls due on delivery. All prices include 19% VAT. This site is a demonstration — nothing is actually charged at checkout.",
+    "bot.a.voucher": "Yes. The code {code} takes {betrag} off your order. You receive it as soon as you leave your email address in the welcome window — the footer reopens it at any time.",
+    "bot.a.showroom": "Our showroom is at Stadthausbrücke 8, 20355 Hamburg. Open Monday to Friday 10am–7pm, Saturday 11am–5pm, closed Sunday.",
+    "bot.a.contact": "The fastest way to reach us is +49 40 41 92 74 60 or info@studio-lusso.de. You can also propose an appointment through the contact form.",
+    "bot.a.used": "Everything here is pre-owned — furniture and lighting alike. The pieces come from completed projects, showrooms and private homes, are checked, refurbished and listed with condition and year. Each one exists only once.",
+    "bot.a.care": "Care instructions come with every piece; we send leather and wood care products free of charge on request. The materials of each piece are listed under “Specifications” on its page.",
+    "bot.a.sustain": "Passing on a good piece is the thriftiest way to treat fine craft: no new material, no new production. We repair where it is needed instead of replacing.",
+    "bot.a.stock": "Every piece is one of a kind and available only once. Whatever is in the collection is here and ready to ship; sold pieces are taken out.",
+    "bot.a.cart": "Add a piece with “Add to cart”; the cart reopens any time from the top right. Since every piece is one of a kind, it can only be added once.",
+    "bot.a.lang": "This site is available in German, English, French and Spanish. Switch languages at the top right.",
+    "bot.a.sizes": "Dimensions, weight, material and origin are on every product page under “Specifications”. Tell me which piece you mean and I will read them out.",
+    "bot.a.price.one": "{name} costs {price} — {cond}.",
+    "bot.a.budget.one": "Under {max} I found one piece:",
+    "bot.a.cat.one": "In {cat} we have one piece:",
+    "bot.a.budget": "Under {max} I found {n} pieces:",
+    "bot.a.budget.none": "There is nothing under {max} at the moment. The least expensive piece is {name} at {price}.",
+    "bot.a.cat": "In {cat} we have {n} pieces:",
+    "bot.a.cat.none": "Nothing is free in {cat} right now.",
+    "bot.a.cheapest": "The least expensive is {name} at {price}.",
+    "bot.a.dearest": "The most expensive piece is {name} at {price}.",
+    "bot.a.found": "This might be what you mean:",
+    "bot.a.fallback": "I am not sure about that one. Ask me about a piece, a budget, delivery, returns, warranty, payment, the voucher or the showroom — or write to our team.",
+    "bot.cta.contact": "Contact us",
+    "bot.cta.all": "Whole collection",
     "cond.used": "Pre-owned",
     "cond.new": "New",
     "grade.wieneu": "As new — showroom piece",
@@ -1484,6 +1681,53 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    /* ---- Berater (bot) ---- */
+    "bot.launch": "Des questions ? Je réponds tout de suite",
+    "bot.open": "Ouvrir le conseiller",
+    "bot.close": "Fermer le conseiller",
+    "bot.title": "Conseiller",
+    "bot.sub": "Répond immédiatement — jour et nuit",
+    "bot.name": "Studio Lusso",
+    "bot.you": "Vous",
+    "bot.log": "Conversation",
+    "bot.placeholder": "Saisissez votre question …",
+    "bot.send": "Envoyer",
+    "bot.typing": "écrit …",
+    "bot.hint": "Réponses automatiques tirées de nos propres fiches. Tout ce qui est personnel, notre équipe s’en charge.",
+    "bot.intro": "Bonjour. Je réponds aux questions sur nos pièces, la livraison, l’état et la garantie — et je trouve ce qui correspond à votre budget.",
+    "bot.suggest.budget": "Qu’y a-t-il sous 3 000 € ?",
+    "bot.suggest.delivery": "Comment se passe la livraison ?",
+    "bot.suggest.used": "Les pièces sont-elles d’occasion ?",
+    "bot.suggest.voucher": "Y a-t-il un bon de réduction ?",
+    "bot.a.greeting": "Bonjour. Posez-moi une question sur une pièce, un budget, la livraison, l’état, la garantie ou notre showroom.",
+    "bot.a.thanks": "Avec plaisir. Pour réserver une pièce, mettez-la dans le panier — nous confirmons chaque commande personnellement.",
+    "bot.a.delivery": "Nous livrons dans toute l’Europe sans frais, directement dans la pièce de votre choix : nous déballons, montons et remportons les emballages. Nous convenons de la date par téléphone dès que votre pièce a été remise en état.",
+    "bot.a.returns": "Vous disposez de 14 jours pour retourner votre achat. Écrivez-nous simplement — nous reprenons la pièce là où nous l’avons installée.",
+    "bot.a.warranty": "Les pièces d’occasion bénéficient de la garantie légale de douze mois. Chaque pièce est contrôlée, remise en état et présentée avec son état avant la vente.",
+    "bot.a.payment": "Acompte de 30 %, le solde est dû à la livraison. Tous les prix s’entendent TVA de 19 % comprise. Ce site est une démonstration — rien n’est réellement débité à la caisse.",
+    "bot.a.voucher": "Oui. Le code {code} déduit {betrag} de votre commande. Vous le recevez dès que vous laissez votre adresse e-mail dans la fenêtre de bienvenue — le pied de page permet de la rouvrir à tout moment.",
+    "bot.a.showroom": "Notre showroom se trouve Stadthausbrücke 8, 20355 Hambourg. Ouvert du lundi au vendredi de 10h à 19h, le samedi de 11h à 17h, fermé le dimanche.",
+    "bot.a.contact": "Le plus rapide : +49 40 41 92 74 60 ou info@studio-lusso.de. Le formulaire de contact permet aussi de proposer un rendez-vous.",
+    "bot.a.used": "Tout est de seconde main chez nous — mobilier comme luminaires. Les pièces proviennent de projets achevés, de showrooms et de particuliers ; elles sont contrôlées, remises en état et présentées avec leur état et leur année. Chacune n’existe qu’une fois.",
+    "bot.a.care": "Une notice d’entretien accompagne chaque pièce ; sur demande, nous envoyons gratuitement les produits pour le cuir et le bois. Les matières figurent sur chaque fiche produit sous « Caractéristiques ».",
+    "bot.a.sustain": "Transmettre une belle pièce est la manière la plus économe de traiter le bon artisanat : pas de matière neuve, pas de nouvelle fabrication. Nous réparons là où c’est nécessaire plutôt que de remplacer.",
+    "bot.a.stock": "Chaque pièce est unique et disponible une seule fois. Ce qui figure dans la collection est en stock et livrable immédiatement ; les pièces vendues sont retirées.",
+    "bot.a.cart": "Ajoutez une pièce avec « Ajouter au panier » ; le panier se rouvre à tout moment en haut à droite. Chaque pièce étant unique, elle ne peut être ajoutée qu’une fois.",
+    "bot.a.lang": "Ce site existe en allemand, anglais, français et espagnol. Changez de langue en haut à droite.",
+    "bot.a.sizes": "Dimensions, poids, matière et provenance figurent sur chaque fiche produit sous « Caractéristiques ». Dites-moi de quelle pièce il s’agit et je vous les donne.",
+    "bot.a.price.one": "{name} coûte {price} — {cond}.",
+    "bot.a.budget.one": "Sous {max}, j’ai trouvé une pièce :",
+    "bot.a.cat.one": "Dans la rubrique {cat}, nous avons une pièce :",
+    "bot.a.budget": "Sous {max}, j’ai trouvé {n} pièces :",
+    "bot.a.budget.none": "Rien sous {max} pour le moment. La pièce la moins chère est {name} à {price}.",
+    "bot.a.cat": "Dans la rubrique {cat}, nous avons {n} pièces :",
+    "bot.a.cat.none": "Rien n’est disponible dans la rubrique {cat} en ce moment.",
+    "bot.a.cheapest": "La moins chère est {name} à {price}.",
+    "bot.a.dearest": "La pièce la plus chère est {name} à {price}.",
+    "bot.a.found": "Il s’agit peut-être de ceci :",
+    "bot.a.fallback": "Là, je ne suis pas sûr. Posez-moi une question sur une pièce, un budget, la livraison, les retours, la garantie, le paiement, le bon de réduction ou le showroom — ou écrivez à notre équipe.",
+    "bot.cta.contact": "Nous contacter",
+    "bot.cta.all": "Toute la collection",
     "cond.used": "Occasion",
     "cond.new": "Neuf",
     "grade.wieneu": "Comme neuf — pièce d’exposition",
@@ -1757,6 +2001,53 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    /* ---- Berater (bot) ---- */
+    "bot.launch": "¿Preguntas? Respondo al momento",
+    "bot.open": "Abrir el asesor",
+    "bot.close": "Cerrar el asesor",
+    "bot.title": "Asesor",
+    "bot.sub": "Responde al momento — a cualquier hora",
+    "bot.name": "Studio Lusso",
+    "bot.you": "Usted",
+    "bot.log": "Conversación",
+    "bot.placeholder": "Escriba su pregunta …",
+    "bot.send": "Enviar",
+    "bot.typing": "escribiendo …",
+    "bot.hint": "Respuestas automáticas tomadas de nuestras propias fichas. Lo personal lo responde nuestro equipo.",
+    "bot.intro": "Buenos días. Respondo preguntas sobre nuestras piezas, la entrega, el estado y la garantía — y encuentro lo que encaja con su presupuesto.",
+    "bot.suggest.budget": "¿Qué hay por debajo de 3.000 €?",
+    "bot.suggest.delivery": "¿Cómo funciona la entrega?",
+    "bot.suggest.used": "¿Las piezas son de segunda mano?",
+    "bot.suggest.voucher": "¿Hay algún cupón?",
+    "bot.a.greeting": "Buenos días. Pregúnteme por una pieza, un presupuesto, la entrega, el estado, la garantía o nuestro showroom.",
+    "bot.a.thanks": "Con mucho gusto. Si desea reservar una pieza, añádala a la cesta — confirmamos personalmente cada pedido.",
+    "bot.a.delivery": "Entregamos en toda Europa sin gastos de envío, directamente en la estancia que elija: desembalamos, montamos y nos llevamos el embalaje. Acordamos la fecha por teléfono en cuanto la pieza ha pasado por nuestra restauración.",
+    "bot.a.returns": "Dispone de 14 días para devolver su compra. Basta con avisarnos — recogemos la pieza allí donde la colocamos.",
+    "bot.a.warranty": "Las piezas de segunda mano cuentan con la garantía legal de doce meses. Cada pieza se revisa, se restaura y se presenta con su estado antes de la venta.",
+    "bot.a.payment": "Anticipo del 30 %, el resto se abona en la entrega. Todos los precios incluyen el 19 % de IVA. Esta página es una demostración — en la caja no se cobra realmente nada.",
+    "bot.a.voucher": "Sí. Con el código {code} descontamos {betrag} de su pedido. Lo recibe en cuanto deja su correo electrónico en la ventana de bienvenida — desde el pie de página puede volver a abrirla cuando quiera.",
+    "bot.a.showroom": "Nuestro showroom está en Stadthausbrücke 8, 20355 Hamburgo. Abierto de lunes a viernes de 10 a 19 h, sábados de 11 a 17 h, domingos cerrado.",
+    "bot.a.contact": "La vía más rápida es el +49 40 41 92 74 60 o info@studio-lusso.de. También puede proponer una cita mediante el formulario de contacto.",
+    "bot.a.used": "Todo lo nuestro es de segunda mano — muebles e iluminación por igual. Las piezas proceden de proyectos finalizados, showrooms y particulares; se revisan, se restauran y se presentan con su estado y su año. Cada una existe una sola vez.",
+    "bot.a.care": "Cada pieza incluye instrucciones de cuidado; enviamos gratuitamente los productos para cuero y madera si lo desea. Los materiales figuran en cada ficha de producto bajo «Datos».",
+    "bot.a.sustain": "Dar una segunda vida a una buena pieza es la forma más sobria de tratar el buen oficio: sin material nuevo, sin fabricación nueva. Reparamos donde hace falta en lugar de sustituir.",
+    "bot.a.stock": "Cada pieza es única y está disponible una sola vez. Lo que aparece en la colección está aquí y se entrega de inmediato; las piezas vendidas se retiran.",
+    "bot.a.cart": "Añada una pieza con «Añadir a la cesta»; la cesta se abre cuando quiera arriba a la derecha. Como cada pieza es única, solo puede añadirse una vez.",
+    "bot.a.lang": "Esta página está en alemán, inglés, francés y español. Cambie de idioma arriba a la derecha.",
+    "bot.a.sizes": "Medidas, peso, material y procedencia figuran en cada ficha de producto bajo «Datos». Dígame qué pieza le interesa y se los indico.",
+    "bot.a.price.one": "{name} cuesta {price} — {cond}.",
+    "bot.a.budget.one": "Por debajo de {max} he encontrado una pieza:",
+    "bot.a.cat.one": "En la categoría {cat} tenemos una pieza:",
+    "bot.a.budget": "Por debajo de {max} he encontrado {n} piezas:",
+    "bot.a.budget.none": "Por debajo de {max} no hay nada ahora mismo. La pieza más económica es {name} por {price}.",
+    "bot.a.cat": "En la categoría {cat} tenemos {n} piezas:",
+    "bot.a.cat.none": "Ahora mismo no hay nada libre en la categoría {cat}.",
+    "bot.a.cheapest": "La más económica es {name} por {price}.",
+    "bot.a.dearest": "La pieza más cara es {name} por {price}.",
+    "bot.a.found": "Quizá se refiera a esto:",
+    "bot.a.fallback": "De eso no estoy seguro. Pregúnteme por una pieza, un presupuesto, la entrega, las devoluciones, la garantía, el pago, el cupón o el showroom — o escriba a nuestro equipo.",
+    "bot.cta.contact": "Contacto",
+    "bot.cta.all": "Toda la colección",
     "promo.eyebrow": "Bienvenida",
     "promo.title": "{betrag} en su primera compra",
     "promo.text": "Regístrese y consiga al instante {betrag} en su primer pedido.",
@@ -3378,6 +3669,8 @@ function renderChrome() {
   applyI18n(document);
   renderTopbar();
   bindChrome();
+  // Der Berater haengt sich unter die Fusszeile, sobald diese steht
+  if (typeof initBerater === "function") initBerater();
   document.addEventListener("cart:changed", renderTopbar);
 }
 
@@ -3813,6 +4106,305 @@ document.addEventListener("DOMContentLoaded", () => {
   initForms();
   initReveal();
 });
+
+</script>
+<script>
+/* =========================================================
+   STUDIO LUSSO — Berater
+   Beantwortet Fragen zum Sortiment und zum Service. Die Antworten
+   kommen aus denselben Daten wie die Seite selbst (PRODUCTS, I18N),
+   damit Preise, Zustand und Verfügbarkeit nie auseinanderlaufen.
+   Kein Server, kein Schlüssel, keine Übertragung von Eingaben.
+   ========================================================= */
+
+/* Ein Stichwort trifft am Wortanfang: „liefer“ erkennt Lieferung und
+   liefern, aber „iva“ nicht mitten in „privat“. */
+function botHit(text, stem) {
+  const s = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp("(^|[^a-z0-9])" + s).test(text);
+}
+
+/* Stichwörter aller vier Sprachen in einem Topf: Wer auf der englischen
+   Seite deutsch tippt, bekommt trotzdem eine Antwort. */
+const BOT_INTENTS = [
+  { key: "greeting", words: ["hallo", "guten tag", "guten morgen", "guten abend", "servus", "moin", "hey", "hi ", "hello", "bonjour", "salut", "hola", "buenos dias"] },
+  { key: "thanks", words: ["danke", "dankeschon", "thank", "thanks", "merci", "gracias"] },
+  { key: "delivery", words: ["liefer", "versand", "zustell", "transport", "spedition", "delivery", "deliver", "shipping", "ship ", "livrais", "livrer", "envoi", "entrega", "envio", "montage", "aufbau", "assembl", "montaje"] },
+  { key: "returns", words: ["ruckgabe", "rucksend", "zuruckgeb", "zuruckschick", "umtausch", "widerruf", "retour", "return", "refund", "devoluc", "devolver", "reembolso"] },
+  { key: "warranty", words: ["garantie", "gewahrleist", "warranty", "guarantee", "garantia", "mangel", "defekt", "reklamat"] },
+  { key: "payment", words: ["bezahl", "zahlung", "zahlen", "anzahlung", "rechnung", "rate", "mwst", "steuer", "payment", "pay ", "paying", "invoice", "deposit", "vat", "paiement", "payer", "acompte", "facture", "tva", "pago", "pagar", "anticipo", "factura"] },
+  { key: "voucher", words: ["gutschein", "rabatt", "code", "voucher", "discount", "coupon", "promo", "bon de", "reduction", "cupon", "descuento"] },
+  { key: "showroom", words: ["showroom", "laden", "geschaft", "adresse", "offnungs", "geoffnet", "hamburg", "vorbei", "besuch", "address", "opening", "open ", "visit", "store", "adresse", "horaire", "ouvert", "visiter", "direccion", "horario", "abierto", "visitar", "tienda"] },
+  { key: "contact", words: ["kontakt", "telefon", "anrufen", "erreich", "mail", "termin", "beratung", "berater", "mensch", "mitarbeit", "contact", "phone", "call ", "appointment", "advice", "human", "telefono", "cita", "asesor", "rendez"] },
+  { key: "used", words: ["gebraucht", "second", "zweiter hand", "zustand", "vorbesitz", "neu ", "abgenutzt", "kratzer", "pre-owned", "preowned", "used", "condition", "occasion", "seconde main", "etat", "segunda mano", "estado", "usado"] },
+  { key: "care", words: ["pflege", "reinig", "putzen", "leder", "holz", "stoff", "material", "care", "clean", "leather", "wood", "fabric", "entretien", "cuir", "bois", "tissu", "matiere", "cuidado", "limpi", "cuero", "madera", "tejido"] },
+  { key: "sustain", words: ["nachhalt", "umwelt", "okolog", "klima", "kreislauf", "sustain", "environment", "ecolog", "circular", "durable", "durabilit", "sostenib", "medio ambiente"] },
+  { key: "stock", words: ["verfugbar", "vorratig", "lager", "sofort", "wie viele", "noch da", "available", "stock", "in store", "how many", "disponib", "combien reste", "cuantas quedan"] },
+  { key: "cart", words: ["warenkorb", "korb", "bestell", "kaufen", "reservier", "cart", "basket", "order", "buy", "checkout", "reserve", "panier", "commande", "acheter", "cesta", "pedido", "comprar"] },
+  { key: "lang", words: ["sprache", "deutsch", "englisch", "franzosisch", "spanisch", "language", "english", "german", "french", "spanish", "langue", "idioma", "espanol"] },
+  { key: "sizes", words: ["mase", "grose", "abmess", "breite", "hohe", "tiefe", "gewicht", "zentimeter", "dimension", "size", "width", "height", "depth", "weight", "taille", "largeur", "hauteur", "poids", "medida", "tamano", "ancho", "alto", "peso"] }
+];
+
+/* Rubriken samt Alltagswörtern, die Kundinnen und Kunden tippen */
+const BOT_CATEGORIES = {
+  sofas: ["sofa", "couch", "canape", "sofá", "settee"],
+  sessel: ["sessel", "armchair", "fauteuil", "butaca", "sillon"],
+  tische: ["tisch", "table", "esstisch", "mesa", "couchtisch"],
+  stuehle: ["stuhl", "stuhle", "chair", "chaise", "silla"],
+  leuchten: ["leuchte", "lampe", "lampen", "licht", "beleucht", "lamp", "light", "pendant", "luminaire", "lumiere", "lampara", "iluminac"],
+  aufbewahrung: ["regal", "schrank", "sideboard", "kommode", "aufbewahr", "shelf", "shelv", "storage", "cabinet", "etager", "rangement", "estanter", "almacenaje", "armario"],
+  betten: ["bett", "betten", "bed ", "beds", "schlaf", "lit ", "cama"],
+  accessoires: ["accessoire", "accessory", "accessories", "teppich", "spiegel", "rug", "mirror", "tapis", "miroir", "alfombra", "espejo"]
+};
+
+const BOT_LIMIT_WORDS = ["unter", "bis", "hochstens", "maximal", "max", "weniger", "budget", "billiger", "gunstiger", "under", "below", "less", "up to", "cheaper", "moins", "sous", "jusqu", "menos", "hasta", "presupuesto", "barato"];
+const BOT_CHEAP_WORDS = ["gunstigst", "billigst", "preiswertest", "cheapest", "least expensive", "moins cher", "mas barat", "economic"];
+const BOT_DEAR_WORDS = ["teuerst", "hochste", "most expensive", "dearest", "plus cher", "mas car"];
+
+/* Zahl aus der Frage lesen: 3000, 3.000, 3,000, 3k, 3 tsd */
+function botBudget(text) {
+  const m = text.match(/(\d[\d.,\s]*)\s*(k\b|tsd|tausend|mil\b|mille)?/);
+  if (!m) return 0;
+  const zahl = parseInt(m[1].replace(/[.,\s]/g, ""), 10);
+  if (!Number.isFinite(zahl) || zahl <= 0) return 0;
+  return m[2] && zahl < 1000 ? zahl * 1000 : zahl;
+}
+
+const botEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const botCond = (p) => (p.grade ? t("grade." + p.grade) : t("cond.used"));
+
+/* ---------- Die eigentliche Antwort ---------- */
+function botAnswer(frage) {
+  const q = normalize(frage).trim();
+  if (!q) return { text: t("bot.a.fallback") };
+
+  /* 1. Ein Stück beim Namen genannt */
+  const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
+  if (genannt.length === 1) {
+    const p = genannt[0];
+    return {
+      text: t("bot.a.price.one", { name: p.name, price: euro(p.price), cond: botCond(p) }),
+      products: [p]
+    };
+  }
+  if (genannt.length > 1) return { text: t("bot.a.found"), products: genannt };
+
+  /* 2. Superlative */
+  const sortiert = [...PRODUCTS].sort((a, b) => a.price - b.price);
+  if (BOT_CHEAP_WORDS.some((w) => botHit(q, w))) {
+    const p = sortiert[0];
+    return { text: t("bot.a.cheapest", { name: p.name, price: euro(p.price) }), products: [p] };
+  }
+  if (BOT_DEAR_WORDS.some((w) => botHit(q, w))) {
+    const p = sortiert[sortiert.length - 1];
+    return { text: t("bot.a.dearest", { name: p.name, price: euro(p.price) }), products: [p] };
+  }
+
+  /* 3. Rubrik erkannt? (wird gleich für Budget und Rubrikliste gebraucht) */
+  let rubrik = null;
+  for (const key of Object.keys(BOT_CATEGORIES)) {
+    if (BOT_CATEGORIES[key].some((w) => botHit(q, w))) { rubrik = key; break; }
+  }
+
+  /* 4. Budget */
+  const grenze = botBudget(q);
+  const budgetFrage = grenze >= 100 && (BOT_LIMIT_WORDS.some((w) => botHit(q, w)) || rubrik || /€|euro/.test(q));
+  if (budgetFrage) {
+    const pool = rubrik ? PRODUCTS.filter((p) => p.categoryKey === rubrik) : PRODUCTS;
+    const treffer = pool.filter((p) => p.price <= grenze).sort((a, b) => b.price - a.price);
+    if (treffer.length) {
+      const schluessel = treffer.length === 1 ? "bot.a.budget.one" : "bot.a.budget";
+      return { text: t(schluessel, { max: euro(grenze), n: treffer.length }), products: treffer.slice(0, 5) };
+    }
+    const billigste = [...pool].sort((a, b) => a.price - b.price)[0] || sortiert[0];
+    return {
+      text: t("bot.a.budget.none", { max: euro(grenze), name: billigste.name, price: euro(billigste.price) }),
+      products: [billigste]
+    };
+  }
+
+  /* 5. Feste Auskünfte — das längste Stichwort gewinnt */
+  let beste = null;
+  for (const intent of BOT_INTENTS) {
+    let punkte = 0;
+    for (const w of intent.words) if (botHit(q, w)) punkte = Math.max(punkte, w.trim().length);
+    if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
+  }
+  if (beste && beste.punkte >= 3) {
+    const vars = { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) };
+    const antwort = { text: t("bot.a." + beste.key, vars) };
+    if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
+    if (beste.key === "used" || beste.key === "stock") antwort.all = true;
+    return antwort;
+  }
+
+  /* 6. Rubrik ohne Budget */
+  if (rubrik) {
+    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const cat = t("cat." + rubrik);
+    if (!treffer.length) return { text: t("bot.a.cat.none", { cat }), all: true };
+    const schluessel = treffer.length === 1 ? "bot.a.cat.one" : "bot.a.cat";
+    return { text: t(schluessel, { cat, n: treffer.length }), products: treffer.slice(0, 5) };
+  }
+
+  /* 7. Volltextsuche über die Kollektion */
+  const gefunden = searchProducts(frage).slice(0, 5);
+  if (gefunden.length) return { text: t("bot.a.found"), products: gefunden };
+
+  return { text: t("bot.a.fallback"), contact: true, all: true };
+}
+
+/* ---------- Oberfläche ---------- */
+let botGebunden = false;
+
+function initBerater() {
+  const host = $("#site-footer");
+  if (!host || $("#bot-panel")) return;
+
+  const wrap = document.createElement("div");
+  wrap.className = "bot-wrap";
+  wrap.innerHTML = `
+  <button class="bot-launch" id="bot-launch" type="button" aria-expanded="false" aria-controls="bot-panel" title="${botEsc(t("bot.launch"))}">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 12.4c0 4-3.8 7.2-8.5 7.2-1 0-2-.15-2.9-.42L4 21l1.4-3.7C4.2 16 3.5 14.3 3.5 12.4c0-4 3.8-7.2 8.5-7.2s8.5 3.2 8.5 7.2Z"/>
+    </svg>
+    <span class="bot-launch__label">${botEsc(t("bot.launch"))}</span>
+  </button>
+  <section class="bot" id="bot-panel" role="dialog" aria-labelledby="bot-title">
+    <header class="bot__head">
+      <span class="bot__dot" aria-hidden="true"></span>
+      <div class="bot__id">
+        <strong id="bot-title">${botEsc(t("bot.title"))}</strong>
+        <small data-i18n="bot.sub"></small>
+      </div>
+      <button class="close-x" id="bot-close" type="button" data-i18n-aria="bot.close">×</button>
+    </header>
+    <div class="bot__log" id="bot-log" role="log" aria-live="polite" data-i18n-aria="bot.log"></div>
+    <div class="bot__chips" id="bot-chips"></div>
+    <form class="bot__form" id="bot-form" novalidate>
+      <input type="text" id="bot-input" autocomplete="off" data-i18n-placeholder="bot.placeholder" data-i18n-aria="bot.placeholder">
+      <button class="bot__send" type="submit" data-i18n-aria="bot.send" title="${botEsc(t("bot.send"))}">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12h14M12 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </form>
+    <p class="bot__hint" data-i18n="bot.hint"></p>
+  </section>`;
+  host.appendChild(wrap);
+  applyI18n(wrap);
+
+  const panel = $("#bot-panel");
+  const launch = $("#bot-launch");
+  const log = $("#bot-log");
+  const input = $("#bot-input");
+  const chips = $("#bot-chips");
+
+  /* Geschlossen heißt: nicht sichtbar, nicht anklickbar, nicht antippbar */
+  const setOpen = (open) => {
+    if (!open && panel.contains(document.activeElement)) launch.focus();
+    panel.classList.toggle("is-open", open);
+    launch.classList.toggle("is-open", open);
+    launch.setAttribute("aria-expanded", String(open));
+    panel.inert = !open;
+    panel.setAttribute("aria-hidden", String(!open));
+    if (open) {
+      if (!log.children.length) sag(t("bot.intro"));
+      // Erst wenn das Feld sichtbar ist, darf der Fokus hinein
+      requestAnimationFrame(() => input.focus());
+      scrollDown();
+    }
+  };
+  const isOpen = () => panel.classList.contains("is-open");
+
+  const scrollDown = () => { log.scrollTop = log.scrollHeight; };
+
+  function blase(rolle, inhaltHtml) {
+    const el = document.createElement("div");
+    el.className = "bot__msg bot__msg--" + rolle;
+    el.innerHTML = `<span class="bot__who">${botEsc(rolle === "you" ? t("bot.you") : t("bot.name"))}</span>${inhaltHtml}`;
+    log.appendChild(el);
+    scrollDown();
+    return el;
+  }
+
+  const sag = (text) => blase("bot", `<p>${botEsc(text)}</p>`);
+
+  function antwortHtml(a) {
+    let html = `<p>${botEsc(a.text)}</p>`;
+    if (a.products && a.products.length) {
+      html += `<ul class="bot__list">` + a.products.map((p) => `
+        <li><a href="produkt.html?id=${encodeURIComponent(p.id)}" data-bot-link>
+          <span>${botEsc(p.name)}</span><em>${botEsc(euro(p.price))}</em>
+          <small>${botEsc(t("cat." + p.categoryKey))} · ${botEsc(botCond(p))}</small>
+        </a></li>`).join("") + `</ul>`;
+    }
+    const links = [];
+    if (a.all) links.push(`<a href="kollektion.html" data-bot-link>${botEsc(t("bot.cta.all"))}</a>`);
+    if (a.contact) links.push(`<a href="kontakt.html" data-bot-link>${botEsc(t("bot.cta.contact"))}</a>`);
+    if (links.length) html += `<p class="bot__cta">${links.join("")}</p>`;
+    return html;
+  }
+
+  let denkt = null;
+  function frage(text) {
+    const sauber = text.trim().slice(0, 300);
+    if (!sauber) return;
+    blase("you", `<p>${botEsc(sauber)}</p>`);
+    input.value = "";
+    if (denkt) denkt.remove();
+    denkt = blase("bot", `<p class="bot__typing"><i></i><i></i><i></i><span class="sr-only">${botEsc(t("bot.typing"))}</span></p>`);
+    const wartezeit = 260 + Math.min(500, sauber.length * 9);
+    setTimeout(() => {
+      if (denkt) { denkt.remove(); denkt = null; }
+      const a = botAnswer(sauber);
+      blase("bot", antwortHtml(a));
+    }, wartezeit);
+  }
+
+  /* Vorschläge: einmal gestellt, verschwinden sie nicht — sie bleiben
+     als schneller Einstieg stehen. */
+  ["bot.suggest.budget", "bot.suggest.delivery", "bot.suggest.used", "bot.suggest.voucher"].forEach((k) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "bot__chip";
+    b.textContent = t(k);
+    b.addEventListener("click", () => frage(b.textContent));
+    chips.appendChild(b);
+  });
+
+  launch.addEventListener("click", () => setOpen(!isOpen()));
+  $("#bot-close").addEventListener("click", () => setOpen(false));
+  $("#bot-form").addEventListener("submit", (e) => { e.preventDefault(); frage(input.value); });
+
+  /* Ein Verweis in der Antwort führt weiter — in der Einzeldatei über die Raute */
+  log.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-bot-link]");
+    if (!a) return;
+    e.preventDefault();
+    goTo(a.getAttribute("href"));
+    if (window.matchMedia("(max-width: 640px)").matches) setOpen(false);
+  });
+
+  if (!botGebunden) {
+    botGebunden = true;
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const p = $("#bot-panel");
+      if (p && p.classList.contains("is-open")) $("#bot-launch")?.click();
+    });
+    /* Warenkorb, Menü und Gutschein legen sich über den Berater —
+       dann macht er Platz. */
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#cart-open, #burger, #promo-reopen")) return;
+      const p = $("#bot-panel");
+      if (p && p.classList.contains("is-open")) $("#bot-close")?.click();
+    });
+  }
+
+  setOpen(false);
+}
 
 </script>
 <script>

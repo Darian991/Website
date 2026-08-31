@@ -347,6 +347,8 @@ function renderChrome() {
   applyI18n(document);
   renderTopbar();
   bindChrome();
+  // Der Berater haengt sich unter die Fusszeile, sobald diese steht
+  if (typeof initBerater === "function") initBerater();
   document.addEventListener("cart:changed", renderTopbar);
 }
 

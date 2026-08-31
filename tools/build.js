@@ -176,6 +176,9 @@ document.body.dataset.spa = "true";
 ${read("assets/js/app.js")}
 </script>
 <script>
+${read("assets/js/berater.js")}
+</script>
+<script>
 /* ---------- Einfache Wegführung für die Einzeldatei ---------- */
 const ROUTES = {
 ${routes}

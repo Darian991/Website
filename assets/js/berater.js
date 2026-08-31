@@ -1,0 +1,296 @@
+/* =========================================================
+   STUDIO LUSSO — Berater
+   Beantwortet Fragen zum Sortiment und zum Service. Die Antworten
+   kommen aus denselben Daten wie die Seite selbst (PRODUCTS, I18N),
+   damit Preise, Zustand und Verfügbarkeit nie auseinanderlaufen.
+   Kein Server, kein Schlüssel, keine Übertragung von Eingaben.
+   ========================================================= */
+
+/* Ein Stichwort trifft am Wortanfang: „liefer“ erkennt Lieferung und
+   liefern, aber „iva“ nicht mitten in „privat“. */
+function botHit(text, stem) {
+  const s = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp("(^|[^a-z0-9])" + s).test(text);
+}
+
+/* Stichwörter aller vier Sprachen in einem Topf: Wer auf der englischen
+   Seite deutsch tippt, bekommt trotzdem eine Antwort. */
+const BOT_INTENTS = [
+  { key: "greeting", words: ["hallo", "guten tag", "guten morgen", "guten abend", "servus", "moin", "hey", "hi ", "hello", "bonjour", "salut", "hola", "buenos dias"] },
+  { key: "thanks", words: ["danke", "dankeschon", "thank", "thanks", "merci", "gracias"] },
+  { key: "delivery", words: ["liefer", "versand", "zustell", "transport", "spedition", "delivery", "deliver", "shipping", "ship ", "livrais", "livrer", "envoi", "entrega", "envio", "montage", "aufbau", "assembl", "montaje"] },
+  { key: "returns", words: ["ruckgabe", "rucksend", "zuruckgeb", "zuruckschick", "umtausch", "widerruf", "retour", "return", "refund", "devoluc", "devolver", "reembolso"] },
+  { key: "warranty", words: ["garantie", "gewahrleist", "warranty", "guarantee", "garantia", "mangel", "defekt", "reklamat"] },
+  { key: "payment", words: ["bezahl", "zahlung", "zahlen", "anzahlung", "rechnung", "rate", "mwst", "steuer", "payment", "pay ", "paying", "invoice", "deposit", "vat", "paiement", "payer", "acompte", "facture", "tva", "pago", "pagar", "anticipo", "factura"] },
+  { key: "voucher", words: ["gutschein", "rabatt", "code", "voucher", "discount", "coupon", "promo", "bon de", "reduction", "cupon", "descuento"] },
+  { key: "showroom", words: ["showroom", "laden", "geschaft", "adresse", "offnungs", "geoffnet", "hamburg", "vorbei", "besuch", "address", "opening", "open ", "visit", "store", "adresse", "horaire", "ouvert", "visiter", "direccion", "horario", "abierto", "visitar", "tienda"] },
+  { key: "contact", words: ["kontakt", "telefon", "anrufen", "erreich", "mail", "termin", "beratung", "berater", "mensch", "mitarbeit", "contact", "phone", "call ", "appointment", "advice", "human", "telefono", "cita", "asesor", "rendez"] },
+  { key: "used", words: ["gebraucht", "second", "zweiter hand", "zustand", "vorbesitz", "neu ", "abgenutzt", "kratzer", "pre-owned", "preowned", "used", "condition", "occasion", "seconde main", "etat", "segunda mano", "estado", "usado"] },
+  { key: "care", words: ["pflege", "reinig", "putzen", "leder", "holz", "stoff", "material", "care", "clean", "leather", "wood", "fabric", "entretien", "cuir", "bois", "tissu", "matiere", "cuidado", "limpi", "cuero", "madera", "tejido"] },
+  { key: "sustain", words: ["nachhalt", "umwelt", "okolog", "klima", "kreislauf", "sustain", "environment", "ecolog", "circular", "durable", "durabilit", "sostenib", "medio ambiente"] },
+  { key: "stock", words: ["verfugbar", "vorratig", "lager", "sofort", "wie viele", "noch da", "available", "stock", "in store", "how many", "disponib", "combien reste", "cuantas quedan"] },
+  { key: "cart", words: ["warenkorb", "korb", "bestell", "kaufen", "reservier", "cart", "basket", "order", "buy", "checkout", "reserve", "panier", "commande", "acheter", "cesta", "pedido", "comprar"] },
+  { key: "lang", words: ["sprache", "deutsch", "englisch", "franzosisch", "spanisch", "language", "english", "german", "french", "spanish", "langue", "idioma", "espanol"] },
+  { key: "sizes", words: ["mase", "grose", "abmess", "breite", "hohe", "tiefe", "gewicht", "zentimeter", "dimension", "size", "width", "height", "depth", "weight", "taille", "largeur", "hauteur", "poids", "medida", "tamano", "ancho", "alto", "peso"] }
+];
+
+/* Rubriken samt Alltagswörtern, die Kundinnen und Kunden tippen */
+const BOT_CATEGORIES = {
+  sofas: ["sofa", "couch", "canape", "sofá", "settee"],
+  sessel: ["sessel", "armchair", "fauteuil", "butaca", "sillon"],
+  tische: ["tisch", "table", "esstisch", "mesa", "couchtisch"],
+  stuehle: ["stuhl", "stuhle", "chair", "chaise", "silla"],
+  leuchten: ["leuchte", "lampe", "lampen", "licht", "beleucht", "lamp", "light", "pendant", "luminaire", "lumiere", "lampara", "iluminac"],
+  aufbewahrung: ["regal", "schrank", "sideboard", "kommode", "aufbewahr", "shelf", "shelv", "storage", "cabinet", "etager", "rangement", "estanter", "almacenaje", "armario"],
+  betten: ["bett", "betten", "bed ", "beds", "schlaf", "lit ", "cama"],
+  accessoires: ["accessoire", "accessory", "accessories", "teppich", "spiegel", "rug", "mirror", "tapis", "miroir", "alfombra", "espejo"]
+};
+
+const BOT_LIMIT_WORDS = ["unter", "bis", "hochstens", "maximal", "max", "weniger", "budget", "billiger", "gunstiger", "under", "below", "less", "up to", "cheaper", "moins", "sous", "jusqu", "menos", "hasta", "presupuesto", "barato"];
+const BOT_CHEAP_WORDS = ["gunstigst", "billigst", "preiswertest", "cheapest", "least expensive", "moins cher", "mas barat", "economic"];
+const BOT_DEAR_WORDS = ["teuerst", "hochste", "most expensive", "dearest", "plus cher", "mas car"];
+
+/* Zahl aus der Frage lesen: 3000, 3.000, 3,000, 3k, 3 tsd */
+function botBudget(text) {
+  const m = text.match(/(\d[\d.,\s]*)\s*(k\b|tsd|tausend|mil\b|mille)?/);
+  if (!m) return 0;
+  const zahl = parseInt(m[1].replace(/[.,\s]/g, ""), 10);
+  if (!Number.isFinite(zahl) || zahl <= 0) return 0;
+  return m[2] && zahl < 1000 ? zahl * 1000 : zahl;
+}
+
+const botEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const botCond = (p) => (p.grade ? t("grade." + p.grade) : t("cond.used"));
+
+/* ---------- Die eigentliche Antwort ---------- */
+function botAnswer(frage) {
+  const q = normalize(frage).trim();
+  if (!q) return { text: t("bot.a.fallback") };
+
+  /* 1. Ein Stück beim Namen genannt */
+  const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
+  if (genannt.length === 1) {
+    const p = genannt[0];
+    return {
+      text: t("bot.a.price.one", { name: p.name, price: euro(p.price), cond: botCond(p) }),
+      products: [p]
+    };
+  }
+  if (genannt.length > 1) return { text: t("bot.a.found"), products: genannt };
+
+  /* 2. Superlative */
+  const sortiert = [...PRODUCTS].sort((a, b) => a.price - b.price);
+  if (BOT_CHEAP_WORDS.some((w) => botHit(q, w))) {
+    const p = sortiert[0];
+    return { text: t("bot.a.cheapest", { name: p.name, price: euro(p.price) }), products: [p] };
+  }
+  if (BOT_DEAR_WORDS.some((w) => botHit(q, w))) {
+    const p = sortiert[sortiert.length - 1];
+    return { text: t("bot.a.dearest", { name: p.name, price: euro(p.price) }), products: [p] };
+  }
+
+  /* 3. Rubrik erkannt? (wird gleich für Budget und Rubrikliste gebraucht) */
+  let rubrik = null;
+  for (const key of Object.keys(BOT_CATEGORIES)) {
+    if (BOT_CATEGORIES[key].some((w) => botHit(q, w))) { rubrik = key; break; }
+  }
+
+  /* 4. Budget */
+  const grenze = botBudget(q);
+  const budgetFrage = grenze >= 100 && (BOT_LIMIT_WORDS.some((w) => botHit(q, w)) || rubrik || /€|euro/.test(q));
+  if (budgetFrage) {
+    const pool = rubrik ? PRODUCTS.filter((p) => p.categoryKey === rubrik) : PRODUCTS;
+    const treffer = pool.filter((p) => p.price <= grenze).sort((a, b) => b.price - a.price);
+    if (treffer.length) {
+      const schluessel = treffer.length === 1 ? "bot.a.budget.one" : "bot.a.budget";
+      return { text: t(schluessel, { max: euro(grenze), n: treffer.length }), products: treffer.slice(0, 5) };
+    }
+    const billigste = [...pool].sort((a, b) => a.price - b.price)[0] || sortiert[0];
+    return {
+      text: t("bot.a.budget.none", { max: euro(grenze), name: billigste.name, price: euro(billigste.price) }),
+      products: [billigste]
+    };
+  }
+
+  /* 5. Feste Auskünfte — das längste Stichwort gewinnt */
+  let beste = null;
+  for (const intent of BOT_INTENTS) {
+    let punkte = 0;
+    for (const w of intent.words) if (botHit(q, w)) punkte = Math.max(punkte, w.trim().length);
+    if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
+  }
+  if (beste && beste.punkte >= 3) {
+    const vars = { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) };
+    const antwort = { text: t("bot.a." + beste.key, vars) };
+    if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
+    if (beste.key === "used" || beste.key === "stock") antwort.all = true;
+    return antwort;
+  }
+
+  /* 6. Rubrik ohne Budget */
+  if (rubrik) {
+    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const cat = t("cat." + rubrik);
+    if (!treffer.length) return { text: t("bot.a.cat.none", { cat }), all: true };
+    const schluessel = treffer.length === 1 ? "bot.a.cat.one" : "bot.a.cat";
+    return { text: t(schluessel, { cat, n: treffer.length }), products: treffer.slice(0, 5) };
+  }
+
+  /* 7. Volltextsuche über die Kollektion */
+  const gefunden = searchProducts(frage).slice(0, 5);
+  if (gefunden.length) return { text: t("bot.a.found"), products: gefunden };
+
+  return { text: t("bot.a.fallback"), contact: true, all: true };
+}
+
+/* ---------- Oberfläche ---------- */
+let botGebunden = false;
+
+function initBerater() {
+  const host = $("#site-footer");
+  if (!host || $("#bot-panel")) return;
+
+  const wrap = document.createElement("div");
+  wrap.className = "bot-wrap";
+  wrap.innerHTML = `
+  <button class="bot-launch" id="bot-launch" type="button" aria-expanded="false" aria-controls="bot-panel" title="${botEsc(t("bot.launch"))}">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 12.4c0 4-3.8 7.2-8.5 7.2-1 0-2-.15-2.9-.42L4 21l1.4-3.7C4.2 16 3.5 14.3 3.5 12.4c0-4 3.8-7.2 8.5-7.2s8.5 3.2 8.5 7.2Z"/>
+    </svg>
+    <span class="bot-launch__label">${botEsc(t("bot.launch"))}</span>
+  </button>
+  <section class="bot" id="bot-panel" role="dialog" aria-labelledby="bot-title">
+    <header class="bot__head">
+      <span class="bot__dot" aria-hidden="true"></span>
+      <div class="bot__id">
+        <strong id="bot-title">${botEsc(t("bot.title"))}</strong>
+        <small data-i18n="bot.sub"></small>
+      </div>
+      <button class="close-x" id="bot-close" type="button" data-i18n-aria="bot.close">×</button>
+    </header>
+    <div class="bot__log" id="bot-log" role="log" aria-live="polite" data-i18n-aria="bot.log"></div>
+    <div class="bot__chips" id="bot-chips"></div>
+    <form class="bot__form" id="bot-form" novalidate>
+      <input type="text" id="bot-input" autocomplete="off" data-i18n-placeholder="bot.placeholder" data-i18n-aria="bot.placeholder">
+      <button class="bot__send" type="submit" data-i18n-aria="bot.send" title="${botEsc(t("bot.send"))}">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12h14M12 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </form>
+    <p class="bot__hint" data-i18n="bot.hint"></p>
+  </section>`;
+  host.appendChild(wrap);
+  applyI18n(wrap);
+
+  const panel = $("#bot-panel");
+  const launch = $("#bot-launch");
+  const log = $("#bot-log");
+  const input = $("#bot-input");
+  const chips = $("#bot-chips");
+
+  /* Geschlossen heißt: nicht sichtbar, nicht anklickbar, nicht antippbar */
+  const setOpen = (open) => {
+    if (!open && panel.contains(document.activeElement)) launch.focus();
+    panel.classList.toggle("is-open", open);
+    launch.classList.toggle("is-open", open);
+    launch.setAttribute("aria-expanded", String(open));
+    panel.inert = !open;
+    panel.setAttribute("aria-hidden", String(!open));
+    if (open) {
+      if (!log.children.length) sag(t("bot.intro"));
+      // Erst wenn das Feld sichtbar ist, darf der Fokus hinein
+      requestAnimationFrame(() => input.focus());
+      scrollDown();
+    }
+  };
+  const isOpen = () => panel.classList.contains("is-open");
+
+  const scrollDown = () => { log.scrollTop = log.scrollHeight; };
+
+  function blase(rolle, inhaltHtml) {
+    const el = document.createElement("div");
+    el.className = "bot__msg bot__msg--" + rolle;
+    el.innerHTML = `<span class="bot__who">${botEsc(rolle === "you" ? t("bot.you") : t("bot.name"))}</span>${inhaltHtml}`;
+    log.appendChild(el);
+    scrollDown();
+    return el;
+  }
+
+  const sag = (text) => blase("bot", `<p>${botEsc(text)}</p>`);
+
+  function antwortHtml(a) {
+    let html = `<p>${botEsc(a.text)}</p>`;
+    if (a.products && a.products.length) {
+      html += `<ul class="bot__list">` + a.products.map((p) => `
+        <li><a href="produkt.html?id=${encodeURIComponent(p.id)}" data-bot-link>
+          <span>${botEsc(p.name)}</span><em>${botEsc(euro(p.price))}</em>
+          <small>${botEsc(t("cat." + p.categoryKey))} · ${botEsc(botCond(p))}</small>
+        </a></li>`).join("") + `</ul>`;
+    }
+    const links = [];
+    if (a.all) links.push(`<a href="kollektion.html" data-bot-link>${botEsc(t("bot.cta.all"))}</a>`);
+    if (a.contact) links.push(`<a href="kontakt.html" data-bot-link>${botEsc(t("bot.cta.contact"))}</a>`);
+    if (links.length) html += `<p class="bot__cta">${links.join("")}</p>`;
+    return html;
+  }
+
+  let denkt = null;
+  function frage(text) {
+    const sauber = text.trim().slice(0, 300);
+    if (!sauber) return;
+    blase("you", `<p>${botEsc(sauber)}</p>`);
+    input.value = "";
+    if (denkt) denkt.remove();
+    denkt = blase("bot", `<p class="bot__typing"><i></i><i></i><i></i><span class="sr-only">${botEsc(t("bot.typing"))}</span></p>`);
+    const wartezeit = 260 + Math.min(500, sauber.length * 9);
+    setTimeout(() => {
+      if (denkt) { denkt.remove(); denkt = null; }
+      const a = botAnswer(sauber);
+      blase("bot", antwortHtml(a));
+    }, wartezeit);
+  }
+
+  /* Vorschläge: einmal gestellt, verschwinden sie nicht — sie bleiben
+     als schneller Einstieg stehen. */
+  ["bot.suggest.budget", "bot.suggest.delivery", "bot.suggest.used", "bot.suggest.voucher"].forEach((k) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "bot__chip";
+    b.textContent = t(k);
+    b.addEventListener("click", () => frage(b.textContent));
+    chips.appendChild(b);
+  });
+
+  launch.addEventListener("click", () => setOpen(!isOpen()));
+  $("#bot-close").addEventListener("click", () => setOpen(false));
+  $("#bot-form").addEventListener("submit", (e) => { e.preventDefault(); frage(input.value); });
+
+  /* Ein Verweis in der Antwort führt weiter — in der Einzeldatei über die Raute */
+  log.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-bot-link]");
+    if (!a) return;
+    e.preventDefault();
+    goTo(a.getAttribute("href"));
+    if (window.matchMedia("(max-width: 640px)").matches) setOpen(false);
+  });
+
+  if (!botGebunden) {
+    botGebunden = true;
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const p = $("#bot-panel");
+      if (p && p.classList.contains("is-open")) $("#bot-launch")?.click();
+    });
+    /* Warenkorb, Menü und Gutschein legen sich über den Berater —
+       dann macht er Platz. */
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#cart-open, #burger, #promo-reopen")) return;
+      const p = $("#bot-panel");
+      if (p && p.classList.contains("is-open")) $("#bot-close")?.click();
+    });
+  }
+
+  setOpen(false);
+}
