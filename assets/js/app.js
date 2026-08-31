@@ -276,7 +276,7 @@ function renderChrome() {
             <li>Stadthausbrücke 8</li>
             <li>20355 Hamburg</li>
             <li><a href="tel:+4940419274600">+49 40 41 92 74 60</a></li>
-            <li><a href="mailto:info@studio-lusso.de">info@studio-lusso.de</a></li>
+            <li><a href="mailto:norbert.wichele@gemail.com">norbert.wichele@gemail.com</a></li>
           </ul>
         </div>
       </div>

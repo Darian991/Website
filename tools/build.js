@@ -104,7 +104,7 @@ function noscriptFooter() {
   <footer class="footer"><div class="wrap">
     <p>${esc(de["footer.tagline"])}</p>
     <p>Stadthausbrücke 8 · 20355 Hamburg · <a href="tel:+4940419274600">+49 40 41 92 74 60</a> ·
-       <a href="mailto:info@studio-lusso.de">info@studio-lusso.de</a></p>
+       <a href="mailto:norbert.wichele@gemail.com">norbert.wichele@gemail.com</a></p>
     <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
   </div></footer>
 </noscript>`;
