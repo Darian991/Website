@@ -110,6 +110,12 @@ Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
   über die man streiten kann, keine Tatsachen.
 * `botAnswer()` — die Reihenfolge der Prüfungen: Produktname, Superlativ,
   Budget, Thema, Rubrik, Volltextsuche, Rückfall.
+* Alltagsfragen — Begrüßung, „wie geht es dir“, Wetter, Uhrzeit und Datum,
+  „wer bist du“, „was kannst du“, Witz, Lob, Verabschiedung, Beleidigung.
+  Uhrzeit und Datum kommen aus der Uhr des Besuchers und sind damit echt;
+  beim Wetter sagt der Berater freundlich, dass er nicht hinaussehen kann.
+  Ein ganzer Satz ohne Bezug zum Laden bekommt `bot.a.smalltalk` statt der
+  Verlegenheitsantwort — der Berater bleibt so nie stumm.
 * `BOT_MARKER` — häufige Funktionswörter je Sprache. Daran erkennt der
   Berater, in welcher Sprache gefragt wird, und antwortet in dieser Sprache
   — auch wenn die Seite auf eine andere eingestellt ist. Preise, Rubriken

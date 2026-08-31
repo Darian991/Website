@@ -31,6 +31,20 @@ const BOT_INTENTS = [
   { key: "stock", words: ["verfugbar", "vorratig", "lager", "sofort", "wie viele", "noch da", "noch zu haben", "verkauft", "vergriffen", "available", "stock", "in store", "how many", "sold", "disponib", "combien reste", "vendu", "cuantas quedan", "vendido"] },
   { key: "cart", words: ["warenkorb", "korb", "bestell", "kaufen", "reservier", "cart", "basket", "order", "buy", "checkout", "reserve", "panier", "commande", "acheter", "cesta", "pedido", "comprar"] },
   { key: "lang", words: ["sprache", "deutsch", "englisch", "franzosisch", "spanisch", "language", "english", "german", "french", "spanish", "langue", "idioma", "espanol"] },
+  /* Alltag: Der Berater soll auf alles etwas erwidern können, nicht nur
+     auf Warenkunde. Wo er nichts wissen kann — beim Wetter etwa — sagt er
+     das freundlich, statt stumm zu bleiben. */
+  { key: "howareyou", words: ["wie geht es", "wie gehts", "wie geht's", "alles gut bei dir", "how are you", "how're you", "how do you do", "how is it going", "comment vas", "comment allez", "ca va", "que tal estas", "como estas", "como esta usted"] },
+  { key: "weather", words: ["wetter", "regnet", "regen", "sonnig", "schneit", "draussen kalt", "draussen warm", "weather", "raining", "sunny", "snowing", "meteo", "il pleut", "fait beau", "tiempo hace", "clima", "llueve", "hace sol"] },
+  { key: "time", words: ["uhrzeit", "wie spat", "welcher tag", "welches datum", "welcher wochentag", "what time", "what day", "todays date", "what is the date", "quelle heure", "quel jour", "quelle date", "que hora", "que dia", "que fecha"] },
+  { key: "identity", words: ["wer bist du", "was bist du", "bist du ein mensch", "bist du echt", "bist du ein bot", "roboter", "kunstliche intelligenz", "wie heisst du", "dein name", "who are you", "what are you", "are you a robot", "are you human", "are you real", "your name", "qui es-tu", "qui etes-vous", "es-tu un robot", "ton nom", "quien eres", "eres un robot", "eres humano", "tu nombre"] },
+  { key: "help", words: ["was kannst du", "wobei kannst du", "kannst du mir helfen", "konnen sie mir helfen", "hilfe", "helfen", "what can you do", "can you help", "how can you help", "que peux-tu", "pouvez-vous m aider", "aidez", "que puedes hacer", "puede ayudarme", "ayuda"] },
+  { key: "joke", words: ["witz", "erzahl mir was lustiges", "joke", "something funny", "blague", "chiste", "algo gracioso"] },
+  { key: "compliment", words: ["du bist super", "du bist toll", "du bist gut", "du bist nett", "du bist schlau", "sehr hilfreich", "you are great", "youre great", "you are nice", "you are helpful", "tu es super", "tu es genial", "eres genial", "eres muy amable", "muy util"] },
+  { key: "bye", words: ["tschuss", "auf wiedersehen", "bis dann", "bis bald", "ciao", "schonen tag noch", "bye", "goodbye", "see you", "have a nice day", "au revoir", "bonne journee", "a bientot", "adios", "hasta luego", "buen dia"] },
+  { key: "love", words: ["ich liebe dich", "magst du mich", "willst du mich heiraten", "hast du gefuhle", "love you", "marry me", "do you like me", "je t aime", "veux-tu m epouser", "te quiero", "te amo", "quieres casarte"] },
+  { key: "insult", words: ["du bist blod", "du bist dumm", "du bist nutzlos", "idiot", "du taugst nichts", "you are stupid", "youre stupid", "you are useless", "useless bot", "tu es nul", "eres tonto", "eres inutil"] },
+
   { key: "sizes", words: ["mase", "gros", "abmess", "breit", "hoh", "hoch", "tief", "gewicht", "schwer", "zentimeter", "passt in", "dimension", "size", "width", "wide", "height", "tall", "depth", "deep", "weight", "heavy", "how big", "taille", "largeur", "large", "hauteur", "haut", "profond", "poids", "lourd", "medida", "mide", "tamano", "ancho", "alto", "profund", "peso", "pesa"] }
 ];
 
@@ -88,10 +102,10 @@ const botEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": 
    Erkannt wird an häufigen Funktionswörtern; wer in mehreren Sprachen
    vorkommt („la“, „no“, „que“), zählt entsprechend weniger. */
 const BOT_MARKER = {
-  de: ["ist", "sind", "der", "die", "das", "und", "ich", "wie", "was", "wo", "wer", "haben", "habt", "kann", "koennen", "bitte", "danke", "nicht", "gibt", "mit", "fuer", "auf", "noch", "ein", "eine", "einen", "sie", "mir", "mich", "euch", "kostet", "wieviel", "viel", "gebraucht", "auch", "aber", "oder", "sehr", "bei", "von", "zum", "gut"],
-  en: ["is", "are", "the", "and", "i", "how", "what", "where", "who", "do", "does", "can", "could", "please", "thanks", "thank", "not", "there", "with", "for", "on", "an", "you", "me", "my", "cost", "costs", "much", "used", "also", "but", "or", "very", "at", "from", "to", "have", "has", "it"],
-  fr: ["est", "sont", "le", "la", "les", "et", "je", "comment", "quoi", "ou", "qui", "avez", "avoir", "peut", "puis", "pouvez", "merci", "pas", "il", "avec", "pour", "sur", "un", "une", "vous", "moi", "prix", "coute", "combien", "aussi", "mais", "tres", "de", "du", "des", "ce", "cette", "quel", "quelle", "est-ce"],
-  es: ["es", "son", "el", "la", "los", "las", "y", "yo", "como", "que", "donde", "quien", "tiene", "tienen", "puedo", "puede", "gracias", "favor", "no", "hay", "con", "para", "sobre", "un", "una", "usted", "precio", "cuesta", "cuanto", "tambien", "pero", "muy", "del", "esta", "este", "esa", "algun", "alguna"]
+  de: ["ist", "sind", "bin", "war", "der", "die", "das", "den", "dem", "und", "ich", "du", "bist", "dir", "dich", "wir", "uns", "ihr", "wie", "was", "wo", "wer", "wann", "warum", "wieso", "welche", "welcher", "haben", "habt", "hat", "hast", "kann", "kannst", "koennen", "koennt", "soll", "muss", "wird", "werden", "bitte", "danke", "nicht", "kein", "keine", "gibt", "geht", "gehts", "mit", "fuer", "auf", "noch", "schon", "ein", "eine", "einen", "sie", "mir", "mich", "euch", "mein", "meine", "dein", "deine", "kostet", "wieviel", "viel", "gebraucht", "auch", "aber", "oder", "sehr", "bei", "von", "zum", "zur", "hier", "alles", "etwas", "nichts", "gut", "heute", "morgen"],
+  en: ["is", "are", "am", "was", "were", "the", "and", "i", "how", "what", "where", "who", "when", "why", "which", "do", "does", "did", "dont", "doesnt", "can", "could", "would", "should", "will", "please", "thanks", "thank", "not", "there", "this", "that", "these", "with", "for", "on", "an", "you", "your", "me", "my", "mine", "its", "cost", "costs", "much", "many", "used", "also", "but", "or", "very", "at", "from", "to", "have", "has", "had", "it", "tell", "show", "need", "want", "looking", "about", "here", "something", "anything", "nothing", "today"],
+  fr: ["est", "sont", "suis", "etes", "etait", "le", "la", "les", "et", "je", "tu", "nous", "comment", "quoi", "ou", "qui", "quand", "pourquoi", "avez", "avoir", "avons", "peut", "peux", "puis", "pouvez", "merci", "pas", "il", "elle", "avec", "pour", "sur", "un", "une", "vous", "votre", "moi", "mon", "ma", "mes", "ton", "prix", "coute", "combien", "aussi", "mais", "tres", "de", "du", "des", "ce", "cette", "cela", "quel", "quelle", "est-ce", "bien", "tout", "tous", "fait", "faire", "cherche", "montrer", "bonjour", "aujourd"],
+  es: ["es", "son", "soy", "estoy", "estas", "el", "la", "los", "las", "y", "yo", "tu", "como", "que", "donde", "quien", "cuando", "porque", "tiene", "tienen", "tienes", "puedo", "puede", "gracias", "favor", "no", "hay", "con", "para", "sobre", "un", "una", "usted", "precio", "cuesta", "cuanto", "cuantos", "tambien", "pero", "muy", "del", "esta", "este", "esa", "algun", "alguna", "algo", "nada", "todo", "todos", "quiero", "busco", "dime", "dame", "hola", "cual", "cuales", "mi", "su", "sus", "hoy"]
 };
 
 /* Wörter, die nur in einer Sprache vorkommen, wiegen am schwersten */
@@ -151,10 +165,17 @@ function botAnswer(frage, lang) {
     if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
   }
   const festeAuskunft = () => {
-    const vars = { code: GUTSCHEIN.code, betrag: beuro(GUTSCHEIN.betrag) };
+    const jetzt = new Date();
+    const ort = langLocale(lang);
+    const vars = {
+      code: GUTSCHEIN.code,
+      betrag: beuro(GUTSCHEIN.betrag),
+      zeit: jetzt.toLocaleTimeString(ort, { hour: "2-digit", minute: "2-digit" }),
+      datum: jetzt.toLocaleDateString(ort, { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+    };
     const antwort = { lang, text: bt("bot.a." + beste.key, vars) };
-    if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
-    if (beste.key === "used" || beste.key === "stock") antwort.all = true;
+    if (["contact", "showroom", "identity", "insult"].indexOf(beste.key) > -1) antwort.contact = true;
+    if (["used", "stock", "help"].indexOf(beste.key) > -1) antwort.all = true;
     return antwort;
   };
   const fragtNachAngaben = intentTreffer("sizes") > 0 || BOT_SPEC_WORDS.some((w) => botHit(q, w));
@@ -248,6 +269,11 @@ function botAnswer(frage, lang) {
 
   /* 8. Eigenschaftsfrage ohne erkennbaren Bezug */
   if (gelobt) return { lang, text: bt("bot.a.lob.allgemein"), all: true };
+
+  /* 9. Ein ganzer Satz ohne Bezug zum Laden ist Plauderei, kein Missverständnis.
+     Eine bloße Wortmeldung dagegen kann eine missglückte Suche sein. */
+  const woerter = q.split(/[^a-z0-9]+/).filter(Boolean).length;
+  if (woerter >= 3) return { lang, text: bt("bot.a.smalltalk"), all: true };
 
   return { lang, text: bt("bot.a.fallback"), contact: true, all: true };
 }

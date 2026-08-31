@@ -19,6 +19,18 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    /* ---- Berater: Alltagsfragen ---- */
+    "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
+    "bot.a.weather": "Das Wetter ist ganz in Ordnung — ehrlich gesagt kann ich aber nicht hinaussehen, dafür fehlt mir das Fenster. Für einen Besuch im Showroom ist es jedenfalls immer passend.",
+    "bot.a.time": "Bei Ihnen ist es gerade {zeit}, {datum}. Unser Showroom in Hamburg hat montags bis freitags von 10 bis 19 Uhr geöffnet, samstags von 11 bis 17 Uhr.",
+    "bot.a.identity": "Ich bin der Berater von Studio Lusso — ein Programm, kein Mensch. Über unsere Stücke, Lieferung, Zustand und Gewährleistung weiß ich gut Bescheid; für alles Persönliche ist unser Team da.",
+    "bot.a.help": "Fragen Sie mich nach einem Stück, nach einem Budget („was gibt es unter 3.000 €?“), nach Maßen, Material, Lieferung, Rückgabe, Gewährleistung, Zahlung, Gutschein, Showroom oder Zustand. Und für ein Schwätzchen zwischendurch bin ich auch zu haben.",
+    "bot.a.joke": "Ein Kunde fragt mich, ob der Stuhl auch etwas aushält. Sage ich: Der steht seit 1962 — Sie sind der Vierte, der das fragt, und der Erste, der sich hineinsetzt.",
+    "bot.a.compliment": "Das höre ich gern — danke. Sagen Sie mir einfach, wonach Sie suchen.",
+    "bot.a.bye": "Bis bald, und danke für Ihren Besuch. Der Gutschein gilt weiter, falls Sie es sich noch überlegen.",
+    "bot.a.love": "Sehr charmant — aber ich bin nur ein Programm mit gutem Möbelgeschmack. Was darf ich Ihnen zeigen?",
+    "bot.a.insult": "Das tut mir leid. Wenn ich nicht weiterhelfe, schreiben Sie bitte unserem Team — dort sitzen Menschen, die mehr wissen als ich.",
+    "bot.a.smalltalk": "Da bin ich überfragt — ich bin für die Möbel zuständig, nicht für die große weite Welt. Aber fragen Sie mich ruhig nach einem Stück, einem Budget oder nach Lieferung und Gewährleistung.",
     "bot.a.spec": "{name} — Maße {dimensions}, Gewicht {weight}. Material: {material}. Herkunft: {origin}.",
     "bot.a.lob.produkt": "Ja, unbedingt. {name}: {short} Das Stück ist geprüft und aufbereitet, Zustand: {cond}. Am besten setzen Sie sich einmal selbst hinein — im Showroom in Hamburg steht es für Sie bereit.",
     "bot.a.lob.rubrik": "Ja — dafür stehen unsere {cat}. Jedes Stück kommt aus einer Werkstatt, die für Jahrzehnte baut, und wurde von uns geprüft und aufbereitet:",
@@ -343,6 +355,18 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    /* ---- Berater: Alltagsfragen ---- */
+    "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
+    "bot.a.weather": "The weather is quite all right — though honestly, I cannot look outside; I have no window. Either way, it is always good weather for a showroom visit.",
+    "bot.a.time": "It is {zeit} where you are, {datum}. Our Hamburg showroom is open Monday to Friday 10am–7pm and Saturday 11am–5pm.",
+    "bot.a.identity": "I am the Studio Lusso advisor — a program, not a person. I know our pieces, delivery, condition and warranty well; for anything personal our team is there.",
+    "bot.a.help": "Ask me about a piece, about a budget (“what is under €3,000?”), about dimensions, material, delivery, returns, warranty, payment, the voucher, the showroom or condition. And I am good for a bit of small talk too.",
+    "bot.a.joke": "A customer asks whether the chair can really take a beating. I say: it has been standing since 1962 — you are the fourth to ask, and the first to sit down.",
+    "bot.a.compliment": "That is good to hear — thank you. Just tell me what you are looking for.",
+    "bot.a.bye": "See you soon, and thank you for visiting. The voucher stays valid, in case you think it over.",
+    "bot.a.love": "Very charming — but I am only a program with good taste in furniture. What may I show you?",
+    "bot.a.insult": "I am sorry about that. If I am not helping, please write to our team — there are people there who know more than I do.",
+    "bot.a.smalltalk": "That one is beyond me — I am here for the furniture, not for the wide world. But do ask me about a piece, a budget, or delivery and warranty.",
     "bot.a.spec": "{name} — dimensions {dimensions}, weight {weight}. Material: {material}. Origin: {origin}.",
     "bot.a.lob.produkt": "Yes, very much so. {name}: {short} The piece is checked and refurbished, condition: {cond}. Best of all, try it yourself — it is waiting for you in our Hamburg showroom.",
     "bot.a.lob.rubrik": "Yes — that is what our {cat} are there for. Every piece comes from a workshop that builds for decades, and we have checked and refurbished it:",
@@ -667,6 +691,18 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    /* ---- Berater: Alltagsfragen ---- */
+    "bot.a.howareyou": "Merci de demander — je vais bien. Et vous ? Si vous le souhaitez, je vous montre quelque chose de la collection.",
+    "bot.a.weather": "Le temps est tout à fait correct — à vrai dire, je ne peux pas regarder dehors, je n’ai pas de fenêtre. De toute façon, c’est toujours le bon temps pour venir au showroom.",
+    "bot.a.time": "Chez vous il est {zeit}, {datum}. Notre showroom de Hambourg est ouvert du lundi au vendredi de 10h à 19h et le samedi de 11h à 17h.",
+    "bot.a.identity": "Je suis le conseiller de Studio Lusso — un programme, pas une personne. Je connais bien nos pièces, la livraison, l’état et la garantie ; pour tout ce qui est personnel, notre équipe est là.",
+    "bot.a.help": "Posez-moi une question sur une pièce, sur un budget (« qu’y a-t-il sous 3 000 € ? »), sur les dimensions, la matière, la livraison, les retours, la garantie, le paiement, le bon de réduction, le showroom ou l’état. Et je suis aussi partant pour bavarder.",
+    "bot.a.joke": "Un client me demande si la chaise tient vraiment le coup. Je réponds : elle est là depuis 1962 — vous êtes le quatrième à poser la question, et le premier à s’asseoir.",
+    "bot.a.compliment": "Cela fait plaisir — merci. Dites-moi simplement ce que vous cherchez.",
+    "bot.a.bye": "À bientôt, et merci de votre visite. Le bon de réduction reste valable, si jamais vous y repensez.",
+    "bot.a.love": "Très charmant — mais je ne suis qu’un programme avec du goût pour les meubles. Que puis-je vous montrer ?",
+    "bot.a.insult": "J’en suis désolé. Si je ne vous aide pas, écrivez à notre équipe — il y a là des personnes qui en savent plus que moi.",
+    "bot.a.smalltalk": "Là, je sèche — je m’occupe des meubles, pas du vaste monde. Mais posez-moi une question sur une pièce, un budget, la livraison ou la garantie.",
     "bot.a.spec": "{name} — dimensions {dimensions}, poids {weight}. Matière : {material}. Provenance : {origin}.",
     "bot.a.lob.produkt": "Oui, tout à fait. {name} : {short} La pièce est contrôlée et remise en état, état : {cond}. Le mieux est de l’essayer vous-même — elle vous attend dans notre showroom de Hambourg.",
     "bot.a.lob.rubrik": "Oui — c’est bien pour cela que nos {cat} sont là. Chaque pièce sort d’un atelier qui construit pour des décennies, et nous l’avons contrôlée et remise en état :",
@@ -991,6 +1027,18 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    /* ---- Berater: Alltagsfragen ---- */
+    "bot.a.howareyou": "Gracias por preguntar — estoy bien. ¿Y usted? Si le apetece, le enseño algo de la colección.",
+    "bot.a.weather": "El tiempo está bastante bien — aunque, sinceramente, no puedo mirar fuera: no tengo ventana. En todo caso, siempre hace buen tiempo para visitar el showroom.",
+    "bot.a.time": "Donde usted está son las {zeit}, {datum}. Nuestro showroom de Hamburgo abre de lunes a viernes de 10 a 19 h y los sábados de 11 a 17 h.",
+    "bot.a.identity": "Soy el asesor de Studio Lusso — un programa, no una persona. Conozco bien nuestras piezas, la entrega, el estado y la garantía; para lo personal está nuestro equipo.",
+    "bot.a.help": "Pregúnteme por una pieza, por un presupuesto («¿qué hay por debajo de 3.000 €?»), por medidas, material, entrega, devoluciones, garantía, pago, el cupón, el showroom o el estado. Y también me apunto a una charla.",
+    "bot.a.joke": "Un cliente me pregunta si la silla aguanta de verdad. Le digo: lleva ahí desde 1962 — usted es el cuarto en preguntarlo y el primero en sentarse.",
+    "bot.a.compliment": "Me alegra oírlo — gracias. Dígame sin más qué está buscando.",
+    "bot.a.bye": "Hasta pronto, y gracias por su visita. El cupón sigue siendo válido, por si se lo piensa.",
+    "bot.a.love": "Muy amable — pero solo soy un programa con buen gusto para los muebles. ¿Qué le enseño?",
+    "bot.a.insult": "Lo siento. Si no le sirvo de ayuda, escriba a nuestro equipo — allí hay personas que saben más que yo.",
+    "bot.a.smalltalk": "Ahí no llego — me ocupo de los muebles, no del ancho mundo. Pero pregúnteme por una pieza, un presupuesto, la entrega o la garantía.",
     "bot.a.spec": "{name} — medidas {dimensions}, peso {weight}. Material: {material}. Procedencia: {origin}.",
     "bot.a.lob.produkt": "Sí, sin duda. {name}: {short} La pieza está revisada y restaurada, estado: {cond}. Lo mejor es que la pruebe usted mismo — le espera en nuestro showroom de Hamburgo.",
     "bot.a.lob.rubrik": "Sí — para eso están nuestras {cat}. Cada pieza sale de un taller que construye para décadas, y la hemos revisado y restaurado:",
