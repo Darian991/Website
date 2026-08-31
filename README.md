@@ -110,6 +110,13 @@ Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
   über die man streiten kann, keine Tatsachen.
 * `botAnswer()` — die Reihenfolge der Prüfungen: Produktname, Superlativ,
   Budget, Thema, Rubrik, Volltextsuche, Rückfall.
+* `BOT_MARKER` — häufige Funktionswörter je Sprache. Daran erkennt der
+  Berater, in welcher Sprache gefragt wird, und antwortet in dieser Sprache
+  — auch wenn die Seite auf eine andere eingestellt ist. Preise, Rubriken
+  und Zustandsangaben folgen mit. Wörter, die in mehreren Sprachen
+  vorkommen, zählen entsprechend weniger; Umlaute, ñ und ¿ geben zusätzlich
+  den Ausschlag. Ist eine Eingabe zu kurz für ein sicheres Urteil, bleibt es
+  bei der Sprache des laufenden Gesprächs, sonst bei der der Seite.
 
 Ein echtes Sprachmodell wäre der nächste Schritt, braucht aber einen kleinen
 Server: Ein API-Schlüssel darf niemals in einer statischen Seite stehen, weil

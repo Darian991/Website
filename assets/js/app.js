@@ -7,20 +7,20 @@
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-const euro = (n) =>
-  new Intl.NumberFormat(langLocale(), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+const euro = (n, lang) =>
+  new Intl.NumberFormat(langLocale(lang), { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
 
 /* Vergleichbare Schreibweise: Kleinbuchstaben, ohne Akzente */
 const normalize = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
 /* Durchsucht Name, Kategorie, Material und Beschreibung */
-function searchProducts(query) {
+function searchProducts(query, lang) {
   const words = normalize(query).split(/\s+/).filter(Boolean);
   if (!words.length) return [];
   return PRODUCTS.filter((p) => {
-    const x = pt(p);
+    const x = pt(p, lang);
     const haystack = normalize([
-      p.name, t("cat." + p.categoryKey), x.short, x.description,
+      p.name, t("cat." + p.categoryKey, null, lang), x.short, x.description,
       x.material, x.origin, (x.colors || []).join(" ")
     ].join(" "));
     return words.every((w) => haystack.includes(w));

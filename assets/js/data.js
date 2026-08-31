@@ -706,8 +706,8 @@ const PRODUCTS = [
 const bestand = (product) => (product.used ? 1 : 99);
 
 /* Liefert die Texte eines Produkts in der aktiven Sprache. */
-function pt(product) {
-  return (product.t && (product.t[getLang()] || product.t.de)) || {};
+function pt(product, lang) {
+  return (product.t && (product.t[lang] || product.t[getLang()] || product.t.de)) || {};
 }
 
 /* Farbfelder mit übersetzten Namen */

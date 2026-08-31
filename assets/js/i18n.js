@@ -1352,14 +1352,16 @@ function setLang(code) {
   location.reload();
 }
 
-function langLocale() {
-  const l = LANGS.find((x) => x.code === getLang());
+function langLocale(lang) {
+  const l = LANGS.find((x) => x.code === (lang || getLang()));
   return l ? l.locale : "de-DE";
 }
 
-/* Übersetzt einen Schlüssel; {platzhalter} werden ersetzt. */
-function t(key, vars) {
-  const dict = I18N[getLang()] || I18N.de;
+/* Übersetzt einen Schlüssel; {platzhalter} werden ersetzt.
+   Mit „lang“ lässt sich eine andere Sprache als die eingestellte wählen —
+   der Berater antwortet damit in der Sprache der Frage. */
+function t(key, vars, lang) {
+  const dict = (lang && I18N[lang]) || I18N[getLang()] || I18N.de;
   let str = dict[key];
   if (str === undefined) str = (I18N.de[key] !== undefined ? I18N.de[key] : key);
   if (vars) {

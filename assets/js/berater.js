@@ -83,12 +83,57 @@ function botBudget(text) {
 
 const botEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-const botCond = (p) => (p.grade ? t("grade." + p.grade) : t("cond.used"));
+/* ---------- In welcher Sprache wird gefragt? ----------
+   Kunden schreiben nicht immer in der Sprache, die oben eingestellt ist.
+   Erkannt wird an häufigen Funktionswörtern; wer in mehreren Sprachen
+   vorkommt („la“, „no“, „que“), zählt entsprechend weniger. */
+const BOT_MARKER = {
+  de: ["ist", "sind", "der", "die", "das", "und", "ich", "wie", "was", "wo", "wer", "haben", "habt", "kann", "koennen", "bitte", "danke", "nicht", "gibt", "mit", "fuer", "auf", "noch", "ein", "eine", "einen", "sie", "mir", "mich", "euch", "kostet", "wieviel", "viel", "gebraucht", "auch", "aber", "oder", "sehr", "bei", "von", "zum", "gut"],
+  en: ["is", "are", "the", "and", "i", "how", "what", "where", "who", "do", "does", "can", "could", "please", "thanks", "thank", "not", "there", "with", "for", "on", "an", "you", "me", "my", "cost", "costs", "much", "used", "also", "but", "or", "very", "at", "from", "to", "have", "has", "it"],
+  fr: ["est", "sont", "le", "la", "les", "et", "je", "comment", "quoi", "ou", "qui", "avez", "avoir", "peut", "puis", "pouvez", "merci", "pas", "il", "avec", "pour", "sur", "un", "une", "vous", "moi", "prix", "coute", "combien", "aussi", "mais", "tres", "de", "du", "des", "ce", "cette", "quel", "quelle", "est-ce"],
+  es: ["es", "son", "el", "la", "los", "las", "y", "yo", "como", "que", "donde", "quien", "tiene", "tienen", "puedo", "puede", "gracias", "favor", "no", "hay", "con", "para", "sobre", "un", "una", "usted", "precio", "cuesta", "cuanto", "tambien", "pero", "muy", "del", "esta", "este", "esa", "algun", "alguna"]
+};
+
+/* Wörter, die nur in einer Sprache vorkommen, wiegen am schwersten */
+const BOT_MARKER_GEWICHT = (() => {
+  const zaehler = {};
+  Object.keys(BOT_MARKER).forEach((l) => BOT_MARKER[l].forEach((w) => { zaehler[w] = (zaehler[w] || 0) + 1; }));
+  const tabelle = {};
+  Object.keys(BOT_MARKER).forEach((l) => {
+    tabelle[l] = {};
+    BOT_MARKER[l].forEach((w) => { tabelle[l][w] = 1 / zaehler[w]; });
+  });
+  return tabelle;
+})();
+
+function botSprache(frage) {
+  const roh = String(frage || "");
+  const woerter = normalize(roh).split(/[^a-z0-9-]+/).filter(Boolean);
+  if (woerter.length < 2) return null;
+
+  const punkte = { de: 0, en: 0, fr: 0, es: 0 };
+  woerter.forEach((w) => {
+    Object.keys(punkte).forEach((l) => { punkte[l] += BOT_MARKER_GEWICHT[l][w] || 0; });
+  });
+  // Schriftzeichen sind ein starkes Indiz, das kein Funktionswort schlägt
+  if (/[äöüß]/i.test(roh)) punkte.de += 1.5;
+  if (/[ñ¿¡]/i.test(roh)) punkte.es += 1.5;
+  if (/[çœ]|’|qu'/i.test(roh)) punkte.fr += 1;
+
+  const rang = Object.keys(punkte).sort((a, b) => punkte[b] - punkte[a]);
+  const erster = punkte[rang[0]], zweiter = punkte[rang[1]];
+  if (erster < 1 || erster < zweiter * 1.4) return null;
+  return I18N[rang[0]] ? rang[0] : null;
+}
+
+const botCond = (p, lang) => (p.grade ? t("grade." + p.grade, null, lang) : t("cond.used", null, lang));
 
 /* ---------- Die eigentliche Antwort ---------- */
-function botAnswer(frage) {
+function botAnswer(frage, lang) {
+  const bt = (key, vars) => t(key, vars, lang);
+  const beuro = (n) => euro(n, lang);
   const q = normalize(frage).trim();
-  if (!q) return { text: t("bot.a.fallback") };
+  if (!q) return { lang, text: bt("bot.a.fallback") };
 
   const gelobt = BOT_LOB_WORDS.some((w) => botHit(q, w)) ||
     (botHit(q, "schon") && !BOT_SCHON_AUS.some((w) => botHit(q, w)));
@@ -106,8 +151,8 @@ function botAnswer(frage) {
     if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
   }
   const festeAuskunft = () => {
-    const vars = { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) };
-    const antwort = { text: t("bot.a." + beste.key, vars) };
+    const vars = { code: GUTSCHEIN.code, betrag: beuro(GUTSCHEIN.betrag) };
+    const antwort = { lang, text: bt("bot.a." + beste.key, vars) };
     if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
     if (beste.key === "used" || beste.key === "stock") antwort.all = true;
     return antwort;
@@ -120,14 +165,16 @@ function botAnswer(frage) {
     const p = genannt[0];
     if (gelobt) {
       return {
-        text: t("bot.a.lob.produkt", { name: p.name, short: pt(p).short, cond: botCond(p) }),
+        lang,
+        text: bt("bot.a.lob.produkt", { name: p.name, short: pt(p, lang).short, cond: botCond(p, lang) }),
         products: [p]
       };
     }
     if (fragtNachAngaben) {
-      const x = pt(p);
+      const x = pt(p, lang);
       return {
-        text: t("bot.a.spec", { name: p.name, dimensions: x.dimensions, weight: p.weight, material: x.material, origin: x.origin }),
+        lang,
+        text: bt("bot.a.spec", { name: p.name, dimensions: x.dimensions, weight: p.weight, material: x.material, origin: x.origin }),
         products: [p]
       };
     }
@@ -135,21 +182,22 @@ function botAnswer(frage) {
     // die Auskunft hören und nicht den Preis vorgelesen bekommen.
     if (beste && beste.punkte >= 5) return festeAuskunft();
     return {
-      text: t("bot.a.price.one", { name: p.name, price: euro(p.price), cond: botCond(p) }),
+      lang,
+      text: bt("bot.a.price.one", { name: p.name, price: beuro(p.price), cond: botCond(p, lang) }),
       products: [p]
     };
   }
-  if (genannt.length > 1) return { text: t("bot.a.found"), products: genannt };
+  if (genannt.length > 1) return { lang, text: bt("bot.a.found"), products: genannt };
 
   /* 2. Superlative */
   const sortiert = [...PRODUCTS].sort((a, b) => a.price - b.price);
   if (BOT_CHEAP_WORDS.some((w) => botHit(q, w))) {
     const p = sortiert[0];
-    return { text: t("bot.a.cheapest", { name: p.name, price: euro(p.price) }), products: [p] };
+    return { lang, text: bt("bot.a.cheapest", { name: p.name, price: beuro(p.price) }), products: [p] };
   }
   if (BOT_DEAR_WORDS.some((w) => botHit(q, w))) {
     const p = sortiert[sortiert.length - 1];
-    return { text: t("bot.a.dearest", { name: p.name, price: euro(p.price) }), products: [p] };
+    return { lang, text: bt("bot.a.dearest", { name: p.name, price: beuro(p.price) }), products: [p] };
   }
 
   /* 3. Rubrik erkannt? (wird gleich für Budget und Rubrikliste gebraucht) */
@@ -161,7 +209,7 @@ function botAnswer(frage) {
   /* 3b. Eigenschaftsfrage zu einer ganzen Rubrik */
   if (gelobt && rubrik) {
     const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
-    return { text: t("bot.a.lob.rubrik", { cat: t("cat." + rubrik) }), products: treffer.slice(0, 5) };
+    return { lang, text: bt("bot.a.lob.rubrik", { cat: bt("cat." + rubrik) }), products: treffer.slice(0, 5) };
   }
 
   /* 4. Budget */
@@ -172,11 +220,12 @@ function botAnswer(frage) {
     const treffer = pool.filter((p) => p.price <= grenze).sort((a, b) => b.price - a.price);
     if (treffer.length) {
       const schluessel = treffer.length === 1 ? "bot.a.budget.one" : "bot.a.budget";
-      return { text: t(schluessel, { max: euro(grenze), n: treffer.length }), products: treffer.slice(0, 5) };
+      return { lang, text: bt(schluessel, { max: beuro(grenze), n: treffer.length }), products: treffer.slice(0, 5) };
     }
     const billigste = [...pool].sort((a, b) => a.price - b.price)[0] || sortiert[0];
     return {
-      text: t("bot.a.budget.none", { max: euro(grenze), name: billigste.name, price: euro(billigste.price) }),
+      lang,
+      text: bt("bot.a.budget.none", { max: beuro(grenze), name: billigste.name, price: beuro(billigste.price) }),
       products: [billigste]
     };
   }
@@ -187,20 +236,20 @@ function botAnswer(frage) {
   /* 6. Rubrik ohne Budget */
   if (rubrik) {
     const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
-    const cat = t("cat." + rubrik);
-    if (!treffer.length) return { text: t("bot.a.cat.none", { cat }), all: true };
+    const cat = bt("cat." + rubrik);
+    if (!treffer.length) return { lang, text: bt("bot.a.cat.none", { cat }), all: true };
     const schluessel = treffer.length === 1 ? "bot.a.cat.one" : "bot.a.cat";
-    return { text: t(schluessel, { cat, n: treffer.length }), products: treffer.slice(0, 5) };
+    return { lang, text: bt(schluessel, { cat, n: treffer.length }), products: treffer.slice(0, 5) };
   }
 
   /* 7. Volltextsuche über die Kollektion */
-  const gefunden = searchProducts(frage).slice(0, 5);
-  if (gefunden.length) return { text: t("bot.a.found"), products: gefunden };
+  const gefunden = searchProducts(frage, lang).slice(0, 5);
+  if (gefunden.length) return { lang, text: bt("bot.a.found"), products: gefunden };
 
   /* 8. Eigenschaftsfrage ohne erkennbaren Bezug */
-  if (gelobt) return { text: t("bot.a.lob.allgemein"), all: true };
+  if (gelobt) return { lang, text: bt("bot.a.lob.allgemein"), all: true };
 
-  return { text: t("bot.a.fallback"), contact: true, all: true };
+  return { lang, text: bt("bot.a.fallback"), contact: true, all: true };
 }
 
 /* ---------- Oberfläche ---------- */
@@ -268,10 +317,16 @@ function initBerater() {
 
   const scrollDown = () => { log.scrollTop = log.scrollHeight; };
 
-  function blase(rolle, inhaltHtml) {
+  /* Die Sprache des Gesprächs: erkannt an der Frage, sonst die zuletzt
+     erkannte — sonst die eingestellte. So bleibt ein französisches Gespräch
+     französisch, auch wenn eine kurze Rückfrage kein Merkmal enthält. */
+  let gespraechsSprache = null;
+
+  function blase(rolle, inhaltHtml, lang) {
     const el = document.createElement("div");
     el.className = "bot__msg bot__msg--" + rolle;
-    el.innerHTML = `<span class="bot__who">${botEsc(rolle === "you" ? t("bot.you") : t("bot.name"))}</span>${inhaltHtml}`;
+    const wer = rolle === "you" ? t("bot.you", null, lang) : t("bot.name", null, lang);
+    el.innerHTML = `<span class="bot__who">${botEsc(wer)}</span>${inhaltHtml}`;
     log.appendChild(el);
     scrollDown();
     return el;
@@ -280,17 +335,18 @@ function initBerater() {
   const sag = (text) => blase("bot", `<p>${botEsc(text)}</p>`);
 
   function antwortHtml(a) {
+    const l = a.lang;
     let html = `<p>${botEsc(a.text)}</p>`;
     if (a.products && a.products.length) {
       html += `<ul class="bot__list">` + a.products.map((p) => `
         <li><a href="produkt.html?id=${encodeURIComponent(p.id)}" data-bot-link>
-          <span>${botEsc(p.name)}</span><em>${botEsc(euro(p.price))}</em>
-          <small>${botEsc(t("cat." + p.categoryKey))} · ${botEsc(botCond(p))}</small>
+          <span>${botEsc(p.name)}</span><em>${botEsc(euro(p.price, l))}</em>
+          <small>${botEsc(t("cat." + p.categoryKey, null, l))} · ${botEsc(botCond(p, l))}</small>
         </a></li>`).join("") + `</ul>`;
     }
     const links = [];
-    if (a.all) links.push(`<a href="kollektion.html" data-bot-link>${botEsc(t("bot.cta.all"))}</a>`);
-    if (a.contact) links.push(`<a href="kontakt.html" data-bot-link>${botEsc(t("bot.cta.contact"))}</a>`);
+    if (a.all) links.push(`<a href="kollektion.html" data-bot-link>${botEsc(t("bot.cta.all", null, l))}</a>`);
+    if (a.contact) links.push(`<a href="kontakt.html" data-bot-link>${botEsc(t("bot.cta.contact", null, l))}</a>`);
     if (links.length) html += `<p class="bot__cta">${links.join("")}</p>`;
     return html;
   }
@@ -299,15 +355,17 @@ function initBerater() {
   function frage(text) {
     const sauber = text.trim().slice(0, 300);
     if (!sauber) return;
-    blase("you", `<p>${botEsc(sauber)}</p>`);
+    const lang = botSprache(sauber) || gespraechsSprache || getLang();
+    gespraechsSprache = lang;
+    blase("you", `<p>${botEsc(sauber)}</p>`, lang);
     input.value = "";
     if (denkt) denkt.remove();
-    denkt = blase("bot", `<p class="bot__typing"><i></i><i></i><i></i><span class="sr-only">${botEsc(t("bot.typing"))}</span></p>`);
+    denkt = blase("bot", `<p class="bot__typing"><i></i><i></i><i></i><span class="sr-only">${botEsc(t("bot.typing", null, lang))}</span></p>`, lang);
     const wartezeit = 260 + Math.min(500, sauber.length * 9);
     setTimeout(() => {
       if (denkt) { denkt.remove(); denkt = null; }
-      const a = botAnswer(sauber);
-      blase("bot", antwortHtml(a));
+      const a = botAnswer(sauber, lang);
+      blase("bot", antwortHtml(a), a.lang);
     }, wartezeit);
   }
 
