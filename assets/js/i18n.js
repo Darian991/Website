@@ -19,6 +19,10 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.spec": "{name} — Maße {dimensions}, Gewicht {weight}. Material: {material}. Herkunft: {origin}.",
+    "bot.a.lob.produkt": "Ja, unbedingt. {name}: {short} Das Stück ist geprüft und aufbereitet, Zustand: {cond}. Am besten setzen Sie sich einmal selbst hinein — im Showroom in Hamburg steht es für Sie bereit.",
+    "bot.a.lob.rubrik": "Ja — dafür stehen unsere {cat}. Jedes Stück kommt aus einer Werkstatt, die für Jahrzehnte baut, und wurde von uns geprüft und aufbereitet:",
+    "bot.a.lob.allgemein": "Ja. Wir nehmen nur Stücke in die Kollektion, hinter denen wir stehen: gute Materialien, saubere Verarbeitung, geprüft und aufbereitet. Sagen Sie mir, welches Stück Sie interessiert — dann werde ich konkret.",
     /* ---- Berater (bot) ---- */
     "bot.launch": "Fragen? Ich antworte sofort",
     "bot.open": "Berater öffnen",
@@ -339,6 +343,10 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    "bot.a.spec": "{name} — dimensions {dimensions}, weight {weight}. Material: {material}. Origin: {origin}.",
+    "bot.a.lob.produkt": "Yes, very much so. {name}: {short} The piece is checked and refurbished, condition: {cond}. Best of all, try it yourself — it is waiting for you in our Hamburg showroom.",
+    "bot.a.lob.rubrik": "Yes — that is what our {cat} are there for. Every piece comes from a workshop that builds for decades, and we have checked and refurbished it:",
+    "bot.a.lob.allgemein": "Yes. We only take pieces into the collection that we stand behind: good materials, clean workmanship, checked and refurbished. Tell me which piece you have in mind and I will be specific.",
     /* ---- Berater (bot) ---- */
     "bot.launch": "Questions? I answer right away",
     "bot.open": "Open the advisor",
@@ -659,6 +667,10 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "bot.a.spec": "{name} — dimensions {dimensions}, poids {weight}. Matière : {material}. Provenance : {origin}.",
+    "bot.a.lob.produkt": "Oui, tout à fait. {name} : {short} La pièce est contrôlée et remise en état, état : {cond}. Le mieux est de l’essayer vous-même — elle vous attend dans notre showroom de Hambourg.",
+    "bot.a.lob.rubrik": "Oui — c’est bien pour cela que nos {cat} sont là. Chaque pièce sort d’un atelier qui construit pour des décennies, et nous l’avons contrôlée et remise en état :",
+    "bot.a.lob.allgemein": "Oui. Nous ne prenons dans la collection que des pièces que nous assumons : de bonnes matières, une finition soignée, contrôlées et remises en état. Dites-moi quelle pièce vous intéresse et je serai précis.",
     /* ---- Berater (bot) ---- */
     "bot.launch": "Des questions ? Je réponds tout de suite",
     "bot.open": "Ouvrir le conseiller",
@@ -979,6 +991,10 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "bot.a.spec": "{name} — medidas {dimensions}, peso {weight}. Material: {material}. Procedencia: {origin}.",
+    "bot.a.lob.produkt": "Sí, sin duda. {name}: {short} La pieza está revisada y restaurada, estado: {cond}. Lo mejor es que la pruebe usted mismo — le espera en nuestro showroom de Hamburgo.",
+    "bot.a.lob.rubrik": "Sí — para eso están nuestras {cat}. Cada pieza sale de un taller que construye para décadas, y la hemos revisado y restaurado:",
+    "bot.a.lob.allgemein": "Sí. Solo incorporamos a la colección piezas que respaldamos: buenos materiales, acabado limpio, revisadas y restauradas. Dígame qué pieza le interesa y le doy detalles.",
     /* ---- Berater (bot) ---- */
     "bot.launch": "¿Preguntas? Respondo al momento",
     "bot.open": "Abrir el asesor",

@@ -98,6 +98,16 @@ Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
   Ein Stichwort trifft am Wortanfang. Die Antwort steht unter `bot.a.<thema>`
   in `assets/js/i18n.js` und muss in allen vier Sprachen vorhanden sein.
 * `BOT_CATEGORIES` — Alltagswörter je Rubrik („couch“ → Sofas).
+* `BOT_LOB_WORDS` — Fragen nach einer Eigenschaft („bequem“, „hochwertig“,
+  „lohnt sich“). Darauf antwortet der Berater bejahend und wirbt für das
+  Stück. Das ist Verkauf und bewusst so gewollt.
+  **Nicht** bejaht werden Fragen nach nachprüfbaren Tatsachen — Zustand,
+  Baujahr, Maße, Material, Preis, Verfügbarkeit. Die laufen weiter über die
+  echten Angaben aus `PRODUCTS`. Ein erfundenes „Ja“ auf „ist das neu?“ oder
+  „ist das echtes Leder?“ wäre eine Falschangabe gegenüber Kundinnen und
+  Kunden — nach deutschem Recht abmahnfähig und ein Grund zur Rückabwicklung.
+  Wer weitere Lobwörter aufnimmt, sollte deshalb nur Eigenschaften ergänzen,
+  über die man streiten kann, keine Tatsachen.
 * `botAnswer()` — die Reihenfolge der Prüfungen: Produktname, Superlativ,
   Budget, Thema, Rubrik, Volltextsuche, Rückfall.
 

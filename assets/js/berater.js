@@ -25,13 +25,13 @@ const BOT_INTENTS = [
   { key: "voucher", words: ["gutschein", "rabatt", "code", "voucher", "discount", "coupon", "promo", "bon de", "reduction", "cupon", "descuento"] },
   { key: "showroom", words: ["showroom", "laden", "geschaft", "adresse", "offnungs", "geoffnet", "hamburg", "vorbei", "besuch", "address", "opening", "open ", "visit", "store", "adresse", "horaire", "ouvert", "visiter", "direccion", "horario", "abierto", "visitar", "tienda"] },
   { key: "contact", words: ["kontakt", "telefon", "anrufen", "erreich", "mail", "termin", "beratung", "berater", "mensch", "mitarbeit", "contact", "phone", "call ", "appointment", "advice", "human", "telefono", "cita", "asesor", "rendez"] },
-  { key: "used", words: ["gebraucht", "second", "zweiter hand", "zustand", "vorbesitz", "neu ", "abgenutzt", "kratzer", "pre-owned", "preowned", "used", "condition", "occasion", "seconde main", "etat", "segunda mano", "estado", "usado"] },
+  { key: "used", words: ["gebraucht", "second", "zweiter hand", "zustand", "vorbesitz", "neu", "abgenutzt", "kratzer", "pre-owned", "preowned", "used", "condition", "occasion", "seconde main", "etat", "segunda mano", "estado", "usado"] },
   { key: "care", words: ["pflege", "reinig", "putzen", "leder", "holz", "stoff", "material", "care", "clean", "leather", "wood", "fabric", "entretien", "cuir", "bois", "tissu", "matiere", "cuidado", "limpi", "cuero", "madera", "tejido"] },
   { key: "sustain", words: ["nachhalt", "umwelt", "okolog", "klima", "kreislauf", "sustain", "environment", "ecolog", "circular", "durable", "durabilit", "sostenib", "medio ambiente"] },
-  { key: "stock", words: ["verfugbar", "vorratig", "lager", "sofort", "wie viele", "noch da", "available", "stock", "in store", "how many", "disponib", "combien reste", "cuantas quedan"] },
+  { key: "stock", words: ["verfugbar", "vorratig", "lager", "sofort", "wie viele", "noch da", "noch zu haben", "verkauft", "vergriffen", "available", "stock", "in store", "how many", "sold", "disponib", "combien reste", "vendu", "cuantas quedan", "vendido"] },
   { key: "cart", words: ["warenkorb", "korb", "bestell", "kaufen", "reservier", "cart", "basket", "order", "buy", "checkout", "reserve", "panier", "commande", "acheter", "cesta", "pedido", "comprar"] },
   { key: "lang", words: ["sprache", "deutsch", "englisch", "franzosisch", "spanisch", "language", "english", "german", "french", "spanish", "langue", "idioma", "espanol"] },
-  { key: "sizes", words: ["mase", "grose", "abmess", "breite", "hohe", "tiefe", "gewicht", "zentimeter", "dimension", "size", "width", "height", "depth", "weight", "taille", "largeur", "hauteur", "poids", "medida", "tamano", "ancho", "alto", "peso"] }
+  { key: "sizes", words: ["mase", "gros", "abmess", "breit", "hoh", "hoch", "tief", "gewicht", "schwer", "zentimeter", "passt in", "dimension", "size", "width", "wide", "height", "tall", "depth", "deep", "weight", "heavy", "how big", "taille", "largeur", "large", "hauteur", "haut", "profond", "poids", "lourd", "medida", "mide", "tamano", "ancho", "alto", "profund", "peso", "pesa"] }
 ];
 
 /* Rubriken samt Alltagswörtern, die Kundinnen und Kunden tippen */
@@ -45,6 +45,28 @@ const BOT_CATEGORIES = {
   betten: ["bett", "betten", "bed ", "beds", "schlaf", "lit ", "cama"],
   accessoires: ["accessoire", "accessory", "accessories", "teppich", "spiegel", "rug", "mirror", "tapis", "miroir", "alfombra", "espejo"]
 };
+
+/* Fragen nach einer Eigenschaft — bequem, hochwertig, schön, lohnt sich.
+   Darauf antwortet der Berater bejahend: Das ist Verkauf, keine Behauptung
+   über nachprüfbare Tatsachen. Fragen nach Zustand, Alter, Maß oder Material
+   laufen weiterhin über die echten Angaben und werden nicht schöngeredet. */
+const BOT_LOB_WORDS = [
+  "bequem", "gemutlich", "komfortabel", "hochwertig", "qualitat", "gute", "guter", "gutes",
+  "schone", "stabil", "robust", "haltbar", "langlebig", "wertig", "elegant", "weich",
+  "angenehm", "lohnt", "empfehl", "zufrieden", "taugt", "wirklich so gut",
+  "comfortable", "comfy", "cosy", "cozy", "quality", "sturdy", "durable", "beautiful",
+  "nice", "worth", "recommend", "well made",
+  "confortable", "moelleux", "solide", "qualite", "recommand", "vaut", "agreable", "belle",
+  "comodo", "comoda", "calidad", "resistente", "duradero", "bonito", "bonita", "merece",
+  "recomend", "agradable"
+];
+
+/* „schön“ wird ohne Umlaut zu „schon“ — und das heißt auch „bereits“.
+   Als Lob zählt es nur, wenn nicht nach dem Verbleib gefragt wird. */
+const BOT_SCHON_AUS = ["verkauft", "weg", "vergeben", "bestellt", "versendet", "reserviert", "sold", "gone", "vendu", "vendido"];
+
+/* Fragen nach Maßen oder Material werden nicht gelobt, sondern beantwortet */
+const BOT_SPEC_WORDS = ["material", "matiere", "materia", "woraus", "besteht", "made of", "made from"];
 
 const BOT_LIMIT_WORDS = ["unter", "bis", "hochstens", "maximal", "max", "weniger", "budget", "billiger", "gunstiger", "under", "below", "less", "up to", "cheaper", "moins", "sous", "jusqu", "menos", "hasta", "presupuesto", "barato"];
 const BOT_CHEAP_WORDS = ["gunstigst", "billigst", "preiswertest", "cheapest", "least expensive", "moins cher", "mas barat", "economic"];
@@ -68,10 +90,50 @@ function botAnswer(frage) {
   const q = normalize(frage).trim();
   if (!q) return { text: t("bot.a.fallback") };
 
+  const gelobt = BOT_LOB_WORDS.some((w) => botHit(q, w)) ||
+    (botHit(q, "schon") && !BOT_SCHON_AUS.some((w) => botHit(q, w)));
+
+  /* Welche feste Auskunft passt? Das längste Stichwort gewinnt. */
+  const intentTreffer = (key) => {
+    const intent = BOT_INTENTS.find((i) => i.key === key);
+    let punkte = 0;
+    for (const w of intent.words) if (botHit(q, w)) punkte = Math.max(punkte, w.trim().length);
+    return punkte;
+  };
+  let beste = null;
+  for (const intent of BOT_INTENTS) {
+    const punkte = intentTreffer(intent.key);
+    if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
+  }
+  const festeAuskunft = () => {
+    const vars = { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) };
+    const antwort = { text: t("bot.a." + beste.key, vars) };
+    if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
+    if (beste.key === "used" || beste.key === "stock") antwort.all = true;
+    return antwort;
+  };
+  const fragtNachAngaben = intentTreffer("sizes") > 0 || BOT_SPEC_WORDS.some((w) => botHit(q, w));
+
   /* 1. Ein Stück beim Namen genannt */
   const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
   if (genannt.length === 1) {
     const p = genannt[0];
+    if (gelobt) {
+      return {
+        text: t("bot.a.lob.produkt", { name: p.name, short: pt(p).short, cond: botCond(p) }),
+        products: [p]
+      };
+    }
+    if (fragtNachAngaben) {
+      const x = pt(p);
+      return {
+        text: t("bot.a.spec", { name: p.name, dimensions: x.dimensions, weight: p.weight, material: x.material, origin: x.origin }),
+        products: [p]
+      };
+    }
+    // Wer nach Lieferung oder Pflege fragt und dabei ein Stück nennt, will
+    // die Auskunft hören und nicht den Preis vorgelesen bekommen.
+    if (beste && beste.punkte >= 5) return festeAuskunft();
     return {
       text: t("bot.a.price.one", { name: p.name, price: euro(p.price), cond: botCond(p) }),
       products: [p]
@@ -96,6 +158,12 @@ function botAnswer(frage) {
     if (BOT_CATEGORIES[key].some((w) => botHit(q, w))) { rubrik = key; break; }
   }
 
+  /* 3b. Eigenschaftsfrage zu einer ganzen Rubrik */
+  if (gelobt && rubrik) {
+    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    return { text: t("bot.a.lob.rubrik", { cat: t("cat." + rubrik) }), products: treffer.slice(0, 5) };
+  }
+
   /* 4. Budget */
   const grenze = botBudget(q);
   const budgetFrage = grenze >= 100 && (BOT_LIMIT_WORDS.some((w) => botHit(q, w)) || rubrik || /€|euro/.test(q));
@@ -113,20 +181,8 @@ function botAnswer(frage) {
     };
   }
 
-  /* 5. Feste Auskünfte — das längste Stichwort gewinnt */
-  let beste = null;
-  for (const intent of BOT_INTENTS) {
-    let punkte = 0;
-    for (const w of intent.words) if (botHit(q, w)) punkte = Math.max(punkte, w.trim().length);
-    if (punkte && (!beste || punkte > beste.punkte)) beste = { key: intent.key, punkte };
-  }
-  if (beste && beste.punkte >= 3) {
-    const vars = { code: GUTSCHEIN.code, betrag: euro(GUTSCHEIN.betrag) };
-    const antwort = { text: t("bot.a." + beste.key, vars) };
-    if (beste.key === "contact" || beste.key === "showroom") antwort.contact = true;
-    if (beste.key === "used" || beste.key === "stock") antwort.all = true;
-    return antwort;
-  }
+  /* 5. Feste Auskünfte */
+  if (beste && beste.punkte >= 3) return festeAuskunft();
 
   /* 6. Rubrik ohne Budget */
   if (rubrik) {
@@ -140,6 +196,9 @@ function botAnswer(frage) {
   /* 7. Volltextsuche über die Kollektion */
   const gefunden = searchProducts(frage).slice(0, 5);
   if (gefunden.length) return { text: t("bot.a.found"), products: gefunden };
+
+  /* 8. Eigenschaftsfrage ohne erkennbaren Bezug */
+  if (gelobt) return { text: t("bot.a.lob.allgemein"), all: true };
 
   return { text: t("bot.a.fallback"), contact: true, all: true };
 }
