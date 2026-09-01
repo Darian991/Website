@@ -116,6 +116,10 @@ Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
   beim Wetter sagt der Berater freundlich, dass er nicht hinaussehen kann.
   Ein ganzer Satz ohne Bezug zum Laden bekommt `bot.a.smalltalk` statt der
   Verlegenheitsantwort — der Berater bleibt so nie stumm.
+* `BOT_GRUSS` — Grußformeln je Sprache. Sie wiegen bei der Spracherkennung
+  schwerer als Funktionswörter, damit schon ein einzelnes „hola“ oder
+  „bonjour“ die Sprache festlegt. Mehrdeutiges wie „hi“ und „hey“ steht
+  bewusst nicht darin; als ganze Eingabe gelten sie trotzdem als Gruß.
 * `BOT_MARKER` — häufige Funktionswörter je Sprache. Daran erkennt der
   Berater, in welcher Sprache gefragt wird, und antwortet in dieser Sprache
   — auch wenn die Seite auf eine andere eingestellt ist. Preise, Rubriken

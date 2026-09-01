@@ -4208,7 +4208,7 @@ function botHit(text, stem) {
 /* Stichwörter aller vier Sprachen in einem Topf: Wer auf der englischen
    Seite deutsch tippt, bekommt trotzdem eine Antwort. */
 const BOT_INTENTS = [
-  { key: "greeting", words: ["hallo", "guten tag", "guten morgen", "guten abend", "servus", "moin", "hey", "hi ", "hello", "bonjour", "salut", "hola", "buenos dias"] },
+  { key: "greeting", words: ["hallo", "hallochen", "guten tag", "guten morgen", "guten abend", "servus", "moin", "gruss gott", "gruß gott", "gruezi", "tach", "hey", "hi ", "hello", "hiya", "howdy", "good morning", "good afternoon", "good evening", "good day", "bonjour", "bonsoir", "salut", "coucou", "hola", "buenos dias", "buenas tardes", "buenas noches", "buenas", "buen dia"] },
   { key: "thanks", words: ["danke", "dankeschon", "thank", "thanks", "merci", "gracias"] },
   { key: "delivery", words: ["liefer", "versand", "zustell", "transport", "spedition", "delivery", "deliver", "shipping", "ship ", "livrais", "livrer", "envoi", "entrega", "envio", "montage", "aufbau", "assembl", "montaje"] },
   { key: "returns", words: ["ruckgabe", "rucksend", "zuruckgeb", "zuruckschick", "umtausch", "widerruf", "retour", "return", "refund", "devoluc", "devolver", "reembolso"] },
@@ -4312,12 +4312,31 @@ const BOT_MARKER_GEWICHT = (() => {
   return tabelle;
 })();
 
+/* Grußformeln verraten die Sprache im Alleingang: „hola“ ist ein Wort und
+   trotzdem eindeutig. Mehrdeutiges wie „hi“ oder „hey“ steht bewusst nicht
+   hier — dabei bliebe es beim Raten. */
+const BOT_GRUSS = {
+  de: ["hallo", "hallochen", "guten tag", "guten morgen", "guten abend", "servus", "moin", "gruss gott", "gruß gott", "gruezi", "tach", "na ihr"],
+  en: ["hello", "good morning", "good afternoon", "good evening", "good day", "hiya", "howdy"],
+  fr: ["bonjour", "bonsoir", "salut", "coucou"],
+  es: ["hola", "buenos dias", "buenas tardes", "buenas noches", "buenas", "buen dia"]
+};
+
 function botSprache(frage) {
   const roh = String(frage || "");
-  const woerter = normalize(roh).split(/[^a-z0-9-]+/).filter(Boolean);
-  if (woerter.length < 2) return null;
+  const text = normalize(roh);
+  const woerter = text.split(/[^a-z0-9-]+/).filter(Boolean);
 
   const punkte = { de: 0, en: 0, fr: 0, es: 0 };
+
+  /* Ein Gruß wiegt schwerer als jedes Funktionswort — und macht auch eine
+     Eingabe aus einem einzigen Wort eindeutig. */
+  let gegruesst = false;
+  Object.keys(BOT_GRUSS).forEach((l) => {
+    if (BOT_GRUSS[l].some((g) => botHit(text, g))) { punkte[l] += 2.5; gegruesst = true; }
+  });
+  if (woerter.length < 2 && !gegruesst) return null;
+
   woerter.forEach((w) => {
     Object.keys(punkte).forEach((l) => { punkte[l] += BOT_MARKER_GEWICHT[l][w] || 0; });
   });
@@ -4371,6 +4390,13 @@ function botAnswer(frage, lang) {
     return antwort;
   };
   const fragtNachAngaben = intentTreffer("sizes") > 0 || BOT_SPEC_WORDS.some((w) => botHit(q, w));
+
+  /* „hi“, „hey“, „yo“ — zu kurz, um sie irgendwo im Satz zu suchen, aber
+     als ganze Eingabe unmissverständlich ein Gruß. */
+  if (["hi", "hey", "yo", "hoi", "jo", "hallo", "hola", "salut", "hello"].indexOf(q.replace(/[^a-z]/g, "")) > -1) {
+    beste = { key: "greeting", punkte: 9 };
+    return festeAuskunft();
+  }
 
   /* 1. Ein Stück beim Namen genannt */
   const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
@@ -4456,7 +4482,8 @@ function botAnswer(frage, lang) {
   }
 
   /* 7. Volltextsuche über die Kollektion */
-  const gefunden = searchProducts(frage, lang).slice(0, 5);
+  const langGenug = q.split(/[^a-z0-9]+/).some((w) => w.length >= 3);
+  const gefunden = langGenug ? searchProducts(frage, lang).slice(0, 5) : [];
   if (gefunden.length) return { lang, text: bt("bot.a.found"), products: gefunden };
 
   /* 8. Eigenschaftsfrage ohne erkennbaren Bezug */
