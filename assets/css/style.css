@@ -329,7 +329,7 @@ noscript .footer p { max-width: 60ch; }
 }
 .search__item:hover { background: var(--paper-2); }
 .search__thumb { display: block; aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--paper-2); }
-.search__thumb svg { width: 100%; height: 100%; object-fit: cover; }
+.search__thumb svg, .search__thumb img { width: 100%; height: 100%; object-fit: cover; }
 .search__text { display: grid; gap: .1rem; min-width: 0; }
 .search__cat { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 .search__name { font-size: .98rem; color: var(--ink); }
@@ -644,6 +644,7 @@ noscript .footer p { max-width: 60ch; }
 .pdp__thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; }
 .pdp__thumbs button { border: 1px solid var(--line); background: var(--paper-2); padding: 0; border-radius: var(--radius); overflow: hidden; cursor: pointer; aspect-ratio: 1/1; transition: border-color var(--t); }
 .pdp__thumbs button.is-active, .pdp__thumbs button:hover { border-color: var(--brass); }
+.pdp__thumbs button svg, .pdp__thumbs button img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pdp__info { position: sticky; top: 110px; }
 .price { font-size: 1.35rem; font-weight: 300; color: var(--ink); margin: .4rem 0 1.4rem; }
 .divider { height: 1px; background: var(--line); margin: 2rem 0; border: 0; }
@@ -675,7 +676,7 @@ noscript .footer p { max-width: 60ch; }
 .cart-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
 .cart-item { display: grid; grid-template-columns: 110px 1fr auto; gap: 1.4rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); align-items: center; }
 .cart-item__media { aspect-ratio: 1/1; background: var(--paper-2); border-radius: var(--radius); overflow: hidden; }
-.cart-item__media svg { width: 100%; height: 100%; object-fit: cover; }
+.cart-item__media svg, .cart-item__media img { width: 100%; height: 100%; object-fit: cover; }
 .cart-item__title { font-size: 1rem; color: var(--ink); }
 .cart-item__meta { font-size: .8rem; color: var(--muted); }
 .cart-item__remove { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; padding: 0; margin-top: .5rem; transition: color var(--t); }

@@ -185,9 +185,31 @@ Erst damit sind echte Unschärfe, ein Lichtschacht aus dem Fenster, eine
 Spiegelung im Parkett und Staub im Licht möglich. Der Raum wird einmal in
 einen Zwischenspeicher gezeichnet; pro Bild kommen nur Staub und Korn hinzu.
 Die Bewegung ruht, sobald das Bild aus dem Sichtfeld scrollt, und entfällt
-ganz, wenn im Betriebssystem weniger Bewegung eingestellt ist. Sobald echte Fotos vorliegen, lassen sie sich
-ersetzen: in `productCard()` (app.js) und auf der Produktseite `artFor(p)` durch
-ein `<img src="…" alt="…">` austauschen.
+ganz, wenn im Betriebssystem weniger Bewegung eingestellt ist.
+
+### Echte Fotos statt Zeichnung
+
+Ein Produkt mit einem Feld `photos` zeigt Fotos statt der Zeichnung:
+
+```js
+photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", …]
+```
+
+`artFor()` gibt dann ein `<img>` zurück, und alle Stellen erben das
+automatisch: Karte, Suche, Warenkorb und die Galerie der Produktseite. Die
+Galerie richtet sich nach der Länge der Strecke, nicht mehr nach den vier
+gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
+das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
+Motiv stellen.
+
+Die Dateien liegen in `assets/img/`. Sinnvoll sind höchstens 1200 px an der
+langen Kante bei Qualität 82 — `tools/build.js` bettet sie als Daten-URI in
+`preview.html` ein, und diese eine Datei soll handlich bleiben.
+
+**Vor der Veröffentlichung**: Produktfotos brauchen ein Nutzungsrecht. Fotos
+von Herstellern und Händlern sind urheberrechtlich geschützt, auch wenn sie
+im Netz frei zu finden sind. Eigene Aufnahmen der tatsächlich angebotenen
+Stücke sind bei gebrauchter Ware ohnehin der bessere Verkaufsweg.
 
 ## Ohne JavaScript
 
@@ -209,7 +231,9 @@ Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
 * **Rechtstexte**: Impressum, Datenschutzerklärung, AGB und Widerrufsbelehrung
   sind in der Fußzeile verlinkt, aber noch nicht geschrieben — in Deutschland
   sind sie für einen Shop Pflicht.
-* **Fotos**: echte Produktfotos statt der SVG-Illustrationen.
+* **Fotos**: echte Produktfotos statt der SVG-Illustrationen. Ein Stück
+  (PH Artichoke) hat bereits eine Fotostrecke; für die übrigen fehlen sie.
+  Das Nutzungsrecht an jedem Foto muss vorher geklärt sein.
 * **Berater mit Sprachmodell**: heute beantwortet er Fragen aus den eigenen
   Daten. Für freie Antworten braucht es ein Backend mit API-Schlüssel.
 

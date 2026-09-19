@@ -105,9 +105,9 @@ function renderPdp() {
           <span class="gallery__count" id="gal-count" aria-live="polite"></span>
         </div>
         <div class="pdp__thumbs" id="pdp-thumbs">
-          ${VIEWS.map((v, i) => `
+          ${ansichten(p).map((v, i) => `
             <button data-view="${i}" class="${i === chosenView ? "is-active" : ""}"
-                    aria-label="${t("view." + v.key)}" title="${t("view." + v.key)}"
+                    aria-label="${v.label}" title="${v.label}"
                     >${artFor(p, chosenColorIndex, i)}</button>`).join("")}
         </div>
       </div>
@@ -178,11 +178,12 @@ function renderPdp() {
      Ausführung. Bedienbar über die kleinen Bilder, die Pfeile und die
      Pfeiltasten der Tastatur. */
   function zeigeAnsicht(index) {
-    chosenView = (index + VIEWS.length) % VIEWS.length;
+    const anzahl = ansichten(current).length;
+    chosenView = (index + anzahl) % anzahl;
     $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView);
     $$("#pdp-thumbs button").forEach((b) =>
       b.classList.toggle("is-active", Number(b.dataset.view) === chosenView));
-    $("#gal-count").textContent = t("gallery.count", { n: chosenView + 1, m: VIEWS.length });
+    $("#gal-count").textContent = t("gallery.count", { n: chosenView + 1, m: anzahl });
   }
 
   function chooseColor(index) {

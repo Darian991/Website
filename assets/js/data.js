@@ -337,6 +337,12 @@ function luminance(hex) {
    Helle Möbel stehen dabei in einem dunklen Raum und umgekehrt — sonst
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
 function artFor(product, colorIndex = 0, viewIndex = 0) {
+  /* Liegt eine Fotostrecke vor, geht sie der Zeichnung vor. Die Ansichten
+     der Galerie werden dann zu den Bildern der Strecke. */
+  if (product.photos && product.photos.length) {
+    const src = product.photos[viewIndex % product.photos.length];
+    return `<img src="${src}" alt="${product.name}" loading="lazy" decoding="async">`;
+  }
   const hex = product.swatches[colorIndex] || product.swatches[0];
   // Helle Möbel vor dunklem Grund, dunkle vor hellem.
   const base = luminance(hex) > 0.62 ? TONES.tief : TONES.studio;
@@ -591,6 +597,30 @@ const PRODUCTS = [
     }
   },
   {
+    /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
+    id: "leuchte-artischocke", used: true, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
+    price: 12800, weight: "12 kg", swatches: ["#b87333"],
+    photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
+    t: {
+      de: { short: "H\u00e4ngeleuchte von Poul Henningsen, 72 Kupferbl\u00e4tter, gebaut von Louis Poulsen.",
+        description: "Die PH Artichoke entwarf Poul Henningsen 1958 f\u00fcr den Langelinie-Pavillon in Kopenhagen; gebaut wird sie seither von Louis Poulsen. Zw\u00f6lf Reihen mit insgesamt 72 Kupferbl\u00e4ttern verdecken das Leuchtmittel vollst\u00e4ndig \u2014 aus jedem Winkel des Raumes sieht man nur weiches, reflektiertes Licht, nie die Lampe selbst. Dieses Exemplar hing in einem Privathaus am Elbhang. Das Kupfer hat die ungleichm\u00e4\u00dfige Patina angesetzt, die diese Leuchte erst sch\u00f6n macht; die Elektrik haben wir gepr\u00fcft und auf LED umgestellt.",
+        material: "Kupfer, verchromter Stahl", dimensions: "\u00d8 60 \u00d7 H 52 cm, Abh\u00e4ngung bis 300 cm",
+        origin: "Louis Poulsen, D\u00e4nemark", lead: "sofort verf\u00fcgbar", colors: ["Kupfer"] },
+      en: { short: "Pendant by Poul Henningsen, 72 copper leaves, built by Louis Poulsen.",
+        description: "Poul Henningsen designed the PH Artichoke in 1958 for the Langelinie Pavilion in Copenhagen; Louis Poulsen has built it ever since. Twelve rows of 72 copper leaves hide the bulb completely \u2014 from any angle in the room you see only soft reflected light, never the lamp itself. This piece hung in a private house on the Elbe hillside. The copper has taken on the uneven patina that makes this lamp what it is; we have tested the wiring and converted it to LED.",
+        material: "Copper, chrome-plated steel", dimensions: "\u00d8 60 \u00d7 H 52 cm, drop up to 300 cm",
+        origin: "Louis Poulsen, Denmark", lead: "available now", colors: ["Copper"] },
+      fr: { short: "Suspension de Poul Henningsen, 72 feuilles de cuivre, fabriqu\u00e9e par Louis Poulsen.",
+        description: "Poul Henningsen a dessin\u00e9 la PH Artichoke en 1958 pour le pavillon Langelinie de Copenhague ; Louis Poulsen la fabrique depuis. Douze rang\u00e9es de 72 feuilles de cuivre masquent enti\u00e8rement la source \u2014 de tout point de la pi\u00e8ce on ne voit qu\u2019une lumi\u00e8re douce et r\u00e9fl\u00e9chie, jamais la lampe. Cet exemplaire a \u00e9clair\u00e9 une maison priv\u00e9e sur les hauteurs de l\u2019Elbe. Le cuivre a pris la patine irr\u00e9guli\u00e8re qui fait tout le charme de cette suspension ; l\u2019\u00e9lectricit\u00e9 a \u00e9t\u00e9 contr\u00f4l\u00e9e et convertie en LED.",
+        material: "Cuivre, acier chrom\u00e9", dimensions: "\u00d8 60 \u00d7 H 52 cm, hauteur jusqu\u2019\u00e0 300 cm",
+        origin: "Louis Poulsen, Danemark", lead: "disponible imm\u00e9diatement", colors: ["Cuivre"] },
+      es: { short: "L\u00e1mpara de suspensi\u00f3n de Poul Henningsen, 72 hojas de cobre, fabricada por Louis Poulsen.",
+        description: "Poul Henningsen dise\u00f1\u00f3 la PH Artichoke en 1958 para el pabell\u00f3n Langelinie de Copenhague; Louis Poulsen la fabrica desde entonces. Doce hileras con 72 hojas de cobre ocultan por completo la bombilla \u2014 desde cualquier punto de la estancia solo se ve luz reflejada y suave, nunca la l\u00e1mpara. Esta pieza estuvo en una casa particular sobre la ladera del Elba. El cobre ha adquirido la p\u00e1tina irregular que da car\u00e1cter a esta l\u00e1mpara; hemos revisado la instalaci\u00f3n el\u00e9ctrica y la hemos convertido a LED.",
+        material: "Cobre, acero cromado", dimensions: "\u00d8 60 \u00d7 Al 52 cm, ca\u00edda hasta 300 cm",
+        origin: "Louis Poulsen, Dinamarca", lead: "disponible ahora", colors: ["Cobre"] }
+    }
+  },
+  {
     id: "regal-biblio", used: true, grade: "sehrgut", year: "2019", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
     price: 3960, weight: "86 kg", swatches: ["#4a3b2c", "#c1a37a", "#2e2c28"],
     t: {
@@ -704,6 +734,15 @@ const PRODUCTS = [
 
 /* Ein gebrauchtes Stück ist ein Einzelstück und nur einmal zu haben. */
 const bestand = (product) => (product.used ? 1 : 99);
+
+/* Die Ansichten der Galerie: bei einer Fotostrecke ein Eintrag je Bild,
+   sonst die vier gezeichneten Blickwinkel. */
+function ansichten(product) {
+  if (product.photos && product.photos.length) {
+    return product.photos.map((src, i) => ({ key: "foto", label: t("gallery.image", { n: i + 1 }) }));
+  }
+  return VIEWS.map((v) => ({ key: v.key, label: t("view." + v.key) }));
+}
 
 /* Liefert die Texte eines Produkts in der aktiven Sprache. */
 function pt(product, lang) {

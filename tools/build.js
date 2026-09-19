@@ -16,6 +16,23 @@ const root = path.join(__dirname, "..");
 const read = (f) => fs.readFileSync(path.join(root, f), "utf8");
 const write = (f, c) => fs.writeFileSync(path.join(root, f), c, "utf8");
 
+/* Bilder als Daten-URI einbetten. Die Einzeldatei-Vorschau hat keinen
+   Ordner daneben, aus dem sie Fotos nachladen könnte — und im Artifact
+   wären Pfade zu anderen Rechnern ohnehin gesperrt. */
+function inlineBilder(text) {
+  const typen = { ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp" };
+  let ersetzt = 0, bytes = 0;
+  const out = text.replace(/assets\/img\/[\w.-]+\.(?:jpe?g|png|webp)/g, (treffer) => {
+    const voll = path.join(root, treffer);
+    if (!fs.existsSync(voll)) return treffer;
+    const roh = fs.readFileSync(voll);
+    ersetzt++; bytes += roh.length;
+    return "data:" + typen[path.extname(treffer).toLowerCase()] + ";base64," + roh.toString("base64");
+  });
+  if (ersetzt) console.log("  " + ersetzt + " Bilder eingebettet (" + Math.round(bytes / 1024) + " KB)");
+  return out;
+}
+
 /* Deutsche Texte aus der Sprachdatei holen */
 const { I18N, LANGS } = new Function(read("assets/js/i18n.js") + "; return { I18N, LANGS };")();
 const de = I18N.de;
@@ -148,7 +165,7 @@ ${scriptOf(html)}
   }`;
   }).join(",\n");
 
-  const out = `<meta charset="utf-8">
+  let out = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio Lusso Interior Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -237,6 +254,7 @@ if (document.readyState !== "loading") boot();
 </script>
 `;
 
+  out = inlineBilder(out);
   write("preview.html", out);
   return out.length;
 }
