@@ -130,7 +130,7 @@ function renderPdp() {
         </div>
 
         <div class="buy-row" style="margin-top:1.6rem">
-          ${p.used ? `<span class="claim" style="align-self:center">${t("pdp.unique")}</span>` : `
+          ${p.used ? `<span class="claim" style="align-self:center">${t(p.paar ? "pdp.pair" : "pdp.unique")}</span>` : `
           <div class="qty">
             <button id="qty-minus" aria-label="${t("pdp.less")}">−</button>
             <span id="qty-value">1</span>
