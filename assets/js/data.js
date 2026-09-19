@@ -599,7 +599,7 @@ const PRODUCTS = [
   {
     /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
     id: "leuchte-artischocke", used: true, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
-    price: 12800, weight: "12 kg", swatches: ["#b87333"],
+    price: 6500, weight: "12 kg", swatches: ["#b87333"],
     photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
     t: {
       de: { short: "H\u00e4ngeleuchte von Poul Henningsen, 72 Kupferbl\u00e4tter, gebaut von Louis Poulsen.",
