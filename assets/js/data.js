@@ -622,7 +622,7 @@ const PRODUCTS = [
   },
   {
     id: "bett-marin", used: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
-    price: 1400, weight: "34 kg", swatches: ["#f1eee8"],
+    price: 700, weight: "34 kg", swatches: ["#f1eee8"],
     photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg"],
     t: {
       de: { short: "Einzelbett mit gepolstertem Kopfteil, heller Bezug.",
