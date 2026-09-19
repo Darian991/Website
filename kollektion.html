@@ -92,7 +92,7 @@ function initPage() {
   activeCat = categoryKeyFrom(params.get("kategorie")) || "alle";
   activeQuery = params.get("suche") || "";
 
-  $("#filters").innerHTML = CATEGORY_KEYS.map((c) =>
+  $("#filters").innerHTML = ["alle"].concat(belegteKategorien()).map((c) =>
     `<button class="chip ${c === activeCat ? "is-active" : ""}" data-cat="${c}">${t("cat." + c)}</button>`).join("");
 
   $$("#filters .chip").forEach((chip) => {

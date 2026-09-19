@@ -253,10 +253,8 @@ function renderChrome() {
         <div>
           <h5 data-i18n="footer.collection"></h5>
           <ul>
-            <li><a href="kollektion.html?kategorie=sofas" data-i18n="cat.sofas"></a></li>
-            <li><a href="kollektion.html?kategorie=sessel" data-i18n="cat.sessel"></a></li>
-            <li><a href="kollektion.html?kategorie=tische" data-i18n="cat.tische"></a></li>
-            <li><a href="kollektion.html?kategorie=leuchten" data-i18n="cat.leuchten"></a></li>
+            ${belegteKategorien().map((k) => `
+            <li><a href="kollektion.html?kategorie=${k}" data-i18n="cat.${k}"></a></li>`).join("")}
             <li><a href="kollektion.html" data-i18n="footer.all"></a></li>
           </ul>
         </div>

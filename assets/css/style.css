@@ -487,8 +487,11 @@ noscript .footer p { max-width: 60ch; }
 .cat-tile__label {
   position: absolute; inset: auto 0 0 0;
   padding: 3rem 1.4rem 1.3rem;
-  background: linear-gradient(transparent, rgba(58,50,41,.62));
+  /* Über hellen Fotos — einer weißen Küche etwa — trägt ein zarter Verlauf
+     die Schrift nicht mehr. Deshalb kräftiger und mit weichem Schatten. */
+  background: linear-gradient(transparent, rgba(40,34,28,.82));
   color: #fff;
+  text-shadow: 0 1px 10px rgba(30,25,20,.55);
   font-size: .74rem;
   font-weight: 500;
   letter-spacing: .22em;

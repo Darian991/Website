@@ -202,6 +202,14 @@ gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
 das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
 Motiv stellen.
 
+### Rubriken folgen dem Bestand
+
+Filterleiste, Fußzeile und die Kacheln der Startseite zeigen nur Rubriken,
+in denen wirklich etwas steht — `belegteKategorien()` in `data.js` liefert
+sie. Verkauft sich die letzte Leuchte, verschwindet „Leuchten" von selbst;
+ein alter Verweis darauf führt weiterhin auf eine Seite, die sauber „0
+Stücke" meldet.
+
 ### Neue Rubrik anlegen
 
 Die Rubriken stehen an einer Stelle: `CATEGORY_KEYS` in `assets/js/i18n.js`.
@@ -244,6 +252,12 @@ Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
   Sprachen teilen sich dieselbe Adresse. Für Suchmaschinen bräuchte jede
   Sprache eigene Adressen (`/en/kollektion`) samt `hreflang` — das geht mit
   einer rein statischen Seite nicht und wäre der nächste Schritt.
+* **Rückgabe**: Die Seite weist derzeit kein Rückgaberecht aus. Beim Verkauf
+  an Privatpersonen über das Internet gilt in der EU trotzdem das gesetzliche
+  Widerrufsrecht von 14 Tagen — es lässt sich weder abbedingen noch
+  wegschreiben. Ohne Widerrufsbelehrung verlängert sich die Frist auf ein
+  Jahr und vierzehn Tage. Wer nur an Gewerbetreibende verkauft oder
+  ausschließlich vor Ort abgibt, ist davon nicht betroffen.
 * **Rechtstexte**: Impressum, Datenschutzerklärung, AGB und Widerrufsbelehrung
   sind in der Fußzeile verlinkt, aber noch nicht geschrieben — in Deutschland
   sind sie für einen Shop Pflicht.

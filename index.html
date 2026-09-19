@@ -152,20 +152,18 @@ function initPage() {
   $("#story-art").innerHTML   = ART.regal(TONES.studio);
   $("#service-art").innerHTML = ART.tisch(TONES.studio);
 
-  const featured = ["sofa-milano", "leuchte-alba", "sessel-orsini", "tisch-atelier", "leuchte-vertice", "sideboard-linea"]
-    .map(findProduct).filter(Boolean);
-  $("#featured").innerHTML = featured.map(productCard).join("");
+  // Ausgewaehlte Stuecke und Rubrikkacheln kommen aus dem Bestand, nicht aus
+  // einer festen Liste — sonst zeigt die Startseite auf Verkauftes.
+  $("#featured").innerHTML = PRODUCTS.slice(0, 6).map(productCard).join("");
 
-  const tiles = [
-    { label: t("home.cats.sitting"), cat: "sofas",        shape: "sofa",      tone: "studio" },
-    { label: t("cat.tische"),        cat: "tische",       shape: "tisch",     tone: "tief" },
-    { label: t("cat.aufbewahrung"),  cat: "aufbewahrung", shape: "sideboard", tone: "studio" }
-  ];
-  $("#cats").innerHTML = tiles.map((tile) => `
-    <a class="cat-tile reveal" href="kollektion.html?kategorie=${tile.cat}">
-      ${ART[tile.shape](TONES[tile.tone])}
-      <span class="cat-tile__label">${tile.label}</span>
-    </a>`).join("");
+  $("#cats").innerHTML = belegteKategorien().map((k) => {
+    const erstes = PRODUCTS.find((p) => p.categoryKey === k);
+    return `
+    <a class="cat-tile reveal" href="kollektion.html?kategorie=${k}">
+      ${artFor(erstes)}
+      <span class="cat-tile__label">${t("cat." + k)}</span>
+    </a>`;
+  }).join("");
 }
 </script>
 </body>
