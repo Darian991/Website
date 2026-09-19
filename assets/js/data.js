@@ -644,6 +644,29 @@ const PRODUCTS = [
     }
   },
   {
+    id: "kueche-costa", used: true, grade: "sehrgut", year: "2018", name: "Costa", categoryKey: "kuechen", shape: "sideboard", tone: "studio",
+    price: 14500, weight: "\u2014", swatches: ["#f3f1ed"],
+    photos: ["assets/img/kueche-costa-1.jpg", "assets/img/kueche-costa-2.jpg", "assets/img/kueche-costa-3.jpg"],
+    t: {
+      de: { short: "Grifflose Einbauk\u00fcche in Wei\u00df und Nussbaum, mit Kochinsel und Ger\u00e4ten.",
+        description: "Eine grifflose Einbauk\u00fcche aus einem Neubau an der Costa Blanca, ausgebaut und eingelagert. Wei\u00df lackierte Fronten treffen auf H\u00e4ngeschr\u00e4nke und eine Barplatte aus massivem Nussbaum; die Arbeitsplatten sind aus wei\u00dfem Mineralwerkstoff. Zur K\u00fccheninsel geh\u00f6rt ein Induktionsfeld, in der Hochschrankzeile stecken zwei Backofen, ein Weinklimaschrank und der K\u00fchlschrank. Alle Ger\u00e4te laufen und wurden von uns gepr\u00fcft. Wir bauen vor Ort ab und wieder auf; auf Wunsch passen wir die Zeile an Ihren Grundriss an. Barhocker, Geschirr und Dekoration der Aufnahmen geh\u00f6ren nicht zum Angebot.",
+        material: "Lack matt wei\u00df, Nussbaum massiv, Mineralwerkstoff", dimensions: "Zeile 420 cm, Insel 340 \u00d7 95 cm, Barplatte 340 \u00d7 60 cm",
+        origin: "Neubau Costa Blanca, Spanien", lead: "nach Absprache", colors: ["Wei\u00df / Nussbaum"] },
+      en: { short: "Handleless fitted kitchen in white and walnut, with island and appliances.",
+        description: "A handleless fitted kitchen from a new-build house on the Costa Blanca, dismantled and in storage. White lacquered fronts meet wall units and a breakfast bar in solid walnut; the worktops are white mineral composite. The island carries an induction hob, the tall run holds two ovens, a wine cabinet and the fridge. Every appliance works and has been tested by us. We dismantle and reinstall on site and will adapt the run to your floor plan on request. Bar stools, tableware and decoration in the photographs are not part of the offer.",
+        material: "Matt white lacquer, solid walnut, mineral composite", dimensions: "Run 420 cm, island 340 \u00d7 95 cm, bar top 340 \u00d7 60 cm",
+        origin: "New-build, Costa Blanca, Spain", lead: "by arrangement", colors: ["White / walnut"] },
+      fr: { short: "Cuisine int\u00e9gr\u00e9e sans poign\u00e9es, blanc et noyer, avec \u00eelot et appareils.",
+        description: "Une cuisine int\u00e9gr\u00e9e sans poign\u00e9es, provenant d\u2019une maison neuve de la Costa Blanca, d\u00e9mont\u00e9e et stock\u00e9e. Les fa\u00e7ades laqu\u00e9es blanches c\u00f4toient des \u00e9l\u00e9ments hauts et un plan de bar en noyer massif ; les plans de travail sont en r\u00e9sine min\u00e9rale blanche. L\u2019\u00eelot re\u00e7oit une table \u00e0 induction, la colonne abrite deux fours, une cave \u00e0 vin et le r\u00e9frig\u00e9rateur. Tous les appareils fonctionnent et ont \u00e9t\u00e9 contr\u00f4l\u00e9s. Nous assurons la d\u00e9pose et la repose, et adaptons la lin\u00e9aire \u00e0 votre plan sur demande. Les tabourets, la vaisselle et la d\u00e9coration des photographies ne font pas partie de l\u2019offre.",
+        material: "Laque blanche mate, noyer massif, r\u00e9sine min\u00e9rale", dimensions: "Lin\u00e9aire 420 cm, \u00eelot 340 \u00d7 95 cm, plan de bar 340 \u00d7 60 cm",
+        origin: "Maison neuve, Costa Blanca, Espagne", lead: "sur rendez-vous", colors: ["Blanc / noyer"] },
+      es: { short: "Cocina integrada sin tiradores, en blanco y nogal, con isla y electrodom\u00e9sticos.",
+        description: "Una cocina integrada sin tiradores procedente de una vivienda de obra nueva en la Costa Blanca, desmontada y almacenada. Los frentes lacados en blanco conviven con muebles altos y una barra de nogal macizo; las encimeras son de material mineral blanco. La isla incorpora una placa de inducci\u00f3n y la columna aloja dos hornos, una vinoteca y el frigor\u00edfico. Todos los electrodom\u00e9sticos funcionan y han sido revisados por nosotros. Nos encargamos del desmontaje y del montaje, y adaptamos el frente a su plano si lo desea. Los taburetes, la vajilla y la decoraci\u00f3n de las fotograf\u00edas no forman parte de la oferta.",
+        material: "Lacado blanco mate, nogal macizo, material mineral", dimensions: "Frente 420 cm, isla 340 \u00d7 95 cm, barra 340 \u00d7 60 cm",
+        origin: "Obra nueva, Costa Blanca, Espa\u00f1a", lead: "a convenir", colors: ["Blanco / nogal"] }
+    }
+  },
+  {
     id: "regal-biblio", used: true, grade: "sehrgut", year: "2019", name: "Biblio", categoryKey: "aufbewahrung", shape: "regal", tone: "stone",
     price: 3960, weight: "86 kg", swatches: ["#4a3b2c", "#c1a37a", "#2e2c28"],
     t: {

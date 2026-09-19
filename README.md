@@ -202,6 +202,15 @@ gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
 das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
 Motiv stellen.
 
+### Neue Rubrik anlegen
+
+Die Rubriken stehen an einer Stelle: `CATEGORY_KEYS` in `assets/js/i18n.js`.
+Ein Eintrag dort, dazu `cat.<schlüssel>` in allen vier Sprachen, und die
+Filterleiste, die Brotkrumen und die Adressen (`?kategorie=…`) ziehen
+nach — auch in den anderen Sprachen, weil `categoryKeyFrom()` alle
+Anzeigenamen kennt. Damit der Berater die Rubrik versteht, gehören die
+Alltagswörter dazu noch in `BOT_CATEGORIES` in `assets/js/berater.js`.
+
 ### Mehrfach vorhandene Stücke
 
 Gebraucht heißt meist Einzelstück, deshalb ist die Menge normalerweise fest

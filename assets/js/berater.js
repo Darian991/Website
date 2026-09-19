@@ -57,6 +57,7 @@ const BOT_CATEGORIES = {
   leuchten: ["leuchte", "lampe", "lampen", "licht", "beleucht", "lamp", "light", "pendant", "luminaire", "lumiere", "lampara", "iluminac"],
   aufbewahrung: ["regal", "schrank", "sideboard", "kommode", "aufbewahr", "shelf", "shelv", "storage", "cabinet", "etager", "rangement", "estanter", "almacenaje", "armario"],
   betten: ["bett", "betten", "bed ", "beds", "schlaf", "lit ", "cama"],
+  kuechen: ["kuche", "kuchen", "einbaukuche", "kitchen", "kitchens", "cuisine", "cocina", "herd", "backofen", "kochinsel", "island", "hob", "oven"],
   accessoires: ["accessoire", "accessory", "accessories", "teppich", "spiegel", "rug", "mirror", "tapis", "miroir", "alfombra", "espejo"]
 };
 

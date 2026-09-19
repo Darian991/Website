@@ -13,7 +13,7 @@ const LANGS = [
   { code: "es", label: "ES", name: "Español",  locale: "es-ES" }
 ];
 
-const CATEGORY_KEYS = ["alle", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "accessoires"];
+const CATEGORY_KEYS = ["alle", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "kuechen", "accessoires"];
 
 const I18N = {
 
@@ -169,6 +169,7 @@ const I18N = {
     "cat.leuchten": "Leuchten",
     "cat.aufbewahrung": "Aufbewahrung",
     "cat.betten": "Betten",
+    "cat.kuechen": "Küchen",
     "cat.accessoires": "Accessoires",
 
     "search.title": "Suchen",
@@ -507,6 +508,7 @@ const I18N = {
     "cat.leuchten": "Lighting",
     "cat.aufbewahrung": "Storage",
     "cat.betten": "Beds",
+    "cat.kuechen": "Kitchens",
     "cat.accessoires": "Accessories",
 
     "search.title": "Search",
@@ -845,6 +847,7 @@ const I18N = {
     "cat.leuchten": "Luminaires",
     "cat.aufbewahrung": "Rangement",
     "cat.betten": "Lits",
+    "cat.kuechen": "Cuisines",
     "cat.accessoires": "Accessoires",
 
     "search.title": "Rechercher",
@@ -1164,6 +1167,7 @@ const I18N = {
     "cat.leuchten": "Iluminación",
     "cat.aufbewahrung": "Almacenaje",
     "cat.betten": "Camas",
+    "cat.kuechen": "Cocinas",
     "cat.accessoires": "Accesorios",
     "search.title": "Buscar",
     "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
