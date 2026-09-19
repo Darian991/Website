@@ -403,7 +403,7 @@ const PRODUCTS = [
   },
   {
     id: "kueche-costa", used: true, grade: "sehrgut", year: "2018", name: "Costa", categoryKey: "kuechen", shape: "sideboard", tone: "studio",
-    price: 14500, weight: "\u2014", swatches: ["#f3f1ed"],
+    price: 17500, weight: "\u2014", swatches: ["#f3f1ed"],
     photos: ["assets/img/kueche-costa-1.jpg", "assets/img/kueche-costa-2.jpg", "assets/img/kueche-costa-3.jpg"],
     t: {
       de: { short: "Grifflose Einbauk\u00fcche in Wei\u00df und Nussbaum, mit Kochinsel und Ger\u00e4ten.",

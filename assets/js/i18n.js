@@ -19,6 +19,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
     "bot.a.weather": "Das Wetter ist ganz in Ordnung — ehrlich gesagt kann ich aber nicht hinaussehen, dafür fehlt mir das Fenster. Für einen Besuch im Showroom ist es jedenfalls immer passend.",
@@ -358,6 +359,7 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
     "bot.a.weather": "The weather is quite all right — though honestly, I cannot look outside; I have no window. Either way, it is always good weather for a showroom visit.",
@@ -697,6 +699,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Merci de demander — je vais bien. Et vous ? Si vous le souhaitez, je vous montre quelque chose de la collection.",
     "bot.a.weather": "Le temps est tout à fait correct — à vrai dire, je ne peux pas regarder dehors, je n’ai pas de fenêtre. De toute façon, c’est toujours le bon temps pour venir au showroom.",
@@ -1036,6 +1039,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Gracias por preguntar — estoy bien. ¿Y usted? Si le apetece, le enseño algo de la colección.",
     "bot.a.weather": "El tiempo está bastante bien — aunque, sinceramente, no puedo mirar fuera: no tengo ventana. En todo caso, siempre hace buen tiempo para visitar el showroom.",

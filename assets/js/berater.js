@@ -83,6 +83,16 @@ const BOT_SCHON_AUS = ["verkauft", "weg", "vergeben", "bestellt", "versendet", "
 /* Fragen nach Maßen oder Material werden nicht gelobt, sondern beantwortet */
 const BOT_SPEC_WORDS = ["material", "matiere", "materia", "woraus", "besteht", "made of", "made from"];
 
+/* „Was habt ihr denn?“ — bei einem kleinen Bestand die haeufigste Frage.
+   Sie wird nur beantwortet, wenn keine Rubrik genannt ist. */
+const BOT_ALLES_WORDS = [
+  "alles zeigen", "zeig mir alles", "zeig mir was", "was habt ihr", "was habt ihr denn", "was gibt es",
+  "was bietet ihr", "ganze kollektion", "ganzen bestand", "alle stucke", "alles was ihr habt", "sortiment",
+  "everything", "what do you have", "what have you got", "whole collection", "entire collection", "all your pieces", "show me all",
+  "tout ce que vous", "toute la collection", "qu avez-vous", "tout votre", "montrez-moi tout",
+  "todo lo que", "toda la coleccion", "que teneis", "que tienen", "ensename todo", "muestrame todo"
+];
+
 const BOT_LIMIT_WORDS = ["unter", "bis", "hochstens", "maximal", "max", "weniger", "budget", "billiger", "gunstiger", "under", "below", "less", "up to", "cheaper", "moins", "sous", "jusqu", "menos", "hasta", "presupuesto", "barato"];
 const BOT_CHEAP_WORDS = ["gunstigst", "billigst", "preiswertest", "cheapest", "least expensive", "moins cher", "mas barat", "economic"];
 const BOT_DEAR_WORDS = ["teuerst", "hochste", "most expensive", "dearest", "plus cher", "mas car"];
@@ -258,6 +268,12 @@ function botAnswer(frage, lang) {
   if (gelobt && rubrik) {
     const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
     return { lang, text: bt("bot.a.lob.rubrik", { cat: bt("cat." + rubrik) }), products: treffer.slice(0, 5) };
+  }
+
+  /* 3c. Nach dem ganzen Bestand gefragt */
+  if (!rubrik && BOT_ALLES_WORDS.some((w) => botHit(q, w))) {
+    const liste = [...PRODUCTS].sort((a, b) => b.price - a.price);
+    return { lang, text: bt("bot.a.alles", { n: liste.length }), products: liste.slice(0, 8), all: true };
   }
 
   /* 4. Budget */

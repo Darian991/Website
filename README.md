@@ -98,6 +98,9 @@ Damit kann der Berater nichts behaupten, was auf der Seite nicht steht.
   Ein Stichwort trifft am Wortanfang. Die Antwort steht unter `bot.a.<thema>`
   in `assets/js/i18n.js` und muss in allen vier Sprachen vorhanden sein.
 * `BOT_CATEGORIES` — Alltagswörter je Rubrik („couch“ → Sofas).
+* `BOT_ALLES_WORDS` — „was habt ihr“, „zeig mir alles“. Der Berater zählt
+  dann den ganzen Bestand auf. Bei einem kleinen Laden ist das die
+  häufigste Frage überhaupt.
 * `BOT_LOB_WORDS` — Fragen nach einer Eigenschaft („bequem“, „hochwertig“,
   „lohnt sich“). Darauf antwortet der Berater bejahend und wirbt für das
   Stück. Das ist Verkauf und bewusst so gewollt.
