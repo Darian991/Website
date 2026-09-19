@@ -99,12 +99,12 @@ function renderCartPage() {
             <a class="cart-item__title" href="produkt.html?id=${p.id}">${p.name}</a>
             <div class="cart-item__meta">${t("cat." + p.categoryKey)} · ${itemColor(p, item)} · ${p.used ? t("grade." + p.grade) : t("cartpage.production") + " " + x.lead}</div>
             <div style="display:flex;align-items:center;gap:1rem;margin-top:.8rem;flex-wrap:wrap">
-              ${p.used ? `<span class="caption">${t("pdp.unique")}</span>` : `
+              ${bestand(p) > 1 ? `
               <div class="qty">
                 <button data-dec="${index}" aria-label="${t("pdp.less")}">−</button>
                 <span>${item.qty}</span>
                 <button data-inc="${index}" aria-label="${t("pdp.more")}">+</button>
-              </div>`}
+              </div>` : `<span class="caption">${t("pdp.unique")}</span>`}
               <button class="cart-item__remove" data-del="${index}" style="margin:0">${t("cart.remove")}</button>
             </div>
           </div>

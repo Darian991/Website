@@ -202,6 +202,13 @@ gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
 das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
 Motiv stellen.
 
+### Mehrfach vorhandene Stücke
+
+Gebraucht heißt meist Einzelstück, deshalb ist die Menge normalerweise fest
+auf eins. Gibt es ein Stück mehrfach, sagt das Feld `stueck: 2`, wie oft.
+Produktseite und Warenkorb zeigen dann eine Mengenauswahl, gedeckelt auf den
+Bestand, und statt „Einzelstück" steht „2 Exemplare verfügbar".
+
 Die Dateien liegen in `assets/img/`. Sinnvoll sind höchstens 1200 px an der
 langen Kante bei Qualität 82 — `tools/build.js` bettet sie als Daten-URI in
 `preview.html` ein, und diese eine Datei soll handlich bleiben.

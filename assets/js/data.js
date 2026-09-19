@@ -598,7 +598,7 @@ const PRODUCTS = [
   },
   {
     /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
-    id: "leuchte-artischocke", used: true, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
+    id: "leuchte-artischocke", used: true, stueck: 2, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
     price: 6500, weight: "12 kg", swatches: ["#b87333"],
     photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
     t: {
@@ -621,25 +621,25 @@ const PRODUCTS = [
     }
   },
   {
-    id: "bett-marin", used: true, paar: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
-    price: 2400, weight: "je 34 kg", swatches: ["#f1eee8"],
+    id: "bett-marin", used: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
+    price: 1400, weight: "34 kg", swatches: ["#f1eee8"],
     photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg"],
     t: {
-      de: { short: "Paar Einzelbetten mit gepolstertem Kopfteil, heller Bezug.",
-        description: "Zwei baugleiche Einzelbetten, die zusammen bleiben sollten. Der Unterbau ist rundum gepolstert und gefedert, das Kopfteil schlicht gehalten und mit demselben hellen Gewebe bezogen; ein schmaler dunkler Sockel hebt die Betten vom Boden ab. Sie standen im G\u00e4stezimmer eines Ferienhauses und sind kaum benutzt \u2014 der Bezug ist fleckenfrei, die Federung ohne Kuhle. Bettwaren und Dekoration der Aufnahmen geh\u00f6ren nicht zum Angebot.",
-        material: "Leinenmischgewebe, gefederter Unterbau, Massivholzrahmen", dimensions: "je B 100 \u00d7 L 200 \u00d7 H 105 cm",
+      de: { short: "Einzelbett mit gepolstertem Kopfteil, heller Bezug.",
+        description: "Ein Einzelbett, rundum gepolstert und gefedert. Das Kopfteil ist schlicht gehalten und mit demselben hellen Gewebe bezogen; ein schmaler dunkler Sockel hebt das Bett vom Boden ab. Es stand im G\u00e4stezimmer eines Ferienhauses und ist kaum benutzt \u2014 der Bezug ist fleckenfrei, die Federung ohne Kuhle. Die Aufnahmen zeigen das Zimmer mit zwei Betten; angeboten wird eines davon. Bettwaren und Dekoration geh\u00f6ren nicht dazu.",
+        material: "Leinenmischgewebe, gefederter Unterbau, Massivholzrahmen", dimensions: "B 100 \u00d7 L 200 \u00d7 H 105 cm",
         origin: "Polsterei Levante, Spanien", lead: "sofort verf\u00fcgbar", colors: ["Wollwei\u00df"] },
-      en: { short: "Pair of single beds with upholstered headboards, pale cover.",
-        description: "Two identical single beds that ought to stay together. The base is upholstered and sprung all round, the headboard kept plain and covered in the same pale cloth; a narrow dark plinth lifts the beds off the floor. They stood in the guest room of a holiday house and have barely been used \u2014 the cover is unstained, the springing free of hollows. Bedding and decoration in the photographs are not part of the offer.",
-        material: "Linen blend, sprung base, solid timber frame", dimensions: "each W 100 \u00d7 L 200 \u00d7 H 105 cm",
+      en: { short: "Single bed with an upholstered headboard, pale cover.",
+        description: "A single bed, upholstered and sprung all round. The headboard is kept plain and covered in the same pale cloth; a narrow dark plinth lifts the bed off the floor. It stood in the guest room of a holiday house and has barely been used \u2014 the cover is unstained, the springing free of hollows. The photographs show the room with two beds; one of them is on offer. Bedding and decoration are not included.",
+        material: "Linen blend, sprung base, solid timber frame", dimensions: "W 100 \u00d7 L 200 \u00d7 H 105 cm",
         origin: "Levante upholstery workshop, Spain", lead: "available now", colors: ["Wool white"] },
-      fr: { short: "Paire de lits simples \u00e0 t\u00eate de lit rembourr\u00e9e, tissu clair.",
-        description: "Deux lits simples identiques, qui gagnent \u00e0 rester ensemble. Le sommier est rembourr\u00e9 et suspendu sur tout son pourtour, la t\u00eate de lit reste sobre, dans le m\u00eame tissu clair ; un socle sombre et \u00e9troit d\u00e9tache les lits du sol. Ils se trouvaient dans la chambre d\u2019amis d\u2019une maison de vacances et ont \u00e0 peine servi \u2014 le tissu est sans tache, la suspension sans creux. La literie et la d\u00e9coration des photographies ne font pas partie de l\u2019offre.",
-        material: "M\u00e9lange de lin, sommier suspendu, cadre en bois massif", dimensions: "chacun L 100 \u00d7 l 200 \u00d7 H 105 cm",
+      fr: { short: "Lit simple \u00e0 t\u00eate de lit rembourr\u00e9e, tissu clair.",
+        description: "Un lit simple, rembourr\u00e9 et suspendu sur tout son pourtour. La t\u00eate de lit reste sobre, dans le m\u00eame tissu clair ; un socle sombre et \u00e9troit le d\u00e9tache du sol. Il se trouvait dans la chambre d\u2019amis d\u2019une maison de vacances et a \u00e0 peine servi \u2014 le tissu est sans tache, la suspension sans creux. Les photographies montrent la pi\u00e8ce avec deux lits ; c\u2019est l\u2019un d\u2019eux qui est propos\u00e9. La literie et la d\u00e9coration ne sont pas comprises.",
+        material: "M\u00e9lange de lin, sommier suspendu, cadre en bois massif", dimensions: "L 100 \u00d7 l 200 \u00d7 H 105 cm",
         origin: "Atelier de tapisserie Levante, Espagne", lead: "disponible imm\u00e9diatement", colors: ["Blanc laine"] },
-      es: { short: "Pareja de camas individuales con cabecero tapizado, tejido claro.",
-        description: "Dos camas individuales id\u00e9nticas que conviene mantener juntas. La base est\u00e1 tapizada y suspendida en todo su contorno, el cabecero es sobrio y va forrado con el mismo tejido claro; un z\u00f3calo oscuro y estrecho separa las camas del suelo. Estuvieron en la habitaci\u00f3n de invitados de una casa de vacaciones y apenas se han usado \u2014 el tejido no tiene manchas y la suspensi\u00f3n no presenta hundimientos. La ropa de cama y la decoraci\u00f3n de las fotograf\u00edas no forman parte de la oferta.",
-        material: "Mezcla de lino, base suspendida, estructura de madera maciza", dimensions: "cada una An 100 \u00d7 L 200 \u00d7 Al 105 cm",
+      es: { short: "Cama individual con cabecero tapizado, tejido claro.",
+        description: "Una cama individual, tapizada y suspendida en todo su contorno. El cabecero es sobrio y va forrado con el mismo tejido claro; un z\u00f3calo oscuro y estrecho la separa del suelo. Estuvo en la habitaci\u00f3n de invitados de una casa de vacaciones y apenas se ha usado \u2014 el tejido no tiene manchas y la suspensi\u00f3n no presenta hundimientos. Las fotograf\u00edas muestran la habitaci\u00f3n con dos camas; se ofrece una de ellas. La ropa de cama y la decoraci\u00f3n no est\u00e1n incluidas.",
+        material: "Mezcla de lino, base suspendida, estructura de madera maciza", dimensions: "An 100 \u00d7 L 200 \u00d7 Al 105 cm",
         origin: "Tapicer\u00eda Levante, Espa\u00f1a", lead: "disponible ahora", colors: ["Blanco lana"] }
     }
   },
@@ -756,7 +756,9 @@ const PRODUCTS = [
 ];
 
 /* Ein gebrauchtes Stück ist ein Einzelstück und nur einmal zu haben. */
-const bestand = (product) => (product.used ? 1 : 99);
+/* Gebraucht heißt meist Einzelstück. Liegt ein Stück mehrfach vor, sagt
+   das Feld „stueck“, wie oft — dann darf die Menge gewählt werden. */
+const bestand = (product) => (product.used ? (product.stueck || 1) : 99);
 
 /* Die Ansichten der Galerie: bei einer Fotostrecke ein Eintrag je Bild,
    sonst die vier gezeichneten Blickwinkel. */

@@ -130,14 +130,15 @@ function renderPdp() {
         </div>
 
         <div class="buy-row" style="margin-top:1.6rem">
-          ${p.used ? `<span class="claim" style="align-self:center">${t(p.paar ? "pdp.pair" : "pdp.unique")}</span>` : `
+          ${bestand(p) > 1 ? `
           <div class="qty">
             <button id="qty-minus" aria-label="${t("pdp.less")}">−</button>
             <span id="qty-value">1</span>
             <button id="qty-plus" aria-label="${t("pdp.more")}">+</button>
-          </div>`}
+          </div>` : `<span class="claim" style="align-self:center">${t("pdp.unique")}</span>`}
           <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
+        ${p.used && bestand(p) > 1 ? `<p class="claim" style="margin-top:.9rem">${t("pdp.multi", { n: bestand(p) })}</p>` : ""}
         <p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>
 
         <hr class="divider">
