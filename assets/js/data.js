@@ -357,7 +357,7 @@ const PRODUCTS = [
   {
     /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
     id: "leuchte-artischocke", used: true, stueck: 2, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
-    price: 6500, weight: "12 kg", swatches: ["#b87333"],
+    price: 4900, weight: "12 kg", swatches: ["#b87333"],
     photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
     t: {
       de: { short: "H\u00e4ngeleuchte von Poul Henningsen, 72 Kupferbl\u00e4tter, gebaut von Louis Poulsen.",
@@ -381,7 +381,7 @@ const PRODUCTS = [
   {
     id: "bett-marin", used: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
     price: 700, weight: "34 kg", swatches: ["#f1eee8"],
-    photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg", "assets/img/betten-marin-3.jpg"],
+    photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg"],
     t: {
       de: { short: "Einzelbett mit gepolstertem Kopfteil, heller Bezug.",
         description: "Ein Einzelbett, rundum gepolstert und gefedert. Das Kopfteil ist schlicht gehalten und mit demselben hellen Gewebe bezogen; ein schmaler dunkler Sockel hebt das Bett vom Boden ab. Es stand im G\u00e4stezimmer eines Ferienhauses und ist kaum benutzt \u2014 der Bezug ist fleckenfrei, die Federung ohne Kuhle. Die Aufnahmen zeigen das Zimmer mit zwei Betten; angeboten wird eines davon. Bettwaren und Dekoration geh\u00f6ren nicht dazu.",
