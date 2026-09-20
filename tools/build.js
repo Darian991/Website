@@ -214,7 +214,7 @@ function renderRoute() {
   clearPageListeners();
   document.dispatchEvent(new Event("route:changed"));
   document.body.dataset.page = route.page;
-  document.querySelectorAll("#nav a").forEach(function (a) {
+  document.querySelectorAll("#nav a, #subnav a").forEach(function (a) {
     a.classList.toggle("is-active", a.getAttribute("href") === key);
   });
 

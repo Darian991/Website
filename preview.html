@@ -1017,6 +1017,38 @@ noscript .footer p { max-width: 60ch; }
   .bot-launch__label { display: none; }
 }
 
+/* ---------- Seitenauswahl unter dem Gutscheinstreifen ----------
+   Auf breiten Bildschirmen steht die Navigation in der Kopfzeile. Sobald
+   sie dort dem Menüknopf weicht, tritt dieser Streifen an ihre Stelle:
+   offen sichtbar, ohne Umweg über ein Menü. Er klebt mit der Kopfzeile
+   oben und lässt sich auf schmalen Geräten seitlich schieben. */
+.subnav { display: none; border-bottom: 1px solid var(--line); background: rgba(250,247,242,.6); }
+.subnav__inner {
+  display: flex; gap: 1.6rem; justify-content: center;
+  overflow-x: auto; scrollbar-width: none;
+  padding: .55rem 0;
+}
+.subnav__inner::-webkit-scrollbar { display: none; }
+.subnav a {
+  flex: none;
+  font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); padding: .25rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color var(--t), border-color var(--t);
+}
+.subnav a:hover { color: var(--ink); }
+.subnav a.is-active { color: var(--ink); border-bottom-color: var(--greige); }
+
+@media (max-width: 1240px) {
+  .subnav { display: block; }
+}
+@media (max-width: 560px) {
+  /* Auf dem Telefon rücken die Wörter enger zusammen, damit alle vier
+     Seiten ohne Schieben sichtbar bleiben. */
+  .subnav__inner { gap: .9rem; padding-inline: .7rem; }
+  .subnav a { font-size: .62rem; letter-spacing: .1em; }
+}
+
 </style>
 
 <div id="site-header"></div>
@@ -1175,6 +1207,7 @@ const I18N = {
 
     "topbar": "Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
+    "nav.pages": "Seiten",
     "nav.home": "Startseite",
     "nav.shop": "Kollektion",
     "nav.about": "Studio",
@@ -1515,6 +1548,7 @@ const I18N = {
 
     "topbar": "Poliform showroom Hamburg · Appointments on +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
+    "nav.pages": "Pages",
     "nav.home": "Home",
     "nav.shop": "Collection",
     "nav.about": "Studio",
@@ -1725,6 +1759,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Merci de demander — je vais bien. Et vous ? Si vous le souhaitez, je vous montre quelque chose de la collection.",
@@ -2065,6 +2100,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Gracias por preguntar — estoy bien. ¿Y usted? Si le apetece, le enseño algo de la colección.",
@@ -3355,6 +3391,13 @@ function renderChrome() {
   const header = `
   <div class="topbar" id="topbar"></div>
   <header class="header">
+    <!-- Die Seitenauswahl liegt auf schmalen Geräten offen unter dem
+         Gutscheinstreifen, statt sich hinter dem Menüknopf zu verstecken. -->
+    <nav class="subnav" id="subnav" aria-label="${t("nav.pages")}">
+      <div class="wrap subnav__inner">
+        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
+      </div>
+    </nav>
     <div class="wrap header__inner">
       <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
       <nav class="nav" id="nav">
@@ -4887,7 +4930,7 @@ function renderRoute() {
   clearPageListeners();
   document.dispatchEvent(new Event("route:changed"));
   document.body.dataset.page = route.page;
-  document.querySelectorAll("#nav a").forEach(function (a) {
+  document.querySelectorAll("#nav a, #subnav a").forEach(function (a) {
     a.classList.toggle("is-active", a.getAttribute("href") === key);
   });
 

@@ -149,6 +149,7 @@ const I18N = {
 
     "topbar": "Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
+    "nav.pages": "Seiten",
     "nav.home": "Startseite",
     "nav.shop": "Kollektion",
     "nav.about": "Studio",
@@ -489,6 +490,7 @@ const I18N = {
 
     "topbar": "Poliform showroom Hamburg · Appointments on +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
+    "nav.pages": "Pages",
     "nav.home": "Home",
     "nav.shop": "Collection",
     "nav.about": "Studio",
@@ -699,6 +701,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Merci de demander — je vais bien. Et vous ? Si vous le souhaitez, je vous montre quelque chose de la collection.",
@@ -1039,6 +1042,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Gracias por preguntar — estoy bien. ¿Y usted? Si le apetece, le enseño algo de la colección.",

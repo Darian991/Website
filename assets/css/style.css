@@ -1009,3 +1009,35 @@ noscript .footer p { max-width: 60ch; }
   .bot-launch { padding: .8rem; }
   .bot-launch__label { display: none; }
 }
+
+/* ---------- Seitenauswahl unter dem Gutscheinstreifen ----------
+   Auf breiten Bildschirmen steht die Navigation in der Kopfzeile. Sobald
+   sie dort dem Menüknopf weicht, tritt dieser Streifen an ihre Stelle:
+   offen sichtbar, ohne Umweg über ein Menü. Er klebt mit der Kopfzeile
+   oben und lässt sich auf schmalen Geräten seitlich schieben. */
+.subnav { display: none; border-bottom: 1px solid var(--line); background: rgba(250,247,242,.6); }
+.subnav__inner {
+  display: flex; gap: 1.6rem; justify-content: center;
+  overflow-x: auto; scrollbar-width: none;
+  padding: .55rem 0;
+}
+.subnav__inner::-webkit-scrollbar { display: none; }
+.subnav a {
+  flex: none;
+  font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); padding: .25rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color var(--t), border-color var(--t);
+}
+.subnav a:hover { color: var(--ink); }
+.subnav a.is-active { color: var(--ink); border-bottom-color: var(--greige); }
+
+@media (max-width: 1240px) {
+  .subnav { display: block; }
+}
+@media (max-width: 560px) {
+  /* Auf dem Telefon rücken die Wörter enger zusammen, damit alle vier
+     Seiten ohne Schieben sichtbar bleiben. */
+  .subnav__inner { gap: .9rem; padding-inline: .7rem; }
+  .subnav a { font-size: .62rem; letter-spacing: .1em; }
+}

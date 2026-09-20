@@ -205,6 +205,13 @@ function renderChrome() {
   const header = `
   <div class="topbar" id="topbar"></div>
   <header class="header">
+    <!-- Die Seitenauswahl liegt auf schmalen Geräten offen unter dem
+         Gutscheinstreifen, statt sich hinter dem Menüknopf zu verstecken. -->
+    <nav class="subnav" id="subnav" aria-label="${t("nav.pages")}">
+      <div class="wrap subnav__inner">
+        ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
+      </div>
+    </nav>
     <div class="wrap header__inner">
       <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
       <nav class="nav" id="nav">

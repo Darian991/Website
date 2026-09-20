@@ -30,6 +30,12 @@ tools/build.js         Schreibt die deutschen Texte fest in die Seiten
 Kopf- und Fußzeile werden von `app.js` in die Platzhalter `#site-header` und
 `#site-footer` eingesetzt — sie müssen also nur an einer Stelle gepflegt werden.
 
+Die Seitenauswahl steht doppelt bereit: in der Kopfzeile, solange dort Platz
+ist, und ab 1240 px abwärts als eigener Streifen (`.subnav`) direkt unter dem
+Gutscheinband. So ist jede Seite auf Tablet und Telefon mit einem Griff
+erreichbar, ohne Umweg über den Menüknopf. Der Menüknopf bleibt daneben
+bestehen, weil dort die Sprachwahl liegt.
+
 ## Ansehen
 
 Einfach `index.html` im Browser öffnen. Oder mit einem lokalen Server:
