@@ -381,7 +381,7 @@ const PRODUCTS = [
   {
     id: "bett-marin", used: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
     price: 700, weight: "34 kg", swatches: ["#f1eee8"],
-    photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg"],
+    photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg", "assets/img/betten-marin-3.jpg"],
     t: {
       de: { short: "Einzelbett mit gepolstertem Kopfteil, heller Bezug.",
         description: "Ein Einzelbett, rundum gepolstert und gefedert. Das Kopfteil ist schlicht gehalten und mit demselben hellen Gewebe bezogen; ein schmaler dunkler Sockel hebt das Bett vom Boden ab. Es stand im G\u00e4stezimmer eines Ferienhauses und ist kaum benutzt \u2014 der Bezug ist fleckenfrei, die Federung ohne Kuhle. Die Aufnahmen zeigen das Zimmer mit zwei Betten; angeboten wird eines davon. Bettwaren und Dekoration geh\u00f6ren nicht dazu.",
