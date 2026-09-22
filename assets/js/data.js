@@ -381,22 +381,22 @@ const PRODUCTS = [
   {
     id: "stuhl-ombra", used: true, grade: "sehrgut", year: "2020", name: "Ombra", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
     price: 1500, weight: "9 kg", swatches: ["#1c1b1a"],
-    photos: ["assets/img/stuhl-ombra-1.jpg", "assets/img/stuhl-ombra-2.jpg", "assets/img/stuhl-ombra-3.jpg"],
+    photos: ["assets/img/stuhl-ombra-1.jpg"],
     t: {
       de: { short: "Drehstuhl mit Armlehnen, schwarzes Leder, Knopfheftung.",
-        description: "Ein Drehstuhl, der seine Form dem R\u00fccken verdankt: Die Schale l\u00e4uft in zwei knappe Armlehnen aus, vier Kn\u00f6pfe halten das Leder in der Lehne. Das Kreuzgestell aus schwarz lackiertem Stahl dreht leise und stellt sich von selbst zur\u00fcck. Das Leder ist durchgef\u00e4rbt, ohne Risse und nur an den Armkanten leicht gegl\u00e4ttet. Die Aufnahmen zeigen mehrere Exemplare an einem Esstisch; angeboten wird einer davon. Tisch und Zubeh\u00f6r geh\u00f6ren nicht dazu.",
+        description: "Ein Drehstuhl, der seine Form dem R\u00fccken verdankt: Die Schale l\u00e4uft in zwei knappe Armlehnen aus, vier Kn\u00f6pfe halten das Leder in der Lehne. Das Kreuzgestell aus schwarz lackiertem Stahl dreht leise und stellt sich von selbst zur\u00fcck. Das Leder ist durchgef\u00e4rbt, ohne Risse und nur an den Armkanten leicht gegl\u00e4ttet. Die Aufnahme zeigt den Stuhl an einem Esstisch; Tisch und Zubeh\u00f6r geh\u00f6ren nicht zum Angebot.",
         material: "Leder schwarz, Kreuzgestell Stahl schwarz", dimensions: "B 62 \u00d7 T 58 \u00d7 H 80 cm, Sitzh\u00f6he 46 cm",
         origin: "Polsterei Jutland, D\u00e4nemark", lead: "sofort verf\u00fcgbar", colors: ["Schwarz"] },
       en: { short: "Swivel chair with arms, black leather, buttoned back.",
-        description: "A swivel chair that owes its shape to the back: the shell runs out into two short arms, and four buttons hold the leather in the backrest. The cross base in black lacquered steel turns quietly and returns by itself. The leather is dyed through, free of cracks and only lightly polished along the arm edges. The photographs show several of these at a dining table; one of them is on offer. Table and accessories are not included.",
+        description: "A swivel chair that owes its shape to the back: the shell runs out into two short arms, and four buttons hold the leather in the backrest. The cross base in black lacquered steel turns quietly and returns by itself. The leather is dyed through, free of cracks and only lightly polished along the arm edges. The photograph shows the chair at a dining table; table and accessories are not included.",
         material: "Black leather, black steel cross base", dimensions: "W 62 \u00d7 D 58 \u00d7 H 80 cm, seat height 46 cm",
         origin: "Jutland upholstery, Denmark", lead: "available now", colors: ["Black"] },
       fr: { short: "Chaise pivotante \u00e0 accoudoirs, cuir noir, dossier capitonn\u00e9.",
-        description: "Une chaise pivotante qui doit sa forme au dos : la coque se prolonge en deux accoudoirs courts et quatre boutons retiennent le cuir du dossier. Le pi\u00e9tement en croix, acier laqu\u00e9 noir, tourne sans bruit et revient de lui-m\u00eame. Le cuir est teint\u00e9 dans la masse, sans fissures, l\u00e9g\u00e8rement liss\u00e9 seulement sur l\u2019ar\u00eate des accoudoirs. Les photographies montrent plusieurs exemplaires autour d\u2019une table ; c\u2019est l\u2019un d\u2019eux qui est propos\u00e9. La table et les accessoires ne sont pas compris.",
+        description: "Une chaise pivotante qui doit sa forme au dos : la coque se prolonge en deux accoudoirs courts et quatre boutons retiennent le cuir du dossier. Le pi\u00e9tement en croix, acier laqu\u00e9 noir, tourne sans bruit et revient de lui-m\u00eame. Le cuir est teint\u00e9 dans la masse, sans fissures, l\u00e9g\u00e8rement liss\u00e9 seulement sur l\u2019ar\u00eate des accoudoirs. La photographie montre la chaise \u00e0 une table de repas ; la table et les accessoires ne sont pas compris.",
         material: "Cuir noir, pi\u00e9tement en croix acier noir", dimensions: "L 62 \u00d7 P 58 \u00d7 H 80 cm, assise 46 cm",
         origin: "Tapisserie du Jutland, Danemark", lead: "disponible imm\u00e9diatement", colors: ["Noir"] },
       es: { short: "Silla giratoria con brazos, cuero negro, respaldo capitonado.",
-        description: "Una silla giratoria que debe su forma al respaldo: la carcasa se prolonga en dos brazos cortos y cuatro botones sujetan el cuero del respaldo. La base en cruz de acero lacado negro gira en silencio y vuelve sola a su sitio. El cuero est\u00e1 te\u00f1ido en masa, sin grietas, apenas pulido en el canto de los brazos. Las fotograf\u00edas muestran varias unidades alrededor de una mesa; se ofrece una de ellas. La mesa y los accesorios no est\u00e1n incluidos.",
+        description: "Una silla giratoria que debe su forma al respaldo: la carcasa se prolonga en dos brazos cortos y cuatro botones sujetan el cuero del respaldo. La base en cruz de acero lacado negro gira en silencio y vuelve sola a su sitio. El cuero est\u00e1 te\u00f1ido en masa, sin grietas, apenas pulido en el canto de los brazos. La fotograf\u00eda muestra la silla en una mesa de comedor; la mesa y los accesorios no est\u00e1n incluidos.",
         material: "Cuero negro, base en cruz de acero negro", dimensions: "An 62 \u00d7 Pr 58 \u00d7 Al 80 cm, asiento 46 cm",
         origin: "Tapicer\u00eda de Jutlandia, Dinamarca", lead: "disponible ahora", colors: ["Negro"] }
     }

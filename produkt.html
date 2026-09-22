@@ -100,16 +100,18 @@ function renderPdp() {
       <div class="pdp__gallery">
         <div class="gallery" id="gallery" role="group" aria-roledescription="carousel" aria-label="${t("gallery.label")}">
           <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView)}</div>
+          ${ansichten(p).length > 1 ? `
           <button class="gallery__arrow gallery__arrow--prev" id="gal-prev" aria-label="${t("gallery.prev")}" aria-controls="pdp-main">‹</button>
           <button class="gallery__arrow gallery__arrow--next" id="gal-next" aria-label="${t("gallery.next")}" aria-controls="pdp-main">›</button>
-          <span class="gallery__count" id="gal-count" aria-live="polite"></span>
+          <span class="gallery__count" id="gal-count" aria-live="polite"></span>` : ""}
         </div>
+        ${ansichten(p).length > 1 ? `
         <div class="pdp__thumbs" id="pdp-thumbs">
           ${ansichten(p).map((v, i) => `
             <button data-view="${i}" class="${i === chosenView ? "is-active" : ""}"
                     aria-label="${v.label}" title="${v.label}"
                     >${artFor(p, chosenColorIndex, i)}</button>`).join("")}
-        </div>
+        </div>` : ""}
       </div>
 
       <div class="pdp__info">
@@ -184,7 +186,9 @@ function renderPdp() {
     $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView);
     $$("#pdp-thumbs button").forEach((b) =>
       b.classList.toggle("is-active", Number(b.dataset.view) === chosenView));
-    $("#gal-count").textContent = t("gallery.count", { n: chosenView + 1, m: anzahl });
+    // Bei einer einzigen Aufnahme gibt es weder Zähler noch Pfeile
+    const zaehler = $("#gal-count");
+    if (zaehler) zaehler.textContent = t("gallery.count", { n: chosenView + 1, m: anzahl });
   }
 
   function chooseColor(index) {
@@ -203,12 +207,14 @@ function renderPdp() {
   $$("#swatches .swatch").forEach((sw) =>
     sw.addEventListener("click", () => chooseColor(Number(sw.dataset.index))));
 
-  $("#gal-prev").addEventListener("click", () => zeigeAnsicht(chosenView - 1));
-  $("#gal-next").addEventListener("click", () => zeigeAnsicht(chosenView + 1));
-  $("#gallery").addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") { e.preventDefault(); zeigeAnsicht(chosenView - 1); }
-    if (e.key === "ArrowRight") { e.preventDefault(); zeigeAnsicht(chosenView + 1); }
-  });
+  $("#gal-prev")?.addEventListener("click", () => zeigeAnsicht(chosenView - 1));
+  $("#gal-next")?.addEventListener("click", () => zeigeAnsicht(chosenView + 1));
+  if (ansichten(current).length > 1) {
+    $("#gallery").addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); zeigeAnsicht(chosenView - 1); }
+      if (e.key === "ArrowRight") { e.preventDefault(); zeigeAnsicht(chosenView + 1); }
+    });
+  }
 
   zeigeAnsicht(chosenView);
 

@@ -211,6 +211,12 @@ gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
 das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
 Motiv stellen.
 
+### Eine einzige Aufnahme
+
+Hat ein Stück nur ein Bild, entfallen Pfeile, Zähler und die Reihe der
+Kleinbilder — Bedienelemente, die nichts tun, verwirren mehr als sie
+helfen. Ab zwei Bildern ist die Galerie wieder vollständig da.
+
 ### Nur das Stück selbst
 
 Auf der Produktseite stand früher unter jedem Stück ein Abschnitt
