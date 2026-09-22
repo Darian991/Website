@@ -379,6 +379,52 @@ const PRODUCTS = [
     }
   },
   {
+    id: "stuhl-ombra", used: true, grade: "sehrgut", year: "2020", name: "Ombra", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
+    price: 1500, weight: "9 kg", swatches: ["#1c1b1a"],
+    photos: ["assets/img/stuhl-ombra-1.jpg", "assets/img/stuhl-ombra-2.jpg", "assets/img/stuhl-ombra-3.jpg"],
+    t: {
+      de: { short: "Drehstuhl mit Armlehnen, schwarzes Leder, Knopfheftung.",
+        description: "Ein Drehstuhl, der seine Form dem R\u00fccken verdankt: Die Schale l\u00e4uft in zwei knappe Armlehnen aus, vier Kn\u00f6pfe halten das Leder in der Lehne. Das Kreuzgestell aus schwarz lackiertem Stahl dreht leise und stellt sich von selbst zur\u00fcck. Das Leder ist durchgef\u00e4rbt, ohne Risse und nur an den Armkanten leicht gegl\u00e4ttet. Die Aufnahmen zeigen mehrere Exemplare an einem Esstisch; angeboten wird einer davon. Tisch und Zubeh\u00f6r geh\u00f6ren nicht dazu.",
+        material: "Leder schwarz, Kreuzgestell Stahl schwarz", dimensions: "B 62 \u00d7 T 58 \u00d7 H 80 cm, Sitzh\u00f6he 46 cm",
+        origin: "Polsterei Jutland, D\u00e4nemark", lead: "sofort verf\u00fcgbar", colors: ["Schwarz"] },
+      en: { short: "Swivel chair with arms, black leather, buttoned back.",
+        description: "A swivel chair that owes its shape to the back: the shell runs out into two short arms, and four buttons hold the leather in the backrest. The cross base in black lacquered steel turns quietly and returns by itself. The leather is dyed through, free of cracks and only lightly polished along the arm edges. The photographs show several of these at a dining table; one of them is on offer. Table and accessories are not included.",
+        material: "Black leather, black steel cross base", dimensions: "W 62 \u00d7 D 58 \u00d7 H 80 cm, seat height 46 cm",
+        origin: "Jutland upholstery, Denmark", lead: "available now", colors: ["Black"] },
+      fr: { short: "Chaise pivotante \u00e0 accoudoirs, cuir noir, dossier capitonn\u00e9.",
+        description: "Une chaise pivotante qui doit sa forme au dos : la coque se prolonge en deux accoudoirs courts et quatre boutons retiennent le cuir du dossier. Le pi\u00e9tement en croix, acier laqu\u00e9 noir, tourne sans bruit et revient de lui-m\u00eame. Le cuir est teint\u00e9 dans la masse, sans fissures, l\u00e9g\u00e8rement liss\u00e9 seulement sur l\u2019ar\u00eate des accoudoirs. Les photographies montrent plusieurs exemplaires autour d\u2019une table ; c\u2019est l\u2019un d\u2019eux qui est propos\u00e9. La table et les accessoires ne sont pas compris.",
+        material: "Cuir noir, pi\u00e9tement en croix acier noir", dimensions: "L 62 \u00d7 P 58 \u00d7 H 80 cm, assise 46 cm",
+        origin: "Tapisserie du Jutland, Danemark", lead: "disponible imm\u00e9diatement", colors: ["Noir"] },
+      es: { short: "Silla giratoria con brazos, cuero negro, respaldo capitonado.",
+        description: "Una silla giratoria que debe su forma al respaldo: la carcasa se prolonga en dos brazos cortos y cuatro botones sujetan el cuero del respaldo. La base en cruz de acero lacado negro gira en silencio y vuelve sola a su sitio. El cuero est\u00e1 te\u00f1ido en masa, sin grietas, apenas pulido en el canto de los brazos. Las fotograf\u00edas muestran varias unidades alrededor de una mesa; se ofrece una de ellas. La mesa y los accesorios no est\u00e1n incluidos.",
+        material: "Cuero negro, base en cruz de acero negro", dimensions: "An 62 \u00d7 Pr 58 \u00d7 Al 80 cm, asiento 46 cm",
+        origin: "Tapicer\u00eda de Jutlandia, Dinamarca", lead: "disponible ahora", colors: ["Negro"] }
+    }
+  },
+  {
+    id: "hocker-vite", used: true, grade: "sehrgut", year: "2019", name: "Vite", categoryKey: "stuehle", shape: "stuhl", tone: "studio",
+    price: 200, weight: "4 kg", swatches: ["#efece6"],
+    photos: ["assets/img/hocker-vite-1.jpg", "assets/img/hocker-vite-2.jpg", "assets/img/hocker-vite-3.jpg"],
+    t: {
+      de: { short: "Barhocker, wei\u00df lackierter Stahl, Sitz aus Eiche, stufenlos h\u00f6henverstellbar.",
+        description: "Ein Barhocker, der ohne Hebel auskommt: Der Sitz aus massiver Eiche sitzt auf einer Gewindespindel und wird durch Drehen h\u00f6her oder tiefer gestellt. Das Gestell ist wei\u00df lackierter Stahl, der Fu\u00dfring aus Edelstahl. Lack und Sitz sind ohne Schaden, der Fu\u00dfring zeigt den \u00fcblichen matten Glanz vom Gebrauch. Die Aufnahmen zeigen zwei Hocker; angeboten wird einer.",
+        material: "Stahl wei\u00df lackiert, Sitz Eiche, Fu\u00dfring Edelstahl", dimensions: "\u00d8 35 \u00d7 H 60\u201375 cm (drehbar verstellbar)",
+        origin: "Metallwerkstatt Brianza, Italien", lead: "sofort verf\u00fcgbar", colors: ["Wei\u00df / Eiche"] },
+      en: { short: "Bar stool, white lacquered steel, oak seat, freely height-adjustable.",
+        description: "A bar stool that needs no lever: the solid oak seat sits on a threaded spindle and is raised or lowered simply by turning it. The frame is white lacquered steel, the footrest stainless. Lacquer and seat are undamaged; the footrest shows the usual matt sheen of use. The photographs show two stools; one is on offer.",
+        material: "White lacquered steel, oak seat, stainless footrest", dimensions: "\u00d8 35 \u00d7 H 60\u201375 cm (adjusted by turning)",
+        origin: "Brianza metal workshop, Italy", lead: "available now", colors: ["White / oak"] },
+      fr: { short: "Tabouret de bar, acier laqu\u00e9 blanc, assise en ch\u00eane, hauteur r\u00e9glable.",
+        description: "Un tabouret de bar qui se passe de levier : l\u2019assise en ch\u00eane massif repose sur une vis sans fin et se r\u00e8gle en la faisant tourner. Le pi\u00e9tement est en acier laqu\u00e9 blanc, le repose-pied en inox. La laque et l\u2019assise sont intactes ; le repose-pied montre le l\u00e9ger satin\u00e9 de l\u2019usage. Les photographies montrent deux tabourets ; un seul est propos\u00e9.",
+        material: "Acier laqu\u00e9 blanc, assise en ch\u00eane, repose-pied inox", dimensions: "\u00d8 35 \u00d7 H 60\u201375 cm (r\u00e9glage par rotation)",
+        origin: "Atelier m\u00e9tal de Brianza, Italie", lead: "disponible imm\u00e9diatement", colors: ["Blanc / ch\u00eane"] },
+      es: { short: "Taburete de bar, acero lacado blanco, asiento de roble, altura regulable.",
+        description: "Un taburete de bar que prescinde de palancas: el asiento de roble macizo va sobre un husillo roscado y se sube o baja simplemente gir\u00e1ndolo. La estructura es de acero lacado blanco y el reposapi\u00e9s de acero inoxidable. Lacado y asiento est\u00e1n intactos; el reposapi\u00e9s presenta el brillo mate propio del uso. Las fotograf\u00edas muestran dos taburetes; se ofrece uno.",
+        material: "Acero lacado blanco, asiento de roble, reposapi\u00e9s inoxidable", dimensions: "\u00d8 35 \u00d7 Al 60\u201375 cm (se regula girando)",
+        origin: "Taller met\u00e1lico de Brianza, Italia", lead: "disponible ahora", colors: ["Blanco / roble"] }
+    }
+  },
+  {
     id: "bett-marin", used: true, grade: "wieneu", year: "2021", name: "Marin", categoryKey: "betten", shape: "bett", tone: "studio",
     price: 700, weight: "34 kg", swatches: ["#f1eee8"],
     photos: ["assets/img/betten-marin-1.jpg", "assets/img/betten-marin-2.jpg"],

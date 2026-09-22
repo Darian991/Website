@@ -235,6 +235,13 @@ auf eins. Gibt es ein Stück mehrfach, sagt das Feld `stueck: 2`, wie oft.
 Produktseite und Warenkorb zeigen dann eine Mengenauswahl, gedeckelt auf den
 Bestand, und statt „Einzelstück" steht „2 Exemplare verfügbar".
 
+**Aus einem Raumbild ein Produktbild schneiden**: Oft gibt es nur eine
+Aufnahme, auf der das Stück mitsamt Zimmer zu sehen ist. Drei brauchbare
+Bilder entstehen daraus durch Ausschnitte — Übersicht, Einzelstück,
+Detail. Wird ein Ausschnitt dabei hochgerechnet, weicht er auf; ein
+leichtes Nachschärfen (`UnsharpMask`, Radius 1,4, 95 %) holt die Kanten
+zurück. Mehr als das Doppelte der Ausgangsgröße lohnt sich nicht.
+
 Die Dateien liegen in `assets/img/`. Sinnvoll sind höchstens 1200 px an der
 langen Kante bei Qualität 82 — `tools/build.js` bettet sie als Daten-URI in
 `preview.html` ein, und diese eine Datei soll handlich bleiben.
