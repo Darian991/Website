@@ -402,6 +402,52 @@ const PRODUCTS = [
     }
   },
   {
+    id: "sessel-salina", used: true, grade: "sehrgut", year: "2019", name: "Salina", categoryKey: "sessel", shape: "sessel", tone: "sand",
+    price: 900, weight: "28 kg", swatches: ["#ded7c9"],
+    photos: ["assets/img/sessel-salina-1.jpg", "assets/img/sessel-salina-2.jpg", "assets/img/sessel-salina-3.jpg"],
+    t: {
+      de: { short: "Breiter Sessel mit losem Leinenbezug, Sch\u00fcrze und Paspel.",
+        description: "Ein Sessel, in dem man quer sitzen kann: breite Sitzfl\u00e4che, weiche Kissen, eine Lehne, die nach hinten nachgibt. Der Bezug aus gewaschenem Leinen liegt lose auf, l\u00e4uft unten in eine Sch\u00fcrze aus und ist an den Kanten mit Paspel gefasst. Er l\u00e4sst sich abziehen und waschen; der vorhandene ist fleckenfrei und nur an den Armkanten leicht wei\u00df gerieben, wie es Leinen tut. Teppich, Beistelltisch und Kissen der Aufnahmen geh\u00f6ren nicht zum Angebot.",
+        material: "Leinenbezug abnehmbar, Federkern, Massivholzrahmen", dimensions: "B 100 \u00d7 T 95 \u00d7 H 88 cm, Sitzh\u00f6he 45 cm",
+        origin: "Polsterei Brianza, Italien", lead: "sofort verf\u00fcgbar", colors: ["Naturleinen"] },
+      en: { short: "Wide armchair with a loose linen cover, skirt and piping.",
+        description: "An armchair you can sit across: a wide seat, soft cushions, a back that gives a little. The washed linen cover sits loose, runs out into a skirt at the bottom and is piped along the edges. It can be taken off and washed; the one on it is unstained and only lightly rubbed pale along the arm edges, as linen does. Rug, side table and cushions in the photographs are not part of the offer.",
+        material: "Removable linen cover, sprung seat, solid timber frame", dimensions: "W 100 \u00d7 D 95 \u00d7 H 88 cm, seat height 45 cm",
+        origin: "Brianza upholstery, Italy", lead: "available now", colors: ["Natural linen"] },
+      fr: { short: "Large fauteuil \u00e0 housse de lin amovible, jupe et passepoil.",
+        description: "Un fauteuil o\u00f9 l\u2019on peut s\u2019asseoir en travers : assise large, coussins souples, dossier qui c\u00e8de un peu. La housse en lin lav\u00e9 est pos\u00e9e librement, se termine en jupe et se borde d\u2019un passepoil. Elle se retire et se lave ; celle-ci est sans taches, \u00e0 peine blanchie sur l\u2019ar\u00eate des accoudoirs, comme le fait le lin. Le tapis, la table d\u2019appoint et les coussins des photographies ne font pas partie de l\u2019offre.",
+        material: "Housse de lin amovible, assise \u00e0 ressorts, cadre en bois massif", dimensions: "L 100 \u00d7 P 95 \u00d7 H 88 cm, assise 45 cm",
+        origin: "Tapisserie de Brianza, Italie", lead: "disponible imm\u00e9diatement", colors: ["Lin naturel"] },
+      es: { short: "Butaca ancha con funda de lino suelta, faldón y ribete.",
+        description: "Una butaca en la que se puede sentar de lado: asiento ancho, cojines blandos, respaldo que cede un poco. La funda de lino lavado va suelta, termina abajo en un fald\u00f3n y lleva ribete en los cantos. Se quita y se lava; la actual no tiene manchas y solo est\u00e1 algo aclarada en el canto de los brazos, como hace el lino. La alfombra, la mesa auxiliar y los cojines de las fotograf\u00edas no forman parte de la oferta.",
+        material: "Funda de lino desenfundable, asiento con muelles, estructura de madera maciza", dimensions: "An 100 \u00d7 Pr 95 \u00d7 Al 88 cm, asiento 45 cm",
+        origin: "Tapicer\u00eda de Brianza, Italia", lead: "disponible ahora", colors: ["Lino natural"] }
+    }
+  },
+  {
+    id: "bett-duna", used: true, grade: "wieneu", year: "2020", name: "Duna", categoryKey: "betten", shape: "bett", tone: "studio",
+    price: 1400, weight: "72 kg", swatches: ["#efece5"],
+    photos: ["assets/img/bett-duna-1.jpg", "assets/img/bett-duna-2.jpg", "assets/img/bett-duna-3.jpg"],
+    t: {
+      de: { short: "Doppelbett mit weich geschwungenem Kopfteil, heller Bezug.",
+        description: "Ein Doppelbett in voller Breite. Das Kopfteil ist gepolstert und oben weich geschwungen, der Unterbau rundum bezogen und gefedert, ohne sichtbare F\u00fc\u00dfe \u2014 das Bett steht ruhig im Raum. Der Bezug ist fleckenfrei, die Federung ohne Kuhle; Matratze auf Wunsch. Bettw\u00e4sche, Nachttische und Wandleuchten der Aufnahmen geh\u00f6ren nicht zum Angebot.",
+        material: "Leinenmischgewebe, gefederter Unterbau, Massivholzrahmen", dimensions: "B 180 \u00d7 L 200 \u00d7 H 105 cm",
+        origin: "Polsterei Levante, Spanien", lead: "sofort verf\u00fcgbar", colors: ["Wollwei\u00df"] },
+      en: { short: "Double bed with a softly curved headboard, pale cover.",
+        description: "A double bed in full width. The headboard is upholstered and softly curved along the top, the base covered all round and sprung, with no visible legs \u2014 the bed sits quietly in the room. The cover is unstained, the springing free of hollows; mattress on request. Bed linen, nightstands and wall lamps in the photographs are not part of the offer.",
+        material: "Linen blend, sprung base, solid timber frame", dimensions: "W 180 \u00d7 L 200 \u00d7 H 105 cm",
+        origin: "Levante upholstery workshop, Spain", lead: "available now", colors: ["Wool white"] },
+      fr: { short: "Lit double \u00e0 t\u00eate de lit doucement galb\u00e9e, tissu clair.",
+        description: "Un lit double pleine largeur. La t\u00eate de lit est rembourr\u00e9e et doucement galb\u00e9e sur le dessus, le sommier habill\u00e9 sur tout son pourtour et suspendu, sans pieds apparents \u2014 le lit repose calmement dans la pi\u00e8ce. Le tissu est sans taches, la suspension sans creux ; matelas sur demande. Le linge de lit, les chevets et les appliques des photographies ne font pas partie de l\u2019offre.",
+        material: "M\u00e9lange de lin, sommier suspendu, cadre en bois massif", dimensions: "L 180 \u00d7 l 200 \u00d7 H 105 cm",
+        origin: "Atelier de tapisserie Levante, Espagne", lead: "disponible imm\u00e9diatement", colors: ["Blanc laine"] },
+      es: { short: "Cama de matrimonio con cabecero de curva suave, tejido claro.",
+        description: "Una cama de matrimonio a todo lo ancho. El cabecero va tapizado y curvado con suavidad en la parte alta; la base est\u00e1 forrada en todo su contorno y suspendida, sin patas a la vista \u2014 la cama descansa serena en la habitaci\u00f3n. El tejido no tiene manchas y la suspensi\u00f3n no presenta hundimientos; colch\u00f3n bajo petici\u00f3n. La ropa de cama, las mesillas y los apliques de las fotograf\u00edas no forman parte de la oferta.",
+        material: "Mezcla de lino, base suspendida, estructura de madera maciza", dimensions: "An 180 \u00d7 L 200 \u00d7 Al 105 cm",
+        origin: "Tapicer\u00eda Levante, Espa\u00f1a", lead: "disponible ahora", colors: ["Blanco lana"] }
+    }
+  },
+  {
     id: "stuhl-ombra", used: true, grade: "sehrgut", year: "2020", name: "Ombra", categoryKey: "stuehle", shape: "stuhl", tone: "ink",
     price: 1500, weight: "9 kg", swatches: ["#1c1b1a"],
     photos: ["assets/img/stuhl-ombra-1.jpg"],
