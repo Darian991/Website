@@ -254,9 +254,24 @@ Bestand, und statt „Einzelstück" steht „2 Exemplare verfügbar".
 **Aus einem Raumbild ein Produktbild schneiden**: Oft gibt es nur eine
 Aufnahme, auf der das Stück mitsamt Zimmer zu sehen ist. Drei brauchbare
 Bilder entstehen daraus durch Ausschnitte — Übersicht, Einzelstück,
-Detail. Wird ein Ausschnitt dabei hochgerechnet, weicht er auf; ein
-leichtes Nachschärfen (`UnsharpMask`, Radius 1,4, 95 %) holt die Kanten
-zurück. Mehr als das Doppelte der Ausgangsgröße lohnt sich nicht.
+Detail.
+
+Wird ein Ausschnitt dabei hochgerechnet, weicht er auf. Ein einziger Sprung
+auf das Doppelte und ein Zug mit großem Radius hinterher malen nur Ränder
+um die Formen. Deutlich besser in zwei Stufen, mit kleinem Radius vor,
+zwischen und nach dem Vergrößern:
+
+```
+UnsharpMask(0.8, 60 %)  →  auf √2 vergrößern
+UnsharpMask(0.8, 80 %)  →  auf die Zielgröße vergrößern
+UnsharpMask(0.7, 110 %)
+```
+
+Damit bleibt die Struktur des Gewebes erhalten statt zu verschmieren.
+Gespeichert wird solches Material mit Güte 90 statt 82 — was an feiner
+Zeichnung gewonnen wurde, darf die Kompression nicht gleich wieder
+wegnehmen. Mehr als das Doppelte der Ausgangsgröße lohnt sich trotzdem
+nicht: Was im Original nicht steht, entsteht auch hier nicht.
 
 Die Dateien liegen in `assets/img/`. Sinnvoll sind höchstens 1200 px an der
 langen Kante bei Qualität 82 — `tools/build.js` bettet sie als Daten-URI in
