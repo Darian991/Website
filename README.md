@@ -211,6 +211,16 @@ gezeichneten Blickwinkeln (`ansichten()` in `data.js`). Das erste Bild ist
 das Titelbild der Karte, also dorthin das ruhigste, am besten quadratnahe
 Motiv stellen.
 
+### Nur das Stück selbst
+
+Auf der Produktseite stand früher unter jedem Stück ein Abschnitt
+„Ebenfalls sehenswert“, der mit allem aufgefüllt wurde, was der Laden sonst
+führt. Bei wenigen Stücken sah das aus wie weitere Aufnahmen desselben
+Stücks. Der Abschnitt zeigt jetzt nur noch dieselbe Rubrik und erscheint
+erst, wenn es dort mindestens zwei weitere Stücke gibt (`renderRelated()`
+in `produkt.html`). Solange der Bestand klein ist, zeigt eine Produktseite
+damit ausschließlich Bilder des angebotenen Stücks.
+
 ### Rubriken folgen dem Bestand
 
 Filterleiste, Fußzeile und die Kacheln der Startseite zeigen nur Rubriken,

@@ -231,9 +231,15 @@ function renderPdp() {
 }
 
 function renderRelated() {
-  const rest = PRODUCTS.filter((p) => p.id !== current.id);
-  const same = rest.filter((p) => p.categoryKey === current.categoryKey);
-  const list = [...same, ...rest.filter((p) => p.categoryKey !== current.categoryKey)].slice(0, 3);
+  /* Nur Stücke derselben Rubrik, und erst ab zweien. Vorher wurde mit allem
+     aufgefüllt, was der Laden sonst führt: Unter einem Stuhl standen Bilder
+     von Lampe und Bett, die leicht für weitere Aufnahmen des Stuhls gehalten
+     werden. Ein einzelner Nachbar lohnt den Abschnitt nicht — dann führt der
+     Weg über die Kollektion. Wächst eine Rubrik, kommt er von selbst zurück. */
+  const list = PRODUCTS
+    .filter((p) => p.id !== current.id && p.categoryKey === current.categoryKey)
+    .slice(0, 3);
+  if (list.length < 2) { $("#related-section").hidden = true; return; }
   $("#related").innerHTML = list.map(productCard).join("");
   $("#related-section").hidden = false;
   bindAddButtons($("#related"));
