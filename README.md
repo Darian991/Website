@@ -1,4 +1,4 @@
-# Studio Lusso — Website für Luxusmöbel
+# Premium Meubles — Website für Luxusmöbel
 
 Eine vollständige Website für den Verkauf hochwertiger Möbel. Gebaut mit reinem
 HTML, CSS und JavaScript — kein Build-Prozess, keine Abhängigkeiten.
@@ -329,7 +329,7 @@ und die Auszeichnung im Browser ziehen mit.
 **Vorschau beim Teilen** (Open Graph, Twitter Card): Wer einen Link bei
 WhatsApp, Instagram, Facebook, LinkedIn oder Signal einfügt, sieht eine Karte
 mit Bild, Titel und Zeile darunter statt einer nackten Adresse. Das Bild dafür
-ist `assets/img/og-studio-lusso.jpg` (1200 × 630). Auf einer Produktseite
+ist `assets/img/og-premium-meubles.jpg` (1200 × 630). Auf einer Produktseite
 setzt `setzeProduktKopf()` in `assets/js/app.js` Titel, Text und Bild auf das
 gezeigte Stück um — Suchmaschinen führen die Seite dafür aus, die meisten
 sozialen Netze nicht; deren Karte zeigt den Grundeintrag.
@@ -371,7 +371,7 @@ verschwinden: Sie zeigen, dass hier wirklich gehandelt wird.
 In dieser Reihenfolge. Die ersten beiden Schritte sind an einem Nachmittag
 erledigt, Schritt 3 dauert am längsten und lässt sich nicht abkürzen.
 
-**1. Namen kaufen.** Eine Domain (`studio-lusso.de`) kostet bei INWX,
+**1. Namen kaufen.** Eine Domain (`premium-meubles.de`) kostet bei INWX,
 Namecheap oder Cloudflare etwa 10–20 € im Jahr. Danach einmal in
 `assets/js/i18n.js` ganz oben `SITE_URL` auf den echten Namen setzen und
 `node tools/build.js` laufen lassen — Kopfdaten, Teilvorschau und

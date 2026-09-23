@@ -157,8 +157,8 @@ const Cart = {
    alle Texte setzen ihn über den Platzhalter {betrag} ein. Der Code wird im Browser
    gespeichert und an der Kasse vom Zwischenbetrag abgezogen. */
 const GUTSCHEIN = { code: "WILLKOMMEN75", betrag: 75 };
-const PROMO_KEY = "studio-lusso-gutschein";
-const PROMO_SEEN = "studio-lusso-gutschein-gesehen";
+const PROMO_KEY = "premium-meubles-gutschein";
+const PROMO_SEEN = "premium-meubles-gutschein-gesehen";
 
 const Discount = {
   aktiv() {
@@ -213,7 +213,7 @@ function renderChrome() {
       </div>
     </nav>
     <div class="wrap header__inner">
-      <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
+      <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">PM</span><span class="logo__name">Premium Meubles<small data-i18n="logo.sub"></small></span></a>
       <nav class="nav" id="nav">
         <button class="close-x nav__close" id="nav-close" data-i18n-aria="action.close">×</button>
         ${NAV.map((n) => `<a href="${n.href}" class="${n.key === page ? "is-active" : ""}" data-i18n="nav.${n.key}"></a>`).join("")}
@@ -254,7 +254,7 @@ function renderChrome() {
     <div class="wrap">
       <div class="footer__grid">
         <div>
-          <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">SL</span><span class="logo__name">Studio Lusso<small data-i18n="logo.sub"></small></span></a>
+          <a class="logo" href="index.html"><span class="logo__mark" aria-hidden="true">PM</span><span class="logo__name">Premium Meubles<small data-i18n="logo.sub"></small></span></a>
           <p style="margin-top:1.2rem;max-width:34ch;font-size:.92rem" data-i18n="footer.tagline"></p>
         </div>
         <div>
@@ -777,7 +777,7 @@ function setzeProduktKopf(p) {
     color: (x.colors && x.colors[0]) || undefined,
     image: bilder.length ? bilder : undefined,
     productionDate: p.year,
-    brand: { "@type": "Brand", name: "Studio Lusso" },
+    brand: { "@type": "Brand", name: "Premium Meubles" },
     offers: {
       "@type": "Offer",
       url: adresse,

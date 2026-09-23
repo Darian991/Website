@@ -1,6 +1,6 @@
-# Studio Lusso
+# Premium Meubles
 User-agent: *
 Allow: /
 Disallow: /warenkorb.html
 
-Sitemap: https://www.studio-lusso.de/sitemap.xml
+Sitemap: https://www.premium-meubles.de/sitemap.xml

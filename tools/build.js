@@ -67,7 +67,7 @@ const SITE = SITE_URL;
 /* Was in Auszeichnung und Adressbuch steht. Muss mit Fusszeile und
    Kontaktseite uebereinstimmen. */
 const HAUS = {
-  name: "Studio Lusso",
+  name: "Premium Meubles",
   strasse: "Stadthausbrücke 8",
   plz: "20355",
   ort: "Hamburg",
@@ -161,7 +161,7 @@ function ldHaus() {
     name: HAUS.name,
     description: de["desc.home"],
     url: SITE + "/",
-    image: SITE + "/assets/img/og-studio-lusso.jpg",
+    image: SITE + "/assets/img/og-premium-meubles.jpg",
     logo: SITE + "/assets/icon-512.png",
     telephone: HAUS.telefon,
     email: HAUS.email,
@@ -255,7 +255,7 @@ function kopfDaten(p) {
   const titel = de[p.titel];
   const text = de[p.text];
   const adresse = SITE + "/" + (p.route === "index.html" ? "" : p.route);
-  const bild = SITE + "/assets/img/og-studio-lusso.jpg";
+  const bild = SITE + "/assets/img/og-premium-meubles.jpg";
 
   const zeilen = [
     ANFANG,
@@ -311,7 +311,7 @@ function noscriptChrome(activeKey) {
   <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
   <div class="topbar">${esc(de["topbar"])}</div>
   <header class="header"><div class="wrap header__inner">
-    <a class="logo" href="index.html"><span class="logo__mark">SL</span><span class="logo__name">Studio Lusso<small>${esc(de["logo.sub"])}</small></span></a>
+    <a class="logo" href="index.html"><span class="logo__mark">PM</span><span class="logo__name">Premium Meubles<small>${esc(de["logo.sub"])}</small></span></a>
     <nav class="nav-static">
       ${NAV.map((n) => `<a href="${n.href}"${n.key === activeKey ? ' class="is-active"' : ""}>${esc(de["nav." + n.key])}</a>`).join("\n      ")}
     </nav>
@@ -377,7 +377,7 @@ function schreibeVerzeichnis() {
     ).join("\n") + "\n</urlset>\n");
 
   write("robots.txt",
-    "# Studio Lusso\n" +
+    "# Premium Meubles\n" +
     "User-agent: *\n" +
     "Allow: /\n" +
     "Disallow: /warenkorb.html\n" +
@@ -431,7 +431,7 @@ ${scriptOf(html)}
 
   let out = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Studio Lusso Interior Design</title>
+<title>Premium Meubles Interior Design</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
