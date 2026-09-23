@@ -1,0 +1,47 @@
+# =========================================================
+#  Netlify — wie die Seite gebaut und ausgeliefert wird
+#
+#  Anlegen: auf netlify.com "Add new site" → "Import from Git"
+#  → dieses Verzeichnis auswählen. Mehr ist nicht nötig; alles
+#  Weitere steht hier.
+# =========================================================
+
+[build]
+  # Schreibt die deutschen Texte fest in die Seiten, erzeugt
+  # Kopfdaten, sitemap.xml, robots.txt und preview.html.
+  command = "node tools/build.js"
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  # Die Kasse liest den Katalog aus denselben Dateien wie die Website.
+  # Ohne diese Zeile lägen sie neben der Funktion nicht bereit.
+  included_files = ["assets/js/i18n.js", "assets/js/data.js"]
+
+# Alles, was nie abgelaufen ist, darf der Browser behalten.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Die Seiten selbst nicht lange halten — sonst sieht niemand,
+# dass ein Stück verkauft ist.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+
+# Die Einzeldatei-Vorschau gehört nicht ins Netz.
+[[headers]]
+  for = "/preview.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"

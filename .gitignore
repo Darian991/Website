@@ -1,0 +1,7 @@
+# Nie einchecken: Schlüssel und lokale Einstellungen.
+# Der Stripe-Schlüssel gehört in Netlify unter "Environment variables",
+# nicht in eine Datei im Verzeichnis.
+.env
+.env.*
+.netlify/
+node_modules/

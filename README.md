@@ -23,8 +23,12 @@ assets/js/data.js      Produktkatalog + Produktabbildungen als SVG
 assets/js/hero.js      Bühnenbild der Startseite, auf Canvas gezeichnet
 assets/js/app.js       Warenkorb, Suche, Kopf-/Fußzeile, Filter, Formulare
 assets/js/berater.js   Berater: beantwortet Fragen aus Katalog und Texten
-tools/build.js         Schreibt die deutschen Texte fest in die Seiten
+tools/build.js         Schreibt die deutschen Texte fest in die Seiten,
+                       erzeugt Kopfdaten, sitemap.xml und robots.txt
                        und baut preview.html (alles in einer Datei)
+netlify/functions/     Der einzige Code, der nicht im Browser läuft:
+  kasse.js             legt die Bezahlseite bei Stripe an
+netlify.toml           Bau, Auslieferung und Zwischenspeicher bei Netlify
 ```
 
 Kopf- und Fußzeile werden von `app.js` in die Platzhalter `#site-header` und
@@ -362,10 +366,100 @@ Instagram und Pinterest — dort wird nach Einrichtung gesucht wie anderswo nach
 Rezepten — und daraus, dass verkaufte Stücke stehen bleiben statt zu
 verschwinden: Sie zeigen, dass hier wirklich gehandelt wird.
 
+## Online stellen
+
+In dieser Reihenfolge. Die ersten beiden Schritte sind an einem Nachmittag
+erledigt, Schritt 3 dauert am längsten und lässt sich nicht abkürzen.
+
+**1. Namen kaufen.** Eine Domain (`studio-lusso.de`) kostet bei INWX,
+Namecheap oder Cloudflare etwa 10–20 € im Jahr. Danach einmal in
+`assets/js/i18n.js` ganz oben `SITE_URL` auf den echten Namen setzen und
+`node tools/build.js` laufen lassen — Kopfdaten, Teilvorschau und
+`sitemap.xml` ziehen mit.
+
+**2. Bei Netlify anlegen.** Auf netlify.com „Add new site" → „Import from
+Git" → dieses Verzeichnis. Alles Weitere steht in `netlify.toml`: Bau,
+Verzeichnis, Funktionen, HTTPS. Danach unter „Domain management" die eigene
+Domain eintragen.
+
+Cloudflare Pages und Vercel gehen genauso; dann muss die Kasse unter
+`netlify/functions/` allerdings an deren Format angepasst werden. GitHub
+Pages funktioniert für die Seite selbst, kann aber keine Funktionen
+ausführen — dort bliebe es bei Anfragen per E-Mail.
+
+**3. Gewerbe und Rechtstexte.** Siehe unten. Ohne das schaltet kein
+Zahlungsanbieter frei, und Abmahnungen kommen in Deutschland zügig.
+
+**4. Bei Google anmelden.** Zwei verschiedene Dinge:
+
+* **Search Console** — Domain bestätigen, `sitemap.xml` einreichen. Das
+  betrifft die Suche. Bis Ergebnisse erscheinen, vergehen 2–8 Wochen.
+* **Google Business Profile** — der Eintrag mit Karte, Zeiten und
+  Bewertungen. Für einen Laden mit Anschrift der wirksamste einzelne
+  Schritt. Die Bestätigung kommt als Postkarte an die angegebene Adresse,
+  mit einer erfundenen ist er also nicht zu bekommen.
+
+## Bezahlen
+
+Der Knopf „Zur Kasse" ruft `netlify/functions/kasse.js` auf. Die Funktion
+legt bei Stripe eine Bezahlseite an und schickt den Besucher dorthin.
+
+**Warum eine Funktion und nicht der Browser**: Der geheime Stripe-Schlüssel
+darf die Seite nie erreichen — wer ihn liest, kann in unserem Namen Geld
+bewegen. Er liegt deshalb bei Netlify als Umgebungsvariable.
+
+**Warum Preise nicht aus dem Warenkorb kommen**: Der Browser schickt nur,
+welches Stück und wie viele. Preis, Bestand und Gutschein rechnet die
+Funktion selbst aus dem Katalog nach. Sonst könnte jemand die Küche für
+einen Euro kaufen. Die Menge wird dabei auf den echten Bestand gedeckelt —
+ein gebrauchtes Stück zweimal zu verkaufen wäre der teuerste Fehler.
+
+**Einrichten**:
+
+1. Konto bei stripe.com anlegen und freischalten lassen (Gewerbeanmeldung,
+   Ausweis, Geschäftskonto).
+2. In Netlify unter *Site settings → Environment variables* setzen:
+   `STRIPE_SECRET_KEY = sk_live_…`. Zum Proben erst `sk_test_…`; dann
+   nimmt Stripe die Testkarte 4242 4242 4242 4242 an, ohne dass Geld fließt.
+3. Im Stripe-Dashboard unter *Zahlungsmethoden* einschalten, was angeboten
+   werden soll.
+
+**Was damit geht**:
+
+| Zahlart | Ungefähre Gebühr | Anmerkung |
+| --- | --- | --- |
+| Karte (Visa, Mastercard, Amex) | ~1,5 % + 0,25 € bei EU-Karten | ~3,25 % außerhalb der EU |
+| Apple Pay, Google Pay | dieselbe Kartengebühr | keine eigene Anmeldung nötig |
+| PayPal | Kartengebühr plus PayPal-Anteil | in Deutschland am meisten genutzt |
+| Klarna | höher | Rechnung und Raten, hebt die Abschlussquote spürbar |
+| SEPA-Lastschrift | ~0,8 %, höchstens 5 € | bei großen Beträgen die günstigste Karte im Spiel |
+
+Apple Pay und Google Pay brauchen hier keine Einrichtung: Die Bezahlseite
+liegt bei Stripe selbst, die Bestätigung der eigenen Domain entfällt.
+
+*giropay* gibt es nicht mehr — die deutschen Banken haben es Ende 2024
+abgeschaltet. Nachfolger ist *Wero*, noch im Aufbau. *Cash App* ist nur für
+die USA; aus Großbritannien hat sich der Dienst 2024 zurückgezogen, in
+Europa gibt es ihn nicht.
+
+**Bei teuren Stücken lieber nicht die Karte**: Auf die Küche für 17.500 €
+entfallen rund 270 € Kartengebühr. Üblich ist dort eine Anzahlung per Karte
+und der Rest per Überweisung — die kostet nichts. Ab etwa 2.000 € lohnt es
+sich, statt „Zur Kasse" eine Anfrage und eine Rechnung anzubieten.
+
+**Solange keine Kasse dahinter liegt**, sagt der Knopf das freundlich und
+tut nichts. Das gilt auch in der Einzeldatei-Vorschau und beim Öffnen per
+Doppelklick. Es gibt also keinen Zustand, in dem er ins Leere greift.
+
+**Noch offen**: Was nach der Zahlung geschieht, steht noch nicht — heute
+sieht der Käufer eine Bestätigung, aber im Laden klingelt nichts. Dafür
+braucht es einen Stripe-Webhook, der die Bestellung per E-Mail zustellt und
+das verkaufte Stück auf `stueck: 0` setzt.
+
 ## Was noch fehlt für den echten Betrieb
 
-* **Zahlung**: Der Button „Verbindlich anfragen“ ist eine Demo. Für echte
-  Zahlungen eignet sich Stripe Checkout oder ein Shop-System wie Shopify.
+* **Zahlung**: Die Kasse ist gebaut, aber noch ohne Stripe-Schlüssel und
+  ohne Benachrichtigung nach dem Kauf. Siehe „Bezahlen“.
 * **Formulare**: Kontakt- und Newsletter-Formular zeigen nur eine Bestätigung an.
   Sie brauchen ein Backend oder einen Dienst wie Formspree.
 * **Mehrsprachige Adressen**: Die Sprache wird im Browser gespeichert, alle

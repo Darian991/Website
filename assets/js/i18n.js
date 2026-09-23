@@ -28,6 +28,7 @@ const I18N = {
   de: {
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, alle aus zweiter Hand:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
@@ -313,9 +314,14 @@ const I18N = {
     "cartpage.included": "inklusive",
     "cartpage.vat": "enthaltene MwSt. (19 %)",
     "cartpage.total": "Gesamt",
-    "cartpage.checkout": "Verbindlich anfragen",
+    "cartpage.checkout": "Zur Kasse",
     "cartpage.note": "Jedes Stück ist ein Einzelstück und für Sie reserviert, sobald wir Ihre Bestellung persönlich bestätigt haben. Anzahlung 30 %, Restbetrag bei Lieferung.",
-    "cartpage.demo": "Demo-Kasse: In der fertigen Version folgt hier die Zahlung. Ihre Anfrage wäre jetzt bei uns eingegangen.",
+    "cartpage.demo": "Die Kasse ist noch nicht eingerichtet. Schreiben Sie uns — wir halten das Stück für Sie zurück.",
+    "cartpage.pay.wait": "Einen Moment, wir bereiten die Zahlung vor …",
+    "cartpage.pay.error": "Das hat gerade nicht geklappt. Bitte noch einmal versuchen oder uns anrufen.",
+    "cartpage.paid.title": "Vielen Dank — Ihre Zahlung ist eingegangen.",
+    "cartpage.paid.p": "Sie bekommen die Bestätigung per E-Mail. Wir melden uns wegen des Liefertermins.",
+    "cartpage.cancelled": "Die Zahlung wurde abgebrochen. Ihr Warenkorb ist unverändert.",
 
     "about.eyebrow": "Interior Design Studio",
     "about.title": "Wir gestalten Räume,<br>die über Trends hinausgehen.",
@@ -384,6 +390,7 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
@@ -671,9 +678,14 @@ const I18N = {
     "cartpage.included": "included",
     "cartpage.vat": "incl. VAT (19%)",
     "cartpage.total": "Total",
-    "cartpage.checkout": "Place a binding request",
+    "cartpage.checkout": "Checkout",
     "cartpage.note": "Every piece is one of a kind and reserved for you as soon as we have confirmed your order personally. 30% deposit, the balance on delivery.",
-    "cartpage.demo": "Demo checkout: payment goes here in the finished version. Your request would now have reached us.",
+    "cartpage.demo": "Checkout is not set up yet. Write to us — we will hold the piece for you.",
+    "cartpage.pay.wait": "One moment, preparing your payment …",
+    "cartpage.pay.error": "That did not work just now. Please try again or give us a call.",
+    "cartpage.paid.title": "Thank you — your payment has gone through.",
+    "cartpage.paid.p": "You will receive confirmation by email. We will be in touch about the delivery date.",
+    "cartpage.cancelled": "The payment was cancelled. Your basket is unchanged.",
 
     "about.eyebrow": "Interior design studio",
     "about.title": "We design rooms<br>that outlast trends.",
@@ -742,6 +754,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "nav.pages": "Pages",
@@ -1029,9 +1042,14 @@ const I18N = {
     "cartpage.included": "compris",
     "cartpage.vat": "TVA comprise (19 %)",
     "cartpage.total": "Total",
-    "cartpage.checkout": "Envoyer une demande ferme",
+    "cartpage.checkout": "Passer au paiement",
     "cartpage.note": "Chaque pièce est unique et vous est réservée dès que nous avons confirmé votre commande personnellement. Acompte de 30 %, solde à la livraison.",
-    "cartpage.demo": "Caisse de démonstration : le paiement prendra place ici dans la version finale. Votre demande nous serait parvenue.",
+    "cartpage.demo": "Le paiement n’est pas encore en place. Écrivez-nous — nous gardons la pièce pour vous.",
+    "cartpage.pay.wait": "Un instant, nous préparons le paiement …",
+    "cartpage.pay.error": "Cela n’a pas fonctionné. Merci de réessayer ou de nous appeler.",
+    "cartpage.paid.title": "Merci — votre paiement est bien arrivé.",
+    "cartpage.paid.p": "Vous recevrez la confirmation par e-mail. Nous vous contacterons pour la date de livraison.",
+    "cartpage.cancelled": "Le paiement a été annulé. Votre panier est inchangé.",
 
     "about.eyebrow": "Studio d\u2019architecture intérieure",
     "about.title": "Nous concevons des espaces<br>qui dépassent les tendances.",
@@ -1100,6 +1118,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "nav.pages": "Páginas",
@@ -1379,9 +1398,14 @@ const I18N = {
     "cartpage.included": "incluida",
     "cartpage.vat": "IVA incluido (19 %)",
     "cartpage.total": "Total",
-    "cartpage.checkout": "Enviar solicitud en firme",
+    "cartpage.checkout": "Ir a la caja",
     "cartpage.note": "Cada pieza es única y queda reservada para usted en cuanto confirmamos su pedido personalmente. Anticipo del 30 %, resto en la entrega.",
-    "cartpage.demo": "Caja de demostración: aquí irá el pago en la versión definitiva. Su solicitud ya nos habría llegado.",
+    "cartpage.demo": "La caja aún no está en marcha. Escríbanos — le reservamos la pieza.",
+    "cartpage.pay.wait": "Un momento, estamos preparando el pago …",
+    "cartpage.pay.error": "Ahora mismo no ha funcionado. Inténtelo de nuevo o llámenos.",
+    "cartpage.paid.title": "Gracias — su pago se ha recibido.",
+    "cartpage.paid.p": "Recibirá la confirmación por correo. Le escribiremos para la fecha de entrega.",
+    "cartpage.cancelled": "El pago se ha cancelado. Su cesta no ha cambiado.",
     "cond.used": "Segunda mano",
     "cond.new": "Nuevo",
     "grade.wieneu": "Como nuevo — pieza de exposición",

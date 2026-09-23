@@ -120,6 +120,7 @@
 function initPage() {
   renderCartPage();
   onCartChange(renderCartPage);
+  bezahlHinweis();
 }
 
 function renderCartPage() {
@@ -227,11 +228,82 @@ function renderCartPage() {
   $("#code-input")?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#code-apply").click(); });
   $("#code-remove")?.addEventListener("click", () => Discount.entfernen());
 
-  $("#checkout").addEventListener("click", () => {
-    const msg = $("#checkout-msg");
-    msg.hidden = false;
-    msg.textContent = t("cartpage.demo");
-  });
+  $("#checkout").addEventListener("click", zurKasse);
+}
+
+/* ---------- Zur Kasse ----------
+   Der Browser schickt nur, welches Stück und wie viele. Preise,
+   Bestand und Gutschein rechnet die Funktion unter
+   netlify/functions/kasse.js noch einmal selbst aus — was von hier
+   kommt, darf über Geld nicht entscheiden.
+
+   Läuft die Seite als Einzeldatei oder ohne Kasse dahinter, bleibt es
+   beim Hinweis: Der Knopf tut dann nichts Falsches, er sagt es nur. */
+async function zurKasse() {
+  const knopf = $("#checkout");
+  const msg = $("#checkout-msg");
+  const zeige = (text) => { msg.hidden = false; msg.textContent = text; };
+
+  if (isPreview() || location.protocol === "file:") return zeige(t("cartpage.demo"));
+
+  const korb = Cart.read().map((i) => ({ id: i.id, menge: i.qty }));
+  if (!korb.length) return;
+
+  knopf.disabled = true;
+  zeige(t("cartpage.pay.wait"));
+  try {
+    const antwort = await fetch("/.netlify/functions/kasse", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        korb,
+        sprache: getLang(),
+        code: Discount.aktiv() ? GUTSCHEIN.code : ""
+      })
+    });
+    const daten = await antwort.json().catch(() => ({}));
+    /* Liegt gar keine Kasse dahinter (404 auf einem reinen Dateiserver)
+       oder ist sie noch ohne Schluessel (503), ist das kein Fehler des
+       Besuchers — darum der freundliche Hinweis statt einer Warnung. */
+    if ([404, 405, 501, 503].includes(antwort.status)) {
+      knopf.disabled = false;
+      return zeige(t("cartpage.demo"));
+    }
+    if (!antwort.ok || !daten.url) throw new Error(daten.fehler || antwort.status);
+    location.href = daten.url;
+  } catch (e) {
+    knopf.disabled = false;
+    zeige(t("cartpage.pay.error"));
+  }
+}
+
+/* Rueckkehr von der Bezahlseite. Stripe haengt das Ergebnis an die
+   Adresse; bei Erfolg ist der Warenkorb erledigt. */
+function bezahlHinweis() {
+  const stand = queryParams().get("bezahlt");
+  if (!stand) return;
+  if (stand === "1") {
+    Cart.clear();
+    Discount.entfernen();
+  }
+  const kasten = document.createElement("div");
+  kasten.className = "wrap";
+  kasten.style.cssText = "margin-top:2rem";
+  kasten.innerHTML = stand === "1"
+    ? `<div class="empty-state" style="padding:2.5rem 1rem">
+         <h2 style="margin:0 0 .6rem">${t("cartpage.paid.title")}</h2>
+         <p class="lede" style="margin-inline:auto">${t("cartpage.paid.p")}</p>
+         <a class="btn" href="kollektion.html" style="margin-top:1.2rem">${t("cart.continue")}</a>
+       </div>`
+    : `<p class="form-msg">${t("cartpage.cancelled")}</p>`;
+  /* Neben den Warenkorb, nicht hinein: renderCartPage() schreibt
+     #cart-root bei jeder Aenderung neu und loeschte den Hinweis sonst
+     sofort wieder — genau im Augenblick des Leerens. */
+  const ziel = $("#cart-root");
+  if (ziel && ziel.parentNode) ziel.parentNode.insertBefore(kasten, ziel);
+  /* Den Hinweis aus der Adresszeile nehmen, damit ein Neuladen ihn
+     nicht wiederholt. */
+  if (history.replaceState) history.replaceState(null, "", location.pathname);
 }
 </script>
 </body>
