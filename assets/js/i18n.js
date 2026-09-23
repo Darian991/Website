@@ -13,7 +13,7 @@ const LANGS = [
   { code: "es", label: "ES", name: "Español",  locale: "es-ES" }
 ];
 
-const CATEGORY_KEYS = ["alle", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "kuechen", "accessoires"];
+const CATEGORY_KEYS = ["alle", "kuechen", "sofas", "sessel", "tische", "stuehle", "leuchten", "aufbewahrung", "betten", "accessoires"];
 
 const I18N = {
 

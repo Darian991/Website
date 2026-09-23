@@ -355,27 +355,26 @@ function artFor(product, colorIndex = 0, viewIndex = 0) {
    Farbwerte. Alles Sprachliche steht unter t.<sprache>. --- */
 const PRODUCTS = [
   {
-    /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
-    id: "leuchte-artischocke", used: true, stueck: 2, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
-    price: 4900, weight: "12 kg", swatches: ["#b87333"],
-    photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
+    id: "kueche-costa", used: true, grade: "sehrgut", year: "2018", name: "Costa", categoryKey: "kuechen", shape: "sideboard", tone: "studio",
+    price: 17500, weight: "\u2014", swatches: ["#f3f1ed"],
+    photos: ["assets/img/kueche-costa-1.jpg", "assets/img/kueche-costa-2.jpg", "assets/img/kueche-costa-3.jpg"],
     t: {
-      de: { short: "H\u00e4ngeleuchte von Poul Henningsen, 72 Kupferbl\u00e4tter, gebaut von Louis Poulsen.",
-        description: "Die PH Artichoke entwarf Poul Henningsen 1958 f\u00fcr den Langelinie-Pavillon in Kopenhagen; gebaut wird sie seither von Louis Poulsen. Zw\u00f6lf Reihen mit insgesamt 72 Kupferbl\u00e4ttern verdecken das Leuchtmittel vollst\u00e4ndig \u2014 aus jedem Winkel des Raumes sieht man nur weiches, reflektiertes Licht, nie die Lampe selbst. Dieses Exemplar hing in einem Privathaus am Elbhang. Das Kupfer hat die ungleichm\u00e4\u00dfige Patina angesetzt, die diese Leuchte erst sch\u00f6n macht; die Elektrik haben wir gepr\u00fcft und auf LED umgestellt.",
-        material: "Kupfer, verchromter Stahl", dimensions: "\u00d8 60 \u00d7 H 52 cm, Abh\u00e4ngung bis 300 cm",
-        origin: "Louis Poulsen, D\u00e4nemark", lead: "sofort verf\u00fcgbar", colors: ["Kupfer"] },
-      en: { short: "Pendant by Poul Henningsen, 72 copper leaves, built by Louis Poulsen.",
-        description: "Poul Henningsen designed the PH Artichoke in 1958 for the Langelinie Pavilion in Copenhagen; Louis Poulsen has built it ever since. Twelve rows of 72 copper leaves hide the bulb completely \u2014 from any angle in the room you see only soft reflected light, never the lamp itself. This piece hung in a private house on the Elbe hillside. The copper has taken on the uneven patina that makes this lamp what it is; we have tested the wiring and converted it to LED.",
-        material: "Copper, chrome-plated steel", dimensions: "\u00d8 60 \u00d7 H 52 cm, drop up to 300 cm",
-        origin: "Louis Poulsen, Denmark", lead: "available now", colors: ["Copper"] },
-      fr: { short: "Suspension de Poul Henningsen, 72 feuilles de cuivre, fabriqu\u00e9e par Louis Poulsen.",
-        description: "Poul Henningsen a dessin\u00e9 la PH Artichoke en 1958 pour le pavillon Langelinie de Copenhague ; Louis Poulsen la fabrique depuis. Douze rang\u00e9es de 72 feuilles de cuivre masquent enti\u00e8rement la source \u2014 de tout point de la pi\u00e8ce on ne voit qu\u2019une lumi\u00e8re douce et r\u00e9fl\u00e9chie, jamais la lampe. Cet exemplaire a \u00e9clair\u00e9 une maison priv\u00e9e sur les hauteurs de l\u2019Elbe. Le cuivre a pris la patine irr\u00e9guli\u00e8re qui fait tout le charme de cette suspension ; l\u2019\u00e9lectricit\u00e9 a \u00e9t\u00e9 contr\u00f4l\u00e9e et convertie en LED.",
-        material: "Cuivre, acier chrom\u00e9", dimensions: "\u00d8 60 \u00d7 H 52 cm, hauteur jusqu\u2019\u00e0 300 cm",
-        origin: "Louis Poulsen, Danemark", lead: "disponible imm\u00e9diatement", colors: ["Cuivre"] },
-      es: { short: "L\u00e1mpara de suspensi\u00f3n de Poul Henningsen, 72 hojas de cobre, fabricada por Louis Poulsen.",
-        description: "Poul Henningsen dise\u00f1\u00f3 la PH Artichoke en 1958 para el pabell\u00f3n Langelinie de Copenhague; Louis Poulsen la fabrica desde entonces. Doce hileras con 72 hojas de cobre ocultan por completo la bombilla \u2014 desde cualquier punto de la estancia solo se ve luz reflejada y suave, nunca la l\u00e1mpara. Esta pieza estuvo en una casa particular sobre la ladera del Elba. El cobre ha adquirido la p\u00e1tina irregular que da car\u00e1cter a esta l\u00e1mpara; hemos revisado la instalaci\u00f3n el\u00e9ctrica y la hemos convertido a LED.",
-        material: "Cobre, acero cromado", dimensions: "\u00d8 60 \u00d7 Al 52 cm, ca\u00edda hasta 300 cm",
-        origin: "Louis Poulsen, Dinamarca", lead: "disponible ahora", colors: ["Cobre"] }
+      de: { short: "Grifflose Einbauk\u00fcche in Wei\u00df und Nussbaum, mit Kochinsel und Ger\u00e4ten.",
+        description: "Eine grifflose Einbauk\u00fcche aus einem Neubau an der Costa Blanca, ausgebaut und eingelagert. Wei\u00df lackierte Fronten treffen auf H\u00e4ngeschr\u00e4nke und eine Barplatte aus massivem Nussbaum; die Arbeitsplatten sind aus wei\u00dfem Mineralwerkstoff. Zur K\u00fccheninsel geh\u00f6rt ein Induktionsfeld, in der Hochschrankzeile stecken zwei Backofen, ein Weinklimaschrank und der K\u00fchlschrank. Alle Ger\u00e4te laufen und wurden von uns gepr\u00fcft. Wir bauen vor Ort ab und wieder auf; auf Wunsch passen wir die Zeile an Ihren Grundriss an. Barhocker, Geschirr und Dekoration der Aufnahmen geh\u00f6ren nicht zum Angebot.",
+        material: "Lack matt wei\u00df, Nussbaum massiv, Mineralwerkstoff", dimensions: "Zeile 420 cm, Insel 340 \u00d7 95 cm, Barplatte 340 \u00d7 60 cm",
+        origin: "Neubau Costa Blanca, Spanien", lead: "nach Absprache", colors: ["Wei\u00df / Nussbaum"] },
+      en: { short: "Handleless fitted kitchen in white and walnut, with island and appliances.",
+        description: "A handleless fitted kitchen from a new-build house on the Costa Blanca, dismantled and in storage. White lacquered fronts meet wall units and a breakfast bar in solid walnut; the worktops are white mineral composite. The island carries an induction hob, the tall run holds two ovens, a wine cabinet and the fridge. Every appliance works and has been tested by us. We dismantle and reinstall on site and will adapt the run to your floor plan on request. Bar stools, tableware and decoration in the photographs are not part of the offer.",
+        material: "Matt white lacquer, solid walnut, mineral composite", dimensions: "Run 420 cm, island 340 \u00d7 95 cm, bar top 340 \u00d7 60 cm",
+        origin: "New-build, Costa Blanca, Spain", lead: "by arrangement", colors: ["White / walnut"] },
+      fr: { short: "Cuisine int\u00e9gr\u00e9e sans poign\u00e9es, blanc et noyer, avec \u00eelot et appareils.",
+        description: "Une cuisine int\u00e9gr\u00e9e sans poign\u00e9es, provenant d\u2019une maison neuve de la Costa Blanca, d\u00e9mont\u00e9e et stock\u00e9e. Les fa\u00e7ades laqu\u00e9es blanches c\u00f4toient des \u00e9l\u00e9ments hauts et un plan de bar en noyer massif ; les plans de travail sont en r\u00e9sine min\u00e9rale blanche. L\u2019\u00eelot re\u00e7oit une table \u00e0 induction, la colonne abrite deux fours, une cave \u00e0 vin et le r\u00e9frig\u00e9rateur. Tous les appareils fonctionnent et ont \u00e9t\u00e9 contr\u00f4l\u00e9s. Nous assurons la d\u00e9pose et la repose, et adaptons la lin\u00e9aire \u00e0 votre plan sur demande. Les tabourets, la vaisselle et la d\u00e9coration des photographies ne font pas partie de l\u2019offre.",
+        material: "Laque blanche mate, noyer massif, r\u00e9sine min\u00e9rale", dimensions: "Lin\u00e9aire 420 cm, \u00eelot 340 \u00d7 95 cm, plan de bar 340 \u00d7 60 cm",
+        origin: "Maison neuve, Costa Blanca, Espagne", lead: "sur rendez-vous", colors: ["Blanc / noyer"] },
+      es: { short: "Cocina integrada sin tiradores, en blanco y nogal, con isla y electrodom\u00e9sticos.",
+        description: "Una cocina integrada sin tiradores procedente de una vivienda de obra nueva en la Costa Blanca, desmontada y almacenada. Los frentes lacados en blanco conviven con muebles altos y una barra de nogal macizo; las encimeras son de material mineral blanco. La isla incorpora una placa de inducci\u00f3n y la columna aloja dos hornos, una vinoteca y el frigor\u00edfico. Todos los electrodom\u00e9sticos funcionan y han sido revisados por nosotros. Nos encargamos del desmontaje y del montaje, y adaptamos el frente a su plano si lo desea. Los taburetes, la vajilla y la decoraci\u00f3n de las fotograf\u00edas no forman parte de la oferta.",
+        material: "Lacado blanco mate, nogal macizo, material mineral", dimensions: "Frente 420 cm, isla 340 \u00d7 95 cm, barra 340 \u00d7 60 cm",
+        origin: "Obra nueva, Costa Blanca, Espa\u00f1a", lead: "a convenir", colors: ["Blanco / nogal"] }
     }
   },
   {
@@ -399,6 +398,30 @@ const PRODUCTS = [
         description: "Un sof\u00e1 que se tiende bajo y largo en la sala: asiento profundo, cojines de respaldo sueltos, brazos que casi no se notan. Se apoya en finas patas de acero negro que lo separan del suelo \u2014 as\u00ed ni una sala grande resulta pesada. La funda de lino grueso es desenfundable y est\u00e1 limpia, sin manchas; los cojines del asiento han conservado su forma. Las vistas de la sala muestran dos sof\u00e1s id\u00e9nticos; se ofrece uno de ellos. Los cojines decorativos, la alfombra y la decoraci\u00f3n no est\u00e1n incluidos.",
         material: "Mezcla de lino, asiento con muelles, estructura de acero negro", dimensions: "An 280 \u00d7 Pr 95 \u00d7 Al 72 cm, asiento 42 cm",
         origin: "Tapicer\u00eda de Brianza, Italia", lead: "disponible ahora", colors: ["Gris arena"] }
+    }
+  },
+  {
+    /* Einziges Stück mit echter Fotostrecke statt Zeichnung. */
+    id: "leuchte-artischocke", used: true, stueck: 2, grade: "sehrgut", year: "2016", name: "PH Artichoke", categoryKey: "leuchten", shape: "haengeleuchte", tone: "sand",
+    price: 4900, weight: "12 kg", swatches: ["#b87333"],
+    photos: ["assets/img/ph-artichoke-1.jpg", "assets/img/ph-artichoke-2.jpg", "assets/img/ph-artichoke-3.jpg", "assets/img/ph-artichoke-4.jpg"],
+    t: {
+      de: { short: "H\u00e4ngeleuchte von Poul Henningsen, 72 Kupferbl\u00e4tter, gebaut von Louis Poulsen.",
+        description: "Die PH Artichoke entwarf Poul Henningsen 1958 f\u00fcr den Langelinie-Pavillon in Kopenhagen; gebaut wird sie seither von Louis Poulsen. Zw\u00f6lf Reihen mit insgesamt 72 Kupferbl\u00e4ttern verdecken das Leuchtmittel vollst\u00e4ndig \u2014 aus jedem Winkel des Raumes sieht man nur weiches, reflektiertes Licht, nie die Lampe selbst. Dieses Exemplar hing in einem Privathaus am Elbhang. Das Kupfer hat die ungleichm\u00e4\u00dfige Patina angesetzt, die diese Leuchte erst sch\u00f6n macht; die Elektrik haben wir gepr\u00fcft und auf LED umgestellt.",
+        material: "Kupfer, verchromter Stahl", dimensions: "\u00d8 60 \u00d7 H 52 cm, Abh\u00e4ngung bis 300 cm",
+        origin: "Louis Poulsen, D\u00e4nemark", lead: "sofort verf\u00fcgbar", colors: ["Kupfer"] },
+      en: { short: "Pendant by Poul Henningsen, 72 copper leaves, built by Louis Poulsen.",
+        description: "Poul Henningsen designed the PH Artichoke in 1958 for the Langelinie Pavilion in Copenhagen; Louis Poulsen has built it ever since. Twelve rows of 72 copper leaves hide the bulb completely \u2014 from any angle in the room you see only soft reflected light, never the lamp itself. This piece hung in a private house on the Elbe hillside. The copper has taken on the uneven patina that makes this lamp what it is; we have tested the wiring and converted it to LED.",
+        material: "Copper, chrome-plated steel", dimensions: "\u00d8 60 \u00d7 H 52 cm, drop up to 300 cm",
+        origin: "Louis Poulsen, Denmark", lead: "available now", colors: ["Copper"] },
+      fr: { short: "Suspension de Poul Henningsen, 72 feuilles de cuivre, fabriqu\u00e9e par Louis Poulsen.",
+        description: "Poul Henningsen a dessin\u00e9 la PH Artichoke en 1958 pour le pavillon Langelinie de Copenhague ; Louis Poulsen la fabrique depuis. Douze rang\u00e9es de 72 feuilles de cuivre masquent enti\u00e8rement la source \u2014 de tout point de la pi\u00e8ce on ne voit qu\u2019une lumi\u00e8re douce et r\u00e9fl\u00e9chie, jamais la lampe. Cet exemplaire a \u00e9clair\u00e9 une maison priv\u00e9e sur les hauteurs de l\u2019Elbe. Le cuivre a pris la patine irr\u00e9guli\u00e8re qui fait tout le charme de cette suspension ; l\u2019\u00e9lectricit\u00e9 a \u00e9t\u00e9 contr\u00f4l\u00e9e et convertie en LED.",
+        material: "Cuivre, acier chrom\u00e9", dimensions: "\u00d8 60 \u00d7 H 52 cm, hauteur jusqu\u2019\u00e0 300 cm",
+        origin: "Louis Poulsen, Danemark", lead: "disponible imm\u00e9diatement", colors: ["Cuivre"] },
+      es: { short: "L\u00e1mpara de suspensi\u00f3n de Poul Henningsen, 72 hojas de cobre, fabricada por Louis Poulsen.",
+        description: "Poul Henningsen dise\u00f1\u00f3 la PH Artichoke en 1958 para el pabell\u00f3n Langelinie de Copenhague; Louis Poulsen la fabrica desde entonces. Doce hileras con 72 hojas de cobre ocultan por completo la bombilla \u2014 desde cualquier punto de la estancia solo se ve luz reflejada y suave, nunca la l\u00e1mpara. Esta pieza estuvo en una casa particular sobre la ladera del Elba. El cobre ha adquirido la p\u00e1tina irregular que da car\u00e1cter a esta l\u00e1mpara; hemos revisado la instalaci\u00f3n el\u00e9ctrica y la hemos convertido a LED.",
+        material: "Cobre, acero cromado", dimensions: "\u00d8 60 \u00d7 Al 52 cm, ca\u00edda hasta 300 cm",
+        origin: "Louis Poulsen, Dinamarca", lead: "disponible ahora", colors: ["Cobre"] }
     }
   },
   {
@@ -514,29 +537,6 @@ const PRODUCTS = [
         description: "Una cama individual, tapizada y suspendida en todo su contorno. El cabecero es sobrio y va forrado con el mismo tejido claro; un z\u00f3calo oscuro y estrecho la separa del suelo. Estuvo en la habitaci\u00f3n de invitados de una casa de vacaciones y apenas se ha usado \u2014 el tejido no tiene manchas y la suspensi\u00f3n no presenta hundimientos. Las fotograf\u00edas muestran la habitaci\u00f3n con dos camas; se ofrece una de ellas. La ropa de cama y la decoraci\u00f3n no est\u00e1n incluidas.",
         material: "Mezcla de lino, base suspendida, estructura de madera maciza", dimensions: "An 100 \u00d7 L 200 \u00d7 Al 105 cm",
         origin: "Tapicer\u00eda Levante, Espa\u00f1a", lead: "disponible ahora", colors: ["Blanco lana"] }
-    }
-  },
-  {
-    id: "kueche-costa", used: true, grade: "sehrgut", year: "2018", name: "Costa", categoryKey: "kuechen", shape: "sideboard", tone: "studio",
-    price: 17500, weight: "\u2014", swatches: ["#f3f1ed"],
-    photos: ["assets/img/kueche-costa-1.jpg", "assets/img/kueche-costa-2.jpg", "assets/img/kueche-costa-3.jpg"],
-    t: {
-      de: { short: "Grifflose Einbauk\u00fcche in Wei\u00df und Nussbaum, mit Kochinsel und Ger\u00e4ten.",
-        description: "Eine grifflose Einbauk\u00fcche aus einem Neubau an der Costa Blanca, ausgebaut und eingelagert. Wei\u00df lackierte Fronten treffen auf H\u00e4ngeschr\u00e4nke und eine Barplatte aus massivem Nussbaum; die Arbeitsplatten sind aus wei\u00dfem Mineralwerkstoff. Zur K\u00fccheninsel geh\u00f6rt ein Induktionsfeld, in der Hochschrankzeile stecken zwei Backofen, ein Weinklimaschrank und der K\u00fchlschrank. Alle Ger\u00e4te laufen und wurden von uns gepr\u00fcft. Wir bauen vor Ort ab und wieder auf; auf Wunsch passen wir die Zeile an Ihren Grundriss an. Barhocker, Geschirr und Dekoration der Aufnahmen geh\u00f6ren nicht zum Angebot.",
-        material: "Lack matt wei\u00df, Nussbaum massiv, Mineralwerkstoff", dimensions: "Zeile 420 cm, Insel 340 \u00d7 95 cm, Barplatte 340 \u00d7 60 cm",
-        origin: "Neubau Costa Blanca, Spanien", lead: "nach Absprache", colors: ["Wei\u00df / Nussbaum"] },
-      en: { short: "Handleless fitted kitchen in white and walnut, with island and appliances.",
-        description: "A handleless fitted kitchen from a new-build house on the Costa Blanca, dismantled and in storage. White lacquered fronts meet wall units and a breakfast bar in solid walnut; the worktops are white mineral composite. The island carries an induction hob, the tall run holds two ovens, a wine cabinet and the fridge. Every appliance works and has been tested by us. We dismantle and reinstall on site and will adapt the run to your floor plan on request. Bar stools, tableware and decoration in the photographs are not part of the offer.",
-        material: "Matt white lacquer, solid walnut, mineral composite", dimensions: "Run 420 cm, island 340 \u00d7 95 cm, bar top 340 \u00d7 60 cm",
-        origin: "New-build, Costa Blanca, Spain", lead: "by arrangement", colors: ["White / walnut"] },
-      fr: { short: "Cuisine int\u00e9gr\u00e9e sans poign\u00e9es, blanc et noyer, avec \u00eelot et appareils.",
-        description: "Une cuisine int\u00e9gr\u00e9e sans poign\u00e9es, provenant d\u2019une maison neuve de la Costa Blanca, d\u00e9mont\u00e9e et stock\u00e9e. Les fa\u00e7ades laqu\u00e9es blanches c\u00f4toient des \u00e9l\u00e9ments hauts et un plan de bar en noyer massif ; les plans de travail sont en r\u00e9sine min\u00e9rale blanche. L\u2019\u00eelot re\u00e7oit une table \u00e0 induction, la colonne abrite deux fours, une cave \u00e0 vin et le r\u00e9frig\u00e9rateur. Tous les appareils fonctionnent et ont \u00e9t\u00e9 contr\u00f4l\u00e9s. Nous assurons la d\u00e9pose et la repose, et adaptons la lin\u00e9aire \u00e0 votre plan sur demande. Les tabourets, la vaisselle et la d\u00e9coration des photographies ne font pas partie de l\u2019offre.",
-        material: "Laque blanche mate, noyer massif, r\u00e9sine min\u00e9rale", dimensions: "Lin\u00e9aire 420 cm, \u00eelot 340 \u00d7 95 cm, plan de bar 340 \u00d7 60 cm",
-        origin: "Maison neuve, Costa Blanca, Espagne", lead: "sur rendez-vous", colors: ["Blanc / noyer"] },
-      es: { short: "Cocina integrada sin tiradores, en blanco y nogal, con isla y electrodom\u00e9sticos.",
-        description: "Una cocina integrada sin tiradores procedente de una vivienda de obra nueva en la Costa Blanca, desmontada y almacenada. Los frentes lacados en blanco conviven con muebles altos y una barra de nogal macizo; las encimeras son de material mineral blanco. La isla incorpora una placa de inducci\u00f3n y la columna aloja dos hornos, una vinoteca y el frigor\u00edfico. Todos los electrodom\u00e9sticos funcionan y han sido revisados por nosotros. Nos encargamos del desmontaje y del montaje, y adaptamos el frente a su plano si lo desea. Los taburetes, la vajilla y la decoraci\u00f3n de las fotograf\u00edas no forman parte de la oferta.",
-        material: "Lacado blanco mate, nogal macizo, material mineral", dimensions: "Frente 420 cm, isla 340 \u00d7 95 cm, barra 340 \u00d7 60 cm",
-        origin: "Obra nueva, Costa Blanca, Espa\u00f1a", lead: "a convenir", colors: ["Blanco / nogal"] }
     }
   }
 ];
