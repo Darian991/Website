@@ -706,6 +706,109 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("is-open"), 2600);
 }
 
+/* ---------- Kopfdaten einer Produktseite ----------
+   Die Produktseite entsteht erst im Browser — beim Auslieferen weiss noch
+   niemand, welches Stueck gezeigt wird. Titel, die Vorschau beim Teilen
+   und die Auszeichnung fuer Suchmaschinen muessen deshalb nachgetragen
+   werden, sobald es feststeht. Suchmaschinen fuehren die Seite dafuer aus;
+   soziale Netze in der Regel nicht — deren Karte zeigt den Grundeintrag.
+
+   In der Einzeldatei-Vorschau bleibt alles unangetastet: dort gaebe es zu
+   den Adressen keine Entsprechung im Netz. ---------- */
+
+function kopfMarke(auswahl, bauen) {
+  let el = document.head.querySelector(auswahl);
+  if (!el) { el = bauen(); document.head.appendChild(el); }
+  return el;
+}
+
+function setzeKopfInhalt(eigenschaft, wert, alsName) {
+  const feld = alsName ? "name" : "property";
+  const el = kopfMarke(`meta[${feld}="${eigenschaft}"]`, () => {
+    const m = document.createElement("meta");
+    m.setAttribute(feld, eigenschaft);
+    return m;
+  });
+  el.setAttribute("content", wert);
+}
+
+function setzeProduktKopf(p) {
+  if (isPreview()) return;
+  const x = pt(p);
+  const adresse = SITE_URL + "/produkt.html?id=" + p.id;
+  const bilder = (p.photos || []).map((f) => SITE_URL + "/" + f);
+  const titel = t("pdp.titel", { name: p.name, kategorie: t("cat.sg." + p.categoryKey) });
+  const text = x.short;
+
+  document.title = titel;
+  setzeKopfInhalt("description", text, true);
+  kopfMarke('link[rel="canonical"]', () => {
+    const l = document.createElement("link");
+    l.rel = "canonical";
+    return l;
+  }).setAttribute("href", adresse);
+
+  setzeKopfInhalt("og:type", "product");
+  setzeKopfInhalt("og:title", titel);
+  setzeKopfInhalt("og:description", text);
+  setzeKopfInhalt("og:url", adresse);
+  setzeKopfInhalt("og:locale", langLocale().replace("-", "_"));
+  setzeKopfInhalt("product:price:amount", String(p.price));
+  setzeKopfInhalt("product:price:currency", "EUR");
+  setzeKopfInhalt("twitter:title", titel, true);
+  setzeKopfInhalt("twitter:description", text, true);
+  if (bilder.length) {
+    setzeKopfInhalt("og:image", bilder[0]);
+    setzeKopfInhalt("og:image:alt", bildText(p, 0));
+    setzeKopfInhalt("twitter:image", bilder[0], true);
+    document.head.querySelectorAll('meta[property="og:image:width"], meta[property="og:image:height"]')
+      .forEach((m) => m.remove());
+  }
+
+  const daten = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": adresse + "#produkt",
+    name: p.name,
+    description: x.description || x.short,
+    sku: p.id,
+    category: t("cat." + p.categoryKey),
+    material: x.material,
+    color: (x.colors && x.colors[0]) || undefined,
+    image: bilder.length ? bilder : undefined,
+    productionDate: p.year,
+    brand: { "@type": "Brand", name: "Studio Lusso" },
+    offers: {
+      "@type": "Offer",
+      url: adresse,
+      price: p.price,
+      priceCurrency: "EUR",
+      itemCondition: p.used ? "https://schema.org/UsedCondition" : "https://schema.org/NewCondition",
+      availability: "https://schema.org/InStock",
+      inventoryLevel: { "@type": "QuantitativeValue", value: bestand(p) },
+      seller: { "@id": SITE_URL + "/#haus" }
+    }
+  };
+  const weg = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: t("nav.home"), item: SITE_URL + "/" },
+      { "@type": "ListItem", position: 2, name: t("cat." + p.categoryKey), item: SITE_URL + "/kollektion.html?kategorie=" + p.categoryKey },
+      { "@type": "ListItem", position: 3, name: p.name, item: adresse }
+    ]
+  };
+
+  let block = document.getElementById("produkt-auszeichnung");
+  if (!block) {
+    block = document.createElement("script");
+    block.type = "application/ld+json";
+    block.id = "produkt-auszeichnung";
+    document.head.appendChild(block);
+  }
+  block.textContent = JSON.stringify([daten, weg]);
+}
+
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
   const x = pt(p);

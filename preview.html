@@ -1064,6 +1064,13 @@ noscript .footer p { max-width: 60ch; }
    anlegt und bei jedem Produkt einen Eintrag unter t hinzufügt.
    ========================================================= */
 
+/* --- Adresse der Website ---
+   Suchmaschinen und soziale Netze brauchen die vollstaendige Adresse einer
+   Seite; relative Pfade nuetzen ihnen nichts. Sobald die Website unter
+   einem eigenen Namen liegt, gehoert er hierher — einmal, an dieser Stelle.
+   tools/build.js liest den Wert von hier. Danach `node tools/build.js`. --- */
+const SITE_URL = "https://www.studio-lusso.de";
+
 const LANGS = [
   { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
   { code: "en", label: "EN", name: "English",  locale: "en-GB" },
@@ -1077,6 +1084,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, alle aus zweiter Hand:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
@@ -1186,6 +1194,8 @@ const I18N = {
     "gallery.next": "Nächstes Bild",
     "gallery.count": "Bild {n} von {m}",
     "gallery.image": "Bild {n}",
+    "img.alt": "{name} — {kurz} Gebraucht, Bild {n} von {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Gebraucht.",
     "gallery.label": "Bildergalerie",
     "topbar.promo": "{betrag} auf Ihren ersten Einkauf — Gutschein sichern",
     "topbar.promoActive": "Gutschein {code} aktiv — {betrag} werden an der Kasse abgezogen",
@@ -1205,7 +1215,7 @@ const I18N = {
     "title.about": "Das Studio — Studio Lusso",
     "title.contact": "Kontakt & Beratung — Studio Lusso",
 
-    "topbar": "Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.pages": "Seiten",
     "nav.home": "Startseite",
@@ -1231,6 +1241,19 @@ const I18N = {
     "cat.betten": "Betten",
     "cat.kuechen": "Küchen",
     "cat.accessoires": "Accessoires",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Möbelstück",
+    "cat.sg.kuechen": "Küche",
+    "cat.sg.sofas": "Sofa",
+    "cat.sg.sessel": "Sessel",
+    "cat.sg.tische": "Tisch",
+    "cat.sg.stuehle": "Stuhl",
+    "cat.sg.leuchten": "Leuchte",
+    "cat.sg.aufbewahrung": "Aufbewahrung",
+    "cat.sg.betten": "Bett",
+    "cat.sg.accessoires": "Accessoire",
+    "pdp.titel": "{name} — {kategorie} aus zweiter Hand · Studio Lusso",
 
     "search.title": "Suchen",
     "search.placeholder": "Wonach suchen Sie? Etwa Sofa, Eiche, Leder …",
@@ -1268,7 +1291,7 @@ const I18N = {
     "home.hero.cta2": "Showroom besuchen",
     "home.feat1.t": "Geprüft & aufbereitet", "home.feat1.p": "Jedes gebrauchte Stück wird von Hand kontrolliert",
     "home.feat2.t": "Lieferung bis in den Raum", "home.feat2.p": "Weißhandschuh-Service inklusive Montage",
-    "home.feat3.t": "Einzelstücke", "home.feat3.p": "Jedes Möbel gibt es nur einmal",
+    "home.feat3.t": "Einzelstücke", "home.feat3.p": "Die meisten Stücke gibt es nur einmal",
     "home.feat4.t": "Persönliche Beratung", "home.feat4.p": "Im Showroom Hamburg oder bei Ihnen zu Hause",
     "home.featured.eyebrow": "Ausgewählt",
     "home.featured.title": "Die Stücke der Saison",
@@ -1360,7 +1383,7 @@ const I18N = {
     "about.mat.p2": "Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.",
     "about.n1.t": "Ganzheitliche Planung", "about.n1.p": "Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.",
     "about.n2.t": "Individuelles Design", "about.n2.p": "Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.",
-    "about.n3.t": "Über Grenzen hinaus", "about.n3.p": "Neben Poliform und Baxter arbeiten wir mit allen renommierten Herstellern — national und international.",
+    "about.n3.t": "Über Grenzen hinaus", "about.n3.p": "Wir kaufen aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz an — Stücke von Poliform, Baxter und anderen renommierten Herstellern, im In- und Ausland.",
     "about.proc.eyebrow": "Projektverlauf",
     "about.proc.title": "Vom Bedürfnis zum Raum.",
     "about.proc.s1": "Bedarfsanalyse & Erstberatung", "about.proc.p1": "Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.",
@@ -1379,7 +1402,7 @@ const I18N = {
     "about.care.metal": "Sonderanfertigungen",
     "about.care.metal.p": "Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Poliform Showroom Hamburg",
+    "about.visit.title": "Showroom Hamburg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung",
     "about.visit.cta": "Termin vereinbaren",
 
@@ -1418,6 +1441,7 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
@@ -1527,6 +1551,8 @@ const I18N = {
     "gallery.next": "Next image",
     "gallery.count": "Image {n} of {m}",
     "gallery.image": "Image {n}",
+    "img.alt": "{name} — {kurz} Pre-owned, image {n} of {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Pre-owned.",
     "gallery.label": "Image gallery",
     "topbar.promo": "{betrag} off your first purchase — get the voucher",
     "topbar.promoActive": "Voucher {code} active — {betrag} is deducted at checkout",
@@ -1546,7 +1572,7 @@ const I18N = {
     "title.about": "The Studio — Studio Lusso",
     "title.contact": "Contact & Advice — Studio Lusso",
 
-    "topbar": "Poliform showroom Hamburg · Appointments on +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburg · Appointments on +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.pages": "Pages",
     "nav.home": "Home",
@@ -1572,6 +1598,19 @@ const I18N = {
     "cat.betten": "Beds",
     "cat.kuechen": "Kitchens",
     "cat.accessoires": "Accessories",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Piece",
+    "cat.sg.kuechen": "Kitchen",
+    "cat.sg.sofas": "Sofa",
+    "cat.sg.sessel": "Armchair",
+    "cat.sg.tische": "Table",
+    "cat.sg.stuehle": "Chair",
+    "cat.sg.leuchten": "Light",
+    "cat.sg.aufbewahrung": "Storage",
+    "cat.sg.betten": "Bed",
+    "cat.sg.accessoires": "Accessory",
+    "pdp.titel": "{name} — Pre-owned {kategorie} · Studio Lusso",
 
     "search.title": "Search",
     "search.placeholder": "What are you looking for? Sofa, oak, leather …",
@@ -1609,7 +1648,7 @@ const I18N = {
     "home.hero.cta2": "Visit the showroom",
     "home.feat1.t": "Checked & refurbished", "home.feat1.p": "Every pre-owned piece is checked by hand",
     "home.feat2.t": "Delivered to your room", "home.feat2.p": "White-glove service, assembly included",
-    "home.feat3.t": "One of a kind", "home.feat3.p": "Each piece is available only once",
+    "home.feat3.t": "One of a kind", "home.feat3.p": "Most pieces exist only once",
     "home.feat4.t": "Personal advice", "home.feat4.p": "In our Hamburg showroom or at your home",
     "home.featured.eyebrow": "Selected",
     "home.featured.title": "Pieces of the season",
@@ -1701,7 +1740,7 @@ const I18N = {
     "about.mat.p2": "Our approach brings architecture and individual needs together early on — for a result that convinces visually and in substance.",
     "about.n1.t": "Holistic planning", "about.n1.p": "Space, light, materiality and function interlock rather than sit side by side.",
     "about.n2.t": "Individual design", "about.n2.p": "Every project is as singular as its context — tuned to place, use and people.",
-    "about.n3.t": "Beyond borders", "about.n3.p": "Alongside Poliform and Baxter we work with every renowned maker — nationally and internationally.",
+    "about.n3.t": "Beyond borders", "about.n3.p": "We buy from completed projects, showrooms and private homes — pieces by Poliform, Baxter and other renowned makers, at home and abroad.",
     "about.proc.eyebrow": "Project process",
     "about.proc.title": "From need to room.",
     "about.proc.s1": "Needs analysis & first meeting", "about.proc.p1": "Understanding what really counts. We clarify expectations, functional requirements and the design direction.",
@@ -1720,7 +1759,7 @@ const I18N = {
     "about.care.metal": "Bespoke pieces",
     "about.care.metal.p": "Unique bespoke pieces at the highest level, made with selected workshops — including our own designs.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Poliform showroom Hamburg",
+    "about.visit.title": "Showroom Hamburg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>By appointment",
     "about.visit.cta": "Make an appointment",
 
@@ -1759,6 +1798,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, toutes de seconde main :",
     /* ---- Berater: Alltagsfragen ---- */
@@ -1869,6 +1909,8 @@ const I18N = {
     "gallery.next": "Image suivante",
     "gallery.count": "Image {n} sur {m}",
     "gallery.image": "Image {n}",
+    "img.alt": "{name} — {kurz} Seconde main, image {n} sur {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Seconde main.",
     "gallery.label": "Galerie d’images",
     "topbar.promo": "{betrag} sur votre premier achat — obtenir le bon",
     "topbar.promoActive": "Bon {code} actif — {betrag} déduits au moment de payer",
@@ -1888,7 +1930,7 @@ const I18N = {
     "title.about": "Le studio — Studio Lusso",
     "title.contact": "Contact et conseil — Studio Lusso",
 
-    "topbar": "Showroom Poliform Hambourg · Rendez-vous au +49 40 41 92 74 60",
+    "topbar": "Showroom Hambourg · Rendez-vous au +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.home": "Accueil",
     "nav.shop": "Collection",
@@ -1913,6 +1955,19 @@ const I18N = {
     "cat.betten": "Lits",
     "cat.kuechen": "Cuisines",
     "cat.accessoires": "Accessoires",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Pièce",
+    "cat.sg.kuechen": "Cuisine",
+    "cat.sg.sofas": "Canapé",
+    "cat.sg.sessel": "Fauteuil",
+    "cat.sg.tische": "Table",
+    "cat.sg.stuehle": "Chaise",
+    "cat.sg.leuchten": "Luminaire",
+    "cat.sg.aufbewahrung": "Rangement",
+    "cat.sg.betten": "Lit",
+    "cat.sg.accessoires": "Accessoire",
+    "pdp.titel": "{name} — {kategorie} de seconde main · Studio Lusso",
 
     "search.title": "Rechercher",
     "search.placeholder": "Que cherchez-vous ? Canapé, chêne, cuir …",
@@ -1950,7 +2005,7 @@ const I18N = {
     "home.hero.cta2": "Visiter le showroom",
     "home.feat1.t": "Contrôlé et remis en état", "home.feat1.p": "Chaque pièce d’occasion est contrôlée à la main",
     "home.feat2.t": "Livré dans la pièce", "home.feat2.p": "Service gants blancs, montage compris",
-    "home.feat3.t": "Pièces uniques", "home.feat3.p": "Chaque meuble n’existe qu’une fois",
+    "home.feat3.t": "Pièces uniques", "home.feat3.p": "La plupart des pièces n’existent qu’une fois",
     "home.feat4.t": "Conseil personnalisé", "home.feat4.p": "Au showroom de Hambourg ou chez vous",
     "home.featured.eyebrow": "Sélection",
     "home.featured.title": "Les pièces de la saison",
@@ -2042,7 +2097,7 @@ const I18N = {
     "about.mat.p2": "Notre approche intègre très tôt l’architecture et les besoins de chacun — pour un résultat qui convainc autant visuellement que sur le fond.",
     "about.n1.t": "Planification globale", "about.n1.p": "Espace, lumière, matière et fonction s’imbriquent au lieu de coexister.",
     "about.n2.t": "Design sur mesure", "about.n2.p": "Chaque projet est aussi singulier que son contexte — accordé au lieu, à l’usage et aux personnes.",
-    "about.n3.t": "Au-delà des frontières", "about.n3.p": "Outre Poliform et Baxter, nous travaillons avec tous les grands fabricants — en Allemagne et à l’international.",
+    "about.n3.t": "Au-delà des frontières", "about.n3.p": "Nous achetons dans des projets achevés, des showrooms et chez des particuliers — des pièces de Poliform, Baxter et d’autres grands fabricants, en Allemagne et à l’étranger.",
     "about.proc.eyebrow": "Déroulé du projet",
     "about.proc.title": "Du besoin à l’espace.",
     "about.proc.s1": "Analyse des besoins & premier échange", "about.proc.p1": "Comprendre ce qui compte vraiment. Nous clarifions les attentes, les exigences fonctionnelles et la direction esthétique.",
@@ -2061,7 +2116,7 @@ const I18N = {
     "about.care.metal": "Pièces sur mesure",
     "about.care.metal.p": "Pièces sur mesure d’exception, réalisées avec des manufactures choisies — y compris d’après nos propres dessins.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Showroom Poliform Hambourg",
+    "about.visit.title": "Showroom Hambourg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hambourg<br>Sur rendez-vous",
     "about.visit.cta": "Prendre rendez-vous",
 
@@ -2100,6 +2155,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, todas de segunda mano:",
     /* ---- Berater: Alltagsfragen ---- */
@@ -2195,6 +2251,8 @@ const I18N = {
     "gallery.next": "Imagen siguiente",
     "gallery.count": "Imagen {n} de {m}",
     "gallery.image": "Imagen {n}",
+    "img.alt": "{name} — {kurz} Segunda mano, imagen {n} de {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Segunda mano.",
     "gallery.label": "Galería de imágenes",
     "topbar.promo": "{betrag} en su primera compra — consiga el vale",
     "topbar.promoActive": "Vale {code} activo — se descuentan {betrag} al pagar",
@@ -2211,7 +2269,7 @@ const I18N = {
     "desc.cart": "Su selección en Studio Lusso — con estado, disponibilidad y entrega en la estancia.",
     "desc.about": "Studio Lusso es un estudio de interiorismo en Hamburgo: planificación integral, diseño a medida y proyectos nacionales e internacionales.",
     "desc.contact": "Asesoramiento de interiorismo, showroom en Hamburgo y contacto con Studio Lusso.",
-    "topbar": "Showroom Poliform Hamburgo · Cita previa en el +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburgo · Cita previa en el +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.home": "Inicio",
     "nav.shop": "Colección",
@@ -2235,6 +2293,19 @@ const I18N = {
     "cat.betten": "Camas",
     "cat.kuechen": "Cocinas",
     "cat.accessoires": "Accesorios",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Pieza",
+    "cat.sg.kuechen": "Cocina",
+    "cat.sg.sofas": "Sofá",
+    "cat.sg.sessel": "Butaca",
+    "cat.sg.tische": "Mesa",
+    "cat.sg.stuehle": "Silla",
+    "cat.sg.leuchten": "Lámpara",
+    "cat.sg.aufbewahrung": "Almacenaje",
+    "cat.sg.betten": "Cama",
+    "cat.sg.accessoires": "Accesorio",
+    "pdp.titel": "{name} — {kategorie} de segunda mano · Studio Lusso",
     "search.title": "Buscar",
     "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
     "search.hint": "Busque por nombre, categoría o material.",
@@ -2271,7 +2342,7 @@ const I18N = {
     "home.feat2.t": "Entrega en la estancia",
     "home.feat2.p": "Servicio de guante blanco, montaje incluido",
     "home.feat3.t": "Piezas únicas",
-    "home.feat3.p": "Cada mueble está disponible una sola vez",
+    "home.feat3.p": "La mayoría de las piezas existen una sola vez",
     "home.feat4.t": "Asesoramiento personal",
     "home.feat4.p": "En el showroom de Hamburgo o en su casa",
     "home.used.eyebrow": "Segunda mano",
@@ -2382,7 +2453,7 @@ const I18N = {
     "about.n2.t": "Diseño a medida",
     "about.n2.p": "Cada proyecto es tan singular como su contexto — ajustado al lugar, al uso y a las personas.",
     "about.n3.t": "Más allá de las fronteras",
-    "about.n3.p": "Junto a Poliform y Baxter trabajamos con todos los fabricantes de referencia — en Alemania y fuera.",
+    "about.n3.p": "Compramos en proyectos finalizados, showrooms y viviendas particulares — piezas de Poliform, Baxter y otros fabricantes de referencia, en Alemania y fuera.",
     "about.proc.eyebrow": "Desarrollo del proyecto",
     "about.proc.title": "De la necesidad al espacio.",
     "about.proc.s1": "Análisis de necesidades y primera cita",
@@ -2406,7 +2477,7 @@ const I18N = {
     "about.care.metal": "Piezas a medida",
     "about.care.metal.p": "Piezas únicas de altísimo nivel, realizadas con manufacturas seleccionadas — también a partir de diseños propios.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Showroom Poliform Hamburgo",
+    "about.visit.title": "Showroom Hamburgo",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburgo<br>Con cita previa",
     "about.visit.cta": "Pedir cita",
     "contact.title": "Hablemos<br>de su espacio.",
@@ -2848,12 +2919,36 @@ function luminance(hex) {
 /* Zeigt das Produkt in der gewählten Ausführung.
    Helle Möbel stehen dabei in einem dunklen Raum und umgekehrt — sonst
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
-function artFor(product, colorIndex = 0, viewIndex = 0) {
+/* Text, der in ein Attribut geschrieben wird — Anfuehrungszeichen und
+   spitze Klammern wuerden sonst das Gerüst zerreissen. */
+function attrText(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* Der Text hinter einem Foto. Er steht in jeder Sprache und beschreibt das
+   Stueck, statt nur seinen Namen zu wiederholen: Vorlesehilfen lesen ihn
+   vor, und die Bildersuche findet ein Moebelstueck fast nur darueber. */
+function bildText(product, index = 0, lang) {
+  const x = pt(product, lang || getLang());
+  const gesamt = (product.photos || []).length;
+  const vars = { name: product.name, kurz: x.short || "", n: index + 1, gesamt: gesamt };
+  return t(gesamt > 1 ? "img.alt" : "img.alt.eins", vars, lang);
+}
+
+function artFor(product, colorIndex = 0, viewIndex = 0, zuerst = false) {
   /* Liegt eine Fotostrecke vor, geht sie der Zeichnung vor. Die Ansichten
      der Galerie werden dann zu den Bildern der Strecke. */
   if (product.photos && product.photos.length) {
-    const src = product.photos[viewIndex % product.photos.length];
-    return `<img src="${src}" alt="${product.name}" loading="lazy" decoding="async">`;
+    const i = viewIndex % product.photos.length;
+    const src = product.photos[i];
+    /* Das zuerst sichtbare Bild nicht aufschieben: es ist auf der
+       Produktseite der groesste Inhalt und bestimmt, wann die Seite als
+       geladen gilt. Alle weiteren kommen erst beim Scrollen. */
+    const laden = zuerst
+      ? ' loading="eager" fetchpriority="high"'
+      : ' loading="lazy"';
+    return `<img src="${src}" alt="${attrText(bildText(product, i))}"${laden} decoding="async">`;
   }
   const hex = product.swatches[colorIndex] || product.swatches[0];
   // Helle Möbel vor dunklem Grund, dunkle vor hellem.
@@ -4007,6 +4102,109 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("is-open"), 2600);
 }
 
+/* ---------- Kopfdaten einer Produktseite ----------
+   Die Produktseite entsteht erst im Browser — beim Auslieferen weiss noch
+   niemand, welches Stueck gezeigt wird. Titel, die Vorschau beim Teilen
+   und die Auszeichnung fuer Suchmaschinen muessen deshalb nachgetragen
+   werden, sobald es feststeht. Suchmaschinen fuehren die Seite dafuer aus;
+   soziale Netze in der Regel nicht — deren Karte zeigt den Grundeintrag.
+
+   In der Einzeldatei-Vorschau bleibt alles unangetastet: dort gaebe es zu
+   den Adressen keine Entsprechung im Netz. ---------- */
+
+function kopfMarke(auswahl, bauen) {
+  let el = document.head.querySelector(auswahl);
+  if (!el) { el = bauen(); document.head.appendChild(el); }
+  return el;
+}
+
+function setzeKopfInhalt(eigenschaft, wert, alsName) {
+  const feld = alsName ? "name" : "property";
+  const el = kopfMarke(`meta[${feld}="${eigenschaft}"]`, () => {
+    const m = document.createElement("meta");
+    m.setAttribute(feld, eigenschaft);
+    return m;
+  });
+  el.setAttribute("content", wert);
+}
+
+function setzeProduktKopf(p) {
+  if (isPreview()) return;
+  const x = pt(p);
+  const adresse = SITE_URL + "/produkt.html?id=" + p.id;
+  const bilder = (p.photos || []).map((f) => SITE_URL + "/" + f);
+  const titel = t("pdp.titel", { name: p.name, kategorie: t("cat.sg." + p.categoryKey) });
+  const text = x.short;
+
+  document.title = titel;
+  setzeKopfInhalt("description", text, true);
+  kopfMarke('link[rel="canonical"]', () => {
+    const l = document.createElement("link");
+    l.rel = "canonical";
+    return l;
+  }).setAttribute("href", adresse);
+
+  setzeKopfInhalt("og:type", "product");
+  setzeKopfInhalt("og:title", titel);
+  setzeKopfInhalt("og:description", text);
+  setzeKopfInhalt("og:url", adresse);
+  setzeKopfInhalt("og:locale", langLocale().replace("-", "_"));
+  setzeKopfInhalt("product:price:amount", String(p.price));
+  setzeKopfInhalt("product:price:currency", "EUR");
+  setzeKopfInhalt("twitter:title", titel, true);
+  setzeKopfInhalt("twitter:description", text, true);
+  if (bilder.length) {
+    setzeKopfInhalt("og:image", bilder[0]);
+    setzeKopfInhalt("og:image:alt", bildText(p, 0));
+    setzeKopfInhalt("twitter:image", bilder[0], true);
+    document.head.querySelectorAll('meta[property="og:image:width"], meta[property="og:image:height"]')
+      .forEach((m) => m.remove());
+  }
+
+  const daten = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": adresse + "#produkt",
+    name: p.name,
+    description: x.description || x.short,
+    sku: p.id,
+    category: t("cat." + p.categoryKey),
+    material: x.material,
+    color: (x.colors && x.colors[0]) || undefined,
+    image: bilder.length ? bilder : undefined,
+    productionDate: p.year,
+    brand: { "@type": "Brand", name: "Studio Lusso" },
+    offers: {
+      "@type": "Offer",
+      url: adresse,
+      price: p.price,
+      priceCurrency: "EUR",
+      itemCondition: p.used ? "https://schema.org/UsedCondition" : "https://schema.org/NewCondition",
+      availability: "https://schema.org/InStock",
+      inventoryLevel: { "@type": "QuantitativeValue", value: bestand(p) },
+      seller: { "@id": SITE_URL + "/#haus" }
+    }
+  };
+  const weg = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: t("nav.home"), item: SITE_URL + "/" },
+      { "@type": "ListItem", position: 2, name: t("cat." + p.categoryKey), item: SITE_URL + "/kollektion.html?kategorie=" + p.categoryKey },
+      { "@type": "ListItem", position: 3, name: p.name, item: adresse }
+    ]
+  };
+
+  let block = document.getElementById("produkt-auszeichnung");
+  if (!block) {
+    block = document.createElement("script");
+    block.type = "application/ld+json";
+    block.id = "produkt-auszeichnung";
+    document.head.appendChild(block);
+  }
+  block.textContent = JSON.stringify([daten, weg]);
+}
+
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
   const x = pt(p);
@@ -4598,7 +4796,7 @@ function initBerater() {
 const ROUTES = {
   "index.html": {
     page: "home",
-    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Studio Lusso</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Geprüft &amp; aufbereitet</h4><p data-i18n=\"home.feat1.p\">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">Einzelstücke</h4><p data-i18n=\"home.feat3.p\">Jedes Möbel gibt es nur einmal</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Studio Lusso. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Studio Lusso · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
+    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Studio Lusso</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Geprüft &amp; aufbereitet</h4><p data-i18n=\"home.feat1.p\">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">Einzelstücke</h4><p data-i18n=\"home.feat3.p\">Die meisten Stücke gibt es nur einmal</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Studio Lusso. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Studio Lusso · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   heroCanvas($("#hero-art"));
@@ -4717,7 +4915,7 @@ function initPage() {
     return;
   }
 
-  if (!isPreview()) document.title = current.name + " — Studio Lusso";
+  setzeProduktKopf(current);
   chosenColorIndex = 0;
   chosenView = 0;
   renderPdp();
@@ -4739,7 +4937,7 @@ function renderPdp() {
     <div class="pdp">
       <div class="pdp__gallery">
         <div class="gallery" id="gallery" role="group" aria-roledescription="carousel" aria-label="${t("gallery.label")}">
-          <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView)}</div>
+          <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView, true)}</div>
           ${ansichten(p).length > 1 ? `
           <button class="gallery__arrow gallery__arrow--prev" id="gal-prev" aria-label="${t("gallery.prev")}" aria-controls="pdp-main">‹</button>
           <button class="gallery__arrow gallery__arrow--next" id="gal-next" aria-label="${t("gallery.next")}" aria-controls="pdp-main">›</button>
@@ -4823,7 +5021,7 @@ function renderPdp() {
   function zeigeAnsicht(index) {
     const anzahl = ansichten(current).length;
     chosenView = (index + anzahl) % anzahl;
-    $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView);
+    $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView, true);
     $$("#pdp-thumbs button").forEach((b) =>
       b.classList.toggle("is-active", Number(b.dataset.view) === chosenView));
     // Bei einer einzigen Aufnahme gibt es weder Zähler noch Pfeile
@@ -5019,7 +5217,7 @@ function renderCartPage() {
   },
   "ueber-uns.html": {
     page: "about",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.about\">Studio</span></div>\n      <span class=\"eyebrow\" data-i18n=\"about.eyebrow\">Interior Design Studio</span>\n      <h1 data-i18n-html=\"about.title\">Wir gestalten Räume,<br>die über Trends hinausgehen.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"about.lede\">Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision und tiefem Verständnis für architektonische Zusammenhänge. Wir begleiten Projekte von der ersten Idee bis zur vollständigen Umsetzung.</p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"about.mat.eyebrow\">Was uns auszeichnet</span>\n      <h2 data-i18n=\"about.mat.title\">Ganzheitliche Planung.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"about.mat.p1\">Interior Design ist für uns mehr als Möblierung oder nur eine Küche. Es ist ein orchestriertes Zusammenspiel aus Raum, Licht, Materialität und Funktion.</p>\n      <p data-i18n=\"about.mat.p2\">Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n1.t\">Ganzheitliche Planung</h3>\n          <p class=\"muted\" data-i18n=\"about.n1.p\">Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n2.t\">Individuelles Design</h3>\n          <p class=\"muted\" data-i18n=\"about.n2.p\">Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n3.t\">Über Grenzen hinaus</h3>\n          <p class=\"muted\" data-i18n=\"about.n3.p\">Neben Poliform und Baxter arbeiten wir mit allen renommierten Herstellern — national und international.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"about.proc.eyebrow\">Projektverlauf</span>\n      <h2 data-i18n=\"about.proc.title\">Vom Bedürfnis zum Raum.</h2>\n          <span class=\"rule\"></span>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — <span data-i18n=\"about.proc.s1\">Bedarfsanalyse &amp; Erstberatung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p1\">Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — <span data-i18n=\"about.proc.s2\">Konzeption &amp; Entwurf</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p2\">Ideen entwickeln, Räume denken — mit 3D-Visualisierungen, Moodboards, Farb- und Materialvorschlägen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — <span data-i18n=\"about.proc.s3\">Planung &amp; Detailentwicklung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p3\">Vom Konzept zur konkreten Lösung: Möblierungspläne, Lichtplanung, Maßzeichnungen, Detailplanungen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — <span data-i18n=\"about.proc.s4\">Umsetzung &amp; Bauleitung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p4\">Gestaltung wird Realität. Wir koordinieren die Gewerke und achten auf Zeit-, Kosten- und Qualitätspläne.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — <span data-i18n=\"about.proc.s5\">Möblierung &amp; Übergabe</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p5\">Das Detail macht den Unterschied: Möbel, Leuchten, Vorhänge, Teppiche, Kunst. Danach bleiben wir Ansprechpartner.</p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"about.care.eyebrow\">Leistungen</span>\n          <h2 data-i18n=\"about.care.title\">Was wir übernehmen</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\"><span data-i18n=\"about.care.leather\">Interior Design &amp; Raumkonzepte</span> <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p data-i18n=\"about.care.leather.p\">Nationale und internationale Projektrealisation, Interior Design, high-end Küchen und vollständige Raumkonzepte — von der ersten Idee bis zur Übergabe.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.wood\">Technische Planung</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.wood.p\">Ausführungs- und Detailplanung, Möblierungs- und Lichtplanung sowie die Koordination der Schnittstellen mit externen Planern.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.fabric\">Material &amp; Oberflächen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.fabric.p\">Material-, Farb- und Oberflächenberatung mit einem sicheren Gespür für Proportion, Haptik und Atmosphäre.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.metal\">Sonderanfertigungen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.metal.p\">Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.</p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"about.visit.eyebrow\">Showroom</span>\n      <h2 data-i18n=\"about.visit.title\">Poliform Showroom Hamburg</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto\" data-i18n-html=\"about.visit.p\">Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung</p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\" data-i18n=\"about.visit.cta\">Termin vereinbaren</a>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.about\">Studio</span></div>\n      <span class=\"eyebrow\" data-i18n=\"about.eyebrow\">Interior Design Studio</span>\n      <h1 data-i18n-html=\"about.title\">Wir gestalten Räume,<br>die über Trends hinausgehen.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"about.lede\">Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision und tiefem Verständnis für architektonische Zusammenhänge. Wir begleiten Projekte von der ersten Idee bis zur vollständigen Umsetzung.</p>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"art-1\"></div>\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"about.mat.eyebrow\">Was uns auszeichnet</span>\n      <h2 data-i18n=\"about.mat.title\">Ganzheitliche Planung.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"about.mat.p1\">Interior Design ist für uns mehr als Möblierung oder nur eine Küche. Es ist ein orchestriertes Zusammenspiel aus Raum, Licht, Materialität und Funktion.</p>\n      <p data-i18n=\"about.mat.p2\">Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--3\">\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n1.t\">Ganzheitliche Planung</h3>\n          <p class=\"muted\" data-i18n=\"about.n1.p\">Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n2.t\">Individuelles Design</h3>\n          <p class=\"muted\" data-i18n=\"about.n2.p\">Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.</p>\n        </div>\n        <div class=\"value reveal\">\n          <h3 data-i18n=\"about.n3.t\">Über Grenzen hinaus</h3>\n          <p class=\"muted\" data-i18n=\"about.n3.p\">Wir kaufen aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz an — Stücke von Poliform, Baxter und anderen renommierten Herstellern, im In- und Ausland.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"about.proc.eyebrow\">Projektverlauf</span>\n      <h2 data-i18n=\"about.proc.title\">Vom Bedürfnis zum Raum.</h2>\n          <span class=\"rule\"></span>\n      <ol style=\"list-style:none;padding:0;margin:1rem 0 0;display:grid;gap:1.6rem\">\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">01 — <span data-i18n=\"about.proc.s1\">Bedarfsanalyse &amp; Erstberatung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p1\">Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">02 — <span data-i18n=\"about.proc.s2\">Konzeption &amp; Entwurf</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p2\">Ideen entwickeln, Räume denken — mit 3D-Visualisierungen, Moodboards, Farb- und Materialvorschlägen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">03 — <span data-i18n=\"about.proc.s3\">Planung &amp; Detailentwicklung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p3\">Vom Konzept zur konkreten Lösung: Möblierungspläne, Lichtplanung, Maßzeichnungen, Detailplanungen.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">04 — <span data-i18n=\"about.proc.s4\">Umsetzung &amp; Bauleitung</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p4\">Gestaltung wird Realität. Wir koordinieren die Gewerke und achten auf Zeit-, Kosten- und Qualitätspläne.</p></li>\n        <li><strong style=\"font-family:var(--serif);font-size:1.3rem\">05 — <span data-i18n=\"about.proc.s5\">Möblierung &amp; Übergabe</span></strong>\n          <p style=\"margin:.35rem 0 0\" data-i18n=\"about.proc.p5\">Das Detail macht den Unterschied: Möbel, Leuchten, Vorhänge, Teppiche, Kunst. Danach bleiben wir Ansprechpartner.</p></li>\n      </ol>\n    </div>\n    <div class=\"split__media\" id=\"art-2\"></div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"about.care.eyebrow\">Leistungen</span>\n          <h2 data-i18n=\"about.care.title\">Was wir übernehmen</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"acc\" style=\"max-width:820px\">\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"true\"><span data-i18n=\"about.care.leather\">Interior Design &amp; Raumkonzepte</span> <i>+</i></button>\n          <div class=\"acc__panel is-open\"><p data-i18n=\"about.care.leather.p\">Nationale und internationale Projektrealisation, Interior Design, high-end Küchen und vollständige Raumkonzepte — von der ersten Idee bis zur Übergabe.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.wood\">Technische Planung</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.wood.p\">Ausführungs- und Detailplanung, Möblierungs- und Lichtplanung sowie die Koordination der Schnittstellen mit externen Planern.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.fabric\">Material &amp; Oberflächen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.fabric.p\">Material-, Farb- und Oberflächenberatung mit einem sicheren Gespür für Proportion, Haptik und Atmosphäre.</p></div>\n        </div>\n        <div class=\"acc__item\">\n          <button class=\"acc__btn\" aria-expanded=\"false\"><span data-i18n=\"about.care.metal\">Sonderanfertigungen</span> <i>+</i></button>\n          <div class=\"acc__panel\"><p data-i18n=\"about.care.metal.p\">Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.</p></div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"about.visit.eyebrow\">Showroom</span>\n      <h2 data-i18n=\"about.visit.title\">Showroom Hamburg</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto\" data-i18n-html=\"about.visit.p\">Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung</p>\n      <a class=\"btn\" href=\"kontakt.html\" style=\"margin-top:1rem\" data-i18n=\"about.visit.cta\">Termin vereinbaren</a>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   $("#art-1").innerHTML = ART.sessel(TONES.studio);

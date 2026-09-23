@@ -307,6 +307,61 @@ Navigation und die Beschreibung für Suchmaschinen sind also auch ohne
 JavaScript da. Warenkorb, Suche, Sprachwahl und die Produktliste auf der
 Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
 
+## Gefunden werden
+
+Eine Website wird nicht dadurch bekannt, dass sie schön ist, sondern dadurch,
+dass Maschinen sie lesen können und dass jemand ihren Link weitergibt. Beides
+ist hier vorbereitet. `tools/build.js` schreibt dafür bei jedem Bau einen
+verwalteten Block in den Kopf jeder Seite — zwischen den Marken
+`<!-- kopfdaten:anfang -->` und `<!-- kopfdaten:ende -->`. Was dort von Hand
+geändert wird, ist beim nächsten Bau wieder weg.
+
+**Die Adresse der Website** steht an einer einzigen Stelle: `SITE_URL` ganz
+oben in `assets/js/i18n.js`. Solange die Seite noch unter keinem eigenen Namen
+liegt, ist der Wert dort ein Platzhalter. Sobald der Name feststeht, einmal
+ändern und `node tools/build.js` laufen lassen — Kopfdaten, Seitenverzeichnis
+und die Auszeichnung im Browser ziehen mit.
+
+**Vorschau beim Teilen** (Open Graph, Twitter Card): Wer einen Link bei
+WhatsApp, Instagram, Facebook, LinkedIn oder Signal einfügt, sieht eine Karte
+mit Bild, Titel und Zeile darunter statt einer nackten Adresse. Das Bild dafür
+ist `assets/img/og-studio-lusso.jpg` (1200 × 630). Auf einer Produktseite
+setzt `setzeProduktKopf()` in `assets/js/app.js` Titel, Text und Bild auf das
+gezeigte Stück um — Suchmaschinen führen die Seite dafür aus, die meisten
+sozialen Netze nicht; deren Karte zeigt den Grundeintrag.
+
+**Auszeichnung für Suchmaschinen** (JSON-LD nach schema.org):
+
+| Seite | Was ausgezeichnet wird |
+| --- | --- |
+| jede | `FurnitureStore` — Name, Anschrift, Ruf, Koordinaten |
+| Startseite | `WebSite` samt Suchfeld |
+| Kollektion | `ItemList` aller Stücke, `BreadcrumbList` |
+| Produkt | `Product` mit `Offer`: Preis, Währung, Bestand — und `UsedCondition` |
+| Studio, Kontakt | `BreadcrumbList` |
+
+`UsedCondition` ist der wichtigste Eintrag: Er sagt einer Suchmaschine, dass
+hier gebrauchte Ware steht. Genau danach wird gesucht, und genau dort ist die
+Konkurrenz dünn.
+
+**Bildtexte**: Jedes Foto trägt einen Text, der das Stück beschreibt, statt
+nur den Namen zu wiederholen — `bildText()` in `assets/js/data.js`, in allen
+vier Sprachen. Möbel werden zu einem guten Teil über die Bildersuche gefunden,
+und dort ist dieser Text die einzige Beschreibung, die eine Maschine hat.
+
+**Weiteres im Kopf**: feste Adresse je Seite (`canonical`), Signet für den
+Reiter (`assets/favicon.svg`, `favicon.ico`, `assets/icon-*.png`), Farbe der
+Adresszeile auf dem Telefon, `site.webmanifest` zum Ablegen auf dem
+Startbildschirm. `robots.txt` und `sitemap.xml` entstehen beim Bau; der
+Warenkorb ist von der Aufnahme ausgenommen.
+
+**Was Code nicht leisten kann**: Auffindbarkeit ist die Voraussetzung, nicht
+die Bekanntheit. Die kommt bei gebrauchten Designmöbeln aus eigenen Fotos,
+einem Eintrag bei Google Business (dafür braucht es die echte Anschrift),
+Instagram und Pinterest — dort wird nach Einrichtung gesucht wie anderswo nach
+Rezepten — und daraus, dass verkaufte Stücke stehen bleiben statt zu
+verschwinden: Sie zeigen, dass hier wirklich gehandelt wird.
+
 ## Was noch fehlt für den echten Betrieb
 
 * **Zahlung**: Der Button „Verbindlich anfragen“ ist eine Demo. Für echte
@@ -326,9 +381,12 @@ Kollektionsseite brauchen JavaScript; darauf weist die Fußzeile dann hin.
 * **Rechtstexte**: Impressum, Datenschutzerklärung, AGB und Widerrufsbelehrung
   sind in der Fußzeile verlinkt, aber noch nicht geschrieben — in Deutschland
   sind sie für einen Shop Pflicht.
-* **Fotos**: echte Produktfotos statt der SVG-Illustrationen. Ein Stück
-  (PH Artichoke) hat bereits eine Fotostrecke; für die übrigen fehlen sie.
-  Das Nutzungsrecht an jedem Foto muss vorher geklärt sein.
+* **Fotos**: Das Nutzungsrecht an jedem Foto muss vorher geklärt sein.
+* **Eigener Name**: `SITE_URL` in `assets/js/i18n.js` ist noch ein
+  Platzhalter. Ohne ihn zeigen Kopfdaten und Seitenverzeichnis ins Leere.
+* **Google Business**: Der Eintrag ist für einen Laden mit Anschrift der
+  wirksamste einzelne Schritt — aber nur mit echter Adresse und echter
+  Nummer zu bekommen.
 * **Berater mit Sprachmodell**: heute beantwortet er Fragen aus den eigenen
   Daten. Für freie Antworten braucht es ein Backend mit API-Schlüssel.
 

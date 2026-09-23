@@ -1,0 +1,6 @@
+# Studio Lusso
+User-agent: *
+Allow: /
+Disallow: /warenkorb.html
+
+Sitemap: https://www.studio-lusso.de/sitemap.xml

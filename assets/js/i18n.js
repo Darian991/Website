@@ -6,6 +6,13 @@
    anlegt und bei jedem Produkt einen Eintrag unter t hinzufügt.
    ========================================================= */
 
+/* --- Adresse der Website ---
+   Suchmaschinen und soziale Netze brauchen die vollstaendige Adresse einer
+   Seite; relative Pfade nuetzen ihnen nichts. Sobald die Website unter
+   einem eigenen Namen liegt, gehoert er hierher — einmal, an dieser Stelle.
+   tools/build.js liest den Wert von hier. Danach `node tools/build.js`. --- */
+const SITE_URL = "https://www.studio-lusso.de";
+
 const LANGS = [
   { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
   { code: "en", label: "EN", name: "English",  locale: "en-GB" },
@@ -19,6 +26,8 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, alle aus zweiter Hand:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
@@ -128,6 +137,8 @@ const I18N = {
     "gallery.next": "Nächstes Bild",
     "gallery.count": "Bild {n} von {m}",
     "gallery.image": "Bild {n}",
+    "img.alt": "{name} — {kurz} Gebraucht, Bild {n} von {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Gebraucht.",
     "gallery.label": "Bildergalerie",
     "topbar.promo": "{betrag} auf Ihren ersten Einkauf — Gutschein sichern",
     "topbar.promoActive": "Gutschein {code} aktiv — {betrag} werden an der Kasse abgezogen",
@@ -147,7 +158,7 @@ const I18N = {
     "title.about": "Das Studio — Studio Lusso",
     "title.contact": "Kontakt & Beratung — Studio Lusso",
 
-    "topbar": "Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.pages": "Seiten",
     "nav.home": "Startseite",
@@ -173,6 +184,19 @@ const I18N = {
     "cat.betten": "Betten",
     "cat.kuechen": "Küchen",
     "cat.accessoires": "Accessoires",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Möbelstück",
+    "cat.sg.kuechen": "Küche",
+    "cat.sg.sofas": "Sofa",
+    "cat.sg.sessel": "Sessel",
+    "cat.sg.tische": "Tisch",
+    "cat.sg.stuehle": "Stuhl",
+    "cat.sg.leuchten": "Leuchte",
+    "cat.sg.aufbewahrung": "Aufbewahrung",
+    "cat.sg.betten": "Bett",
+    "cat.sg.accessoires": "Accessoire",
+    "pdp.titel": "{name} — {kategorie} aus zweiter Hand · Studio Lusso",
 
     "search.title": "Suchen",
     "search.placeholder": "Wonach suchen Sie? Etwa Sofa, Eiche, Leder …",
@@ -210,7 +234,7 @@ const I18N = {
     "home.hero.cta2": "Showroom besuchen",
     "home.feat1.t": "Geprüft & aufbereitet", "home.feat1.p": "Jedes gebrauchte Stück wird von Hand kontrolliert",
     "home.feat2.t": "Lieferung bis in den Raum", "home.feat2.p": "Weißhandschuh-Service inklusive Montage",
-    "home.feat3.t": "Einzelstücke", "home.feat3.p": "Jedes Möbel gibt es nur einmal",
+    "home.feat3.t": "Einzelstücke", "home.feat3.p": "Die meisten Stücke gibt es nur einmal",
     "home.feat4.t": "Persönliche Beratung", "home.feat4.p": "Im Showroom Hamburg oder bei Ihnen zu Hause",
     "home.featured.eyebrow": "Ausgewählt",
     "home.featured.title": "Die Stücke der Saison",
@@ -302,7 +326,7 @@ const I18N = {
     "about.mat.p2": "Unser Planungsansatz integriert frühzeitig Architektur und individuelle Bedürfnisse — für ein Ergebnis, das sowohl visuell als auch inhaltlich überzeugt.",
     "about.n1.t": "Ganzheitliche Planung", "about.n1.p": "Raum, Licht, Materialität und Funktion greifen ineinander, statt nebeneinander zu stehen.",
     "about.n2.t": "Individuelles Design", "about.n2.p": "Jedes Projekt ist so einzigartig wie sein Kontext — abgestimmt auf Ort, Nutzung und Menschen.",
-    "about.n3.t": "Über Grenzen hinaus", "about.n3.p": "Neben Poliform und Baxter arbeiten wir mit allen renommierten Herstellern — national und international.",
+    "about.n3.t": "Über Grenzen hinaus", "about.n3.p": "Wir kaufen aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz an — Stücke von Poliform, Baxter und anderen renommierten Herstellern, im In- und Ausland.",
     "about.proc.eyebrow": "Projektverlauf",
     "about.proc.title": "Vom Bedürfnis zum Raum.",
     "about.proc.s1": "Bedarfsanalyse & Erstberatung", "about.proc.p1": "Verstehen, was wirklich zählt. Wir klären Erwartungen, funktionale Anforderungen und den gestalterischen Stil.",
@@ -321,7 +345,7 @@ const I18N = {
     "about.care.metal": "Sonderanfertigungen",
     "about.care.metal.p": "Einzigartige Sonderanfertigungen auf höchstem Niveau, gefertigt mit ausgewählten Manufakturen — auch nach eigenen Entwürfen.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Poliform Showroom Hamburg",
+    "about.visit.title": "Showroom Hamburg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>Termine nach Vereinbarung",
     "about.visit.cta": "Termin vereinbaren",
 
@@ -360,6 +384,8 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
@@ -469,6 +495,8 @@ const I18N = {
     "gallery.next": "Next image",
     "gallery.count": "Image {n} of {m}",
     "gallery.image": "Image {n}",
+    "img.alt": "{name} — {kurz} Pre-owned, image {n} of {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Pre-owned.",
     "gallery.label": "Image gallery",
     "topbar.promo": "{betrag} off your first purchase — get the voucher",
     "topbar.promoActive": "Voucher {code} active — {betrag} is deducted at checkout",
@@ -488,7 +516,7 @@ const I18N = {
     "title.about": "The Studio — Studio Lusso",
     "title.contact": "Contact & Advice — Studio Lusso",
 
-    "topbar": "Poliform showroom Hamburg · Appointments on +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburg · Appointments on +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.pages": "Pages",
     "nav.home": "Home",
@@ -514,6 +542,19 @@ const I18N = {
     "cat.betten": "Beds",
     "cat.kuechen": "Kitchens",
     "cat.accessoires": "Accessories",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Piece",
+    "cat.sg.kuechen": "Kitchen",
+    "cat.sg.sofas": "Sofa",
+    "cat.sg.sessel": "Armchair",
+    "cat.sg.tische": "Table",
+    "cat.sg.stuehle": "Chair",
+    "cat.sg.leuchten": "Light",
+    "cat.sg.aufbewahrung": "Storage",
+    "cat.sg.betten": "Bed",
+    "cat.sg.accessoires": "Accessory",
+    "pdp.titel": "{name} — Pre-owned {kategorie} · Studio Lusso",
 
     "search.title": "Search",
     "search.placeholder": "What are you looking for? Sofa, oak, leather …",
@@ -551,7 +592,7 @@ const I18N = {
     "home.hero.cta2": "Visit the showroom",
     "home.feat1.t": "Checked & refurbished", "home.feat1.p": "Every pre-owned piece is checked by hand",
     "home.feat2.t": "Delivered to your room", "home.feat2.p": "White-glove service, assembly included",
-    "home.feat3.t": "One of a kind", "home.feat3.p": "Each piece is available only once",
+    "home.feat3.t": "One of a kind", "home.feat3.p": "Most pieces exist only once",
     "home.feat4.t": "Personal advice", "home.feat4.p": "In our Hamburg showroom or at your home",
     "home.featured.eyebrow": "Selected",
     "home.featured.title": "Pieces of the season",
@@ -643,7 +684,7 @@ const I18N = {
     "about.mat.p2": "Our approach brings architecture and individual needs together early on — for a result that convinces visually and in substance.",
     "about.n1.t": "Holistic planning", "about.n1.p": "Space, light, materiality and function interlock rather than sit side by side.",
     "about.n2.t": "Individual design", "about.n2.p": "Every project is as singular as its context — tuned to place, use and people.",
-    "about.n3.t": "Beyond borders", "about.n3.p": "Alongside Poliform and Baxter we work with every renowned maker — nationally and internationally.",
+    "about.n3.t": "Beyond borders", "about.n3.p": "We buy from completed projects, showrooms and private homes — pieces by Poliform, Baxter and other renowned makers, at home and abroad.",
     "about.proc.eyebrow": "Project process",
     "about.proc.title": "From need to room.",
     "about.proc.s1": "Needs analysis & first meeting", "about.proc.p1": "Understanding what really counts. We clarify expectations, functional requirements and the design direction.",
@@ -662,7 +703,7 @@ const I18N = {
     "about.care.metal": "Bespoke pieces",
     "about.care.metal.p": "Unique bespoke pieces at the highest level, made with selected workshops — including our own designs.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Poliform showroom Hamburg",
+    "about.visit.title": "Showroom Hamburg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburg<br>By appointment",
     "about.visit.cta": "Make an appointment",
 
@@ -701,6 +742,8 @@ const I18N = {
 
   /* ------------------------------------------------------ Français */
   fr: {
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, toutes de seconde main :",
     /* ---- Berater: Alltagsfragen ---- */
@@ -811,6 +854,8 @@ const I18N = {
     "gallery.next": "Image suivante",
     "gallery.count": "Image {n} sur {m}",
     "gallery.image": "Image {n}",
+    "img.alt": "{name} — {kurz} Seconde main, image {n} sur {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Seconde main.",
     "gallery.label": "Galerie d’images",
     "topbar.promo": "{betrag} sur votre premier achat — obtenir le bon",
     "topbar.promoActive": "Bon {code} actif — {betrag} déduits au moment de payer",
@@ -830,7 +875,7 @@ const I18N = {
     "title.about": "Le studio — Studio Lusso",
     "title.contact": "Contact et conseil — Studio Lusso",
 
-    "topbar": "Showroom Poliform Hambourg · Rendez-vous au +49 40 41 92 74 60",
+    "topbar": "Showroom Hambourg · Rendez-vous au +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.home": "Accueil",
     "nav.shop": "Collection",
@@ -855,6 +900,19 @@ const I18N = {
     "cat.betten": "Lits",
     "cat.kuechen": "Cuisines",
     "cat.accessoires": "Accessoires",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Pièce",
+    "cat.sg.kuechen": "Cuisine",
+    "cat.sg.sofas": "Canapé",
+    "cat.sg.sessel": "Fauteuil",
+    "cat.sg.tische": "Table",
+    "cat.sg.stuehle": "Chaise",
+    "cat.sg.leuchten": "Luminaire",
+    "cat.sg.aufbewahrung": "Rangement",
+    "cat.sg.betten": "Lit",
+    "cat.sg.accessoires": "Accessoire",
+    "pdp.titel": "{name} — {kategorie} de seconde main · Studio Lusso",
 
     "search.title": "Rechercher",
     "search.placeholder": "Que cherchez-vous ? Canapé, chêne, cuir …",
@@ -892,7 +950,7 @@ const I18N = {
     "home.hero.cta2": "Visiter le showroom",
     "home.feat1.t": "Contrôlé et remis en état", "home.feat1.p": "Chaque pièce d’occasion est contrôlée à la main",
     "home.feat2.t": "Livré dans la pièce", "home.feat2.p": "Service gants blancs, montage compris",
-    "home.feat3.t": "Pièces uniques", "home.feat3.p": "Chaque meuble n’existe qu’une fois",
+    "home.feat3.t": "Pièces uniques", "home.feat3.p": "La plupart des pièces n’existent qu’une fois",
     "home.feat4.t": "Conseil personnalisé", "home.feat4.p": "Au showroom de Hambourg ou chez vous",
     "home.featured.eyebrow": "Sélection",
     "home.featured.title": "Les pièces de la saison",
@@ -984,7 +1042,7 @@ const I18N = {
     "about.mat.p2": "Notre approche intègre très tôt l’architecture et les besoins de chacun — pour un résultat qui convainc autant visuellement que sur le fond.",
     "about.n1.t": "Planification globale", "about.n1.p": "Espace, lumière, matière et fonction s’imbriquent au lieu de coexister.",
     "about.n2.t": "Design sur mesure", "about.n2.p": "Chaque projet est aussi singulier que son contexte — accordé au lieu, à l’usage et aux personnes.",
-    "about.n3.t": "Au-delà des frontières", "about.n3.p": "Outre Poliform et Baxter, nous travaillons avec tous les grands fabricants — en Allemagne et à l’international.",
+    "about.n3.t": "Au-delà des frontières", "about.n3.p": "Nous achetons dans des projets achevés, des showrooms et chez des particuliers — des pièces de Poliform, Baxter et d’autres grands fabricants, en Allemagne et à l’étranger.",
     "about.proc.eyebrow": "Déroulé du projet",
     "about.proc.title": "Du besoin à l’espace.",
     "about.proc.s1": "Analyse des besoins & premier échange", "about.proc.p1": "Comprendre ce qui compte vraiment. Nous clarifions les attentes, les exigences fonctionnelles et la direction esthétique.",
@@ -1003,7 +1061,7 @@ const I18N = {
     "about.care.metal": "Pièces sur mesure",
     "about.care.metal.p": "Pièces sur mesure d’exception, réalisées avec des manufactures choisies — y compris d’après nos propres dessins.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Showroom Poliform Hambourg",
+    "about.visit.title": "Showroom Hambourg",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hambourg<br>Sur rendez-vous",
     "about.visit.cta": "Prendre rendez-vous",
 
@@ -1042,6 +1100,8 @@ const I18N = {
 
   /* ------------------------------------------------------ Español */
   es: {
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, todas de segunda mano:",
     /* ---- Berater: Alltagsfragen ---- */
@@ -1137,6 +1197,8 @@ const I18N = {
     "gallery.next": "Imagen siguiente",
     "gallery.count": "Imagen {n} de {m}",
     "gallery.image": "Imagen {n}",
+    "img.alt": "{name} — {kurz} Segunda mano, imagen {n} de {gesamt}.",
+    "img.alt.eins": "{name} — {kurz} Segunda mano.",
     "gallery.label": "Galería de imágenes",
     "topbar.promo": "{betrag} en su primera compra — consiga el vale",
     "topbar.promoActive": "Vale {code} activo — se descuentan {betrag} al pagar",
@@ -1153,7 +1215,7 @@ const I18N = {
     "desc.cart": "Su selección en Studio Lusso — con estado, disponibilidad y entrega en la estancia.",
     "desc.about": "Studio Lusso es un estudio de interiorismo en Hamburgo: planificación integral, diseño a medida y proyectos nacionales e internacionales.",
     "desc.contact": "Asesoramiento de interiorismo, showroom en Hamburgo y contacto con Studio Lusso.",
-    "topbar": "Showroom Poliform Hamburgo · Cita previa en el +49 40 41 92 74 60",
+    "topbar": "Showroom Hamburgo · Cita previa en el +49 40 41 92 74 60",
     "logo.sub": "Interior Design Concepts",
     "nav.home": "Inicio",
     "nav.shop": "Colección",
@@ -1177,6 +1239,19 @@ const I18N = {
     "cat.betten": "Camas",
     "cat.kuechen": "Cocinas",
     "cat.accessoires": "Accesorios",
+
+    /* Einzahl — für Titel und Bildtexte, wo ein einzelnes Stück gemeint ist */
+    "cat.sg.alle": "Pieza",
+    "cat.sg.kuechen": "Cocina",
+    "cat.sg.sofas": "Sofá",
+    "cat.sg.sessel": "Butaca",
+    "cat.sg.tische": "Mesa",
+    "cat.sg.stuehle": "Silla",
+    "cat.sg.leuchten": "Lámpara",
+    "cat.sg.aufbewahrung": "Almacenaje",
+    "cat.sg.betten": "Cama",
+    "cat.sg.accessoires": "Accesorio",
+    "pdp.titel": "{name} — {kategorie} de segunda mano · Studio Lusso",
     "search.title": "Buscar",
     "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
     "search.hint": "Busque por nombre, categoría o material.",
@@ -1213,7 +1288,7 @@ const I18N = {
     "home.feat2.t": "Entrega en la estancia",
     "home.feat2.p": "Servicio de guante blanco, montaje incluido",
     "home.feat3.t": "Piezas únicas",
-    "home.feat3.p": "Cada mueble está disponible una sola vez",
+    "home.feat3.p": "La mayoría de las piezas existen una sola vez",
     "home.feat4.t": "Asesoramiento personal",
     "home.feat4.p": "En el showroom de Hamburgo o en su casa",
     "home.used.eyebrow": "Segunda mano",
@@ -1324,7 +1399,7 @@ const I18N = {
     "about.n2.t": "Diseño a medida",
     "about.n2.p": "Cada proyecto es tan singular como su contexto — ajustado al lugar, al uso y a las personas.",
     "about.n3.t": "Más allá de las fronteras",
-    "about.n3.p": "Junto a Poliform y Baxter trabajamos con todos los fabricantes de referencia — en Alemania y fuera.",
+    "about.n3.p": "Compramos en proyectos finalizados, showrooms y viviendas particulares — piezas de Poliform, Baxter y otros fabricantes de referencia, en Alemania y fuera.",
     "about.proc.eyebrow": "Desarrollo del proyecto",
     "about.proc.title": "De la necesidad al espacio.",
     "about.proc.s1": "Análisis de necesidades y primera cita",
@@ -1348,7 +1423,7 @@ const I18N = {
     "about.care.metal": "Piezas a medida",
     "about.care.metal.p": "Piezas únicas de altísimo nivel, realizadas con manufacturas seleccionadas — también a partir de diseños propios.",
     "about.visit.eyebrow": "Showroom",
-    "about.visit.title": "Showroom Poliform Hamburgo",
+    "about.visit.title": "Showroom Hamburgo",
     "about.visit.p": "Stadthausbrücke 8 · 20355 Hamburgo<br>Con cita previa",
     "about.visit.cta": "Pedir cita",
     "contact.title": "Hablemos<br>de su espacio.",

@@ -9,12 +9,72 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<!-- kopfdaten:anfang (wird von tools/build.js geschrieben) -->
+<link rel="canonical" href="https://www.studio-lusso.de/produkt.html">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<!-- Vorschau beim Teilen (WhatsApp, Facebook, LinkedIn, Signal …) -->
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Studio Lusso">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:title" content="Entwurf — Studio Lusso">
+<meta property="og:description" content="Materialien, Maße und Ausführungen zu den Entwürfen von Studio Lusso.">
+<meta property="og:url" content="https://www.studio-lusso.de/produkt.html">
+<meta property="og:image" content="https://www.studio-lusso.de/assets/img/og-studio-lusso.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Studio Lusso — Gute Stücke aus zweiter Hand.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Entwurf — Studio Lusso">
+<meta name="twitter:description" content="Materialien, Maße und Ausführungen zu den Entwürfen von Studio Lusso.">
+<meta name="twitter:image" content="https://www.studio-lusso.de/assets/img/og-studio-lusso.jpg">
+
+<!-- Signet und Farbe der Adresszeile. Relative Pfade, damit die
+     Seite auch in einem Unterordner liegen darf (etwa GitHub Pages). -->
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#3a3229">
+
+<!-- Auszeichnung für Suchmaschinen -->
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "FurnitureStore",
+  "@id": "https://www.studio-lusso.de/#haus",
+  "name": "Studio Lusso",
+  "description": "Studio Lusso verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.",
+  "url": "https://www.studio-lusso.de/",
+  "image": "https://www.studio-lusso.de/assets/img/og-studio-lusso.jpg",
+  "logo": "https://www.studio-lusso.de/assets/icon-512.png",
+  "telephone": "+49 40 41 92 74 60",
+  "email": "norbert.wichele@gemail.com",
+  "priceRange": "€€€",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Stadthausbrücke 8",
+    "postalCode": "20355",
+    "addressLocality": "Hamburg",
+    "addressCountry": "DE"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 53.5511,
+    "longitude": 9.9865
+  },
+  "areaServed": "DE",
+  "currenciesAccepted": "EUR"
+}</script>
+<!-- kopfdaten:ende -->
 </head>
 <body data-page="shop">
 <div id="site-header">
 <noscript>
   <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
-  <div class="topbar">Poliform Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60</div>
+  <div class="topbar">Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60</div>
   <header class="header"><div class="wrap header__inner">
     <a class="logo" href="index.html"><span class="logo__mark">SL</span><span class="logo__name">Studio Lusso<small>Interior Design Concepts</small></span></a>
     <nav class="nav-static">
@@ -77,7 +137,7 @@ function initPage() {
     return;
   }
 
-  if (!isPreview()) document.title = current.name + " — Studio Lusso";
+  setzeProduktKopf(current);
   chosenColorIndex = 0;
   chosenView = 0;
   renderPdp();
@@ -99,7 +159,7 @@ function renderPdp() {
     <div class="pdp">
       <div class="pdp__gallery">
         <div class="gallery" id="gallery" role="group" aria-roledescription="carousel" aria-label="${t("gallery.label")}">
-          <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView)}</div>
+          <div class="pdp__main" id="pdp-main">${artFor(p, chosenColorIndex, chosenView, true)}</div>
           ${ansichten(p).length > 1 ? `
           <button class="gallery__arrow gallery__arrow--prev" id="gal-prev" aria-label="${t("gallery.prev")}" aria-controls="pdp-main">‹</button>
           <button class="gallery__arrow gallery__arrow--next" id="gal-next" aria-label="${t("gallery.next")}" aria-controls="pdp-main">›</button>
@@ -183,7 +243,7 @@ function renderPdp() {
   function zeigeAnsicht(index) {
     const anzahl = ansichten(current).length;
     chosenView = (index + anzahl) % anzahl;
-    $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView);
+    $("#pdp-main").innerHTML = artFor(current, chosenColorIndex, chosenView, true);
     $$("#pdp-thumbs button").forEach((b) =>
       b.classList.toggle("is-active", Number(b.dataset.view) === chosenView));
     // Bei einer einzigen Aufnahme gibt es weder Zähler noch Pfeile

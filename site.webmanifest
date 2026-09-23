@@ -1,0 +1,28 @@
+{
+  "name": "Studio Lusso — Interior Design Concepts",
+  "short_name": "Studio Lusso",
+  "description": "Studio Lusso verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#3a3229",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

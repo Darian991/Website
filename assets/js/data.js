@@ -336,12 +336,36 @@ function luminance(hex) {
 /* Zeigt das Produkt in der gewählten Ausführung.
    Helle Möbel stehen dabei in einem dunklen Raum und umgekehrt — sonst
    verschwindet ein cremefarbenes Sofa vor einer cremefarbenen Wand. */
-function artFor(product, colorIndex = 0, viewIndex = 0) {
+/* Text, der in ein Attribut geschrieben wird — Anfuehrungszeichen und
+   spitze Klammern wuerden sonst das Gerüst zerreissen. */
+function attrText(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* Der Text hinter einem Foto. Er steht in jeder Sprache und beschreibt das
+   Stueck, statt nur seinen Namen zu wiederholen: Vorlesehilfen lesen ihn
+   vor, und die Bildersuche findet ein Moebelstueck fast nur darueber. */
+function bildText(product, index = 0, lang) {
+  const x = pt(product, lang || getLang());
+  const gesamt = (product.photos || []).length;
+  const vars = { name: product.name, kurz: x.short || "", n: index + 1, gesamt: gesamt };
+  return t(gesamt > 1 ? "img.alt" : "img.alt.eins", vars, lang);
+}
+
+function artFor(product, colorIndex = 0, viewIndex = 0, zuerst = false) {
   /* Liegt eine Fotostrecke vor, geht sie der Zeichnung vor. Die Ansichten
      der Galerie werden dann zu den Bildern der Strecke. */
   if (product.photos && product.photos.length) {
-    const src = product.photos[viewIndex % product.photos.length];
-    return `<img src="${src}" alt="${product.name}" loading="lazy" decoding="async">`;
+    const i = viewIndex % product.photos.length;
+    const src = product.photos[i];
+    /* Das zuerst sichtbare Bild nicht aufschieben: es ist auf der
+       Produktseite der groesste Inhalt und bestimmt, wann die Seite als
+       geladen gilt. Alle weiteren kommen erst beim Scrollen. */
+    const laden = zuerst
+      ? ' loading="eager" fetchpriority="high"'
+      : ' loading="lazy"';
+    return `<img src="${src}" alt="${attrText(bildText(product, i))}"${laden} decoding="async">`;
   }
   const hex = product.swatches[colorIndex] || product.swatches[0];
   // Helle Möbel vor dunklem Grund, dunkle vor hellem.
