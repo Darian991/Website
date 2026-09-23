@@ -379,6 +379,29 @@ const PRODUCTS = [
     }
   },
   {
+    id: "sofa-lido", used: true, grade: "sehrgut", year: "2019", name: "Lido", categoryKey: "sofas", shape: "sofa", tone: "sand",
+    price: 2900, weight: "68 kg", swatches: ["#ddd8d0"],
+    photos: ["assets/img/sofa-lido-1.jpg", "assets/img/sofa-lido-2.jpg", "assets/img/sofa-lido-3.jpg"],
+    t: {
+      de: { short: "Langes Sofa in hellem Leinengewebe, lose R\u00fcckenkissen, schmale Stahlf\u00fc\u00dfe.",
+        description: "Ein Sofa, das flach und lang im Raum liegt: tiefe Sitzfl\u00e4che, lose R\u00fcckenkissen, kaum sichtbare Armlehnen. Getragen wird es von schmalen schwarzen Stahlf\u00fc\u00dfen, die es vom Boden abheben \u2014 das macht auch einen gro\u00dfen Raum nicht schwer. Das grobe Leinengewebe ist abnehmbar und gereinigt, ohne Flecken; die Sitzkissen haben ihre Form behalten. Die Raumaufnahmen zeigen zwei baugleiche Sofas; angeboten wird eines davon. Zierkissen, Teppich und Dekoration geh\u00f6ren nicht zum Angebot.",
+        material: "Leinenmischgewebe, Federkern, Gestell Stahl schwarz", dimensions: "B 280 \u00d7 T 95 \u00d7 H 72 cm, Sitzh\u00f6he 42 cm",
+        origin: "Polsterei Brianza, Italien", lead: "sofort verf\u00fcgbar", colors: ["Sandgrau"] },
+      en: { short: "Long sofa in pale linen, loose back cushions, slim steel legs.",
+        description: "A sofa that lies low and long in the room: a deep seat, loose back cushions, arms you hardly notice. It rests on slim black steel legs that lift it off the floor \u2014 which keeps even a large room from feeling heavy. The coarse linen cover is removable and has been cleaned, with no stains; the seat cushions have kept their shape. The room shots show two identical sofas; one of them is on offer. Scatter cushions, rug and decoration are not included.",
+        material: "Linen blend, sprung seat, black steel frame", dimensions: "W 280 \u00d7 D 95 \u00d7 H 72 cm, seat height 42 cm",
+        origin: "Brianza upholstery, Italy", lead: "available now", colors: ["Sand grey"] },
+      fr: { short: "Canap\u00e9 long en lin clair, coussins de dossier libres, pieds fins en acier.",
+        description: "Un canap\u00e9 bas et long dans la pi\u00e8ce : assise profonde, coussins de dossier libres, accoudoirs \u00e0 peine visibles. Il repose sur de fins pieds d\u2019acier noir qui le d\u00e9tachent du sol \u2014 m\u00eame une grande pi\u00e8ce n\u2019en para\u00eet pas alourdie. La housse en gros lin est amovible et a \u00e9t\u00e9 nettoy\u00e9e, sans taches ; les coussins d\u2019assise ont gard\u00e9 leur forme. Les vues d\u2019ensemble montrent deux canap\u00e9s identiques ; c\u2019est l\u2019un d\u2019eux qui est propos\u00e9. Coussins d\u00e9coratifs, tapis et d\u00e9coration ne sont pas compris.",
+        material: "M\u00e9lange de lin, assise \u00e0 ressorts, ch\u00e2ssis acier noir", dimensions: "L 280 \u00d7 P 95 \u00d7 H 72 cm, assise 42 cm",
+        origin: "Tapisserie de Brianza, Italie", lead: "disponible imm\u00e9diatement", colors: ["Gris sable"] },
+      es: { short: "Sof\u00e1 largo en lino claro, cojines de respaldo sueltos, patas finas de acero.",
+        description: "Un sof\u00e1 que se tiende bajo y largo en la sala: asiento profundo, cojines de respaldo sueltos, brazos que casi no se notan. Se apoya en finas patas de acero negro que lo separan del suelo \u2014 as\u00ed ni una sala grande resulta pesada. La funda de lino grueso es desenfundable y est\u00e1 limpia, sin manchas; los cojines del asiento han conservado su forma. Las vistas de la sala muestran dos sof\u00e1s id\u00e9nticos; se ofrece uno de ellos. Los cojines decorativos, la alfombra y la decoraci\u00f3n no est\u00e1n incluidos.",
+        material: "Mezcla de lino, asiento con muelles, estructura de acero negro", dimensions: "An 280 \u00d7 Pr 95 \u00d7 Al 72 cm, asiento 42 cm",
+        origin: "Tapicer\u00eda de Brianza, Italia", lead: "disponible ahora", colors: ["Gris arena"] }
+    }
+  },
+  {
     id: "sessel-salina", used: true, grade: "sehrgut", year: "2019", name: "Salina", categoryKey: "sessel", shape: "sessel", tone: "sand",
     price: 900, weight: "28 kg", swatches: ["#ded7c9"],
     photos: ["assets/img/sessel-salina-1.jpg", "assets/img/sessel-salina-2.jpg", "assets/img/sessel-salina-3.jpg"],

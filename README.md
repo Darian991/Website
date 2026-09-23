@@ -271,19 +271,29 @@ Damit bleibt die Struktur des Gewebes erhalten statt zu verschmieren.
 
 **Wie groß liefern?** So groß, wie der Kasten das Bild anzeigt. Das Hauptbild
 der Produktseite misst 625 Punkte im Quadrat, auf einem feinen Bildschirm
-also 1250 echte Punkte. Ein Bild mit 450 Punkten Höhe rechnet der Browser
-dort noch einmal auf das Dreifache hoch — und zwar stumpf, ohne zu schärfen.
-Deshalb liefert der Zuschnitt mindestens 900 Punkte an der kurzen Kante.
-Das Bild wird dadurch nicht detailreicher, aber die Schärfung überlebt den
-Weg auf den Bildschirm.
-Gespeichert wird solches Material mit Güte 90 statt 82 — was an feiner
-Zeichnung gewonnen wurde, darf die Kompression nicht gleich wieder
-wegnehmen. Mehr als das Doppelte der Ausgangsgröße lohnt sich trotzdem
-nicht: Was im Original nicht steht, entsteht auch hier nicht.
+also 1250 echte Punkte. Ein kleineres Bild rechnet der Browser dort selbst
+hoch — und zwar stumpf, ohne zu schärfen. Deshalb liefert der Zuschnitt
+1250 Punkte an der kurzen Kante. Das Bild wird dadurch nicht detailreicher,
+aber die Schärfung überlebt den Weg auf den Bildschirm.
 
-Die Dateien liegen in `assets/img/`. Sinnvoll sind höchstens 1200 px an der
-langen Kante bei Qualität 82 — `tools/build.js` bettet sie als Daten-URI in
-`preview.html` ein, und diese eine Datei soll handlich bleiben.
+**In welchem Seitenverhältnis?** Fast quadratisch. Der Kasten ist ein Quadrat
+und schneidet mit `object-fit: cover` alles ab, was darüber hinausragt: von
+einem Bild im Format 16:9 sieht man auf der Produktseite nur den mittleren
+Ausschnitt. Ein breiter Zuschnitt verschenkt also genau die Punkte, für die
+er hochgerechnet wurde — und zeigt vom Möbelstück nur die Mitte. Lieber den
+Ausschnitt gleich quadratisch setzen und dafür etwas mehr Raum mitnehmen:
+Der kleinere Vergrößerungsfaktor bringt mehr Schärfe, als der engere
+Ausschnitt an Nähe bringt.
+
+Gespeichert wird solches Material mit Güte 88 statt 82 — was an feiner
+Zeichnung gewonnen wurde, darf die Kompression nicht gleich wieder
+wegnehmen. Über das Zweieinhalbfache der Ausgangsgröße hinaus lohnt sich das
+Hochrechnen trotzdem nicht: Was im Original nicht steht, entsteht auch hier
+nicht.
+
+Die Dateien liegen in `assets/img/`. `tools/build.js` bettet sie als
+Daten-URI in `preview.html` ein, und diese eine Datei soll handlich bleiben —
+rund 250 KB je Produktbild sind die Obergrenze.
 
 **Vor der Veröffentlichung**: Produktfotos brauchen ein Nutzungsrecht. Fotos
 von Herstellern und Händlern sind urheberrechtlich geschützt, auch wenn sie

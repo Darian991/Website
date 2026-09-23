@@ -19,7 +19,7 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
-    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, alle aus zweiter Hand:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Danke der Nachfrage — mir geht es gut. Und Ihnen? Wenn Sie mögen, zeige ich Ihnen etwas aus der Kollektion.",
     "bot.a.weather": "Das Wetter ist ganz in Ordnung — ehrlich gesagt kann ich aber nicht hinaussehen, dafür fehlt mir das Fenster. Für einen Besuch im Showroom ist es jedenfalls immer passend.",
@@ -97,7 +97,7 @@ const I18N = {
     "shop.new": "Neu",
     "home.used.eyebrow": "Vorbesitzt",
     "home.used.title": "Gute Stücke aus zweiter Hand.",
-    "home.used.p": "Alles in unserer Kollektion stammt aus zweiter Hand: aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz — Möbel wie Leuchten. Jedes Stück wird geprüft, aufbereitet und mit seinem Zustand und Baujahr ausgewiesen — und ist nur einmal zu haben.",
+    "home.used.p": "Alles in unserer Kollektion stammt aus zweiter Hand: aus abgeschlossenen Projekten, Ausstellungen und Privatbesitz — Möbel wie Leuchten. Jedes Stück wird geprüft, aufbereitet und mit seinem Zustand und Baujahr ausgewiesen — die meisten Stücke gibt es nur einmal.",
     "promo.eyebrow": "Willkommen",
     "promo.title": "{betrag} auf Ihren ersten Einkauf",
     "promo.text": "Eintragen und sofort {betrag} auf die erste Bestellung sichern.",
@@ -239,7 +239,7 @@ const I18N = {
     "home.news.cta": "Abonnieren",
 
     "shop.title": "Die Kollektion",
-    "shop.lede": "Alles, was wir derzeit anbieten. Jedes Stück stammt aus zweiter Hand — Möbel wie Leuchten sind Einzelstücke und jeweils nur einmal zu haben.",
+    "shop.lede": "Alles, was wir derzeit anbieten. Jedes Stück stammt aus zweiter Hand — Möbel wie Leuchten. Wie oft ein Stück noch da ist, steht auf seiner Seite.",
     "shop.search": "Suchen",
     "shop.searchPlaceholder": "Name, Kategorie oder Material",
     "shop.sort": "Sortieren",
@@ -360,7 +360,7 @@ const I18N = {
 
   /* ------------------------------------------------------ English */
   en: {
-    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
     "bot.a.weather": "The weather is quite all right — though honestly, I cannot look outside; I have no window. Either way, it is always good weather for a showroom visit.",
@@ -438,7 +438,7 @@ const I18N = {
     "shop.new": "New",
     "home.used.eyebrow": "Previously owned",
     "home.used.title": "Good pieces, second hand.",
-    "home.used.p": "Everything in our collection is pre-owned: from completed projects, showrooms and private homes — furniture and lighting alike. Every piece is checked, refurbished and listed with its condition and year — and is available only once.",
+    "home.used.p": "Everything in our collection is pre-owned: from completed projects, showrooms and private homes — furniture and lighting alike. Every piece is checked, refurbished and listed with its condition and year — most pieces exist only once.",
     "promo.eyebrow": "Welcome",
     "promo.title": "{betrag} off your first purchase",
     "promo.text": "Sign up and get {betrag} off your first order right away.",
@@ -580,7 +580,7 @@ const I18N = {
     "home.news.cta": "Subscribe",
 
     "shop.title": "The collection",
-    "shop.lede": "Everything we currently have on offer. Every piece is pre-owned — furniture and lighting alike are one of a kind and available only once.",
+    "shop.lede": "Everything we currently have on offer. Every piece is pre-owned — furniture and lighting alike. How many of a piece are left is stated on its page.",
     "shop.search": "Search",
     "shop.searchPlaceholder": "Name, category or material",
     "shop.sort": "Sort",
@@ -702,7 +702,7 @@ const I18N = {
   /* ------------------------------------------------------ Français */
   fr: {
     "nav.pages": "Pages",
-    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, toutes de seconde main :",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Merci de demander — je vais bien. Et vous ? Si vous le souhaitez, je vous montre quelque chose de la collection.",
     "bot.a.weather": "Le temps est tout à fait correct — à vrai dire, je ne peux pas regarder dehors, je n’ai pas de fenêtre. De toute façon, c’est toujours le bon temps pour venir au showroom.",
@@ -780,7 +780,7 @@ const I18N = {
     "shop.new": "Neuf",
     "home.used.eyebrow": "Seconde main",
     "home.used.title": "De belles pièces, en seconde main.",
-    "home.used.p": "Tout dans notre collection est de seconde main : projets achevés, showrooms et particuliers — mobilier comme luminaires. Chaque pièce est contrôlée, remise en état et présentée avec son état et son année — et n’est disponible qu’une fois.",
+    "home.used.p": "Tout dans notre collection est de seconde main : projets achevés, showrooms et particuliers — mobilier comme luminaires. Chaque pièce est contrôlée, remise en état et présentée avec son état et son année — la plupart des pièces n’existent qu’en un exemplaire.",
     "promo.eyebrow": "Bienvenue",
     "promo.title": "{betrag} sur votre premier achat",
     "promo.text": "Inscrivez-vous et obtenez aussitôt {betrag} sur votre première commande.",
@@ -921,7 +921,7 @@ const I18N = {
     "home.news.cta": "S'abonner",
 
     "shop.title": "La collection",
-    "shop.lede": "Tout ce que nous proposons actuellement. Chaque pièce est de seconde main — mobilier comme luminaires sont des pièces uniques, disponibles une seule fois.",
+    "shop.lede": "Tout ce que nous proposons actuellement. Chaque pièce est de seconde main — mobilier comme luminaires. Le nombre d’exemplaires restants figure sur la page de chaque pièce.",
     "shop.search": "Rechercher",
     "shop.searchPlaceholder": "Nom, catégorie ou matière",
     "shop.sort": "Trier",
@@ -1043,7 +1043,7 @@ const I18N = {
   /* ------------------------------------------------------ Español */
   es: {
     "nav.pages": "Páginas",
-    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, todas de segunda mano:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Gracias por preguntar — estoy bien. ¿Y usted? Si le apetece, le enseño algo de la colección.",
     "bot.a.weather": "El tiempo está bastante bien — aunque, sinceramente, no puedo mirar fuera: no tengo ventana. En todo caso, siempre hace buen tiempo para visitar el showroom.",
@@ -1218,7 +1218,7 @@ const I18N = {
     "home.feat4.p": "En el showroom de Hamburgo o en su casa",
     "home.used.eyebrow": "Segunda mano",
     "home.used.title": "Buenas piezas, de segunda mano.",
-    "home.used.p": "Todo en nuestra colección es de segunda mano: procede de proyectos finalizados, showrooms y particulares — muebles e iluminación por igual. Cada pieza se revisa, se restaura y se presenta con su estado y su año — y solo está disponible una vez.",
+    "home.used.p": "Todo en nuestra colección es de segunda mano: procede de proyectos finalizados, showrooms y particulares — muebles e iluminación por igual. Cada pieza se revisa, se restaura y se presenta con su estado y su año — la mayoría de las piezas existen una sola vez.",
     "home.featured.eyebrow": "Selección",
     "home.featured.title": "Las piezas de la temporada",
     "home.featured.link": "Las 16 piezas",
@@ -1248,7 +1248,7 @@ const I18N = {
     "home.news.placeholder": "Su dirección de correo",
     "home.news.cta": "Suscribirse",
     "shop.title": "La colección",
-    "shop.lede": "Todo lo que ofrecemos ahora mismo. Cada pieza es de segunda mano — muebles e iluminación son piezas únicas y solo están disponibles una vez.",
+    "shop.lede": "Todo lo que ofrecemos ahora mismo. Cada pieza es de segunda mano — muebles e iluminación por igual. Cuántas quedan de cada pieza se indica en su página.",
     "shop.search": "Buscar",
     "shop.searchPlaceholder": "Nombre, categoría o material",
     "shop.sort": "Ordenar",
