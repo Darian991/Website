@@ -268,6 +268,14 @@ UnsharpMask(0.7, 110 %)
 ```
 
 Damit bleibt die Struktur des Gewebes erhalten statt zu verschmieren.
+
+**Wie groß liefern?** So groß, wie der Kasten das Bild anzeigt. Das Hauptbild
+der Produktseite misst 625 Punkte im Quadrat, auf einem feinen Bildschirm
+also 1250 echte Punkte. Ein Bild mit 450 Punkten Höhe rechnet der Browser
+dort noch einmal auf das Dreifache hoch — und zwar stumpf, ohne zu schärfen.
+Deshalb liefert der Zuschnitt mindestens 900 Punkte an der kurzen Kante.
+Das Bild wird dadurch nicht detailreicher, aber die Schärfung überlebt den
+Weg auf den Bildschirm.
 Gespeichert wird solches Material mit Güte 90 statt 82 — was an feiner
 Zeichnung gewonnen wurde, darf die Kompression nicht gleich wieder
 wegnehmen. Mehr als das Doppelte der Ausgangsgröße lohnt sich trotzdem
