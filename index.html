@@ -205,7 +205,11 @@
       <h2 data-i18n="home.news.title">Neue Entwürfe zuerst sehen</h2>
           <span class="rule"></span>
       <p class="lede" style="margin-inline:auto;color:rgba(250,247,242,.75)" data-i18n="home.news.lede">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>
-      <form data-demo>
+      <form data-demo name="neuheiten" method="POST" data-netlify="true" netlify-honeypot="firma">
+        <input type="hidden" name="form-name" value="neuheiten">
+        <p class="sr-only" aria-hidden="true">
+          <label>Bitte leer lassen <input name="firma" tabindex="-1" autocomplete="off"></label>
+        </p>
         <input type="email" name="email" required data-i18n-placeholder="home.news.placeholder" data-i18n-aria="home.news.placeholder" placeholder="Ihre E-Mail-Adresse" aria-label="Ihre E-Mail-Adresse">
         <button class="btn btn--light" type="submit" data-i18n="home.news.cta">Abonnieren</button>
         <div class="form-msg" data-msg hidden style="flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)"></div>

@@ -221,6 +221,11 @@ function botAnswer(frage, lang) {
   const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
   if (genannt.length === 1) {
     const p = genannt[0];
+    /* Ein verkauftes Stueck bleibt auffindbar — aber es zu bewerben,
+       waere eine Unwahrheit. Also zuerst sagen, dass es weg ist. */
+    if (istVerkauft(p)) {
+      return { lang, text: bt("bot.a.verkauft", { name: p.name }), products: [p] };
+    }
     if (gelobt) {
       return {
         lang,
@@ -248,7 +253,7 @@ function botAnswer(frage, lang) {
   if (genannt.length > 1) return { lang, text: bt("bot.a.found"), products: genannt };
 
   /* 2. Superlative */
-  const sortiert = [...PRODUCTS].sort((a, b) => a.price - b.price);
+  const sortiert = verfuegbar().sort((a, b) => a.price - b.price);
   if (BOT_CHEAP_WORDS.some((w) => botHit(q, w))) {
     const p = sortiert[0];
     return { lang, text: bt("bot.a.cheapest", { name: p.name, price: beuro(p.price) }), products: [p] };
@@ -266,13 +271,13 @@ function botAnswer(frage, lang) {
 
   /* 3b. Eigenschaftsfrage zu einer ganzen Rubrik */
   if (gelobt && rubrik) {
-    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const treffer = verfuegbar().filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
     return { lang, text: bt("bot.a.lob.rubrik", { cat: bt("cat." + rubrik) }), products: treffer.slice(0, 5) };
   }
 
   /* 3c. Nach dem ganzen Bestand gefragt */
   if (!rubrik && BOT_ALLES_WORDS.some((w) => botHit(q, w))) {
-    const liste = [...PRODUCTS].sort((a, b) => b.price - a.price);
+    const liste = verfuegbar().sort((a, b) => b.price - a.price);
     return { lang, text: bt("bot.a.alles", { n: liste.length }), products: liste.slice(0, 8), all: true };
   }
 
@@ -280,7 +285,7 @@ function botAnswer(frage, lang) {
   const grenze = botBudget(q);
   const budgetFrage = grenze >= 100 && (BOT_LIMIT_WORDS.some((w) => botHit(q, w)) || rubrik || /€|euro/.test(q));
   if (budgetFrage) {
-    const pool = rubrik ? PRODUCTS.filter((p) => p.categoryKey === rubrik) : PRODUCTS;
+    const pool = rubrik ? verfuegbar().filter((p) => p.categoryKey === rubrik) : verfuegbar();
     const treffer = pool.filter((p) => p.price <= grenze).sort((a, b) => b.price - a.price);
     if (treffer.length) {
       const schluessel = treffer.length === 1 ? "bot.a.budget.one" : "bot.a.budget";
@@ -299,7 +304,7 @@ function botAnswer(frage, lang) {
 
   /* 6. Rubrik ohne Budget */
   if (rubrik) {
-    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const treffer = verfuegbar().filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
     const cat = bt("cat." + rubrik);
     if (!treffer.length) return { lang, text: bt("bot.a.cat.none", { cat }), all: true };
     const schluessel = treffer.length === 1 ? "bot.a.cat.one" : "bot.a.cat";

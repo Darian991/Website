@@ -453,6 +453,22 @@ noscript .footer p { max-width: 60ch; }
 /* Gebrauchte Stücke tragen ein zurückhaltendes Etikett — die Ware ist
    geprüft, das muss nicht schreien. */
 .card__tag--used { background: rgba(255,255,255,.9); color: var(--ink); border: 1px solid var(--line); }
+
+/* Verkauft: bleibt stehen, tritt aber zurück. Das Bild nimmt Farbe und
+   Kraft heraus, beim Darüberfahren kommt es zurück — so bleibt die
+   Aufnahme ansehbar, ohne mit dem zu wetteifern, was noch zu haben ist. */
+.card__tag--verkauft { background: var(--greige); color: var(--paper); }
+.card--verkauft .card__media img,
+.card--verkauft .card__media svg { filter: grayscale(.75); opacity: .72; }
+.card--verkauft:hover .card__media img,
+.card--verkauft:hover .card__media svg { filter: none; opacity: 1; }
+.card--verkauft .card__price { text-decoration: line-through; color: var(--greige); }
+
+.verkauft-kasten {
+  margin-top: 1.6rem; padding: 1.3rem 1.4rem;
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.verkauft-kasten p { margin: .5rem 0 0; color: var(--ink-soft); }
 .card__quick {
   position: absolute; left: 1rem; right: 1rem; bottom: 1rem;
   opacity: 0; transform: translateY(10px);
@@ -641,6 +657,17 @@ noscript .footer p { max-width: 60ch; }
   color: var(--ink-soft);
 }
 
+
+/* Fragen und Weitergeben — ruhig unter dem Kaufen-Knopf, damit sie
+   niemanden vom Kauf ablenken, aber ohne Suchen zu finden sind. */
+.pdp__ask {
+  display: flex; flex-wrap: wrap; gap: 1.4rem;
+  margin-top: 1.2rem; font-size: .88rem;
+}
+.pdp__ask button.link-underline {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+}
 
 .pdp__main { aspect-ratio: 1/1; background: var(--paper-2); border-radius: var(--radius); overflow: hidden; }
 .pdp__main svg, .pdp__main img { width: 100%; height: 100%; object-fit: cover; }

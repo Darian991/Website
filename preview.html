@@ -460,6 +460,22 @@ noscript .footer p { max-width: 60ch; }
 /* Gebrauchte Stücke tragen ein zurückhaltendes Etikett — die Ware ist
    geprüft, das muss nicht schreien. */
 .card__tag--used { background: rgba(255,255,255,.9); color: var(--ink); border: 1px solid var(--line); }
+
+/* Verkauft: bleibt stehen, tritt aber zurück. Das Bild nimmt Farbe und
+   Kraft heraus, beim Darüberfahren kommt es zurück — so bleibt die
+   Aufnahme ansehbar, ohne mit dem zu wetteifern, was noch zu haben ist. */
+.card__tag--verkauft { background: var(--greige); color: var(--paper); }
+.card--verkauft .card__media img,
+.card--verkauft .card__media svg { filter: grayscale(.75); opacity: .72; }
+.card--verkauft:hover .card__media img,
+.card--verkauft:hover .card__media svg { filter: none; opacity: 1; }
+.card--verkauft .card__price { text-decoration: line-through; color: var(--greige); }
+
+.verkauft-kasten {
+  margin-top: 1.6rem; padding: 1.3rem 1.4rem;
+  background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.verkauft-kasten p { margin: .5rem 0 0; color: var(--ink-soft); }
 .card__quick {
   position: absolute; left: 1rem; right: 1rem; bottom: 1rem;
   opacity: 0; transform: translateY(10px);
@@ -648,6 +664,17 @@ noscript .footer p { max-width: 60ch; }
   color: var(--ink-soft);
 }
 
+
+/* Fragen und Weitergeben — ruhig unter dem Kaufen-Knopf, damit sie
+   niemanden vom Kauf ablenken, aber ohne Suchen zu finden sind. */
+.pdp__ask {
+  display: flex; flex-wrap: wrap; gap: 1.4rem;
+  margin-top: 1.2rem; font-size: .88rem;
+}
+.pdp__ask button.link-underline {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+}
 
 .pdp__main { aspect-ratio: 1/1; background: var(--paper-2); border-radius: var(--radius); overflow: hidden; }
 .pdp__main svg, .pdp__main img { width: 100%; height: 100%; object-fit: cover; }
@@ -1071,6 +1098,27 @@ noscript .footer p { max-width: 60ch; }
    tools/build.js liest den Wert von hier. Danach `node tools/build.js`. --- */
 const SITE_URL = "https://www.premium-meubles.de";
 
+/* --- Wie man uns erreicht ---
+   An einer Stelle, damit Kopfdaten, Auszeichnung fuer Suchmaschinen und
+   die Anfrage-Knoepfe auf der Produktseite dasselbe sagen. Alle Angaben
+   sind noch Platzhalter und muessen vor dem Online-Stellen echt sein —
+   sonst stehen sie auch in dem, was Google anzeigt.
+
+   whatsapp: Handynummer in internationaler Schreibweise, ohne Plus und
+   ohne Leerzeichen (z. B. "4915112345678"). Bleibt das Feld leer, wird
+   der WhatsApp-Knopf gar nicht erst angezeigt. --- */
+const KONTAKT = {
+  strasse: "Stadthausbrücke 8",
+  plz: "20355",
+  ort: "Hamburg",
+  land: "DE",
+  telefon: "+49 40 41 92 74 60",
+  telefonWahl: "+4940419274600",
+  email: "norbert.wichele@gemail.com",
+  whatsapp: "",
+  geo: { lat: 53.5511, lon: 9.9865 }
+};
+
 const LANGS = [
   { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
   { code: "en", label: "EN", name: "English",  locale: "en-GB" },
@@ -1084,6 +1132,9 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
@@ -1256,6 +1307,16 @@ const I18N = {
     "cat.sg.betten": "Bett",
     "cat.sg.accessoires": "Accessoire",
     "pdp.titel": "{name} — {kategorie} aus zweiter Hand · Premium Meubles",
+    "pdp.frage": "Frage zu diesem Stück",
+    "pdp.frage.betreff": "Anfrage: {name} ({preis})",
+    "pdp.frage.text": "Guten Tag,\n\nich interessiere mich für {name} ({preis}).\n{link}\n\nMeine Frage:\n",
+    "pdp.whatsapp": "Per WhatsApp fragen",
+    "pdp.teilen": "Teilen",
+    "pdp.teilen.kopiert": "Link kopiert — jetzt einfach einfügen.",
+    "pdp.verkauft": "Verkauft",
+    "pdp.verkauft.p": "Dieses Stück ist verkauft. Ähnliches bekommen wir laufend herein — schreiben Sie uns, wonach Sie suchen.",
+    "shop.verkauft": "Verkauft",
+    "bot.a.verkauft": "{name} ist leider schon verkauft. Ähnliches bekommen wir laufend herein — sagen Sie mir, wonach Sie suchen.",
 
     "search.title": "Suchen",
     "search.placeholder": "Wonach suchen Sie? Etwa Sofa, Eiche, Leder …",
@@ -1451,6 +1512,9 @@ const I18N = {
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
@@ -1620,6 +1684,16 @@ const I18N = {
     "cat.sg.betten": "Bed",
     "cat.sg.accessoires": "Accessory",
     "pdp.titel": "{name} — Pre-owned {kategorie} · Premium Meubles",
+    "pdp.frage": "Ask about this piece",
+    "pdp.frage.betreff": "Enquiry: {name} ({preis})",
+    "pdp.frage.text": "Hello,\n\nI am interested in {name} ({preis}).\n{link}\n\nMy question:\n",
+    "pdp.whatsapp": "Ask on WhatsApp",
+    "pdp.teilen": "Share",
+    "pdp.teilen.kopiert": "Link copied — just paste it.",
+    "pdp.verkauft": "Sold",
+    "pdp.verkauft.p": "This piece has been sold. Similar ones come in all the time — write to us and tell us what you are looking for.",
+    "shop.verkauft": "Sold",
+    "bot.a.verkauft": "{name} has already been sold, I am afraid. Similar pieces come in all the time — tell me what you are looking for.",
 
     "search.title": "Search",
     "search.placeholder": "What are you looking for? Sofa, oak, leather …",
@@ -1815,6 +1889,9 @@ const I18N = {
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, toutes de seconde main :",
     /* ---- Berater: Alltagsfragen ---- */
@@ -1984,6 +2061,16 @@ const I18N = {
     "cat.sg.betten": "Lit",
     "cat.sg.accessoires": "Accessoire",
     "pdp.titel": "{name} — {kategorie} de seconde main · Premium Meubles",
+    "pdp.frage": "Une question sur cette pièce",
+    "pdp.frage.betreff": "Demande : {name} ({preis})",
+    "pdp.frage.text": "Bonjour,\n\nje m’intéresse à {name} ({preis}).\n{link}\n\nMa question :\n",
+    "pdp.whatsapp": "Demander par WhatsApp",
+    "pdp.teilen": "Partager",
+    "pdp.teilen.kopiert": "Lien copié — il ne reste qu’à le coller.",
+    "pdp.verkauft": "Vendu",
+    "pdp.verkauft.p": "Cette pièce est vendue. Nous en recevons régulièrement de semblables — dites-nous ce que vous cherchez.",
+    "shop.verkauft": "Vendu",
+    "bot.a.verkauft": "{name} est malheureusement déjà vendu. Nous en recevons régulièrement de semblables — dites-moi ce que vous cherchez.",
 
     "search.title": "Rechercher",
     "search.placeholder": "Que cherchez-vous ? Canapé, chêne, cuir …",
@@ -2179,6 +2266,9 @@ const I18N = {
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, todas de segunda mano:",
     /* ---- Berater: Alltagsfragen ---- */
@@ -2329,6 +2419,16 @@ const I18N = {
     "cat.sg.betten": "Cama",
     "cat.sg.accessoires": "Accesorio",
     "pdp.titel": "{name} — {kategorie} de segunda mano · Premium Meubles",
+    "pdp.frage": "Preguntar por esta pieza",
+    "pdp.frage.betreff": "Consulta: {name} ({preis})",
+    "pdp.frage.text": "Buenos días:\n\nme interesa {name} ({preis}).\n{link}\n\nMi pregunta:\n",
+    "pdp.whatsapp": "Preguntar por WhatsApp",
+    "pdp.teilen": "Compartir",
+    "pdp.teilen.kopiert": "Enlace copiado — solo hay que pegarlo.",
+    "pdp.verkauft": "Vendida",
+    "pdp.verkauft.p": "Esta pieza está vendida. Recibimos piezas parecidas continuamente — díganos qué busca.",
+    "shop.verkauft": "Vendida",
+    "bot.a.verkauft": "{name} ya está vendida, lo siento. Recibimos piezas parecidas continuamente — dígame qué busca.",
     "search.title": "Buscar",
     "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
     "search.hint": "Busque por nombre, categoría o material.",
@@ -3179,7 +3279,15 @@ const PRODUCTS = [
 /* Ein gebrauchtes Stück ist ein Einzelstück und nur einmal zu haben. */
 /* Gebraucht heißt meist Einzelstück. Liegt ein Stück mehrfach vor, sagt
    das Feld „stueck“, wie oft — dann darf die Menge gewählt werden. */
-const bestand = (product) => (product.used ? (product.stueck || 1) : 99);
+/* Ein verkauftes Stueck bleibt stehen, statt zu verschwinden: Sein Link
+   bleibt gueltig, die Suchmaschine verliert die Seite nicht, und wer den
+   Laden zum ersten Mal sieht, erkennt daran, dass hier wirklich
+   gehandelt wird. Kaufen laesst es sich nicht mehr. */
+const istVerkauft = (product) => product.verkauft === true;
+const verfuegbar = () => PRODUCTS.filter((p) => !istVerkauft(p));
+
+const bestand = (product) =>
+  istVerkauft(product) ? 0 : (product.used ? (product.stueck || 1) : 99);
 
 /* Rubriken, in denen tatsächlich etwas steht — in der Reihenfolge der
    Gesamtliste. Filterleiste, Fußzeile und Startseite richten sich danach,
@@ -4130,6 +4238,56 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("is-open"), 2600);
 }
 
+/* ---------- Fragen und Weitergeben ----------
+   Bei einem Einzelstueck fuer ein paar tausend Euro kauft kaum jemand
+   auf Anhieb. Erst kommt die Frage — nach Maßen, nach dem Zustand, nach
+   der Lieferung. Wer dafuer erst die Kontaktseite suchen muss, fragt
+   meistens gar nicht. Die beiden Knoepfe unter dem Kaufen-Knopf nehmen
+   diesen Umweg heraus und tragen Stueck, Preis und Adresse gleich ein.
+
+   Und: Moebel schickt man weiter. „Schau mal das Sofa an" ist der
+   haeufigste Weg zu einem zweiten Betrachter. ---------- */
+
+function produktAdresse(p) {
+  return isPreview() || location.protocol === "file:"
+    ? SITE_URL + "/produkt.html?id=" + p.id
+    : location.href.split("#")[0];
+}
+
+function anfrageLink(p) {
+  const betreff = t("pdp.frage.betreff", { name: p.name, preis: euro(p.price) });
+  const text = t("pdp.frage.text", { name: p.name, preis: euro(p.price), link: produktAdresse(p) });
+  return "mailto:" + KONTAKT.email +
+    "?subject=" + encodeURIComponent(betreff) +
+    "&body=" + encodeURIComponent(text);
+}
+
+function whatsappLink(p) {
+  if (!KONTAKT.whatsapp) return "";
+  const text = t("pdp.frage.text", { name: p.name, preis: euro(p.price), link: produktAdresse(p) });
+  return "https://wa.me/" + KONTAKT.whatsapp + "?text=" + encodeURIComponent(text);
+}
+
+/* Weitergeben: auf dem Telefon das Teilen-Menü des Systems, am Rechner
+   der Umweg ueber die Zwischenablage. Beides kann fehlschlagen (kein
+   Recht auf die Zwischenablage, abgebrochenes Menü) — dann passiert
+   nichts Schlimmes, nur nichts. */
+async function stueckTeilen(p) {
+  const daten = { title: p.name + " · Premium Meubles", text: pt(p).short, url: produktAdresse(p) };
+  try {
+    if (navigator.share) { await navigator.share(daten); return; }
+    await navigator.clipboard.writeText(daten.url);
+    toast(t("pdp.teilen.kopiert"));
+  } catch (e) { /* abgebrochen oder nicht erlaubt */ }
+}
+
+function bindeFragen(p) {
+  const teilen = $("#stueck-teilen");
+  if (teilen && once(teilen, "boundShare")) {
+    teilen.addEventListener("click", (e) => { e.preventDefault(); stueckTeilen(p); });
+  }
+}
+
 /* ---------- Kopfdaten einer Produktseite ----------
    Die Produktseite entsteht erst im Browser — beim Auslieferen weiss noch
    niemand, welches Stueck gezeigt wird. Titel, die Vorschau beim Teilen
@@ -4208,7 +4366,7 @@ function setzeProduktKopf(p) {
       price: p.price,
       priceCurrency: "EUR",
       itemCondition: p.used ? "https://schema.org/UsedCondition" : "https://schema.org/NewCondition",
-      availability: "https://schema.org/InStock",
+      availability: istVerkauft(p) ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
       inventoryLevel: { "@type": "QuantitativeValue", value: bestand(p) },
       seller: { "@id": SITE_URL + "/#haus" }
     }
@@ -4236,14 +4394,16 @@ function setzeProduktKopf(p) {
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
   const x = pt(p);
+  const weg = istVerkauft(p);
   return `
-  <article class="card reveal">
+  <article class="card reveal${weg ? " card--verkauft" : ""}">
     <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name}">
       ${artFor(p)}
-      <span class="card__tag ${p.used ? "card__tag--used" : ""}">${p.used ? t("shop.used") : (x.badge || t("shop.new"))}</span>
+      <span class="card__tag ${weg ? "card__tag--verkauft" : (p.used ? "card__tag--used" : "")}">${weg ? t("shop.verkauft") : (p.used ? t("shop.used") : (x.badge || t("shop.new")))}</span>
+      ${weg ? "" : `
       <div class="card__quick">
         <button class="btn btn--block" data-add="${p.id}">${t("shop.add")}</button>
-      </div>
+      </div>`}
     </a>
     <div class="card__body">
       <span class="card__cat">${t("cat." + p.categoryKey)}</span>
@@ -4305,19 +4465,46 @@ function initAccordions(root = document) {
   });
 }
 
-/* ---------- Formulare (Demo ohne Server) ---------- */
+/* ---------- Formulare ----------
+   Die Formulare tragen `data-netlify`. Netlify liest sie beim Ausliefern
+   aus dem Quelltext und nimmt Einsendungen entgegen, ohne dass dafuer
+   eigener Code laeuft; die Anfragen stehen dann im Netlify-Konto und
+   kommen als E-Mail. Ein verstecktes Feld („firma") faengt die
+   Maschinen ab, die jedes Formular im Netz ausfuellen.
+
+   Abgeschickt wird hier selbst, nicht vom Browser: So bleibt der
+   Besucher auf der Seite und sieht den Dank an Ort und Stelle. Liegt
+   kein Netlify dahinter — Einzeldatei-Vorschau, Doppelklick auf die
+   Datei, eigener Server — sagt der Dank dasselbe wie vorher. Verloren
+   geht dabei nichts, was vorher angekommen waere. ---------- */
 function initForms() {
   $$("form[data-demo]").forEach((form) => {
     if (!once(form, "boundForm")) return;
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const box = form.querySelector("[data-msg]");
       const name = form.querySelector("[name=name]")?.value?.trim();
-      if (box) {
-        box.hidden = false;
-        box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
-      }
-      form.reset();
+      const knopf = form.querySelector("button[type=submit]");
+      const danke = () => {
+        if (box) {
+          box.hidden = false;
+          box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
+        }
+        form.reset();
+      };
+
+      if (!form.dataset.netlify || isPreview() || location.protocol === "file:") return danke();
+
+      if (knopf) knopf.disabled = true;
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form))
+        });
+      } catch (e2) { /* ohne Netlify dahinter: der Dank steht trotzdem */ }
+      if (knopf) knopf.disabled = false;
+      danke();
     });
   });
 }
@@ -4557,6 +4744,11 @@ function botAnswer(frage, lang) {
   const genannt = PRODUCTS.filter((p) => botHit(q, normalize(p.name)));
   if (genannt.length === 1) {
     const p = genannt[0];
+    /* Ein verkauftes Stueck bleibt auffindbar — aber es zu bewerben,
+       waere eine Unwahrheit. Also zuerst sagen, dass es weg ist. */
+    if (istVerkauft(p)) {
+      return { lang, text: bt("bot.a.verkauft", { name: p.name }), products: [p] };
+    }
     if (gelobt) {
       return {
         lang,
@@ -4584,7 +4776,7 @@ function botAnswer(frage, lang) {
   if (genannt.length > 1) return { lang, text: bt("bot.a.found"), products: genannt };
 
   /* 2. Superlative */
-  const sortiert = [...PRODUCTS].sort((a, b) => a.price - b.price);
+  const sortiert = verfuegbar().sort((a, b) => a.price - b.price);
   if (BOT_CHEAP_WORDS.some((w) => botHit(q, w))) {
     const p = sortiert[0];
     return { lang, text: bt("bot.a.cheapest", { name: p.name, price: beuro(p.price) }), products: [p] };
@@ -4602,13 +4794,13 @@ function botAnswer(frage, lang) {
 
   /* 3b. Eigenschaftsfrage zu einer ganzen Rubrik */
   if (gelobt && rubrik) {
-    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const treffer = verfuegbar().filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
     return { lang, text: bt("bot.a.lob.rubrik", { cat: bt("cat." + rubrik) }), products: treffer.slice(0, 5) };
   }
 
   /* 3c. Nach dem ganzen Bestand gefragt */
   if (!rubrik && BOT_ALLES_WORDS.some((w) => botHit(q, w))) {
-    const liste = [...PRODUCTS].sort((a, b) => b.price - a.price);
+    const liste = verfuegbar().sort((a, b) => b.price - a.price);
     return { lang, text: bt("bot.a.alles", { n: liste.length }), products: liste.slice(0, 8), all: true };
   }
 
@@ -4616,7 +4808,7 @@ function botAnswer(frage, lang) {
   const grenze = botBudget(q);
   const budgetFrage = grenze >= 100 && (BOT_LIMIT_WORDS.some((w) => botHit(q, w)) || rubrik || /€|euro/.test(q));
   if (budgetFrage) {
-    const pool = rubrik ? PRODUCTS.filter((p) => p.categoryKey === rubrik) : PRODUCTS;
+    const pool = rubrik ? verfuegbar().filter((p) => p.categoryKey === rubrik) : verfuegbar();
     const treffer = pool.filter((p) => p.price <= grenze).sort((a, b) => b.price - a.price);
     if (treffer.length) {
       const schluessel = treffer.length === 1 ? "bot.a.budget.one" : "bot.a.budget";
@@ -4635,7 +4827,7 @@ function botAnswer(frage, lang) {
 
   /* 6. Rubrik ohne Budget */
   if (rubrik) {
-    const treffer = PRODUCTS.filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
+    const treffer = verfuegbar().filter((p) => p.categoryKey === rubrik).sort((a, b) => a.price - b.price);
     const cat = bt("cat." + rubrik);
     if (!treffer.length) return { lang, text: bt("bot.a.cat.none", { cat }), all: true };
     const schluessel = treffer.length === 1 ? "bot.a.cat.one" : "bot.a.cat";
@@ -4824,7 +5016,7 @@ function initBerater() {
 const ROUTES = {
   "index.html": {
     page: "home",
-    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Premium Meubles</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Geprüft &amp; aufbereitet</h4><p data-i18n=\"home.feat1.p\">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">Einzelstücke</h4><p data-i18n=\"home.feat3.p\">Die meisten Stücke gibt es nur einmal</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Premium Meubles. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Premium Meubles · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
+    html: "<section class=\"hero\">\n    <div class=\"hero__bg\" id=\"hero-art\">\n      <span class=\"hero__caption caption\"><b>/ Premium Meubles</b> Material Inspiration</span>\n    </div>\n    <div class=\"hero__content\">\n      <span class=\"eyebrow\" data-i18n=\"home.hero.eyebrow\">Interior Design Concepts</span>\n      <h1 data-i18n-html=\"home.hero.title\">Räume als Lebensräume.<br>Design mit Substanz.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"home.hero.lede\">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>\n      <div class=\"hero__actions\">\n        <a class=\"btn\" href=\"kollektion.html\" data-i18n=\"home.hero.cta1\">Kollektion ansehen</a>\n        <a class=\"btn btn--ghost\" href=\"kontakt.html\" data-i18n=\"home.hero.cta2\">Showroom besuchen</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"features\">\n    <div class=\"feature\"><h4 data-i18n=\"home.feat1.t\">Geprüft &amp; aufbereitet</h4><p data-i18n=\"home.feat1.p\">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat2.t\">Lieferung bis in den Raum</h4><p data-i18n=\"home.feat2.p\">Weißhandschuh-Service inklusive Montage</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat3.t\">Einzelstücke</h4><p data-i18n=\"home.feat3.p\">Die meisten Stücke gibt es nur einmal</p></div>\n    <div class=\"feature\"><h4 data-i18n=\"home.feat4.t\">Persönliche Beratung</h4><p data-i18n=\"home.feat4.p\">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>\n  </div>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.featured.eyebrow\">Ausgewählt</span>\n          <h2 data-i18n=\"home.featured.title\">Die Stücke der Saison</h2>\n          <span class=\"rule\"></span>\n        </div>\n        <a class=\"link-underline\" href=\"kollektion.html\" data-i18n=\"home.featured.link\">Alle 16 Stücke</a>\n      </div>\n      <div class=\"grid grid--3\" id=\"featured\"></div>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__media\" id=\"story-art\"></div>\n    <div class=\"split__text split--dark\">\n      <span class=\"eyebrow\" data-i18n=\"home.story.eyebrow\">Unsere Philosophie</span>\n      <h2 data-i18n=\"home.story.title\">Für Räume, die wirken.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.story.p1\">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>\n      <p data-i18n=\"home.story.p2\">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>\n      <div style=\"margin-top:1.5rem\"><a class=\"link-underline\" href=\"ueber-uns.html\" data-i18n=\"home.story.link\">Das Studio kennenlernen</a></div>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"section-head reveal\">\n        <div>\n          <span class=\"eyebrow\" data-i18n=\"home.cats.eyebrow\">Nach Raum</span>\n          <h2 data-i18n=\"home.cats.title\">Wo möchten Sie beginnen?</h2>\n          <span class=\"rule\"></span>\n        </div>\n      </div>\n      <div class=\"grid grid--3\" id=\"cats\"></div>\n    </div>\n  </section>\n\n  <section class=\"section\" style=\"background:var(--paper-2)\">\n    <div class=\"wrap center\">\n      <blockquote class=\"quote reveal\">\n        <span data-i18n=\"home.quote\">„Premium Meubles. Für Räume, die wirken.“</span>\n        <cite data-i18n=\"home.quote.cite\">Premium Meubles · Hamburg</cite>\n      </blockquote>\n    </div>\n  </section>\n\n  <section class=\"split\">\n    <div class=\"split__text\">\n      <span class=\"eyebrow\" data-i18n=\"home.service.eyebrow\">Service</span>\n      <h2 data-i18n=\"home.service.title\">Wir planen Ihren Raum mit.</h2>\n          <span class=\"rule\"></span>\n      <p data-i18n=\"home.service.p\">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>\n      <ul class=\"specs\" style=\"margin:1.5rem 0 2rem\">\n        <li><span data-i18n=\"home.service.r1\">Erstgespräch</span><span data-i18n=\"home.service.v1\">kostenfrei</span></li>\n        <li><span data-i18n=\"home.service.r2\">Raumplanung inkl. 3D-Ansicht</span><span data-i18n=\"home.service.v2\">ab 2 Wochen</span></li>\n        <li><span data-i18n=\"home.service.r3\">Materialmuster nach Hause</span><span data-i18n=\"home.service.v3\">inklusive</span></li>\n      </ul>\n      <div><a class=\"btn\" href=\"kontakt.html\" data-i18n=\"home.service.cta\">Termin vereinbaren</a></div>\n    </div>\n    <div class=\"split__media\" id=\"service-art\"></div>\n  </section>\n\n  <section class=\"section newsletter\">\n    <div class=\"wrap center\">\n      <span class=\"eyebrow\" data-i18n=\"home.news.eyebrow\">Bleiben Sie in Verbindung</span>\n      <h2 data-i18n=\"home.news.title\">Neue Entwürfe zuerst sehen</h2>\n          <span class=\"rule\"></span>\n      <p class=\"lede\" style=\"margin-inline:auto;color:rgba(250,247,242,.75)\" data-i18n=\"home.news.lede\">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>\n      <form data-demo name=\"neuheiten\" method=\"POST\" data-netlify=\"true\" netlify-honeypot=\"firma\">\n        <input type=\"hidden\" name=\"form-name\" value=\"neuheiten\">\n        <p class=\"sr-only\" aria-hidden=\"true\">\n          <label>Bitte leer lassen <input name=\"firma\" tabindex=\"-1\" autocomplete=\"off\"></label>\n        </p>\n        <input type=\"email\" name=\"email\" required data-i18n-placeholder=\"home.news.placeholder\" data-i18n-aria=\"home.news.placeholder\" placeholder=\"Ihre E-Mail-Adresse\" aria-label=\"Ihre E-Mail-Adresse\">\n        <button class=\"btn btn--light\" type=\"submit\" data-i18n=\"home.news.cta\">Abonnieren</button>\n        <div class=\"form-msg\" data-msg hidden style=\"flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)\"></div>\n      </form>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   heroCanvas($("#hero-art"));
@@ -4901,10 +5093,17 @@ function renderList() {
     case "preis-ab":  list.sort((a, b) => b.price - a.price); break;
     case "name":      list.sort((a, b) => a.name.localeCompare(b.name, getLang())); break;
   }
+  /* Verkauftes bleibt sichtbar, rutscht aber nach hinten — es soll
+     zeigen, dass gehandelt wird, und nicht den Blick auf das nehmen,
+     was noch zu haben ist. */
+  list.sort((a, b) => Number(istVerkauft(a)) - Number(istVerkauft(b)));
 
   $("#shop-search-clear").hidden = !query;
 
-  const parts = [list.length === 1 ? t("shop.count.one") : t("shop.count.many", { n: list.length })];
+  /* Gezaehlt wird, was zu haben ist. Verkauftes steht daneben, zaehlt
+     aber nicht mit — sonst verspraeche die Zeile mehr, als der Laden hat. */
+  const offen = list.filter((p) => !istVerkauft(p)).length;
+  const parts = [offen === 1 ? t("shop.count.one") : t("shop.count.many", { n: offen })];
   if (activeCat !== "alle") parts.push(t("cat." + activeCat));
   if (query) parts.push(t("shop.for") + " „" + query + "“");
   $("#result-count").textContent = parts.join(" · ");
@@ -4981,7 +5180,7 @@ function renderPdp() {
       </div>
 
       <div class="pdp__info">
-        <span class="eyebrow">${t("cat." + p.categoryKey)} · ${p.used ? t("cond.used") : (x.badge || t("cond.new"))}</span>
+        <span class="eyebrow">${t("cat." + p.categoryKey)} · ${istVerkauft(p) ? t("pdp.verkauft") : (p.used ? t("cond.used") : (x.badge || t("cond.new")))}</span>
         <h1 style="font-size:clamp(2.2rem,4vw,3.2rem)">${p.name}</h1>
         <div class="price">${euro(p.price)}</div>
         <p class="lede">${x.short}</p>
@@ -4997,6 +5196,11 @@ function renderPdp() {
           </div>
         </div>
 
+        ${istVerkauft(p) ? `
+        <div class="verkauft-kasten">
+          <span class="eyebrow">${t("pdp.verkauft")}</span>
+          <p>${t("pdp.verkauft.p")}</p>
+        </div>` : `
         <div class="buy-row" style="margin-top:1.6rem">
           ${bestand(p) > 1 ? `
           <div class="qty">
@@ -5006,8 +5210,14 @@ function renderPdp() {
           </div>` : `<span class="claim" style="align-self:center">${t("pdp.unique")}</span>`}
           <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
-        ${p.used && bestand(p) > 1 ? `<p class="claim" style="margin-top:.9rem">${t("pdp.multi", { n: bestand(p) })}</p>` : ""}
-        <p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>
+        ${p.used && bestand(p) > 1 ? `<p class="claim" style="margin-top:.9rem">${t("pdp.multi", { n: bestand(p) })}</p>` : ""}`}
+
+        <div class="pdp__ask">
+          <a class="link-underline" href="${anfrageLink(p)}">${t("pdp.frage")}</a>
+          ${whatsappLink(p) ? `<a class="link-underline" href="${whatsappLink(p)}" target="_blank" rel="noopener">${t("pdp.whatsapp")}</a>` : ""}
+          <button class="link-underline" id="stueck-teilen" type="button">${t("pdp.teilen")}</button>
+        </div>
+        ${istVerkauft(p) ? "" : `<p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>`}
 
         <hr class="divider">
 
@@ -5094,12 +5304,13 @@ function renderPdp() {
     chosenQty = 1;
   }
 
-  $("#add-to-cart").addEventListener("click", () => {
+  $("#add-to-cart")?.addEventListener("click", () => {
     Cart.add(current.id, chosenQty, chosenColorIndex);
     toast(t("cart.added", { name: current.name + " (" + productColors(current)[chosenColorIndex].name + ")" }));
   });
 
   initAccordions($("#pdp-root"));
+  bindeFragen(p);
 }
 
 function renderRelated() {
@@ -5328,7 +5539,7 @@ function initPage() {
   },
   "kontakt.html": {
     page: "contact",
-    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.contact\">Kontakt</span></div>\n      <h1 data-i18n-html=\"contact.title\">Sprechen wir<br>über Ihren Raum.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"contact.lede\">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo>\n          <h3 data-i18n=\"contact.form.title\">Anfrage senden</h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\" data-i18n=\"contact.name\">Name</label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\" data-i18n=\"contact.email\">E-Mail</label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\" data-i18n=\"contact.phone\">Telefon (optional)</label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\" data-i18n=\"contact.topic\">Anliegen</label>\n              <select id=\"topic\" name=\"topic\">\n                <option value=\"showroom\" data-i18n=\"contact.topic1\">Beratungstermin im Showroom</option>\n                <option value=\"zuhause\" data-i18n=\"contact.topic2\">Beratung bei mir zu Hause</option>\n                <option value=\"entwurf\" data-i18n=\"contact.topic3\">Frage zu einem Entwurf</option>\n                <option value=\"muster\" data-i18n=\"contact.topic4\">Materialmuster anfordern</option>\n                <option value=\"bestellung\" data-i18n=\"contact.topic5\">Bestehende Bestellung</option>\n                <option value=\"sonstiges\" data-i18n=\"contact.topic6\">Sonstiges</option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\" data-i18n=\"contact.message\">Ihre Nachricht</label>\n            <textarea id=\"message\" name=\"message\" required data-i18n-placeholder=\"contact.messagePlaceholder\" placeholder=\"Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.\"></textarea>\n          </div>\n          <p class=\"form-note\" data-i18n=\"contact.privacy\">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\" data-i18n=\"contact.send\">Anfrage senden</button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3 data-i18n=\"contact.reach\">Direkt erreichbar</h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.phoneLabel\">Telefon</span><a href=\"tel:+4940419274600\">+49 40 41 92 74 60</a></li>\n            <li><span data-i18n=\"contact.emailLabel\">E-Mail</span><a href=\"mailto:norbert.wichele@gemail.com\">norbert.wichele@gemail.com</a></li>\n            <li><span data-i18n=\"contact.hoursLabel\">Erreichbarkeit</span><span data-i18n=\"contact.hours\">Mo–Fr 9–18 Uhr</span></li>\n          </ul>\n\n          <h3 data-i18n=\"contact.showroom\">Showroom</h3>\n          <p class=\"muted\" data-i18n-html=\"contact.address\">Stadthausbrücke 8<br>20355 Hamburg<br>Deutschland</p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.monfri\">Montag – Freitag</span><span data-i18n=\"contact.monfriH\">10–19 Uhr</span></li>\n            <li><span data-i18n=\"contact.sat\">Samstag</span><span data-i18n=\"contact.satH\">11–17 Uhr</span></li>\n            <li><span data-i18n=\"contact.sun\">Sonntag</span><span data-i18n=\"contact.sunH\">geschlossen</span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\" data-i18n=\"contact.hint\">Hinweis</span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\" data-i18n=\"contact.hint.p\">Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen.</p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
+    html: "<section class=\"page-head\">\n    <div class=\"wrap\">\n      <div class=\"crumbs\"><a href=\"index.html\" data-i18n=\"nav.home\">Startseite</a> · <span data-i18n=\"nav.contact\">Kontakt</span></div>\n      <h1 data-i18n-html=\"contact.title\">Sprechen wir<br>über Ihren Raum.</h1>\n      <span class=\"rule\"></span>\n      <p class=\"lede\" data-i18n=\"contact.lede\">Ob eine einzelne Frage zum Material oder die Einrichtung einer ganzen Wohnung — wir nehmen uns Zeit. Antwort innerhalb eines Werktages.</p>\n    </div>\n  </section>\n\n  <section class=\"section\">\n    <div class=\"wrap\">\n      <div class=\"grid grid--form\">\n\n        <form data-demo name=\"anfrage\" method=\"POST\" data-netlify=\"true\" netlify-honeypot=\"firma\">\n          <input type=\"hidden\" name=\"form-name\" value=\"anfrage\">\n          <p class=\"sr-only\" aria-hidden=\"true\">\n            <label>Bitte leer lassen <input name=\"firma\" tabindex=\"-1\" autocomplete=\"off\"></label>\n          </p>\n          <h3 data-i18n=\"contact.form.title\">Anfrage senden</h3>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"name\" data-i18n=\"contact.name\">Name</label>\n              <input id=\"name\" name=\"name\" type=\"text\" required autocomplete=\"name\">\n            </div>\n            <div class=\"field\">\n              <label for=\"email\" data-i18n=\"contact.email\">E-Mail</label>\n              <input id=\"email\" name=\"email\" type=\"email\" required autocomplete=\"email\">\n            </div>\n          </div>\n          <div class=\"form-row\">\n            <div class=\"field\">\n              <label for=\"phone\" data-i18n=\"contact.phone\">Telefon (optional)</label>\n              <input id=\"phone\" name=\"phone\" type=\"tel\" autocomplete=\"tel\">\n            </div>\n            <div class=\"field\">\n              <label for=\"topic\" data-i18n=\"contact.topic\">Anliegen</label>\n              <select id=\"topic\" name=\"topic\">\n                <option value=\"showroom\" data-i18n=\"contact.topic1\">Beratungstermin im Showroom</option>\n                <option value=\"zuhause\" data-i18n=\"contact.topic2\">Beratung bei mir zu Hause</option>\n                <option value=\"entwurf\" data-i18n=\"contact.topic3\">Frage zu einem Entwurf</option>\n                <option value=\"muster\" data-i18n=\"contact.topic4\">Materialmuster anfordern</option>\n                <option value=\"bestellung\" data-i18n=\"contact.topic5\">Bestehende Bestellung</option>\n                <option value=\"sonstiges\" data-i18n=\"contact.topic6\">Sonstiges</option>\n              </select>\n            </div>\n          </div>\n          <div class=\"field\">\n            <label for=\"message\" data-i18n=\"contact.message\">Ihre Nachricht</label>\n            <textarea id=\"message\" name=\"message\" required data-i18n-placeholder=\"contact.messagePlaceholder\" placeholder=\"Erzählen Sie uns kurz von Ihrem Raum, Ihren Maßen und Ihrem Zeitrahmen.\"></textarea>\n          </div>\n          <p class=\"form-note\" data-i18n=\"contact.privacy\">Mit dem Absenden stimmen Sie zu, dass wir Ihre Angaben zur Bearbeitung der Anfrage verwenden. Wir geben nichts an Dritte weiter.</p>\n          <button class=\"btn\" type=\"submit\" style=\"margin-top:1rem\" data-i18n=\"contact.send\">Anfrage senden</button>\n          <div class=\"form-msg\" data-msg hidden style=\"margin-top:1.2rem\"></div>\n        </form>\n\n        <aside>\n          <h3 data-i18n=\"contact.reach\">Direkt erreichbar</h3>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.phoneLabel\">Telefon</span><a href=\"tel:+4940419274600\">+49 40 41 92 74 60</a></li>\n            <li><span data-i18n=\"contact.emailLabel\">E-Mail</span><a href=\"mailto:norbert.wichele@gemail.com\">norbert.wichele@gemail.com</a></li>\n            <li><span data-i18n=\"contact.hoursLabel\">Erreichbarkeit</span><span data-i18n=\"contact.hours\">Mo–Fr 9–18 Uhr</span></li>\n          </ul>\n\n          <h3 data-i18n=\"contact.showroom\">Showroom</h3>\n          <p class=\"muted\" data-i18n-html=\"contact.address\">Stadthausbrücke 8<br>20355 Hamburg<br>Deutschland</p>\n          <ul class=\"specs\" style=\"margin-bottom:2.5rem\">\n            <li><span data-i18n=\"contact.monfri\">Montag – Freitag</span><span data-i18n=\"contact.monfriH\">10–19 Uhr</span></li>\n            <li><span data-i18n=\"contact.sat\">Samstag</span><span data-i18n=\"contact.satH\">11–17 Uhr</span></li>\n            <li><span data-i18n=\"contact.sun\">Sonntag</span><span data-i18n=\"contact.sunH\">geschlossen</span></li>\n          </ul>\n\n          <div style=\"border:1px solid var(--line);padding:1.6rem;border-radius:var(--radius);background:var(--card)\">\n            <span class=\"eyebrow\" data-i18n=\"contact.hint\">Hinweis</span>\n            <p style=\"margin:0;font-size:.92rem\" class=\"muted\" data-i18n=\"contact.hint.p\">Dies ist eine Demonstrationsseite. Das Formular sendet noch keine echten Nachrichten — die Anbindung an ein Postfach oder CRM lässt sich jederzeit ergänzen.</p>\n          </div>\n        </aside>\n\n      </div>\n    </div>\n  </section>",
     init: function () {
 function initPage() {
   // Der Wert steht fest, die Beschriftung wechselt mit der Sprache —

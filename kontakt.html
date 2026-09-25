@@ -119,7 +119,11 @@
     <div class="wrap">
       <div class="grid grid--form">
 
-        <form data-demo>
+        <form data-demo name="anfrage" method="POST" data-netlify="true" netlify-honeypot="firma">
+          <input type="hidden" name="form-name" value="anfrage">
+          <p class="sr-only" aria-hidden="true">
+            <label>Bitte leer lassen <input name="firma" tabindex="-1" autocomplete="off"></label>
+          </p>
           <h3 data-i18n="contact.form.title">Anfrage senden</h3>
           <div class="form-row">
             <div class="field">

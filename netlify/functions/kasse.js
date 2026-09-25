@@ -51,7 +51,7 @@ function basisAdresse() {
   return String(gesetzt || laden().SITE_URL || "").replace(/\/+$/, "");
 }
 
-const bestand = (p) => (p.used ? (p.stueck || 1) : 99);
+const bestand = (p) => (p.verkauft ? 0 : (p.used ? (p.stueck || 1) : 99));
 
 function antwort(code, daten) {
   return {
@@ -83,6 +83,7 @@ exports.handler = async (event) => {
   for (const zeile of korb) {
     const p = liste.find((x) => x.id === zeile.id);
     if (!p) return antwort(400, { fehler: "Unbekanntes Stück: " + zeile.id });
+    if (p.verkauft) return antwort(409, { fehler: "Bereits verkauft: " + p.name });
 
     /* Menge gegen den echten Bestand deckeln. Ein gebrauchtes Stueck
        gibt es einmal — zweimal verkaufen waere der teuerste Fehler. */

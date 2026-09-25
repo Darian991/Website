@@ -706,6 +706,56 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("is-open"), 2600);
 }
 
+/* ---------- Fragen und Weitergeben ----------
+   Bei einem Einzelstueck fuer ein paar tausend Euro kauft kaum jemand
+   auf Anhieb. Erst kommt die Frage — nach Maßen, nach dem Zustand, nach
+   der Lieferung. Wer dafuer erst die Kontaktseite suchen muss, fragt
+   meistens gar nicht. Die beiden Knoepfe unter dem Kaufen-Knopf nehmen
+   diesen Umweg heraus und tragen Stueck, Preis und Adresse gleich ein.
+
+   Und: Moebel schickt man weiter. „Schau mal das Sofa an" ist der
+   haeufigste Weg zu einem zweiten Betrachter. ---------- */
+
+function produktAdresse(p) {
+  return isPreview() || location.protocol === "file:"
+    ? SITE_URL + "/produkt.html?id=" + p.id
+    : location.href.split("#")[0];
+}
+
+function anfrageLink(p) {
+  const betreff = t("pdp.frage.betreff", { name: p.name, preis: euro(p.price) });
+  const text = t("pdp.frage.text", { name: p.name, preis: euro(p.price), link: produktAdresse(p) });
+  return "mailto:" + KONTAKT.email +
+    "?subject=" + encodeURIComponent(betreff) +
+    "&body=" + encodeURIComponent(text);
+}
+
+function whatsappLink(p) {
+  if (!KONTAKT.whatsapp) return "";
+  const text = t("pdp.frage.text", { name: p.name, preis: euro(p.price), link: produktAdresse(p) });
+  return "https://wa.me/" + KONTAKT.whatsapp + "?text=" + encodeURIComponent(text);
+}
+
+/* Weitergeben: auf dem Telefon das Teilen-Menü des Systems, am Rechner
+   der Umweg ueber die Zwischenablage. Beides kann fehlschlagen (kein
+   Recht auf die Zwischenablage, abgebrochenes Menü) — dann passiert
+   nichts Schlimmes, nur nichts. */
+async function stueckTeilen(p) {
+  const daten = { title: p.name + " · Premium Meubles", text: pt(p).short, url: produktAdresse(p) };
+  try {
+    if (navigator.share) { await navigator.share(daten); return; }
+    await navigator.clipboard.writeText(daten.url);
+    toast(t("pdp.teilen.kopiert"));
+  } catch (e) { /* abgebrochen oder nicht erlaubt */ }
+}
+
+function bindeFragen(p) {
+  const teilen = $("#stueck-teilen");
+  if (teilen && once(teilen, "boundShare")) {
+    teilen.addEventListener("click", (e) => { e.preventDefault(); stueckTeilen(p); });
+  }
+}
+
 /* ---------- Kopfdaten einer Produktseite ----------
    Die Produktseite entsteht erst im Browser — beim Auslieferen weiss noch
    niemand, welches Stueck gezeigt wird. Titel, die Vorschau beim Teilen
@@ -784,7 +834,7 @@ function setzeProduktKopf(p) {
       price: p.price,
       priceCurrency: "EUR",
       itemCondition: p.used ? "https://schema.org/UsedCondition" : "https://schema.org/NewCondition",
-      availability: "https://schema.org/InStock",
+      availability: istVerkauft(p) ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
       inventoryLevel: { "@type": "QuantitativeValue", value: bestand(p) },
       seller: { "@id": SITE_URL + "/#haus" }
     }
@@ -812,14 +862,16 @@ function setzeProduktKopf(p) {
 /* ---------- Produktkarte ---------- */
 function productCard(p) {
   const x = pt(p);
+  const weg = istVerkauft(p);
   return `
-  <article class="card reveal">
+  <article class="card reveal${weg ? " card--verkauft" : ""}">
     <a class="card__media" href="produkt.html?id=${p.id}" aria-label="${p.name}">
       ${artFor(p)}
-      <span class="card__tag ${p.used ? "card__tag--used" : ""}">${p.used ? t("shop.used") : (x.badge || t("shop.new"))}</span>
+      <span class="card__tag ${weg ? "card__tag--verkauft" : (p.used ? "card__tag--used" : "")}">${weg ? t("shop.verkauft") : (p.used ? t("shop.used") : (x.badge || t("shop.new")))}</span>
+      ${weg ? "" : `
       <div class="card__quick">
         <button class="btn btn--block" data-add="${p.id}">${t("shop.add")}</button>
-      </div>
+      </div>`}
     </a>
     <div class="card__body">
       <span class="card__cat">${t("cat." + p.categoryKey)}</span>
@@ -881,19 +933,46 @@ function initAccordions(root = document) {
   });
 }
 
-/* ---------- Formulare (Demo ohne Server) ---------- */
+/* ---------- Formulare ----------
+   Die Formulare tragen `data-netlify`. Netlify liest sie beim Ausliefern
+   aus dem Quelltext und nimmt Einsendungen entgegen, ohne dass dafuer
+   eigener Code laeuft; die Anfragen stehen dann im Netlify-Konto und
+   kommen als E-Mail. Ein verstecktes Feld („firma") faengt die
+   Maschinen ab, die jedes Formular im Netz ausfuellen.
+
+   Abgeschickt wird hier selbst, nicht vom Browser: So bleibt der
+   Besucher auf der Seite und sieht den Dank an Ort und Stelle. Liegt
+   kein Netlify dahinter — Einzeldatei-Vorschau, Doppelklick auf die
+   Datei, eigener Server — sagt der Dank dasselbe wie vorher. Verloren
+   geht dabei nichts, was vorher angekommen waere. ---------- */
 function initForms() {
   $$("form[data-demo]").forEach((form) => {
     if (!once(form, "boundForm")) return;
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const box = form.querySelector("[data-msg]");
       const name = form.querySelector("[name=name]")?.value?.trim();
-      if (box) {
-        box.hidden = false;
-        box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
-      }
-      form.reset();
+      const knopf = form.querySelector("button[type=submit]");
+      const danke = () => {
+        if (box) {
+          box.hidden = false;
+          box.textContent = name ? t("contact.thanksNamed", { name: name }) : t("contact.thanks");
+        }
+        form.reset();
+      };
+
+      if (!form.dataset.netlify || isPreview() || location.protocol === "file:") return danke();
+
+      if (knopf) knopf.disabled = true;
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form))
+        });
+      } catch (e2) { /* ohne Netlify dahinter: der Dank steht trotzdem */ }
+      if (knopf) knopf.disabled = false;
+      danke();
     });
   });
 }

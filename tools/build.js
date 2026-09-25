@@ -34,7 +34,7 @@ function inlineBilder(text) {
 }
 
 /* Deutsche Texte aus der Sprachdatei holen */
-const { I18N, LANGS, SITE_URL } = new Function(read("assets/js/i18n.js") + "; return { I18N, LANGS, SITE_URL };")();
+const { I18N, LANGS, SITE_URL, KONTAKT } = new Function(read("assets/js/i18n.js") + "; return { I18N, LANGS, SITE_URL, KONTAKT };")();
 const de = I18N.de;
 
 /* Der Katalog — fuer Auszeichnung und Seitenverzeichnis. Die Sprachdatei
@@ -64,18 +64,9 @@ const NAV = [
    laufen. */
 const SITE = SITE_URL;
 
-/* Was in Auszeichnung und Adressbuch steht. Muss mit Fusszeile und
-   Kontaktseite uebereinstimmen. */
-const HAUS = {
-  name: "Premium Meubles",
-  strasse: "Stadthausbrücke 8",
-  plz: "20355",
-  ort: "Hamburg",
-  land: "DE",
-  telefon: "+49 40 41 92 74 60",
-  email: "norbert.wichele@gemail.com",
-  geo: { lat: 53.5511, lon: 9.9865 }
-};
+/* Was in Auszeichnung und Adressbuch steht. Die Anschrift kommt aus
+   assets/js/i18n.js, damit Seite und Kopfdaten nicht auseinanderlaufen. */
+const HAUS = Object.assign({ name: "Premium Meubles" }, KONTAKT);
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const escAttr = (s) => esc(s).replace(/"/g, "&quot;");

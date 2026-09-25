@@ -13,6 +13,27 @@
    tools/build.js liest den Wert von hier. Danach `node tools/build.js`. --- */
 const SITE_URL = "https://www.premium-meubles.de";
 
+/* --- Wie man uns erreicht ---
+   An einer Stelle, damit Kopfdaten, Auszeichnung fuer Suchmaschinen und
+   die Anfrage-Knoepfe auf der Produktseite dasselbe sagen. Alle Angaben
+   sind noch Platzhalter und muessen vor dem Online-Stellen echt sein —
+   sonst stehen sie auch in dem, was Google anzeigt.
+
+   whatsapp: Handynummer in internationaler Schreibweise, ohne Plus und
+   ohne Leerzeichen (z. B. "4915112345678"). Bleibt das Feld leer, wird
+   der WhatsApp-Knopf gar nicht erst angezeigt. --- */
+const KONTAKT = {
+  strasse: "Stadthausbrücke 8",
+  plz: "20355",
+  ort: "Hamburg",
+  land: "DE",
+  telefon: "+49 40 41 92 74 60",
+  telefonWahl: "+4940419274600",
+  email: "norbert.wichele@gemail.com",
+  whatsapp: "",
+  geo: { lat: 53.5511, lon: 9.9865 }
+};
+
 const LANGS = [
   { code: "de", label: "DE", name: "Deutsch",  locale: "de-DE" },
   { code: "en", label: "EN", name: "English",  locale: "en-GB" },
@@ -26,6 +47,8 @@ const I18N = {
 
   /* ------------------------------------------------------ Deutsch */
   de: {
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
+    "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
     "bot.a.alles": "Das ist unser ganzer Bestand — {n} Stücke, jedes nur einmal zu haben:",
@@ -199,6 +222,16 @@ const I18N = {
     "cat.sg.betten": "Bett",
     "cat.sg.accessoires": "Accessoire",
     "pdp.titel": "{name} — {kategorie} aus zweiter Hand · Premium Meubles",
+    "pdp.frage": "Frage zu diesem Stück",
+    "pdp.frage.betreff": "Anfrage: {name} ({preis})",
+    "pdp.frage.text": "Guten Tag,\n\nich interessiere mich für {name} ({preis}).\n{link}\n\nMeine Frage:\n",
+    "pdp.whatsapp": "Per WhatsApp fragen",
+    "pdp.teilen": "Teilen",
+    "pdp.teilen.kopiert": "Link kopiert — jetzt einfach einfügen.",
+    "pdp.verkauft": "Verkauft",
+    "pdp.verkauft.p": "Dieses Stück ist verkauft. Ähnliches bekommen wir laufend herein — schreiben Sie uns, wonach Sie suchen.",
+    "shop.verkauft": "Verkauft",
+    "bot.a.verkauft": "{name} ist leider schon verkauft. Ähnliches bekommen wir laufend herein — sagen Sie mir, wonach Sie suchen.",
 
     "search.title": "Suchen",
     "search.placeholder": "Wonach suchen Sie? Etwa Sofa, Eiche, Leder …",
@@ -395,6 +428,8 @@ const I18N = {
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
+    "bot.a.alles": "That is our entire stock — {n} pieces, each available only once:",
     "bot.a.alles": "That is our entire stock — {n} pieces, all pre-owned:",
     /* ---- Berater: Alltagsfragen ---- */
     "bot.a.howareyou": "Thank you for asking — I am doing well. And you? If you like, let me show you something from the collection.",
@@ -564,6 +599,16 @@ const I18N = {
     "cat.sg.betten": "Bed",
     "cat.sg.accessoires": "Accessory",
     "pdp.titel": "{name} — Pre-owned {kategorie} · Premium Meubles",
+    "pdp.frage": "Ask about this piece",
+    "pdp.frage.betreff": "Enquiry: {name} ({preis})",
+    "pdp.frage.text": "Hello,\n\nI am interested in {name} ({preis}).\n{link}\n\nMy question:\n",
+    "pdp.whatsapp": "Ask on WhatsApp",
+    "pdp.teilen": "Share",
+    "pdp.teilen.kopiert": "Link copied — just paste it.",
+    "pdp.verkauft": "Sold",
+    "pdp.verkauft.p": "This piece has been sold. Similar ones come in all the time — write to us and tell us what you are looking for.",
+    "shop.verkauft": "Sold",
+    "bot.a.verkauft": "{name} has already been sold, I am afraid. Similar pieces come in all the time — tell me what you are looking for.",
 
     "search.title": "Search",
     "search.placeholder": "What are you looking for? Sofa, oak, leather …",
@@ -760,6 +805,8 @@ const I18N = {
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
+    "bot.a.alles": "Voici tout notre stock — {n} pièces, chacune disponible une seule fois :",
     "nav.pages": "Pages",
     "bot.a.alles": "Voici tout notre stock — {n} pièces, toutes de seconde main :",
     /* ---- Berater: Alltagsfragen ---- */
@@ -929,6 +976,16 @@ const I18N = {
     "cat.sg.betten": "Lit",
     "cat.sg.accessoires": "Accessoire",
     "pdp.titel": "{name} — {kategorie} de seconde main · Premium Meubles",
+    "pdp.frage": "Une question sur cette pièce",
+    "pdp.frage.betreff": "Demande : {name} ({preis})",
+    "pdp.frage.text": "Bonjour,\n\nje m’intéresse à {name} ({preis}).\n{link}\n\nMa question :\n",
+    "pdp.whatsapp": "Demander par WhatsApp",
+    "pdp.teilen": "Partager",
+    "pdp.teilen.kopiert": "Lien copié — il ne reste qu’à le coller.",
+    "pdp.verkauft": "Vendu",
+    "pdp.verkauft.p": "Cette pièce est vendue. Nous en recevons régulièrement de semblables — dites-nous ce que vous cherchez.",
+    "shop.verkauft": "Vendu",
+    "bot.a.verkauft": "{name} est malheureusement déjà vendu. Nous en recevons régulièrement de semblables — dites-moi ce que vous cherchez.",
 
     "search.title": "Rechercher",
     "search.placeholder": "Que cherchez-vous ? Canapé, chêne, cuir …",
@@ -1125,6 +1182,8 @@ const I18N = {
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
+    "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, cada una disponible una sola vez:",
     "nav.pages": "Páginas",
     "bot.a.alles": "Este es todo nuestro fondo — {n} piezas, todas de segunda mano:",
     /* ---- Berater: Alltagsfragen ---- */
@@ -1275,6 +1334,16 @@ const I18N = {
     "cat.sg.betten": "Cama",
     "cat.sg.accessoires": "Accesorio",
     "pdp.titel": "{name} — {kategorie} de segunda mano · Premium Meubles",
+    "pdp.frage": "Preguntar por esta pieza",
+    "pdp.frage.betreff": "Consulta: {name} ({preis})",
+    "pdp.frage.text": "Buenos días:\n\nme interesa {name} ({preis}).\n{link}\n\nMi pregunta:\n",
+    "pdp.whatsapp": "Preguntar por WhatsApp",
+    "pdp.teilen": "Compartir",
+    "pdp.teilen.kopiert": "Enlace copiado — solo hay que pegarlo.",
+    "pdp.verkauft": "Vendida",
+    "pdp.verkauft.p": "Esta pieza está vendida. Recibimos piezas parecidas continuamente — díganos qué busca.",
+    "shop.verkauft": "Vendida",
+    "bot.a.verkauft": "{name} ya está vendida, lo siento. Recibimos piezas parecidas continuamente — dígame qué busca.",
     "search.title": "Buscar",
     "search.placeholder": "¿Qué busca? Sofá, roble, cuero…",
     "search.hint": "Busque por nombre, categoría o material.",

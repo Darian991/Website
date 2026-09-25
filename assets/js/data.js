@@ -568,7 +568,15 @@ const PRODUCTS = [
 /* Ein gebrauchtes Stück ist ein Einzelstück und nur einmal zu haben. */
 /* Gebraucht heißt meist Einzelstück. Liegt ein Stück mehrfach vor, sagt
    das Feld „stueck“, wie oft — dann darf die Menge gewählt werden. */
-const bestand = (product) => (product.used ? (product.stueck || 1) : 99);
+/* Ein verkauftes Stueck bleibt stehen, statt zu verschwinden: Sein Link
+   bleibt gueltig, die Suchmaschine verliert die Seite nicht, und wer den
+   Laden zum ersten Mal sieht, erkennt daran, dass hier wirklich
+   gehandelt wird. Kaufen laesst es sich nicht mehr. */
+const istVerkauft = (product) => product.verkauft === true;
+const verfuegbar = () => PRODUCTS.filter((p) => !istVerkauft(p));
+
+const bestand = (product) =>
+  istVerkauft(product) ? 0 : (product.used ? (product.stueck || 1) : 99);
 
 /* Rubriken, in denen tatsächlich etwas steht — in der Reihenfolge der
    Gesamtliste. Filterleiste, Fußzeile und Startseite richten sich danach,

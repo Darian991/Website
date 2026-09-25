@@ -175,7 +175,7 @@ function renderPdp() {
       </div>
 
       <div class="pdp__info">
-        <span class="eyebrow">${t("cat." + p.categoryKey)} · ${p.used ? t("cond.used") : (x.badge || t("cond.new"))}</span>
+        <span class="eyebrow">${t("cat." + p.categoryKey)} · ${istVerkauft(p) ? t("pdp.verkauft") : (p.used ? t("cond.used") : (x.badge || t("cond.new")))}</span>
         <h1 style="font-size:clamp(2.2rem,4vw,3.2rem)">${p.name}</h1>
         <div class="price">${euro(p.price)}</div>
         <p class="lede">${x.short}</p>
@@ -191,6 +191,11 @@ function renderPdp() {
           </div>
         </div>
 
+        ${istVerkauft(p) ? `
+        <div class="verkauft-kasten">
+          <span class="eyebrow">${t("pdp.verkauft")}</span>
+          <p>${t("pdp.verkauft.p")}</p>
+        </div>` : `
         <div class="buy-row" style="margin-top:1.6rem">
           ${bestand(p) > 1 ? `
           <div class="qty">
@@ -200,8 +205,14 @@ function renderPdp() {
           </div>` : `<span class="claim" style="align-self:center">${t("pdp.unique")}</span>`}
           <button class="btn" id="add-to-cart">${t("pdp.add")}</button>
         </div>
-        ${p.used && bestand(p) > 1 ? `<p class="claim" style="margin-top:.9rem">${t("pdp.multi", { n: bestand(p) })}</p>` : ""}
-        <p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>
+        ${p.used && bestand(p) > 1 ? `<p class="claim" style="margin-top:.9rem">${t("pdp.multi", { n: bestand(p) })}</p>` : ""}`}
+
+        <div class="pdp__ask">
+          <a class="link-underline" href="${anfrageLink(p)}">${t("pdp.frage")}</a>
+          ${whatsappLink(p) ? `<a class="link-underline" href="${whatsappLink(p)}" target="_blank" rel="noopener">${t("pdp.whatsapp")}</a>` : ""}
+          <button class="link-underline" id="stueck-teilen" type="button">${t("pdp.teilen")}</button>
+        </div>
+        ${istVerkauft(p) ? "" : `<p class="form-note" style="margin-top:1rem">${p.used ? t("pdp.note.used") : t("pdp.note", { lead: x.lead })}</p>`}
 
         <hr class="divider">
 
@@ -288,12 +299,13 @@ function renderPdp() {
     chosenQty = 1;
   }
 
-  $("#add-to-cart").addEventListener("click", () => {
+  $("#add-to-cart")?.addEventListener("click", () => {
     Cart.add(current.id, chosenQty, chosenColorIndex);
     toast(t("cart.added", { name: current.name + " (" + productColors(current)[chosenColorIndex].name + ")" }));
   });
 
   initAccordions($("#pdp-root"));
+  bindeFragen(p);
 }
 
 function renderRelated() {

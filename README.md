@@ -252,6 +252,15 @@ Alltagswörter dazu noch in `BOT_CATEGORIES` in `assets/js/berater.js`.
 
 Gebraucht heißt meist Einzelstück, deshalb ist die Menge normalerweise fest
 auf eins. Gibt es ein Stück mehrfach, sagt das Feld `stueck: 2`, wie oft.
+
+**Ein Stück ist verkauft** — `verkauft: true` ins Produkt schreiben, sonst
+nichts. Das Stück bleibt danach stehen: Sein Link gilt weiter, die
+Suchmaschine verliert die Seite nicht, und wer den Laden zum ersten Mal
+sieht, erkennt daran, dass hier wirklich gehandelt wird. Es trägt die
+Kennzeichnung „Verkauft", rutscht in der Liste nach hinten, zählt nicht
+mehr mit, lässt sich nicht kaufen, und der Berater bietet es nicht mehr an
+— nach dem Namen gefragt, sagt er, dass es weg ist. Die Auszeichnung für
+Suchmaschinen wechselt auf `SoldOut`.
 Produktseite und Warenkorb zeigen dann eine Mengenauswahl, gedeckelt auf den
 Bestand, und statt „Einzelstück" steht „2 Exemplare verfügbar".
 
@@ -456,12 +465,44 @@ sieht der Käufer eine Bestätigung, aber im Laden klingelt nichts. Dafür
 braucht es einen Stripe-Webhook, der die Bestellung per E-Mail zustellt und
 das verkaufte Stück auf `stueck: 0` setzt.
 
+## Vom Betrachten zum Kaufen
+
+Ein Einzelstück für ein paar tausend Euro kauft kaum jemand auf Anhieb.
+Erst kommt die Frage — nach Maßen, nach dem Zustand, nach der Lieferung.
+Wer dafür erst die Kontaktseite suchen muss, fragt meistens gar nicht.
+
+**Unter dem Kaufen-Knopf** stehen deshalb zwei Wege:
+
+* **Frage zu diesem Stück** öffnet das Mailprogramm mit Betreff, Name,
+  Preis und dem Link zur Seite — der Kunde muss nur noch die Frage
+  tippen, und wir wissen sofort, worum es geht.
+* **Teilen** gibt auf dem Telefon das Teilen-Menü des Systems und am
+  Rechner den Link in die Zwischenablage. „Schau mal das Sofa an" ist der
+  häufigste Weg zu einem zweiten Betrachter.
+
+**WhatsApp** kommt als dritter Knopf dazu, sobald in `KONTAKT.whatsapp`
+(in `assets/js/i18n.js`) eine Handynummer steht — international, ohne Plus
+und ohne Leerzeichen, etwa `4915112345678`. Solange das Feld leer ist,
+erscheint der Knopf gar nicht. Beim Handel mit gebrauchten Möbeln läuft
+ein großer Teil der Anfragen über WhatsApp; der Aufwand lohnt sich.
+
+**Die Formulare gehen wirklich ab.** Kontaktformular und Anmeldung für
+neue Stücke tragen `data-netlify`. Netlify liest sie beim Ausliefern aus
+dem Quelltext, nimmt Einsendungen entgegen und stellt sie im Konto und per
+E-Mail zu — ohne eigenen Server. Ein verstecktes Feld fängt die Maschinen
+ab, die jedes Formular im Netz ausfüllen. Liegt kein Netlify dahinter,
+zeigt das Formular denselben Dank wie zuvor; verloren geht nichts, was
+sonst angekommen wäre. Im kostenlosen Tarif sind 100 Einsendungen im Monat
+enthalten.
+
 ## Was noch fehlt für den echten Betrieb
 
 * **Zahlung**: Die Kasse ist gebaut, aber noch ohne Stripe-Schlüssel und
   ohne Benachrichtigung nach dem Kauf. Siehe „Bezahlen“.
-* **Formulare**: Kontakt- und Newsletter-Formular zeigen nur eine Bestätigung an.
-  Sie brauchen ein Backend oder einen Dienst wie Formspree.
+* **Besucher zählen**: Ohne Zahlen lässt sich nicht sagen, was wirkt. Die
+  Search Console zeigt, wonach gesucht wurde; für das Verhalten auf der
+  Seite eignet sich ein datensparsamer Zähler wie Plausible oder Umami —
+  ohne Einwilligungsbanner, anders als Google Analytics.
 * **Mehrsprachige Adressen**: Die Sprache wird im Browser gespeichert, alle
   Sprachen teilen sich dieselbe Adresse. Für Suchmaschinen bräuchte jede
   Sprache eigene Adressen (`/en/kollektion`) samt `hreflang` — das geht mit
