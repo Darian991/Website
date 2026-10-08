@@ -160,6 +160,12 @@
     <p><b>Boxengasse:</b> rechts vor der Start-Ziel-Geraden abbiegen, in der Gasse gilt 200 km/h. Halte im gelben Rahmen deiner Box, dann repariert deine Mannschaft das Auto.</p>
     <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und mit jedem Schaden wirst du langsamer – bei vollem Schaden bleibt gut die Hälfte des Tempos, und der Motor setzt aus.</p>
     <p><kbd>C</kbd> Kamera · <kbd>L</kbd> Ideallinie · <kbd>G</kbd> Grafik · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton · <kbd>R</kbd> Neustart</p>
+    <p class="autoInfo" id="padInfo"></p>
+    <div class="wahl"><button type="button" class="wahlKnopf" id="padEinrichten" hidden>Lenkrad einrichten</button></div>
+    <div id="lenkZeile" hidden>
+      <div class="garageTitel">Lenkwinkel bis zum vollen Einschlag</div>
+      <div class="wahl" id="lenkWahl"></div>
+    </div>
     <div class="wahl" role="group" aria-label="Wetter">
       <button type="button" class="wahlKnopf an" data-wetter="sonne">☀️ Sonne</button>
       <button type="button" class="wahlKnopf" data-wetter="regen">🌧️ Regen</button>
@@ -178,6 +184,18 @@
     <div class="wahl">
       <button id="nochmal">Nochmal fahren</button>
       <button id="zumMenue" type="button" class="wahlKnopf">☰ Menü</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="padFenster" hidden>
+  <div class="box">
+    <h1>🎮 Lenkrad einrichten</h1>
+    <p id="padSchritt"></p>
+    <p>Das Spiel erkennt selbst, welche Achse sich bewegt. Danach geht es automatisch weiter.</p>
+    <div class="wahl">
+      <button type="button" class="wahlKnopf" id="padUeberspringen">Überspringen</button>
+      <button type="button" class="wahlKnopf" id="padAbbrechen">Abbrechen</button>
     </div>
   </div>
 </div>
@@ -2202,8 +2220,8 @@
     else if (sd > 0.5 && e.gas && Math.random() < dt * (sd - 0.4) * 3) a.stottern = 0.12 + Math.random() * 0.2;
 
     // Gas, Bremse, Handbremse, Luft- und Rollwiderstand; ein beschädigter Motor zieht schwächer
-    if (e.gas && vl > -1 && a.schaltUhr <= 0 && !(a.stottern > 0)) vl += st.beschl * (1 - sd * 0.6) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
-    if (e.bremse) vl -= (vl > 0.5 ? st.bremse * (nass ? 0.7 : 1) : 9) * dt;
+    if (e.gas && vl > -1 && a.schaltUhr <= 0 && !(a.stottern > 0)) vl += (e.analog ? e.gasWert : 1) * st.beschl * (1 - sd * 0.6) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
+    if (e.bremse) vl -= (e.analog ? e.bremsWert : 1) * (vl > 0.5 ? st.bremse * (nass ? 0.7 : 1) : 9) * dt;
     if (begrenzt && vl > GASSE.tempo) vl -= (vl - GASSE.tempo) * Math.min(1, dt * 6);
     a.bremst = (e.bremse && vl > 0.5) || e.handbremse;
     if (e.handbremse) vl -= Math.sign(vl) * Math.min(Math.abs(vl), 7 * dt);
@@ -2213,9 +2231,12 @@
     if (vl < -12) vl = -12;
 
     // Lenkung, über die Tastatur weich eingeblendet
-    const ziel = (e.rechts ? 1 : 0) - (e.links ? 1 : 0);
-    const rate = ziel === 0 ? 7 : (Math.sign(ziel) !== Math.sign(a.lenk) ? 9 : 3.6);
-    a.lenk += (ziel - a.lenk) * Math.min(1, dt * rate);
+    if (e.analog) a.lenk += (e.lenkWert - a.lenk) * Math.min(1, dt * 20);   // Lenkrad: direkt und stufenlos
+    else {
+      const ziel = (e.rechts ? 1 : 0) - (e.links ? 1 : 0);
+      const rate = ziel === 0 ? 7 : (Math.sign(ziel) !== Math.sign(a.lenk) ? 9 : 3.6);
+      a.lenk += (ziel - a.lenk) * Math.min(1, dt * rate);
+    }
 
     // Driften: Handbremse bei Fahrt oder großer Schräglauf
     a.schlupf = Math.atan2(vq, Math.abs(vl) + 0.5);
@@ -2284,7 +2305,7 @@
     if (a.drift && e.gas) rpm = Math.min(9000, rpm + 1300);
     if (a.zwischengas > 0) { a.zwischengas -= dt; rpm += 1200; }
     a.drehzahl += (Math.min(9100, rpm) - a.drehzahl) * Math.min(1, dt * 18);
-    a.gasWert += ((e.gas ? 1 : 0) - a.gasWert) * Math.min(1, dt * 8);
+    a.gasWert += ((e.analog ? e.gasWert : e.gas ? 1 : 0) - a.gasWert) * Math.min(1, dt * 8);
   }
 
   /* ---------- Gegner ---------- */
@@ -2490,7 +2511,7 @@
     if (sd.links >= 40) abfallen(a, "spiegelL");
     if (sd.rechts >= 40) abfallen(a, "spiegelR");
     if (a.spieler) {
-      crashTon(stoss);
+      crashTon(stoss); padRuetteln(stoss);
       if (menge > 6) {
         a.schadenMeldung = 2.5;
         a.schadenText = sd.gesamt >= 70 ? "Motor schwer beschädigt – Höchsttempo " + Math.round(a.st.vmax * (1 - sd.gesamt / 100 * 0.45) * 3.6) + " km/h"
@@ -2809,6 +2830,144 @@
   $("neustartKnopf").onclick = () => { fokusHolen(); tonStarten(); neuesRennen(); };
   $("menueKnopf").onclick = zumMenue;
   $("zumMenue").onclick = zumMenue;
+  /* ---------- Lenkrad und Controller über die Gamepad-Schnittstelle des Browsers ---------- */
+  // Lenkräder (z. B. Logitech G29) melden Lenkung und Pedale als Achsen. Welche Achse was ist, hängt von
+  // Browser und Betriebssystem ab, deshalb gibt es eine kurze Einrichtung, die sich die Belegung merkt.
+  // Normale Controller mit Standardbelegung (Xbox, PlayStation) brauchen keine Einrichtung.
+  const PAD_SPEICHER = "rennstrecke-pad";
+  let padBelegung = null, padGesperrt = false, padName = "", padEingabe = null, padAlt = [];
+  try { padBelegung = JSON.parse(localStorage.getItem(PAD_SPEICHER) || "null"); } catch {}
+  const istLenkrad = (gp) => /g29|g920|g923|driving force|wheel|lenkrad|fanatec|thrustmaster|046d/i.test(gp.id);
+  const kurzName = (gp) => gp.id.replace(/\(.*?\)/g, "").replace(/vendor.*$/i, "").trim() || "Controller";
+  function padHolen() {
+    if (padGesperrt || !navigator.getGamepads) return null;
+    try { for (const gp of navigator.getGamepads()) if (gp && gp.connected) return gp; }
+    catch { padGesperrt = true; padUi(); }
+    return null;
+  }
+  const normPedal = (wert, ruhe, voll) => Math.max(0, Math.min(1, (wert - ruhe) / (voll - ruhe || 1)));
+
+  // Einrichtung: lenken, Gas, Bremse, Handbremstaste – jeweils wird die Achse erkannt, die sich am stärksten bewegt
+  const einrichten = { aktiv: false, schritt: 0, basis: [], neu: {}, halten: 0 };
+  const SCHRITTE = [
+    { text: "Dreh das Lenkrad deutlich nach <b>rechts</b> und halte es dort." },
+    { text: "Tritt das <b>Gaspedal</b> ganz durch und halte es." },
+    { text: "Tritt die <b>Bremse</b> ganz durch und halte sie." },
+    { text: "Drück die Taste, die deine <b>Handbremse</b> sein soll (zum Driften)." }
+  ];
+  function einrichtenStarten() {
+    const gp = padHolen();
+    if (!gp) { melde("Kein Lenkrad gefunden. Schließ es an und drück eine Taste daran."); return; }
+    Object.assign(einrichten, { aktiv: true, schritt: 0, basis: [...gp.axes], neu: { id: gp.id, art: "rad", lenkEmpf: (padBelegung && padBelegung.lenkEmpf) || 2.5 }, halten: 0 });
+    $("padFenster").hidden = false; einrichtenText();
+  }
+  function einrichtenText() {
+    $("padSchritt").innerHTML = (einrichten.schritt + 1) + " von " + SCHRITTE.length + ": " + SCHRITTE[einrichten.schritt].text;
+  }
+  function einrichtenWeiter(gp) {
+    einrichten.schritt++; einrichten.halten = 0; einrichten.basis = [...gp.axes];
+    if (einrichten.schritt >= SCHRITTE.length) einrichtenFertig(); else einrichtenText();
+  }
+  function einrichtenFertig() {
+    einrichten.aktiv = false; $("padFenster").hidden = true;
+    padBelegung = einrichten.neu;
+    try { localStorage.setItem(PAD_SPEICHER, JSON.stringify(padBelegung)); } catch {}
+    melde("Lenkrad eingerichtet. Viel Spaß!"); padUi();
+  }
+  function einrichtenSchritt(gp, dt) {
+    const n = einrichten.neu, s = einrichten.schritt;
+    if (s === 3) {
+      const k = gp.buttons.findIndex((b, i) => b.pressed && !padAlt[i]);
+      if (k >= 0) { n.handbremsTaste = k; einrichtenWeiter(gp); }
+      return;
+    }
+    const belegt = [n.lenkAchse, n.gasAchse, n.bremsAchse];
+    let beste = -1, weg = 0;
+    gp.axes.forEach((w, i) => { const d = Math.abs(w - einrichten.basis[i]); if (!belegt.includes(i) && d > weg) { weg = d; beste = i; } });
+    // eine halbe Sekunde (echte Zeit) halten, dann gilt die Bewegung
+    const jetzt = performance.now();
+    if (weg > (s === 0 ? 0.15 : 0.5)) { if (!einrichten.halten) einrichten.halten = jetzt; } else einrichten.halten = 0;
+    if (!einrichten.halten || jetzt - einrichten.halten < 500) return;
+    const w = gp.axes[beste];
+    if (s === 0) { n.lenkAchse = beste; n.lenkRichtung = Math.sign(w - einrichten.basis[beste]) || 1; }
+    if (s === 1) { n.gasAchse = beste; n.gasRuhe = einrichten.basis[beste]; n.gasVoll = w; }
+    if (s === 2) { n.bremsAchse = beste; n.bremsRuhe = einrichten.basis[beste]; n.bremsVoll = w; }
+    einrichtenWeiter(gp);
+  }
+
+  function padLesen(dt) {
+    const gp = padHolen();
+    if (!gp) { if (padName) { padName = ""; padUi(); } padEingabe = null; return; }
+    if (gp.id !== padName) {
+      padName = gp.id; padUi();
+      const neuesRad = istLenkrad(gp) && (!padBelegung || padBelegung.id !== gp.id);
+      melde((istLenkrad(gp) ? "Lenkrad" : "Controller") + " erkannt: " + kurzName(gp) + (neuesRad ? " – die Einrichtung startet." : ""));
+      // ein neues Lenkrad wird gleich eingerichtet: einmal lenken, Gas, Bremse, Handbremstaste
+      if (neuesRad && zustand === "menue" && !einrichten.aktiv) setTimeout(einrichtenStarten, 300);
+    }
+    const gedrueckt = (k) => gp.buttons[k] && gp.buttons[k].pressed && !padAlt[k];
+    if (einrichten.aktiv) { einrichtenSchritt(gp, dt); padAlt = gp.buttons.map((b) => b.pressed); padEingabe = null; return; }
+    const b = padBelegung && padBelegung.id === gp.id ? padBelegung : (gp.mapping === "standard" && !istLenkrad(gp) ? { art: "pad" } : null);
+    if (!b) { padAlt = gp.buttons.map((x) => x.pressed); padEingabe = null; return; }
+    let lenk, gas, bremse, hand;
+    if (b.art === "pad") {
+      lenk = gp.axes[0] || 0; if (Math.abs(lenk) < 0.08) lenk = 0;
+      gas = gp.buttons[7] ? gp.buttons[7].value : 0; bremse = gp.buttons[6] ? gp.buttons[6].value : 0;
+      hand = !!(gp.buttons[0] && gp.buttons[0].pressed) || !!(gp.buttons[5] && gp.buttons[5].pressed);
+    } else {
+      lenk = Math.max(-1, Math.min(1, (gp.axes[b.lenkAchse] || 0) * b.lenkRichtung * b.lenkEmpf));
+      gas = normPedal(gp.axes[b.gasAchse] || 0, b.gasRuhe, b.gasVoll);
+      bremse = normPedal(gp.axes[b.bremsAchse] || 0, b.bremsRuhe, b.bremsVoll);
+      hand = b.handbremsTaste >= 0 && !!(gp.buttons[b.handbremsTaste] && gp.buttons[b.handbremsTaste].pressed);
+    }
+    if (gas < 0.04) gas = 0; if (bremse < 0.04) bremse = 0;
+    padEingabe = { analog: true, lenkWert: lenk, gasWert: gas, bremsWert: bremse, handbremse: hand, gas: gas > 0, bremse: bremse > 0, links: lenk < -0.05, rechts: lenk > 0.05 };
+    // Tasten: Start/Options = Rennen starten bzw. Neustart, Back/Share = Menü, Y/Dreieck = Kamera
+    if (zustand === "menue") { if (gedrueckt(9) || (b.art === "pad" && gedrueckt(0))) ui.losKnopf.click(); }
+    else {
+      if (gedrueckt(9)) neuesRennen();
+      if (gedrueckt(8)) zumMenue();
+      if (gedrueckt(3) && b.handbremsTaste !== 3) ansicht = (ansicht + 1) % ANSICHTEN.length;
+    }
+    padAlt = gp.buttons.map((x) => x.pressed);
+  }
+  // Tastatur hat Vorrang; sonst steuert das Lenkrad bzw. der Controller
+  function spielerEingabe() {
+    const tastatur = tasten.gas || tasten.bremse || tasten.links || tasten.rechts || tasten.handbremse;
+    return padEingabe && !tastatur ? padEingabe : tasten;
+  }
+  // kurzes Rütteln bei Einschlägen (Controller mit Vibration; Lenkräder mit Force Feedback kann der Browser nicht ansteuern)
+  function padRuetteln(staerke) {
+    const gp = padHolen();
+    if (gp && gp.vibrationActuator && gp.vibrationActuator.playEffect)
+      gp.vibrationActuator.playEffect("dual-rumble", { duration: 220, strongMagnitude: Math.min(1, staerke / 15), weakMagnitude: 0.6 }).catch(() => {});
+  }
+  function padUi() {
+    const info = $("padInfo"), knopf = $("padEinrichten");
+    if (padGesperrt) { info.textContent = "🎮 Dieses Fenster erlaubt keinen Zugriff auf Lenkrad oder Controller. Öffne die Spieldatei direkt im Browser (eigener Tab)."; knopf.hidden = true; return; }
+    if (!padName) { info.textContent = "🎮 Lenkrad oder Controller anschließen und eine Taste daran drücken."; knopf.hidden = true; return; }
+    const gp = padHolen(), rad = gp && istLenkrad(gp), fertig = padBelegung && padBelegung.id === padName;
+    info.textContent = "🎮 " + (rad ? "Lenkrad" : "Controller") + ": " + (gp ? kurzName(gp) : padName) +
+      (rad ? (fertig ? " · eingerichtet" : " · noch nicht eingerichtet") : " · bereit");
+    knopf.hidden = false;
+    knopf.textContent = rad && !fertig ? "Lenkrad einrichten" : "Neu einrichten";
+    document.querySelectorAll("#lenkWahl button").forEach((k) => k.classList.toggle("an", padBelegung && +k.dataset.empf === padBelegung.lenkEmpf));
+    $("lenkZeile").hidden = !(rad && fertig);
+  }
+  addEventListener("gamepadconnected", () => padLesen(0));
+  addEventListener("gamepaddisconnected", () => padLesen(0));
+  $("padEinrichten").onclick = einrichtenStarten;
+  $("padAbbrechen").onclick = () => { einrichten.aktiv = false; $("padFenster").hidden = true; };
+  $("padUeberspringen").onclick = () => { const gp = padHolen(); if (gp) { if (einrichten.schritt === 3) einrichten.neu.handbremsTaste = -1; einrichtenWeiter(gp); } };
+  // Lenkwinkel: wie weit man das Rad für vollen Einschlag drehen muss
+  for (const [grad, empf] of [[180, 5], [360, 2.5], [540, 1.67], [900, 1]]) {
+    const k = document.createElement("button"); k.type = "button"; k.className = "wahlKnopf"; k.textContent = grad + "°"; k.dataset.empf = empf;
+    k.onclick = () => { if (!padBelegung) return; padBelegung.lenkEmpf = empf; try { localStorage.setItem(PAD_SPEICHER, JSON.stringify(padBelegung)); } catch {} padUi(); };
+    $("lenkWahl").appendChild(k);
+  }
+  padUi();
+
+
   const ampelLampen = [...ui.ampel.children];
 
   const zeit = (s) => {
@@ -3255,8 +3414,9 @@
       ampelLampen.forEach((l, k) => l.classList.toggle("an", k < an));
       START_AMPEL.forEach((m, k) => m.color.setHex(k < an ? 0xff2a1a : 0x2a0806));
       // im Stand Gas geben lässt den Motor aufheulen
-      spieler.gasWert += ((tasten.gas ? 1 : 0) - spieler.gasWert) * Math.min(1, dt * 8);
-      spieler.drehzahl += ((tasten.gas ? 7000 : 1000) - spieler.drehzahl) * Math.min(1, dt * 4);
+      const ein = spielerEingabe(), gasStand = ein.analog ? ein.gasWert : ein.gas ? 1 : 0;
+      spieler.gasWert += (gasStand - spieler.gasWert) * Math.min(1, dt * 8);
+      spieler.drehzahl += (1000 + gasStand * 6000 - spieler.drehzahl) * Math.min(1, dt * 4);
       if (ampelUhr >= ampelAus) {
         zustand = "rennen";
         ui.ampel.style.display = "none";
@@ -3267,6 +3427,7 @@
 
     // läuft es zu langsam, Stufe für Stufe Details abschalten: Effekte, dann Schatten, Gras und Seitenspiegel, dann Auflösung.
     // Gemessen wird alle 2 Sekunden; die ersten Sekunden nach dem Laden zählen nicht (Shader werden übersetzt).
+    padLesen(dt);
     messBilder++;
     if (!leistungGeprueft && jetzt - messStart > 2000) {
       const bps = messBilder * 1000 / (jetzt - messStart);
@@ -3292,7 +3453,7 @@
         rennzeit += h;
         for (const a of autos) {
           const alt = a.idx;
-          if (a.spieler) fahreSpieler(a, h, a.fertig === null && !a.boxenstopp ? tasten : ruhe);
+          if (a.spieler) fahreSpieler(a, h, a.fertig === null && !a.boxenstopp ? spielerEingabe() : ruhe);
           else fahreKI(a, h);
           boxenstoppPruefen(a, h);
           rundenZaehlen(a, alt);
