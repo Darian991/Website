@@ -123,7 +123,7 @@
 <div class="overlay" id="start">
   <div class="box">
     <h1>🏁 Grand Prix</h1>
-    <p>3 Runden auf dem Rennkurs gegen drei Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
+    <p>3 Runden auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
     <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und der Motor verliert Leistung.</p>
@@ -223,7 +223,7 @@
   // vorzeichenbehaftete Krümmung (1/m), > 0 = Rechtskurve
   const KR = RICHTUNG.map((_, i) => winkelDiff(RICHTUNG[(i - 3 + N) % N], RICHTUNG[(i + 3) % N]) / (6 * SCHRITT));
   const wrap = (i) => ((i % N) + N) % N;
-  const startIndex = (k) => wrap(-4 - k * 4);
+  const startIndex = (k) => wrap(-4 - Math.floor(k / 2) * 3 - (k % 2));
   const startSeite = (k) => (k % 2 ? 1 : -1);
 
   // Abschnitte, in denen eine Bedingung gilt (auch über den Rundenanfang hinweg)
@@ -543,7 +543,7 @@
   const START_AMPEL = [];
   {
     bodenFlaeche(1.6, 2 * HALB, MAT.karo, 0, 0, 0);
-    for (let k = 0; k < 4; k++) bodenFlaeche(0.3, 3.2, MAT.weiss, startIndex(k), startSeite(k) * 3.2, 2.6);
+    for (let k = 0; k < 16; k++) bodenFlaeche(0.3, 3.2, MAT.weiss, startIndex(k), startSeite(k) * 3.2, 2.6);
     const [sx, sz] = BAHN[0];
     const bruecke = new T.Group();
     bruecke.position.set(sx, 0, sz); bruecke.rotation.y = -RICHTUNG[0];
@@ -939,6 +939,9 @@
     const teile = {};
     const teil = (geo, mat, x, y, z) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
     const box = (b, h, t, x, y, z, mat) => teil(new T.BoxGeometry(b, h, t), mat, x, y, z);
+    // Kleinteile hängen in einer eigenen Gruppe, die bei weit entfernten Autos ausgeblendet wird
+    const details = new T.Group(); g.add(details); teile.details = details;
+    const dbox = (b, h, t, x, y, z, mat) => { const m = new T.Mesh(new T.BoxGeometry(b, h, t), mat); m.position.set(x, y, z); details.add(m); return m; };
     const kugel = (sx, sy, sz, x, y, z, mat) => { const m = teil(new T.SphereGeometry(1, 20, 12), mat, x, y, z); m.scale.set(sx, sy, sz); return m; };
 
     const ab = (name, m) => { (teile.abnehmbar[name] = teile.abnehmbar[name] || []).push(m); return m; };
@@ -952,26 +955,35 @@
       kugel(0.72, 0.15, 0.27, 1.5, 0.74, s * 0.66, oben);            // vordere Kotflügel
       kugel(0.95, 0.16, 0.3, -1.25, 0.84, s * 0.7, oben);            // breite Hinterbacken
       kugel(0.13, 0.1, 0.13, 2.08, 0.75, s * 0.66, new T.MeshBasicMaterial({ color: 0xfff6d8 }));   // runde Scheinwerfer
-      box(0.3, 0.025, 0.15, 1.5, 0.775, s * 0.3, schwarzMat).rotation.z = -0.12;   // Luftauslässe auf der Haube
-      box(0.34, 0.02, 0.2, 1.28, 0.885, s * 0.66, lamellenMat);       // Lamellen über den Vorderrädern
-      box(0.34, 0.16, 0.03, -0.62, 0.6, s * 0.955, schwarzMat);       // Lufteinlass vor dem Hinterrad
+      dbox(0.3, 0.025, 0.15, 1.5, 0.775, s * 0.3, schwarzMat).rotation.z = -0.12;   // Luftauslässe auf der Haube
+      dbox(0.34, 0.02, 0.2, 1.28, 0.885, s * 0.66, lamellenMat);       // Lamellen über den Vorderrädern
+      dbox(0.34, 0.16, 0.03, -0.62, 0.6, s * 0.955, schwarzMat);       // Lufteinlass vor dem Hinterrad
       ab("fluegel", box(0.08, 0.66, 0.06, -1.98, 1.24, s * 0.42, schwarzMat));   // Schwanenhals-Halter
       ab("fluegel", box(0.56, 0.24, 0.03, -2.1, 1.58, s * 0.93, schwarzMat));    // Endplatten
       const schrift = new T.Mesh(schriftGeo, schriftMat);              // Schriftzug unten an der Tür
       schrift.position.set(0.1, 0.3, s * 0.958); schrift.rotation.y = s > 0 ? 0 : Math.PI;
-      g.add(schrift);
+      details.add(schrift);
       (teile.spiegel = teile.spiegel || []).push(ab(s < 0 ? "spiegelL" : "spiegelR", box(0.14, 0.11, 0.24, 0.6, 1.0, s * 1.02, oben)));   // Außenspiegel
     }
-    box(0.38, 0.025, 0.5, 1.8, 0.745, 0, schwarzMat).rotation.z = -0.15;   // großer Auslass in der Fronthaube
+    dbox(0.38, 0.025, 0.5, 1.8, 0.745, 0, schwarzMat).rotation.z = -0.15;  // großer Auslass in der Fronthaube
     ab("fluegel", box(0.52, 0.05, 1.86, -2.1, 1.56, 0, schwarzMat));            // Heckflügel über Dachhöhe
     ab("fluegel", box(0.28, 0.04, 1.86, -1.93, 1.63, 0, schwarzMat)).rotation.z = 0.3;   // verstellbare Klappe (DRS)
     const heckSchrift = new T.Mesh(new T.PlaneGeometry(0.55, 0.1), schriftMat);
     heckSchrift.position.set(-2.4, 0.56, 0); heckSchrift.rotation.y = -Math.PI / 2;
-    g.add(heckSchrift);
+    details.add(heckSchrift);
     ab("splitter", box(0.3, 0.1, 1.95, 2.28, 0.2, 0, schwarzMat));              // Frontsplitter
     box(0.25, 0.18, 1.6, -2.28, 0.28, 0, schwarzMat);                 // Diffusor
-    box(0.04, 0.06, 1.7, -2.33, 0.78, 0, new T.MeshBasicMaterial({ color: 0xcc1010 }));   // Leuchtband hinten
-    for (const s of [-1, 1]) teil(new T.CylinderGeometry(0.05, 0.05, 0.12, 10).rotateZ(Math.PI / 2), felgeMat, -2.35, 0.35, s * 0.12);
+    // Rückleuchten: glimmen normal, leuchten beim Bremsen hell auf (Werte über 1 bringen das Leuchten zum Strahlen)
+    const bremsMat = new T.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+    bremsMat.color.setRGB(0.35, 0.02, 0.02);
+    teile.bremsMat = bremsMat;
+    box(0.04, 0.06, 1.7, -2.33, 0.78, 0, bremsMat);                   // Leuchtband hinten
+    for (const s of [-1, 1]) box(0.05, 0.12, 0.32, -2.335, 0.7, s * 0.62, bremsMat);   // Bremsleuchten
+    box(0.03, 0.035, 0.5, -0.95, 1.245, 0, bremsMat);                 // dritte Bremsleuchte über der Heckscheibe
+    for (const s of [-1, 1]) {
+      const rohr = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 0.12, 10).rotateZ(Math.PI / 2), felgeMat);
+      rohr.position.set(-2.35, 0.35, s * 0.12); details.add(rohr);
+    }
     if (f.rexy) {
       const maul = new T.Mesh(new T.PlaneGeometry(1.5, 0.3), new T.MeshBasicMaterial({ map: rexyFront, transparent: true }));
       maul.position.set(2.41, 0.36, 0); maul.rotation.y = Math.PI / 2; g.add(maul);
@@ -981,7 +993,7 @@
     for (const s of [-1, 1]) {
       const tuer = new T.Mesh(new T.PlaneGeometry(0.42, 0.42), nrMat);
       tuer.position.set(f.rexy ? 0.05 : 0.15, 0.66, s * 1.0); tuer.rotation.y = s > 0 ? 0 : Math.PI;
-      g.add(tuer);
+      details.add(tuer);
     }
     const nr = new T.Mesh(new T.PlaneGeometry(0.6, 0.6), nrMat);
     nr.rotation.x = -Math.PI / 2; nr.rotation.z = -Math.PI / 2; nr.position.set(-0.42, 1.34, 0);
@@ -1140,12 +1152,14 @@
   /* =========================================================
      Spiel
      ========================================================= */
+  // 15 Gegner, die schnellsten starten vorn; du startest als Letzter
   const FAHRER = [
-    { name: "Rot", farbe: 0xd6402f, grip: 12.0, nummer: 7 },
-    { name: "Blau", farbe: 0x2f6fd6, grip: 11.6, nummer: 22 },
-    { name: "Grün", farbe: 0x2fa863, grip: 11.2, nummer: 44 },
-    { name: "Du", farbe: 0x4cb832, spieler: true, rexy: true, nummer: 77 }
-  ];
+    ["Rot", 0xd6402f, 7], ["Blau", 0x2f6fd6, 22], ["Orange", 0xf07a1a, 4], ["Gelb", 0xf2c41c, 11],
+    ["Weiß", 0xeeeeea, 3], ["Schwarz", 0x1c1d20, 99], ["Silber", 0xa9adb3, 63], ["Lila", 0x7a3fc2, 21],
+    ["Pink", 0xe8508f, 14], ["Türkis", 0x1fb5a8, 31], ["Gold", 0xc9a227, 8], ["Dunkelrot", 0x8a1622, 16],
+    ["Hellblau", 0x6cc3f0, 55], ["Grün", 0x2fa863, 44], ["Braun", 0x7a4a2a, 27]
+  ].map(([name, farbe, nummer], k) => ({ name, farbe, nummer, grip: 12.2 - k * 0.11 }))
+    .concat([{ name: "Du", farbe: 0x4cb832, spieler: true, rexy: true, nummer: 77 }]);
   const VMAX = 80, VMAX_KI = 74;
 
   // Höchsttempo je Punkt der Ideallinie: Kurvengrenze, rückwärts heruntergebremst
@@ -1260,6 +1274,7 @@
     // Gas, Bremse, Handbremse, Luft- und Rollwiderstand; ein beschädigter Motor zieht schwächer
     if (e.gas && vl > -1) vl += 13.5 * (1 - sd * 0.4) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
     if (e.bremse) vl -= (vl > 0.5 ? 30 : 9) * dt;
+    a.bremst = (e.bremse && vl > 0.5) || e.handbremse;
     if (e.handbremse) vl -= Math.sign(vl) * Math.min(Math.abs(vl), 7 * dt);
     vl -= vl * (0.02 + 0.0004 * Math.abs(vl)) * dt;
     if (!e.gas && !e.bremse) vl -= vl * 0.15 * dt;
@@ -1350,13 +1365,28 @@
   function fahreKI(a, dt) {
     const l = lage(a.x, a.z, a.idx, 10);
     a.idx = l.i; a.seite = l.seite;
-    if (Math.random() < dt * 0.25) a.spurZiel = (Math.random() - 0.5) * 2.4;
-    a.spur += (a.spurZiel - a.spur) * dt * 0.5;
+    // langsameres Auto direkt voraus? Dann daneben setzen und überholen, sonst dahinter bremsen
+    let vorne = null, abstand = Infinity;
+    for (const b of autos) {
+      if (b === a) continue;
+      const ds = b.fortschritt - a.fortschritt;
+      if (ds <= 0 || ds > 7 || Math.abs(b.seite - a.seite) > 2.6) continue;
+      if (ds < abstand) { abstand = ds; vorne = b; }
+    }
+    a.ueberholen = Math.max(0, (a.ueberholen || 0) - dt);
+    if (vorne && a.v > vorne.v - 1) {
+      const rand = HALB - 1.3, frei = vorne.seite > 0 ? vorne.seite - 3.4 : vorne.seite + 3.4;
+      a.spurZiel = Math.max(-rand, Math.min(rand, frei)) - LINIE_O[a.idx];
+      a.ueberholen = 1.6;
+    } else if (!a.ueberholen && Math.random() < dt * 0.25) a.spurZiel = (Math.random() - 0.5) * 2.4;
+    a.spur += (a.spurZiel - a.spur) * dt * (a.ueberholen ? 1.8 : 0.5);
     const zi = wrap(a.idx + 3 + Math.floor(a.v / 7));
     const tx = LX[zi] + NX[zi] * a.spur, tz = LZ[zi] + NZ[zi] * a.spur;
     const d = winkelDiff(a.w, Math.atan2(tz - a.z, tx - a.x));
     a.w += Math.max(-1.6, Math.min(1.6, d * 3)) * dt;
-    const wunsch = a.profil[wrap(a.idx + 2)] * (1 - a.schaden.gesamt / 100 * 0.3);
+    let wunsch = a.profil[wrap(a.idx + 2)] * (1 - a.schaden.gesamt / 100 * 0.3);
+    if (vorne && abstand < 2.5 && Math.abs(vorne.seite - a.seite) < 2.2) wunsch = Math.min(wunsch, vorne.v - 0.5);
+    a.bremst = a.v > wunsch + 0.8;
     if (a.v < wunsch) a.v += 12.5 * Math.max(0.1, 1 - (a.v / VMAX) ** 2) * dt;
     else a.v -= Math.min(28, (a.v - wunsch) * 5) * dt;
     a.v = Math.max(0, a.v);
@@ -1845,6 +1875,10 @@
       const m = a.mesh;
       m.position.set(a.x, 0, a.z);
       m.rotation.y = -a.w;
+      const t = m.userData.teile;
+      const bremse = a.bremst && zustand !== "menue";
+      if (bremse !== t.bremseAn) { t.bremseAn = bremse; t.bremsMat.color.setRGB(bremse ? 4 : 0.35, bremse ? 0.12 : 0.02, bremse ? 0.08 : 0.02); }
+      t.details.visible = a.spieler || Math.hypot(a.x - spieler.x, a.z - spieler.z) < 90;
       m.rotation.x = a.spieler ? Math.max(-0.04, Math.min(0.04, -a.gier * a.v * 0.0012)) : 0;   // Seitenneigung
       const dreh = a.v * dt / 0.34;
       for (const [k, rad] of m.userData.teile.raeder.entries()) {
