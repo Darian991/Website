@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex">
+<title>Rennstrecke</title>
+<style>
+  :root {
+    --bg: #0f1a12;
+    --panel: rgba(10, 14, 12, 0.78);
+    --text: #f4f1ea;
+    --muted: #b9b4a8;
+    --accent: #e8b84a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: none; user-select: none; -webkit-user-select: none; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .hud { position: fixed; top: 12px; left: 12px; background: var(--panel); padding: 10px 14px; border-radius: 10px;
+    font-variant-numeric: tabular-nums; line-height: 1.5; font-size: 15px; pointer-events: none; }
+  .hud b { color: var(--accent); }
+  .tacho { position: fixed; bottom: 16px; right: 16px; background: var(--panel); padding: 8px 14px; border-radius: 10px;
+    font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; pointer-events: none; }
+  .tacho small { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: rgba(0,0,0,0.55); }
+  .overlay[hidden] { display: none; }
+  .box { background: #17221a; border: 1px solid #2c3a2f; border-radius: 14px; padding: 24px 28px; max-width: 420px; width: 100%; text-align: center; }
+  .box h1 { margin: 0 0 8px; font-size: 28px; }
+  .box p { color: var(--muted); margin: 8px 0; line-height: 1.5; }
+  .box kbd { background: #2a362d; border-radius: 4px; padding: 1px 6px; color: var(--text); font-family: inherit; }
+  .box button { margin-top: 14px; background: var(--accent); color: #1a1406; border: 0; border-radius: 8px; padding: 12px 26px;
+    font-size: 17px; font-weight: 700; cursor: pointer; }
+  .box button:hover { filter: brightness(1.08); }
+  .box table { margin: 12px auto 0; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .box td { padding: 3px 10px; text-align: left; }
+  .box tr.du td { color: var(--accent); font-weight: 700; }
+  .countdown { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;
+    font-size: 120px; font-weight: 800; color: var(--accent); text-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+  .touch { position: fixed; bottom: 16px; left: 16px; right: 140px; display: none; justify-content: space-between; pointer-events: none; }
+  .touch .grp { display: flex; gap: 12px; pointer-events: auto; }
+  .touch button { width: 72px; height: 72px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12); color: var(--text); font-size: 26px; touch-action: none; }
+  .touch button.an { background: rgba(232,184,74,0.45); }
+  @media (pointer: coarse) { .touch { display: flex; } .tacho { bottom: 100px; } }
+</style>
+</head>
+<body>
+<canvas id="spiel"></canvas>
+
+<div class="hud" id="hud"></div>
+<div class="tacho" id="tacho">0 <small>km/h</small></div>
+<div class="countdown" id="countdown"></div>
+
+<div class="touch" id="touch">
+  <div class="grp">
+    <button data-taste="links" aria-label="Links">◀</button>
+    <button data-taste="rechts" aria-label="Rechts">▶</button>
+  </div>
+  <div class="grp">
+    <button data-taste="bremse" aria-label="Bremsen">▼</button>
+    <button data-taste="gas" aria-label="Gas">▲</button>
+  </div>
+</div>
+
+<div class="overlay" id="start">
+  <div class="box">
+    <h1>🏁 Rennstrecke</h1>
+    <p>Fahre 3 Runden gegen drei Gegner. Wer zuerst ins Ziel kommt, gewinnt.</p>
+    <p><kbd>↑</kbd>/<kbd>W</kbd> Gas &nbsp; <kbd>↓</kbd>/<kbd>S</kbd> Bremse<br>
+       <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken &nbsp; <kbd>R</kbd> Neustart</p>
+    <p>Neben der Strecke im Gras wirst du langsamer.</p>
+    <button id="los">Los geht's</button>
+  </div>
+</div>
+
+<div class="overlay" id="ziel" hidden>
+  <div class="box">
+    <h1 id="zielTitel">Ziel!</h1>
+    <p id="zielText"></p>
+    <table id="zielTabelle"></table>
+    <button id="nochmal">Nochmal fahren</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ---------- Strecke ---------- */
+  const RUNDEN = 3;
+  const BREITE = 80;            // halbe Fahrbahnbreite
+  const KONTROLL = [
+    [400, 1500], [380, 900], [560, 450], [1000, 320], [1400, 520], [1650, 380], [2150, 300],
+    [2650, 450], [2800, 900], [2500, 1250], [2050, 1150], [1750, 1350], [2000, 1700], [2600, 1800],
+    [2700, 2150], [2300, 2400], [1500, 2350], [1050, 2050], [700, 2250]
+  ];
+
+  // Catmull-Rom durch die Kontrollpunkte, gleichmäßig abgetastet
+  function abtasten(punkte, proSegment) {
+    const roh = [];
+    const n = punkte.length;
+    for (let i = 0; i < n; i++) {
+      const p0 = punkte[(i - 1 + n) % n], p1 = punkte[i], p2 = punkte[(i + 1) % n], p3 = punkte[(i + 2) % n];
+      for (let s = 0; s < proSegment; s++) {
+        const t = s / proSegment, t2 = t * t, t3 = t2 * t;
+        roh.push([
+          0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+          0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+        ]);
+      }
+    }
+    // auf gleiche Abstände bringen
+    const schritt = 12;
+    const aus = [roh[0]];
+    let rest = 0;
+    for (let i = 1; i <= roh.length; i++) {
+      let a = roh[i - 1], b = roh[i % roh.length];
+      let d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      while (rest + d >= schritt) {
+        const f = (schritt - rest) / d;
+        a = [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+        aus.push(a);
+        d = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        rest = 0;
+      }
+      rest += d;
+    }
+    return aus;
+  }
+
+  const BAHN = abtasten(KONTROLL, 30);
+  const N = BAHN.length;
+  // Richtung und Krümmung je Punkt
+  const RICHTUNG = BAHN.map((p, i) => {
+    const q = BAHN[(i + 1) % N];
+    return Math.atan2(q[1] - p[1], q[0] - p[0]);
+  });
+  const KRUEMMUNG = RICHTUNG.map((w, i) => {
+    let d = RICHTUNG[(i + 6) % N] - w;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    return Math.abs(d);
+  });
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const [x, y] of BAHN) { minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y); }
+  const RAND = 400;
+  const WELT = { x: minX - RAND, y: minY - RAND, w: maxX - minX + 2 * RAND, h: maxY - minY + 2 * RAND };
+
+  /* ---------- Strecke einmal vorzeichnen ---------- */
+  const karte = document.createElement("canvas");
+  karte.width = Math.ceil(WELT.w); karte.height = Math.ceil(WELT.h);
+  (function zeichneStrecke() {
+    const g = karte.getContext("2d");
+    g.translate(-WELT.x, -WELT.y);
+    // Gras mit Streifen
+    g.fillStyle = "#2f6b34";
+    g.fillRect(WELT.x, WELT.y, WELT.w, WELT.h);
+    g.fillStyle = "#357539";
+    for (let y = WELT.y; y < WELT.y + WELT.h; y += 120) g.fillRect(WELT.x, y, WELT.w, 60);
+    // Bäume zufällig, aber nicht auf der Strecke
+    let saat = 7;
+    const zufall = () => (saat = (saat * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 260; i++) {
+      const x = WELT.x + zufall() * WELT.w, y = WELT.y + zufall() * WELT.h;
+      if (abstandZurBahn(x, y).d < BREITE + 90) continue;
+      const r = 18 + zufall() * 22;
+      g.fillStyle = "rgba(0,0,0,0.25)"; g.beginPath(); g.arc(x + 6, y + 8, r, 0, 7); g.fill();
+      g.fillStyle = "#1f4d24"; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+      g.fillStyle = "#2a6230"; g.beginPath(); g.arc(x - r * 0.25, y - r * 0.25, r * 0.6, 0, 7); g.fill();
+    }
+    const pfad = () => { g.beginPath(); BAHN.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); };
+    g.lineJoin = "round"; g.lineCap = "round";
+    // Auslaufzone
+    pfad(); g.strokeStyle = "#b8a77a"; g.lineWidth = BREITE * 2 + 50; g.stroke();
+    // Randsteine rot/weiß
+    pfad(); g.strokeStyle = "#f2f2f2"; g.lineWidth = BREITE * 2 + 16; g.stroke();
+    pfad(); g.setLineDash([22, 22]); g.strokeStyle = "#d33a2c"; g.stroke(); g.setLineDash([]);
+    // Asphalt
+    pfad(); g.strokeStyle = "#4a4d52"; g.lineWidth = BREITE * 2; g.stroke();
+    // Mittellinie
+    pfad(); g.setLineDash([40, 50]); g.strokeStyle = "rgba(255,255,255,0.55)"; g.lineWidth = 4; g.stroke(); g.setLineDash([]);
+    // Start/Ziel-Linie (Schachbrett)
+    const [sx, sy] = BAHN[0], w = RICHTUNG[0];
+    g.save(); g.translate(sx, sy); g.rotate(w);
+    const feld = 10;
+    for (let r = 0; r < 2; r++)
+      for (let k = -BREITE; k < BREITE; k += feld) {
+        g.fillStyle = ((k / feld + r) & 1) ? "#111" : "#fff";
+        g.fillRect(r * feld - feld, k, feld, feld);
+      }
+    g.restore();
+  })();
+
+  /* ---------- Hilfen ---------- */
+  function abstandZurBahn(x, y, start, fenster) {
+    let best = Infinity, idx = 0;
+    if (start === undefined) {
+      for (let i = 0; i < N; i++) { const d = (BAHN[i][0] - x) ** 2 + (BAHN[i][1] - y) ** 2; if (d < best) { best = d; idx = i; } }
+    } else {
+      for (let o = -fenster; o <= fenster; o++) {
+        const i = (start + o + N) % N;
+        const d = (BAHN[i][0] - x) ** 2 + (BAHN[i][1] - y) ** 2;
+        if (d < best) { best = d; idx = i; }
+      }
+    }
+    return { d: Math.sqrt(best), i: idx };
+  }
+  const winkelDiff = (a, b) => { let d = b - a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+  const zeit = (s) => {
+    if (!isFinite(s)) return "–:––.–";
+    const m = Math.floor(s / 60), r = s - m * 60;
+    return m + ":" + (r < 10 ? "0" : "") + r.toFixed(2);
+  };
+
+  /* ---------- Autos ---------- */
+  const FARBEN = [
+    { name: "Du", farbe: "#e8b84a" },
+    { name: "Rot", farbe: "#d6402f" },
+    { name: "Blau", farbe: "#3a7bd5" },
+    { name: "Grün", farbe: "#38b26b" }
+  ];
+  let autos = [];
+
+  function neuesRennen() {
+    autos = FARBEN.map((f, k) => {
+      // Startaufstellung hinter der Linie, versetzt
+      const reihe = Math.floor(k / 2), seite = k % 2 ? 1 : -1;
+      const i = (N - 4 - reihe * 6) % N;
+      const w = RICHTUNG[i];
+      const nx = -Math.sin(w), ny = Math.cos(w);
+      return {
+        ...f, spieler: k === 0,
+        x: BAHN[i][0] + nx * seite * 32, y: BAHN[i][1] + ny * seite * 32,
+        w, vx: 0, vy: 0, lenk: 0,
+        idx: i, runde: 0, fortschritt: i - N, // vor der Linie = negativ
+        rundenStart: 0, besteRunde: Infinity, fertig: null,
+        spur: (k - 1.5) * 18, tempo: 0.9 + k * 0.025, spuren: []
+      };
+    });
+    rennzeit = 0; startUhr = 3.5; zustand = "countdown";
+    ui.ziel.hidden = true;
+  }
+
+  /* ---------- Steuerung ---------- */
+  const tasten = { gas: false, bremse: false, links: false, rechts: false };
+  const KEYS = {
+    ArrowUp: "gas", KeyW: "gas", ArrowDown: "bremse", KeyS: "bremse", Space: "bremse",
+    ArrowLeft: "links", KeyA: "links", ArrowRight: "rechts", KeyD: "rechts"
+  };
+  addEventListener("keydown", (e) => {
+    if (KEYS[e.code]) { tasten[KEYS[e.code]] = true; e.preventDefault(); }
+    if (e.code === "KeyR" && zustand !== "menue") neuesRennen();
+    if ((e.code === "Enter") && zustand === "menue") ui.los.click();
+  });
+  addEventListener("keyup", (e) => { if (KEYS[e.code]) tasten[KEYS[e.code]] = false; });
+  addEventListener("blur", () => { for (const k in tasten) tasten[k] = false; });
+  document.querySelectorAll("#touch button").forEach((b) => {
+    const an = (v) => (e) => { e.preventDefault(); tasten[b.dataset.taste] = v; b.classList.toggle("an", v); };
+    b.addEventListener("pointerdown", an(true));
+    b.addEventListener("pointerup", an(false));
+    b.addEventListener("pointercancel", an(false));
+    b.addEventListener("pointerleave", an(false));
+  });
+
+  /* ---------- Physik ---------- */
+  const MAX = 620, BESCHL = 420, BREMS = 700, ROLL = 0.6, GRAS_MAX = 210;
+
+  function fahre(a, dt, eingabe) {
+    const fx = Math.cos(a.w), fy = Math.sin(a.w);
+    let vor = a.vx * fx + a.vy * fy;           // Längsgeschwindigkeit
+    let quer = -a.vx * fy + a.vy * fx;         // Quergeschwindigkeit
+
+    const bahn = abstandZurBahn(a.x, a.y, a.idx, 25);
+    a.idx = bahn.i;
+    const imGras = bahn.d > BREITE + 6;
+    const max = (imGras ? GRAS_MAX : MAX) * (a.spieler ? 1 : a.tempo);
+
+    if (eingabe.gas) vor += BESCHL * dt * (1 - Math.max(0, vor) / max);
+    if (eingabe.bremse) vor -= (vor > 0 ? BREMS : BESCHL * 0.5) * dt;
+    if (!eingabe.gas && !eingabe.bremse) vor -= vor * ROLL * dt;
+    if (vor < -160) vor = -160;
+    if (imGras && vor > GRAS_MAX) vor -= (vor - GRAS_MAX) * 2.5 * dt;
+
+    // Lenkung: wirkt erst mit Fahrt, bei hoher Fahrt etwas schwächer
+    const ziel = (eingabe.rechts ? 1 : 0) - (eingabe.links ? 1 : 0);
+    a.lenk += (ziel - a.lenk) * Math.min(1, dt * 10);
+    const tempoFaktor = Math.min(1, Math.abs(vor) / 120) * (1 - Math.min(0.45, Math.abs(vor) / MAX * 0.45));
+    a.w += a.lenk * 2.6 * tempoFaktor * dt * Math.sign(vor || 1);
+
+    // Haftung: Quergeschwindigkeit abbauen (Gras rutschiger)
+    const halt = imGras ? 3.5 : 7;
+    const rutsch = Math.abs(quer) > 90;
+    quer -= quer * Math.min(1, halt * dt);
+
+    const nfx = Math.cos(a.w), nfy = Math.sin(a.w);
+    a.vx = nfx * vor - nfy * quer;
+    a.vy = nfy * vor + nfx * quer;
+    a.x += a.vx * dt; a.y += a.vy * dt;
+
+    // Weltgrenze
+    a.x = Math.max(WELT.x + 20, Math.min(WELT.x + WELT.w - 20, a.x));
+    a.y = Math.max(WELT.y + 20, Math.min(WELT.y + WELT.h - 20, a.y));
+
+    // Reifenspuren beim Rutschen
+    if (rutsch || (eingabe.bremse && vor > 250)) {
+      a.spuren.push([a.x, a.y, 1]);
+      if (a.spuren.length > 200) a.spuren.shift();
+    }
+    for (const s of a.spuren) s[2] -= dt * 0.15;
+    while (a.spuren.length && a.spuren[0][2] <= 0) a.spuren.shift();
+
+    a.tachoWert = Math.abs(vor);
+    a.imGras = imGras;
+  }
+
+  function computer(a) {
+    // Zielpunkt etwas voraus auf der Ideallinie
+    const tempo = Math.hypot(a.vx, a.vy);
+    const voraus = 6 + Math.floor(tempo / 45);
+    const zi = (a.idx + voraus) % N;
+    const w = RICHTUNG[zi];
+    const tx = BAHN[zi][0] - Math.sin(w) * a.spur, ty = BAHN[zi][1] + Math.cos(w) * a.spur;
+    const d = winkelDiff(a.w, Math.atan2(ty - a.y, tx - a.x));
+    // vor Kurven abbremsen
+    let k = 0;
+    for (let o = 4; o < 30; o += 3) k = Math.max(k, KRUEMMUNG[(a.idx + o) % N]);
+    const wunsch = MAX * a.tempo * (1 - Math.min(0.62, k * 1.9));
+    return {
+      gas: tempo < wunsch, bremse: tempo > wunsch + 60,
+      links: d < -0.04, rechts: d > 0.04
+    };
+  }
+
+  function rundenZaehlen(a, alt) {
+    // Fortschritt fortlaufend mitzählen, damit Abkürzen nichts bringt
+    let schritt = a.idx - alt;
+    if (schritt > N / 2) schritt -= N;
+    if (schritt < -N / 2) schritt += N;
+    if (Math.abs(schritt) > 30) return; // Sprung über Gras – nicht werten
+    a.fortschritt += schritt;
+    const neueRunde = Math.floor(a.fortschritt / N) + 1;
+    if (neueRunde > a.runde && a.fortschritt >= 0) {
+      if (a.runde >= 1) a.besteRunde = Math.min(a.besteRunde, rennzeit - a.rundenStart);
+      a.runde = neueRunde;
+      a.rundenStart = rennzeit;
+      if (a.runde > RUNDEN && a.fertig === null) a.fertig = rennzeit;
+    }
+  }
+
+  function zusammenstoesse() {
+    for (let i = 0; i < autos.length; i++)
+      for (let j = i + 1; j < autos.length; j++) {
+        const a = autos[i], b = autos[j];
+        const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), min = 30;
+        if (d > 0 && d < min) {
+          const nx = dx / d, ny = dy / d, ueber = (min - d) / 2;
+          a.x -= nx * ueber; a.y -= ny * ueber; b.x += nx * ueber; b.y += ny * ueber;
+          const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+          if (rv < 0) {
+            const imp = -rv * 0.8;
+            a.vx -= nx * imp / 2; a.vy -= ny * imp / 2; b.vx += nx * imp / 2; b.vy += ny * imp / 2;
+          }
+        }
+      }
+  }
+
+  const platz = () => [...autos].sort((a, b) => {
+    if (a.fertig !== null && b.fertig !== null) return a.fertig - b.fertig;
+    if (a.fertig !== null) return -1;
+    if (b.fertig !== null) return 1;
+    return b.fortschritt - a.fortschritt;
+  });
+
+  /* ---------- Bestzeit merken (nur in diesem Browser) ---------- */
+  const SPEICHER = "rennstrecke-bestzeit";
+  const ladeBest = () => { try { return parseFloat(localStorage.getItem(SPEICHER)) || Infinity; } catch { return Infinity; } };
+  const speichereBest = (s) => { try { localStorage.setItem(SPEICHER, String(s)); } catch {} };
+  let bestzeit = ladeBest();
+
+  /* ---------- Zeichnen ---------- */
+  const leinwand = document.getElementById("spiel");
+  const g = leinwand.getContext("2d");
+  let B = 0, H = 0, dpr = 1;
+  function groesse() {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    B = innerWidth; H = innerHeight;
+    leinwand.width = B * dpr; leinwand.height = H * dpr;
+  }
+  addEventListener("resize", groesse); groesse();
+
+  const kamera = { x: BAHN[0][0], y: BAHN[0][1], zoom: 1 };
+
+  function zeichneAuto(a) {
+    g.save(); g.translate(a.x, a.y); g.rotate(a.w);
+    g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(-20, -10, 44, 24);
+    // Reifen
+    g.fillStyle = "#111";
+    for (const [rx, ry] of [[-14, -12], [-14, 8], [10, -12], [10, 8]]) g.fillRect(rx, ry, 10, 4);
+    // Karosserie
+    g.fillStyle = a.farbe;
+    g.beginPath(); g.roundRect(-22, -10, 44, 20, 6); g.fill();
+    g.fillStyle = "rgba(0,0,0,0.55)"; g.beginPath(); g.roundRect(-6, -8, 14, 16, 3); g.fill();  // Scheibe
+    g.fillStyle = "rgba(255,255,255,0.85)"; g.fillRect(-22, -2, 44, 4);                       // Rennstreifen
+    g.fillStyle = "#ffe9a8"; g.fillRect(19, -8, 3, 4); g.fillRect(19, 4, 3, 4);                // Scheinwerfer
+    g.restore();
+    if (!a.spieler) {
+      g.fillStyle = "rgba(0,0,0,0.6)"; g.font = "bold 12px system-ui"; g.textAlign = "center";
+      g.fillText(a.name, a.x, a.y - 22);
+    }
+  }
+
+  function zeichneMinikarte() {
+    const m = Math.min(180, B * 0.32);
+    const s = m / Math.max(WELT.w, WELT.h);
+    const ox = B - m * (WELT.w / Math.max(WELT.w, WELT.h)) - 14, oy = 14;
+    g.save(); g.translate(ox, oy);
+    g.fillStyle = "rgba(10,14,12,0.6)";
+    g.fillRect(-6, -6, WELT.w * s + 12, WELT.h * s + 12);
+    g.beginPath(); BAHN.forEach(([x, y], i) => { const px = (x - WELT.x) * s, py = (y - WELT.y) * s; i ? g.lineTo(px, py) : g.moveTo(px, py); });
+    g.closePath(); g.strokeStyle = "#9a9da3"; g.lineWidth = 4; g.stroke();
+    for (const a of autos) {
+      g.fillStyle = a.farbe; g.beginPath(); g.arc((a.x - WELT.x) * s, (a.y - WELT.y) * s, a.spieler ? 5 : 3.5, 0, 7); g.fill();
+    }
+    g.restore();
+  }
+
+  function zeichne() {
+    const ich = autos[0];
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = "#244f28"; g.fillRect(0, 0, B, H);
+
+    const tempo = Math.hypot(ich.vx, ich.vy);
+    const zielZoom = Math.min(B, H) < 600 ? 0.75 - tempo / MAX * 0.15 : 1.05 - tempo / MAX * 0.25;
+    kamera.zoom += (zielZoom - kamera.zoom) * 0.05;
+    kamera.x += (ich.x + ich.vx * 0.35 - kamera.x) * 0.12;
+    kamera.y += (ich.y + ich.vy * 0.35 - kamera.y) * 0.12;
+
+    g.save();
+    g.translate(B / 2, H / 2); g.scale(kamera.zoom, kamera.zoom); g.translate(-kamera.x, -kamera.y);
+    g.drawImage(karte, WELT.x, WELT.y);
+    for (const a of autos) for (const [x, y, alpha] of a.spuren) {
+      g.fillStyle = "rgba(20,20,20," + (alpha * 0.4) + ")"; g.fillRect(x - 3, y - 3, 6, 6);
+    }
+    for (const a of autos) if (!a.spieler) zeichneAuto(a);
+    zeichneAuto(ich);
+    g.restore();
+    zeichneMinikarte();
+  }
+
+  /* ---------- Anzeige ---------- */
+  const ui = {
+    hud: document.getElementById("hud"), tacho: document.getElementById("tacho"),
+    countdown: document.getElementById("countdown"), start: document.getElementById("start"),
+    los: document.getElementById("los"), ziel: document.getElementById("ziel"),
+    zielTitel: document.getElementById("zielTitel"), zielText: document.getElementById("zielText"),
+    zielTabelle: document.getElementById("zielTabelle"), nochmal: document.getElementById("nochmal")
+  };
+  ui.los.onclick = () => { ui.start.hidden = true; neuesRennen(); };
+  ui.nochmal.onclick = neuesRennen;
+
+  function anzeige() {
+    const ich = autos[0];
+    const reihenfolge = platz();
+    const mein = reihenfolge.indexOf(ich) + 1;
+    const runde = Math.max(1, Math.min(RUNDEN, ich.runde));
+    const aktuell = ich.runde >= 1 && ich.fertig === null ? rennzeit - ich.rundenStart : 0;
+    ui.hud.innerHTML =
+      "Platz <b>" + mein + "/" + autos.length + "</b><br>" +
+      "Runde <b>" + runde + "/" + RUNDEN + "</b><br>" +
+      "Zeit " + zeit(rennzeit) + "<br>" +
+      "Runde " + zeit(aktuell) + "<br>" +
+      "Beste " + zeit(ich.besteRunde) + "<br>" +
+      "Rekord " + zeit(bestzeit) + (ich.imGras ? "<br><b>Im Gras!</b>" : "");
+    ui.tacho.innerHTML = Math.round((ich.tachoWert || 0) * 0.4) + " <small>km/h</small>";
+  }
+
+  function zielAnzeigen() {
+    const ich = autos[0];
+    const reihenfolge = platz();
+    const mein = reihenfolge.indexOf(ich) + 1;
+    const neu = ich.fertig < bestzeit;
+    if (neu) { bestzeit = ich.fertig; speichereBest(bestzeit); }
+    ui.zielTitel.textContent = mein === 1 ? "🏆 Sieg!" : "Platz " + mein;
+    ui.zielText.textContent = "Gesamtzeit " + zeit(ich.fertig) + " · schnellste Runde " + zeit(ich.besteRunde) +
+      (neu ? " · Neuer Rekord!" : "");
+    ui.zielTabelle.innerHTML = reihenfolge.map((a, i) =>
+      "<tr" + (a.spieler ? ' class="du"' : "") + "><td>" + (i + 1) + ".</td><td>" + a.name + "</td><td>" +
+      (a.fertig !== null ? zeit(a.fertig) : "Runde " + Math.min(RUNDEN, Math.max(1, a.runde))) + "</td></tr>").join("");
+    ui.ziel.hidden = false;
+  }
+
+  /* ---------- Hauptschleife ---------- */
+  let zustand = "menue", rennzeit = 0, startUhr = 0, zuletzt = performance.now(), nachZiel = 0;
+  const leer = { gas: false, bremse: false, links: false, rechts: false };
+  neuesRennen(); zustand = "menue";
+
+  function schleife(jetzt) {
+    const dt = Math.min(0.033, (jetzt - zuletzt) / 1000);
+    zuletzt = jetzt;
+
+    if (zustand === "countdown") {
+      startUhr -= dt;
+      ui.countdown.textContent = startUhr > 0.5 ? Math.ceil(startUhr - 0.5) : "LOS!";
+      if (startUhr <= 0.5) { zustand = "rennen"; nachZiel = 0; }
+    } else if (zustand === "rennen" && startUhr > -0.5) {
+      startUhr -= dt;
+      if (startUhr <= -0.5) ui.countdown.textContent = "";
+    }
+
+    if (zustand === "rennen" || zustand === "auslauf") {
+      rennzeit += dt;
+      for (const a of autos) {
+        const alt = a.idx;
+        const eingabe = a.spieler
+          ? (a.fertig === null ? tasten : { ...leer, bremse: true })
+          : computer(a);
+        fahre(a, dt, eingabe);
+        rundenZaehlen(a, alt);
+      }
+      zusammenstoesse();
+      if (zustand === "rennen" && autos[0].fertig !== null) { zustand = "auslauf"; nachZiel = 0; }
+      if (zustand === "auslauf") {
+        nachZiel += dt;
+        if (nachZiel > 1.5) { zustand = "ende"; zielAnzeigen(); }
+      }
+    }
+
+    zeichne();
+    anzeige();
+    requestAnimationFrame(schleife);
+  }
+  requestAnimationFrame(schleife);
+})();
+</script>
+</body>
+</html>
