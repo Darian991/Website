@@ -36,7 +36,7 @@
   .drift small { display: block; font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.2em; }
   .hinweis { position: fixed; left: 50%; top: 40%; transform: translateX(-50%); font-weight: 800; font-size: 22px; pointer-events: none;
     color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-  .ampel { position: fixed; left: 50%; top: 18%; transform: translateX(-50%); display: none; gap: 10px; padding: 12px 16px;
+  .ampel { position: fixed; left: 50%; top: max(18%, 104px); transform: translateX(-50%); display: none; gap: 10px; padding: 12px 16px;
     background: #111; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
   .ampel i { width: 38px; height: 38px; border-radius: 50%; background: #2a0a08; display: block; }
   .ampel i.an { background: var(--rot); box-shadow: 0 0 18px var(--rot); }
@@ -46,6 +46,16 @@
     background: var(--panel); padding: 6px 10px; border-radius: 8px; }
   .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,0.55); }
   .overlay[hidden] { display: none; }
+  #start { background: rgba(0,0,0,0.3); }
+  @media (min-width: 761px) {
+    #start { justify-content: flex-start; padding-left: 5vw; background: linear-gradient(90deg, rgba(0,0,0,0.65), rgba(0,0,0,0) 62%); }
+  }
+  .vollbild { position: fixed; top: 186px; right: 12px; z-index: 20; background: var(--panel); color: var(--text);
+    border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 7px 12px; font: 600 13px system-ui, sans-serif; cursor: pointer; }
+  .vollbild:hover { background: rgba(40,44,48,0.85); }
+  .meldung { position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%); z-index: 30; max-width: min(460px, 90vw);
+    background: #141a17; border: 1px solid #2c3a2f; border-radius: 10px; padding: 10px 14px; font-size: 14px; text-align: center;
+    pointer-events: none; opacity: 0; transition: opacity .3s; }
   .box { background: #141a17; border: 1px solid #2c3a2f; border-radius: 14px; padding: 24px 28px; max-width: 460px; width: 100%; text-align: center; max-height: 100%; overflow-y: auto; touch-action: pan-y; }
   @media (max-height: 480px) { .box { padding: 14px 18px; } .box h1 { font-size: 22px; } .box p { margin: 5px 0; font-size: 14px; line-height: 1.4; } .box button { margin-top: 8px; padding: 10px 22px; } }
   .box h1 { margin: 0 0 8px; font-size: 28px; }
@@ -63,12 +73,14 @@
     background: rgba(255,255,255,0.12); color: var(--text); font-size: 22px; touch-action: none; }
   .touch button.klein { width: 54px; height: 54px; font-size: 11px; font-weight: 700; }
   .touch button.an { background: rgba(232,184,74,0.45); }
+  @media (pointer: coarse) and (max-width: 600px) { .tacho { bottom: 96px; } }
   @media (pointer: coarse) {
     .touch { display: flex; } .tasten { display: none; }
-    .tacho { bottom: auto; top: 12px; right: auto; left: 50%; transform: translateX(-50%); min-width: 0; padding: 6px 12px; text-align: center; }
+    .tacho { bottom: 14px; right: auto; left: 50%; transform: translateX(-50%); min-width: 0; padding: 6px 12px; text-align: center; }
     .tacho .kmh { font-size: 26px; }
     .hud { font-size: 12px; padding: 8px 10px; }
-    .spiegel { visibility: hidden; }
+    .vollbild { top: 150px; right: auto; left: 12px; }
+    .ampel i { width: 28px; height: 28px; }
   }
 </style>
 </head>
@@ -83,11 +95,13 @@
   <div class="drehzahl"><i id="drehzahl"></i></div>
 </div>
 <div class="spiegel" id="spiegel"></div>
+<div class="spiegel" id="spiegelL"></div>
+<div class="spiegel" id="spiegelR"></div>
 <div class="drift" id="drift"><small>DRIFT</small><span id="driftWert">0</span></div>
 <div class="hinweis" id="hinweis"></div>
 <div class="ampel" id="ampel"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="los" id="losText">LOS!</div>
-<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · C Kamera · M Ton · R Neustart</div>
+<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · C Kamera · F Vollbild · M Ton · R Neustart</div>
 
 <div class="touch" id="touch">
   <div class="grp">
@@ -108,7 +122,7 @@
     <p>3 Runden auf dem Rennkurs gegen drei Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
-    <p><kbd>C</kbd> Cockpit / Motorhaube / Verfolger · <kbd>M</kbd> Ton aus/an · <kbd>R</kbd> Neustart</p>
+    <p><kbd>C</kbd> Cockpit / Motorhaube / Verfolger · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton aus/an · <kbd>R</kbd> Neustart</p>
     <button id="los">Rennen starten</button>
   </div>
 </div>
@@ -125,6 +139,9 @@
 <div class="overlay" id="fehler" hidden>
   <div class="box"><h1>Schade</h1><p>Dein Browser kann leider kein 3D (WebGL) darstellen, oder die 3D-Bibliothek konnte nicht geladen werden.</p></div>
 </div>
+
+<button class="vollbild" id="vollbild" type="button">⛶ Vollbild</button>
+<div class="meldung" id="meldung"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -248,12 +265,12 @@
   renderer.toneMappingExposure = 1.05;
   renderer.shadowMap.enabled = !grob;
   renderer.shadowMap.type = T.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;
   document.getElementById("buehne").appendChild(renderer.domElement);
 
   const szene = new T.Scene();
   szene.fog = new T.Fog(0xc4d8ec, 300, 2300);
   const kamera = new T.PerspectiveCamera(72, 1, 0.1, 4000);
-  const spiegelKamera = new T.PerspectiveCamera(42, 3, 0.5, 900);
 
   const aniso = renderer.capabilities.getMaxAnisotropy();
   function leinwandTextur(b, h, malen, wiederholen) {
@@ -796,6 +813,17 @@
     });
   }
 
+  const lamellenMat = new T.MeshStandardMaterial({ roughness: 0.6, map: leinwandTextur(64, 64, (g, b, h) => {
+    g.fillStyle = "#101010"; g.fillRect(0, 0, b, h);
+    g.fillStyle = "#3a3a3a"; for (let x = 4; x < b; x += 10) g.fillRect(x, 0, 3, h);
+  }) });
+  const schriftGeo = new T.PlaneGeometry(0.75, 0.14);
+  const schriftMat = new T.MeshBasicMaterial({ transparent: true, map: leinwandTextur(320, 60, (g, b, h) => {
+    g.font = "italic 900 46px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.lineWidth = 7; g.strokeStyle = "#111"; g.strokeText("GT3 RS", b / 2, h / 2 + 2);
+    g.fillStyle = "#ffffff"; g.fillText("GT3 RS", b / 2, h / 2 + 2);
+  }) });
+
   // Auto zeigt in lokaler +X-Richtung, +Z ist rechts
   function baueAuto(f) {
     const g = new T.Group();
@@ -817,13 +845,22 @@
       kugel(0.72, 0.15, 0.27, 1.5, 0.74, s * 0.66, oben);            // vordere Kotflügel
       kugel(0.95, 0.16, 0.3, -1.25, 0.84, s * 0.7, oben);            // breite Hinterbacken
       kugel(0.13, 0.1, 0.13, 2.08, 0.75, s * 0.66, new T.MeshBasicMaterial({ color: 0xfff6d8 }));   // runde Scheinwerfer
-      box(0.32, 0.03, 0.16, 1.55, 0.81, s * 0.28, schwarzMat);        // Luftauslässe auf der Haube
-      box(0.08, 0.5, 0.06, -1.98, 1.2, s * 0.42, schwarzMat);         // Schwanenhals-Halter
-      box(0.5, 0.2, 0.03, -2.08, 1.5, s * 0.92, schwarzMat);          // Endplatten
+      box(0.3, 0.025, 0.15, 1.5, 0.775, s * 0.3, schwarzMat).rotation.z = -0.12;   // Luftauslässe auf der Haube
+      box(0.34, 0.02, 0.2, 1.28, 0.885, s * 0.66, lamellenMat);       // Lamellen über den Vorderrädern
+      box(0.34, 0.16, 0.03, -0.62, 0.6, s * 0.955, schwarzMat);       // Lufteinlass vor dem Hinterrad
+      box(0.08, 0.66, 0.06, -1.98, 1.24, s * 0.42, schwarzMat);       // Schwanenhals-Halter
+      box(0.56, 0.24, 0.03, -2.1, 1.58, s * 0.93, schwarzMat);        // Endplatten
+      const schrift = new T.Mesh(schriftGeo, schriftMat);              // Schriftzug unten an der Tür
+      schrift.position.set(0.1, 0.3, s * 0.958); schrift.rotation.y = s > 0 ? 0 : Math.PI;
+      g.add(schrift);
       (teile.spiegel = teile.spiegel || []).push(box(0.14, 0.11, 0.24, 0.6, 1.0, s * 1.02, oben));   // Außenspiegel
     }
-    box(0.5, 0.05, 1.86, -2.05, 1.46, 0, schwarzMat);                 // Heckflügel
-    box(0.3, 0.04, 1.86, -1.9, 1.52, 0, schwarzMat);                  // Klappe
+    box(0.38, 0.025, 0.5, 1.8, 0.745, 0, schwarzMat).rotation.z = -0.15;   // großer Auslass in der Fronthaube
+    box(0.52, 0.05, 1.86, -2.1, 1.56, 0, schwarzMat);                 // Heckflügel über Dachhöhe
+    box(0.28, 0.04, 1.86, -1.93, 1.63, 0, schwarzMat).rotation.z = 0.3;   // verstellbare Klappe (DRS)
+    const heckSchrift = new T.Mesh(new T.PlaneGeometry(0.55, 0.1), schriftMat);
+    heckSchrift.position.set(-2.4, 0.56, 0); heckSchrift.rotation.y = -Math.PI / 2;
+    g.add(heckSchrift);
     box(0.3, 0.1, 1.95, 2.28, 0.2, 0, schwarzMat);                    // Frontsplitter
     box(0.25, 0.18, 1.6, -2.28, 0.28, 0, schwarzMat);                 // Diffusor
     box(0.04, 0.06, 1.7, -2.33, 0.78, 0, new T.MeshBasicMaterial({ color: 0xcc1010 }));   // Leuchtband hinten
@@ -1014,6 +1051,7 @@
     if (e.code === "KeyR" && zustand !== "menue") neuesRennen();
     if (e.code === "KeyC") ansicht = (ansicht + 1) % ANSICHTEN.length;
     if (e.code === "KeyM") stumm = !stumm;
+    if (e.code === "KeyF" && kannVollbild) vollbild(!istVollbild());
     if (e.code === "Enter" && zustand === "menue") ui.losKnopf.click();
   });
   addEventListener("keyup", (e) => { if (KEYS[e.code]) tasten[KEYS[e.code]] = false; });
@@ -1240,12 +1278,43 @@
   /* ---------- Anzeige ---------- */
   const $ = (id) => document.getElementById(id);
   const ui = {
-    hud: $("hud"), kmh: $("kmh"), gang: $("gang"), drehzahl: $("drehzahl"), spiegel: $("spiegel"),
+    hud: $("hud"), kmh: $("kmh"), gang: $("gang"), drehzahl: $("drehzahl"), 
     drift: $("drift"), driftWert: $("driftWert"), hinweis: $("hinweis"), ampel: $("ampel"), los: $("losText"),
     start: $("start"), losKnopf: $("los"), ziel: $("ziel"), zielTitel: $("zielTitel"), zielText: $("zielText"),
     zielTabelle: $("zielTabelle"), nochmal: $("nochmal"), karte: $("karte")
   };
-  ui.losKnopf.onclick = () => { ui.start.hidden = true; tonStarten(); neuesRennen(); };
+  /* ---------- Vollbild ---------- */
+  const vollbildKnopf = $("vollbild"), meldung = $("meldung");
+  const wurzel = document.documentElement;
+  const kannVollbild = !!(wurzel.requestFullscreen || wurzel.webkitRequestFullscreen);
+  const istVollbild = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+  let meldungUhr = 0;
+  function melde(text) {
+    meldung.textContent = text; meldung.style.opacity = 1;
+    clearTimeout(meldungUhr); meldungUhr = setTimeout(() => { meldung.style.opacity = 0; }, 4500);
+  }
+  async function vollbild(an, leise) {
+    try {
+      if (an) {
+        await (wurzel.requestFullscreen || wurzel.webkitRequestFullscreen).call(wurzel);
+        try { await screen.orientation.lock("landscape"); } catch {}
+      } else {
+        await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      }
+    } catch {
+      if (!leise) melde("Vollbild ist in diesem Fenster gesperrt. Öffne das Spiel in einem eigenen Browser-Tab, dann klappt es.");
+    }
+  }
+  if (!kannVollbild) vollbildKnopf.hidden = true;
+  vollbildKnopf.onclick = () => vollbild(!istVollbild());
+  const vollbildGeaendert = () => { vollbildKnopf.textContent = istVollbild() ? "✕ Vollbild beenden" : "⛶ Vollbild"; groesse(); };
+  document.addEventListener("fullscreenchange", vollbildGeaendert);
+  document.addEventListener("webkitfullscreenchange", vollbildGeaendert);
+
+  ui.losKnopf.onclick = () => {
+    ui.start.hidden = true; tonStarten(); neuesRennen();
+    if (grob && kannVollbild && !istVollbild()) vollbild(true, true);   // auf dem Handy gleich bildschirmfüllend
+  };
   ui.nochmal.onclick = () => { tonStarten(); neuesRennen(); };
   const ampelLampen = [...ui.ampel.children];
 
@@ -1333,16 +1402,83 @@
     kamera.aspect = B / H; kamera.updateProjectionMatrix();
   }
   addEventListener("resize", groesse); groesse();
-  const spiegelRahmen = () => {
-    const w = Math.round(Math.min(340, B * 0.32)), h = Math.round(w * 0.26);
-    return { x: Math.round((B - w) / 2), y: 12, w, h };
-  };
+
+  /* ---------- Spiegel: Innenspiegel und zwei Außenspiegel, seitenverkehrt wie echte ---------- */
+  const SPIEGEL = [
+    { id: "spiegel", pos: [0.3, 1.35, 0], ziel: [-30, 0.8, 0], fov: 40, eigenesAuto: false },
+    { id: "spiegelL", pos: [0.6, 1.02, -1.2], ziel: [-30, 0.2, -8], fov: 32, eigenesAuto: true },
+    { id: "spiegelR", pos: [0.6, 1.02, 1.2], ziel: [-30, 0.2, 8], fov: 32, eigenesAuto: true }
+  ].map((sp) => {
+    const rt = new T.WebGLRenderTarget(4, 4);
+    rt.texture.encoding = T.sRGBEncoding;
+    const geo = new T.PlaneGeometry(2, 2);
+    const uv = geo.attributes.uv;
+    for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i));
+    const flaeche = new T.Scene();
+    flaeche.add(new T.Mesh(geo, new T.MeshBasicMaterial({ map: rt.texture, depthTest: false, depthWrite: false })));
+    return { ...sp, rt, flaeche, kam: new T.PerspectiveCamera(sp.fov, 2, 0.3, grob ? 350 : 700), div: document.getElementById(sp.id) };
+  });
+  const flaechenKamera = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  function spiegelRahmen(k) {
+    if (k === 0) {
+      const w = Math.round(Math.min(340, B * 0.32)), h = Math.round(w * 0.26);
+      return { x: Math.round((B - w) / 2), y: 12, w, h };
+    }
+    const w = Math.round(Math.min(220, B * 0.18)), h = Math.round(w * 0.6);
+    return { x: k === 1 ? 12 : B - w - 12, y: Math.round(Math.max(H * 0.4, 200)), w, h };
+  }
+  function spiegelZeichnen() {
+    const zeigen = ANSICHTEN[ansicht] === "cockpit" && zustand !== "menue";
+    for (const sp of SPIEGEL) sp.div.style.display = zeigen ? "block" : "none";
+    if (!zeigen) return;
+    const m = spieler.mesh, teile = m.userData.teile, pr = renderer.getPixelRatio();
+    cockpit.visible = false;
+    teile.hinterwagen.visible = teile.kabine.visible = true;
+    SPIEGEL.forEach((sp, k) => {
+      const r = spiegelRahmen(k);
+      Object.assign(sp.div.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" });
+      const bw = Math.max(1, Math.round(r.w * pr)), bh = Math.max(1, Math.round(r.h * pr));
+      if (sp.rt.width !== bw || sp.rt.height !== bh) sp.rt.setSize(bw, bh);
+      sp.kam.aspect = r.w / r.h; sp.kam.updateProjectionMatrix();
+      sp.kam.position.copy(m.localToWorld(hv1.set(...sp.pos)));
+      sp.kam.lookAt(m.localToWorld(hv2.set(...sp.ziel)));
+      m.visible = sp.eigenesAuto;
+      himmelKugel.position.copy(sp.kam.position);
+      renderer.setRenderTarget(sp.rt);
+      renderer.render(szene, sp.kam);
+      renderer.setRenderTarget(null);
+      renderer.setScissorTest(true);
+      renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
+      renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h);
+      renderer.render(sp.flaeche, flaechenKamera);
+      renderer.setScissorTest(false);
+    });
+    m.visible = true;
+    cockpit.visible = true;
+    teile.hinterwagen.visible = teile.kabine.visible = false;
+    renderer.setViewport(0, 0, B, H);
+  }
 
   let kamPos = null;
   const hv1 = new T.Vector3(), hv2 = new T.Vector3();
   function kameraSetzen(dt) {
     const a = spieler, m = a.mesh, teile = m.userData.teile;
     m.updateMatrixWorld();
+    if (zustand === "menue") {
+      // Showroom: die Kamera fährt langsam um das eigene Auto
+      cockpit.visible = false;
+      teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = true;
+      for (const sp of teile.spiegel) sp.visible = true;
+      const t = performance.now() / 1000 * 0.25;
+      kamera.position.set(a.x + Math.cos(t) * 7.2, 1.7, a.z + Math.sin(t) * 7.2);
+      kamera.lookAt(hv2.set(a.x, 0.75, a.z));
+      if (B > 760) kamera.translateX(-2.3);
+      kamera.fov = 48; kamera.updateProjectionMatrix();
+      himmelKugel.position.copy(kamera.position);
+      sonne.position.set(a.x + SONNE.x, SONNE.y, a.z + SONNE.z);
+      sonne.target.position.set(a.x, 0, a.z);
+      return;
+    }
     const art = ANSICHTEN[ansicht];
     cockpit.visible = art === "cockpit";
     teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = art !== "cockpit";
@@ -1370,8 +1506,6 @@
     kamera.updateProjectionMatrix();
     a.anprall = Math.max(0, a.anprall - dt * 2.5);
 
-    spiegelKamera.position.copy(m.localToWorld(hv1.set(0.3, 1.35, 0)));
-    spiegelKamera.lookAt(m.localToWorld(hv2.set(-30, 0.8, 0)));
     himmelKugel.position.copy(kamera.position);
     sonne.position.set(a.x + SONNE.x, SONNE.y, a.z + SONNE.z);
     sonne.target.position.set(a.x, 0, a.z);
@@ -1466,22 +1600,9 @@
 
     renderer.setScissorTest(false);
     renderer.setViewport(0, 0, B, H);
+    renderer.shadowMap.needsUpdate = true;     // Schatten nur einmal je Bild, nicht für jeden Spiegel neu
     renderer.render(szene, kamera);
-    const zeigeSpiegel = ANSICHTEN[ansicht] === "cockpit" && zustand !== "menue" && !grob;
-    ui.spiegel.style.display = zeigeSpiegel ? "block" : "none";
-    if (zeigeSpiegel) {
-      const r = spiegelRahmen();
-      Object.assign(ui.spiegel.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" });
-      spiegelKamera.aspect = r.w / r.h; spiegelKamera.updateProjectionMatrix();
-      spieler.mesh.visible = false;
-      himmelKugel.position.copy(spiegelKamera.position);
-      renderer.setScissorTest(true);
-      renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
-      renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h);
-      renderer.render(szene, spiegelKamera);
-      renderer.setScissorTest(false);
-      spieler.mesh.visible = true;
-    }
+    spiegelZeichnen();
     anzeige(jetzt);
     requestAnimationFrame(schleife);
   }
