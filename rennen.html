@@ -133,7 +133,7 @@
     <p>3 Runden auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
-    <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und der Motor verliert Leistung.</p>
+    <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und mit jedem Schaden wirst du langsamer – bei vollem Schaden bleibt gut die Hälfte des Tempos, und der Motor setzt aus.</p>
     <p><kbd>C</kbd> Kamera · <kbd>L</kbd> Ideallinie · <kbd>G</kbd> Grafik · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton · <kbd>R</kbd> Neustart</p>
     <div class="wahl" role="group" aria-label="Wetter">
       <button type="button" class="wahlKnopf an" data-wetter="sonne">☀️ Sonne</button>
@@ -1381,7 +1381,7 @@
         drift: false, kette: 0, driftPunkte: 0, schlupf: 0, flaeche: "asphalt", radSpur: null, rauchUhr: 0,
         spur: s * 1.5, spurZiel: 0, anprall: 0, gang: 1, drehzahl: 900, gasWert: 0,
         schaden: { gesamt: 0, vorn: 0, hinten: 0, links: 0, rechts: 0 }, trefferUhr: 0, motorRauchUhr: 0,
-        gangIst: 1, schaltUhr: 0, gL: 0, gQ: 0, altVl: 0, gischtUhr: 0
+        gangIst: 1, schaltUhr: 0, gL: 0, gQ: 0, altVl: 0, gischtUhr: 0, stottern: 0, schadenMeldung: 0, hoechstTempo: VMAX
       });
       reparieren(a);
     });
@@ -1444,11 +1444,16 @@
     a.idx = l.i; a.seite = l.seite;
     a.flaeche = untergrund(a);
     const aufGras = a.flaeche === "gras", imKies = a.flaeche === "kies";
+    // Schaden kostet deutlich Leistung: bei 100 % nur noch gut die Hälfte des Höchsttempos
     const sd = a.schaden.gesamt / 100;
-    const vmax = (imKies ? 22 : aufGras ? 34 : VMAX) * (1 - sd * 0.22);
+    const vmax = (imKies ? 22 : aufGras ? 34 : VMAX) * (1 - sd * 0.45);
+    a.hoechstTempo = VMAX * (1 - sd * 0.45);
+    // ein schwer beschädigter Motor setzt immer wieder kurz aus
+    if (a.stottern > 0) a.stottern -= dt;
+    else if (sd > 0.5 && e.gas && Math.random() < dt * (sd - 0.4) * 3) a.stottern = 0.12 + Math.random() * 0.2;
 
     // Gas, Bremse, Handbremse, Luft- und Rollwiderstand; ein beschädigter Motor zieht schwächer
-    if (e.gas && vl > -1 && a.schaltUhr <= 0) vl += 13.5 * (1 - sd * 0.4) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
+    if (e.gas && vl > -1 && a.schaltUhr <= 0 && !(a.stottern > 0)) vl += 13.5 * (1 - sd * 0.6) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
     if (e.bremse) vl -= (vl > 0.5 ? (nass ? 21 : 30) : 9) * dt;
     a.bremst = (e.bremse && vl > 0.5) || e.handbremse;
     if (e.handbremse) vl -= Math.sign(vl) * Math.min(Math.abs(vl), 7 * dt);
@@ -1473,6 +1478,7 @@
     if (aufGras) grip *= 0.5; else if (imKies) grip *= 0.6;
     if (a.ohneFluegel && v > 30) grip *= 0.9;          // ohne Heckflügel fehlt Abtrieb
     grip *= gripFaktor;                                 // auf nasser Strecke weniger Haftung
+    grip *= 1 - sd * 0.15;                              // verbogene Aufhängung, weniger Halt
     if (nass && a.flaeche === "kerb") grip *= 0.75;     // nasse Randsteine sind glatt
 
     let gierMax = Math.min(v / 2.6 * Math.tan(0.6), 1.15 * 15.5 / Math.max(v, 1));
@@ -1567,7 +1573,7 @@
     const tx = LX[zi] + NX[zi] * a.spur, tz = LZ[zi] + NZ[zi] * a.spur;
     const d = winkelDiff(a.w, Math.atan2(tz - a.z, tx - a.x));
     a.w += Math.max(-1.6, Math.min(1.6, d * 3)) * dt;
-    let wunsch = a.profil[wrap(a.idx + 2)] * (1 - a.schaden.gesamt / 100 * 0.3);
+    let wunsch = a.profil[wrap(a.idx + 2)] * (1 - a.schaden.gesamt / 100 * 0.45);
     if (vorne && abstand < 2.5 && Math.abs(vorne.seite - a.seite) < 2.2) wunsch = Math.min(wunsch, vorne.v - 0.5);
     a.bremst = a.v > wunsch + 0.8;
     if (a.v < wunsch) a.v += 12.5 * Math.max(0.1, 1 - (a.v / VMAX) ** 2) * dt;
@@ -1697,6 +1703,11 @@
     if (sd.rechts >= 40) abfallen(a, "spiegelR");
     if (a.spieler) {
       crashTon(stoss);
+      if (menge > 6) {
+        a.schadenMeldung = 2.5;
+        a.schadenText = sd.gesamt >= 70 ? "Motor schwer beschädigt – Höchsttempo " + Math.round(VMAX * (1 - sd.gesamt / 100 * 0.45) * 3.6) + " km/h"
+          : sd.gesamt >= 35 ? "Auto beschädigt – weniger Leistung" : "Leichter Schaden";
+      }
       if (zone === "vorn" && menge > 12) risseZeichnen(false);
     }
   }
@@ -1861,7 +1872,7 @@
     ton.o3.frequency.setTargetAtTime(f * 2, t, 0.02);
     ton.filter.frequency.setTargetAtTime(400 + a.gasWert * 2200 + a.drehzahl * 0.15, t, 0.04);
     const aus = stumm || !laeuft;
-    const schalten = a.schaltUhr > 0 ? 0.45 : 1;
+    const schalten = a.schaltUhr > 0 || a.stottern > 0 ? 0.35 : 1;
     ton.motorLaut.gain.setTargetAtTime(aus ? 0 : (0.045 + a.gasWert * 0.075) * schalten, t, 0.025);
     if (laeuft && ton.altGas > 0.7 && a.gasWert < 0.4 && a.drehzahl > 5500) fehlzuendung(2 + (Math.random() * 4 | 0));
     if (laeuft && a.hochgeschaltet && Math.random() < 0.45) fehlzuendung(1);
@@ -1974,7 +1985,9 @@
     const zeigeDrift = a.kette > 5;
     ui.drift.style.opacity = zeigeDrift ? 1 : 0;
     if (zeigeDrift) ui.driftWert.textContent = "+" + Math.round(a.kette);
-    ui.hinweis.textContent = zustand === "rennen" && a.flaeche === "kies" ? "Im Kiesbett!" : zustand === "rennen" && a.flaeche === "gras" ? "Im Gras!" : "";
+    if (a.schadenMeldung > 0) a.schadenMeldung -= 1 / 60;
+    ui.hinweis.textContent = zustand === "rennen" && a.schadenMeldung > 0 ? a.schadenText
+      : zustand === "rennen" && a.flaeche === "kies" ? "Im Kiesbett!" : zustand === "rennen" && a.flaeche === "gras" ? "Im Gras!" : "";
 
     if (jetzt - letzteAnzeige < 100) return;
     letzteAnzeige = jetzt;
@@ -1986,7 +1999,8 @@
       "Runde " + zeit(aktuell) + "<br>" +
       "Beste " + zeit(a.besteRunde) + "<br>" +
       "Driftpunkte <b>" + a.driftPunkte + "</b><br>" +
-      "Schaden <b>" + Math.round(a.schaden.gesamt) + " %</b><br>" +
+      "Schaden <b>" + Math.round(a.schaden.gesamt) + " %</b>" +
+      (a.schaden.gesamt >= 10 ? " · max. " + Math.round((a.hoechstTempo || VMAX) * 3.6) + " km/h" : "") + "<br>" +
       "Rekord " + zeit(bestzeit);
     schadenZeichnen(a.schaden);
     zeichneKarte();
