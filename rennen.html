@@ -105,7 +105,7 @@
 <div class="overlay" id="start">
   <div class="box">
     <h1>🏁 Grand Prix</h1>
-    <p>3 Runden auf dem Rennkurs gegen drei Gegner, aus dem Cockpit gesehen. Du startest von ganz hinten.</p>
+    <p>3 Runden auf dem Rennkurs gegen drei Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
     <p><kbd>C</kbd> Cockpit / Motorhaube / Verfolger · <kbd>M</kbd> Ton aus/an · <kbd>R</kbd> Neustart</p>
@@ -639,44 +639,215 @@
   szene.add(sonne, sonne.target);
   const SONNE = new T.Vector3(-0.45, 1, -0.35).normalize().multiplyScalar(180);
 
-  /* ---------- Autos ---------- */
+  /* ---------- Autos: 911 GT3 RS ---------- */
   const glasMat = new T.MeshStandardMaterial({ color: 0x0d1418, roughness: 0.05, metalness: 0.8 });
   const reifenMat = new T.MeshStandardMaterial({ color: 0x141414, roughness: 0.9 });
-  const felgeMat = new T.MeshStandardMaterial({ color: 0xc9ccd0, roughness: 0.3, metalness: 0.8 });
+  const felgeMat = new T.MeshStandardMaterial({ color: 0x2a2b2e, roughness: 0.35, metalness: 0.8 });
   const schwarzMat = new T.MeshStandardMaterial({ color: 0x151515, roughness: 0.6 });
-  const radGeo = new T.CylinderGeometry(0.36, 0.36, 0.32, 18); radGeo.rotateX(Math.PI / 2);
-  const felgeGeo = new T.CylinderGeometry(0.22, 0.22, 0.34, 6); felgeGeo.rotateX(Math.PI / 2);
+  const radGeo = new T.CylinderGeometry(0.34, 0.34, 0.3, 20); radGeo.rotateX(Math.PI / 2);
+  const felgeGeo = new T.CylinderGeometry(0.23, 0.23, 0.32, 10); felgeGeo.rotateX(Math.PI / 2);
+  const RADSTAND = 1.23, SPUR = 0.8;
+
+  // Seitenansicht der Karosserie in Metern (x nach vorn, y nach oben), mit Radausschnitten.
+  // Vorder- und Hinterwagen sind getrennt, damit man im Cockpit über die Haube schaut.
+  const TRENNUNG = 0.7;
+  const radbogen = (s, cx) => { s.lineTo(cx - 0.45, 0.2); s.absarc(cx, 0.25, 0.45, Math.PI, 0, true); s.lineTo(cx + 0.45, 0.2); };
+  const vorderwagenForm = (() => {
+    const s = new T.Shape();
+    s.moveTo(TRENNUNG, 0.2);
+    radbogen(s, RADSTAND);
+    s.lineTo(2.18, 0.2);
+    s.quadraticCurveTo(2.36, 0.22, 2.34, 0.42);      // Bugschürze
+    s.quadraticCurveTo(2.3, 0.6, 2.05, 0.66);        // Bug
+    s.quadraticCurveTo(1.4, 0.74, 0.75, 0.86);       // Fronthaube
+    s.lineTo(TRENNUNG, 0.865);
+    s.lineTo(TRENNUNG, 0.2);
+    return s;
+  })();
+  const hinterwagenForm = (() => {
+    const s = new T.Shape();
+    s.moveTo(TRENNUNG, 0.865);
+    s.lineTo(-1.5, 0.9);                             // Gürtellinie
+    s.quadraticCurveTo(-2.0, 0.9, -2.26, 0.8);       // Motordeckel
+    s.quadraticCurveTo(-2.36, 0.6, -2.3, 0.28);      // Heck
+    s.lineTo(-2.15, 0.2);
+    radbogen(s, -RADSTAND);
+    s.lineTo(TRENNUNG, 0.2);
+    s.lineTo(TRENNUNG, 0.865);
+    return s;
+  })();
+  const kabinenForm = (() => {
+    const s = new T.Shape();
+    s.moveTo(0.78, 0.84);
+    s.quadraticCurveTo(0.35, 1.05, 0.0, 1.27);       // Frontscheibe
+    s.quadraticCurveTo(-0.45, 1.34, -0.8, 1.26);     // Dach
+    s.quadraticCurveTo(-1.3, 1.12, -1.75, 0.88);     // flach abfallendes Heck
+    s.lineTo(0.78, 0.84);
+    return s;
+  })();
+  function extrudiert(form, breite, rund) {
+    const geo = new T.ExtrudeGeometry(form, { depth: breite - 2 * rund, bevelEnabled: true, bevelThickness: rund,
+      bevelSize: rund * 0.6, bevelSegments: 3, curveSegments: 14 });
+    geo.translate(0, 0, -(breite - 2 * rund) / 2);
+    return geo;
+  }
+  const VORDERWAGEN_GEO = extrudiert(vorderwagenForm, 1.9, 0.09);
+  const HINTERWAGEN_GEO = extrudiert(hinterwagenForm, 1.9, 0.09);
+  const KABINE_GEO = extrudiert(kabinenForm, 1.38, 0.06);
+
+  // Folie für die Flanken: Textur-Koordinaten sind die Meter der Seitenansicht
+  function seitenTextur(malen) {
+    const t = leinwandTextur(1536, 480, (g, b, h) => {
+      const P = (x, y) => [(x / 4.8 + 0.5) * b, (1 - y / 1.5) * h];
+      malen(g, b, h, P);
+    });
+    t.repeat.set(1 / 4.8, 1 / 1.5);
+    t.offset.set(0.5, 0);
+    return t;
+  }
+  function pfad(g, P, punkte) { g.beginPath(); punkte.forEach(([x, y], i) => i ? g.lineTo(...P(x, y)) : g.moveTo(...P(x, y))); g.closePath(); }
+
+  // „Rexy“: grüner T-Rex mit aufgerissenem Maul an der Front
+  const REXY_GRUEN = "#4cb832", REXY_DUNKEL = "#1d5a17";
+  const rexySeite = seitenTextur((g, b, h, P) => {
+    const verlauf = g.createLinearGradient(0, P(0, 1.0)[1], 0, P(0, 0.2)[1]);
+    verlauf.addColorStop(0, "#5fc93f"); verlauf.addColorStop(1, "#2e7f25");
+    g.fillStyle = verlauf; g.fillRect(0, 0, b, h);
+    // Bauch
+    g.fillStyle = "#c6e07a";
+    pfad(g, P, [[2.4, 0.15], [2.4, 0.3], [1.6, 0.38], [1.0, 0.4], [0.2, 0.36], [-0.5, 0.3], [-0.85, 0.15]]);
+    g.fill();
+    // Schuppen
+    for (let k = 0; k < 2600; k++) {
+      const x = Math.random() * b, y = Math.random() * h;
+      g.strokeStyle = "rgba(10,50,8,0.22)"; g.lineWidth = 1.5;
+      g.beginPath(); g.arc(x, y, 5 + Math.random() * 4, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
+    }
+    // Streifen auf dem Rücken
+    g.fillStyle = REXY_DUNKEL;
+    for (let x = -2.1; x < 0.7; x += 0.32) pfad(g, P, [[x, 0.95], [x + 0.18, 0.95], [x + 0.05, 0.62 + Math.random() * 0.08]]), g.fill();
+    // Oberschenkel und Fuß mit Krallen über dem Hinterrad
+    g.fillStyle = "#3d9a2c"; g.strokeStyle = REXY_DUNKEL; g.lineWidth = 6;
+    g.beginPath(); g.ellipse(...P(-1.05, 0.66), 0.62 * 320, 0.2 * 320, -0.15, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = "#3d9a2c";
+    pfad(g, P, [[-0.75, 0.6], [-0.55, 0.32], [-0.35, 0.22], [-0.75, 0.22], [-0.95, 0.5]]); g.fill(); g.stroke();
+    g.fillStyle = "#f4efdc";
+    for (const [x, y] of [[-0.33, 0.22], [-0.45, 0.22], [-0.57, 0.22]]) { pfad(g, P, [[x, y + 0.06], [x + 0.08, y - 0.01], [x - 0.02, y]]); g.fill(); }
+    // kleines Ärmchen an der Tür
+    g.fillStyle = "#3d9a2c"; g.lineWidth = 5;
+    pfad(g, P, [[0.45, 0.66], [0.62, 0.6], [0.78, 0.47], [0.72, 0.43], [0.55, 0.52], [0.38, 0.58]]); g.fill(); g.stroke();
+    g.fillStyle = "#f4efdc";
+    for (const d of [0, 0.05]) { pfad(g, P, [[0.76 + d, 0.47 - d * 0.4], [0.86 + d, 0.42 - d * 0.4], [0.75 + d, 0.43 - d * 0.4]]); g.fill(); }
+    // Maul
+    const oben = [[2.42, 0.54], [2.0, 0.6], [1.6, 0.6], [1.22, 0.53]];
+    const unten = [[1.22, 0.53], [1.55, 0.4], [2.0, 0.33], [2.42, 0.3]];
+    g.fillStyle = "#4a0a0e";
+    pfad(g, P, [...oben, ...unten]); g.fill();
+    g.fillStyle = "#b8394d";
+    pfad(g, P, [[1.4, 0.47], [1.9, 0.4], [2.42, 0.36], [2.42, 0.32], [2.0, 0.34], [1.55, 0.41]]); g.fill();
+    g.fillStyle = "#f6f1de";
+    for (let x = 1.35; x < 2.38; x += 0.085) {
+      const t = (x - 1.22) / 1.2, yo = 0.53 + Math.sin(Math.min(1, t * 1.6) * Math.PI / 2) * 0.07 - Math.max(0, t - 0.6) * 0.15;
+      pfad(g, P, [[x - 0.03, yo], [x + 0.03, yo], [x, yo - 0.07]]); g.fill();
+      const yu = 0.53 - Math.min(1, t * 1.8) * 0.15 - Math.max(0, t - 0.55) * 0.08;
+      pfad(g, P, [[x - 0.025, yu], [x + 0.025, yu], [x + 0.005, yu + 0.055]]); g.fill();
+    }
+    g.strokeStyle = REXY_DUNKEL; g.lineWidth = 7; g.lineJoin = "round";
+    pfad(g, P, [...oben, ...unten]); g.stroke();
+    // Auge mit Augenbraue, Nasenloch
+    const [ax, ay] = P(1.38, 0.74);
+    g.fillStyle = "#123d0f"; g.beginPath(); g.ellipse(ax, ay, 34, 24, -0.2, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#f5b400"; g.beginPath(); g.arc(ax + 4, ay, 17, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#000"; g.beginPath(); g.ellipse(ax + 4, ay, 4, 15, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#fff"; g.beginPath(); g.arc(ax + 10, ay - 7, 4, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = REXY_DUNKEL; g.lineWidth = 12; g.lineCap = "round";
+    g.beginPath(); g.moveTo(ax - 40, ay - 24); g.quadraticCurveTo(ax, ay - 46, ax + 44, ay - 22); g.stroke();
+    g.fillStyle = "#123d0f"; g.beginPath(); g.ellipse(...P(2.2, 0.63), 14, 7, 0.2, 0, Math.PI * 2); g.fill();
+  });
+  const rexyOben = leinwandTextur(256, 256, (g, b, h) => {
+    g.fillStyle = REXY_GRUEN; g.fillRect(0, 0, b, h);
+    for (let k = 0; k < 500; k++) {
+      g.strokeStyle = "rgba(10,50,8,0.25)"; g.lineWidth = 1.5;
+      g.beginPath(); g.arc(Math.random() * b, Math.random() * h, 5 + Math.random() * 4, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
+    }
+  }, true);
+  rexyOben.repeat.set(1.4, 1.4);
+  // Maul von vorn gesehen, auf der Bugschürze
+  const rexyFront = leinwandTextur(512, 112, (g, b, h) => {
+    g.fillStyle = "#4a0a0e";
+    g.beginPath(); g.moveTo(0, h * 0.5); g.quadraticCurveTo(b / 2, -h * 0.25, b, h * 0.5); g.quadraticCurveTo(b / 2, h * 1.2, 0, h * 0.5); g.fill();
+    g.fillStyle = "#b8394d"; g.beginPath(); g.ellipse(b / 2, h * 0.78, b * 0.3, h * 0.14, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#f6f1de";
+    for (let x = 30; x < b - 20; x += 26) {
+      const yo = h * 0.5 - Math.sin(x / b * Math.PI) * h * 0.36, yu = h * 0.5 + Math.sin(x / b * Math.PI) * h * 0.34;
+      g.beginPath(); g.moveTo(x - 9, yo); g.lineTo(x + 9, yo); g.lineTo(x, yo + 22); g.fill();
+      g.beginPath(); g.moveTo(x - 8, yu); g.lineTo(x + 8, yu); g.lineTo(x, yu - 18); g.fill();
+    }
+  });
+
+  // Gegner: einfarbig mit weißem Streifen
+  function einfarbigSeite(farbe) {
+    return seitenTextur((g, b, h, P) => {
+      g.fillStyle = farbe; g.fillRect(0, 0, b, h);
+      g.fillStyle = "rgba(255,255,255,0.92)";
+      pfad(g, P, [[2.4, 0.42], [-2.4, 0.42], [-2.4, 0.5], [2.4, 0.5]]); g.fill();
+      g.fillStyle = "rgba(0,0,0,0.25)";
+      pfad(g, P, [[2.4, 0.2], [-2.4, 0.2], [-2.4, 0.3], [2.4, 0.3]]); g.fill();
+    });
+  }
 
   // Auto zeigt in lokaler +X-Richtung, +Z ist rechts
-  function baueAuto(farbe, nummer) {
+  function baueAuto(f) {
     const g = new T.Group();
     g.rotation.order = "YXZ";
-    const lack = new T.MeshStandardMaterial({ color: farbe, roughness: 0.25, metalness: 0.55 });
+    const css = "#" + f.farbe.toString(16).padStart(6, "0");
+    const seite = new T.MeshStandardMaterial({ map: f.rexy ? rexySeite : einfarbigSeite(css), roughness: 0.3, metalness: 0.25 });
+    const oben = f.rexy ? new T.MeshStandardMaterial({ map: rexyOben, roughness: 0.3, metalness: 0.25 })
+      : new T.MeshStandardMaterial({ color: f.farbe, roughness: 0.25, metalness: 0.5 });
     const teile = {};
-    const box = (b, h, t, x, y, z, mat) => { const m = new T.Mesh(new T.BoxGeometry(b, h, t), mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
-    box(4.5, 0.32, 1.95, 0, 0.42, 0, lack);
-    box(1.7, 0.22, 1.85, 1.3, 0.68, 0, lack);
-    box(1.3, 0.26, 1.85, -1.6, 0.7, 0, lack);
-    box(1.6, 0.18, 1.85, -0.25, 0.66, 0, lack);
-    teile.kabine = box(1.9, 0.55, 1.55, -0.35, 1.02, 0, glasMat);
-    teile.dachTeil = box(1.4, 0.07, 1.5, -0.45, 1.32, 0, lack);
-    box(0.35, 0.06, 1.9, -2.15, 1.2, 0, schwarzMat);
-    box(0.08, 0.38, 0.08, -2.1, 0.98, 0.6, schwarzMat);
-    box(0.08, 0.38, 0.08, -2.1, 0.98, -0.6, schwarzMat);
-    box(0.25, 0.12, 1.95, 2.3, 0.3, 0, schwarzMat);
-    const licht = new T.MeshBasicMaterial({ color: 0xfff6d8 });
-    box(0.05, 0.1, 0.4, 2.26, 0.62, 0.65, licht); box(0.05, 0.1, 0.4, 2.26, 0.62, -0.65, licht);
-    const rueck = new T.MeshBasicMaterial({ color: 0xbb1111 });
-    box(0.05, 0.1, 0.5, -2.26, 0.7, 0.6, rueck); box(0.05, 0.1, 0.5, -2.26, 0.7, -0.6, rueck);
-    const nr = new T.Mesh(new T.PlaneGeometry(0.9, 0.9), new T.MeshBasicMaterial({ map: zahlTex(String(nummer)) }));
-    nr.rotation.x = -Math.PI / 2; nr.rotation.z = -Math.PI / 2; nr.position.set(-0.45, 1.36, 0);
+    const teil = (geo, mat, x, y, z) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
+    const box = (b, h, t, x, y, z, mat) => teil(new T.BoxGeometry(b, h, t), mat, x, y, z);
+    const kugel = (sx, sy, sz, x, y, z, mat) => { const m = teil(new T.SphereGeometry(1, 20, 12), mat, x, y, z); m.scale.set(sx, sy, sz); return m; };
+
+    teil(VORDERWAGEN_GEO, [seite, oben], 0, 0, 0);
+    teile.hinterwagen = teil(HINTERWAGEN_GEO, [seite, oben], 0, 0, 0);
+    teile.kabine = teil(KABINE_GEO, glasMat, 0, 0, 0);
+    teile.dachTeil = box(0.85, 0.04, 1.2, -0.42, 1.315, 0, oben);
+    for (const s of [-1, 1]) {
+      kugel(0.72, 0.15, 0.27, 1.5, 0.74, s * 0.66, oben);            // vordere Kotflügel
+      kugel(0.95, 0.16, 0.3, -1.25, 0.84, s * 0.7, oben);            // breite Hinterbacken
+      kugel(0.13, 0.1, 0.13, 2.08, 0.75, s * 0.66, new T.MeshBasicMaterial({ color: 0xfff6d8 }));   // runde Scheinwerfer
+      box(0.32, 0.03, 0.16, 1.55, 0.81, s * 0.28, schwarzMat);        // Luftauslässe auf der Haube
+      box(0.08, 0.5, 0.06, -1.98, 1.2, s * 0.42, schwarzMat);         // Schwanenhals-Halter
+      box(0.5, 0.2, 0.03, -2.08, 1.5, s * 0.92, schwarzMat);          // Endplatten
+      (teile.spiegel = teile.spiegel || []).push(box(0.14, 0.11, 0.24, 0.6, 1.0, s * 1.02, oben));   // Außenspiegel
+    }
+    box(0.5, 0.05, 1.86, -2.05, 1.46, 0, schwarzMat);                 // Heckflügel
+    box(0.3, 0.04, 1.86, -1.9, 1.52, 0, schwarzMat);                  // Klappe
+    box(0.3, 0.1, 1.95, 2.28, 0.2, 0, schwarzMat);                    // Frontsplitter
+    box(0.25, 0.18, 1.6, -2.28, 0.28, 0, schwarzMat);                 // Diffusor
+    box(0.04, 0.06, 1.7, -2.33, 0.78, 0, new T.MeshBasicMaterial({ color: 0xcc1010 }));   // Leuchtband hinten
+    for (const s of [-1, 1]) teil(new T.CylinderGeometry(0.05, 0.05, 0.12, 10).rotateZ(Math.PI / 2), felgeMat, -2.35, 0.35, s * 0.12);
+    if (f.rexy) {
+      const maul = new T.Mesh(new T.PlaneGeometry(1.5, 0.3), new T.MeshBasicMaterial({ map: rexyFront, transparent: true }));
+      maul.position.set(2.41, 0.36, 0); maul.rotation.y = Math.PI / 2; g.add(maul);
+    }
+    // Startnummern auf Türen und Dach
+    const nrMat = new T.MeshBasicMaterial({ map: zahlTex(String(f.nummer)) });
+    for (const s of [-1, 1]) {
+      const tuer = new T.Mesh(new T.PlaneGeometry(0.42, 0.42), nrMat);
+      tuer.position.set(f.rexy ? 0.05 : 0.15, 0.66, s * 1.0); tuer.rotation.y = s > 0 ? 0 : Math.PI;
+      g.add(tuer);
+    }
+    const nr = new T.Mesh(new T.PlaneGeometry(0.6, 0.6), nrMat);
+    nr.rotation.x = -Math.PI / 2; nr.rotation.z = -Math.PI / 2; nr.position.set(-0.42, 1.34, 0);
     g.add(nr); teile.nr = nr;
     teile.raeder = [];
-    for (const [x, z] of [[1.45, 0.88], [1.45, -0.88], [-1.45, 0.88], [-1.45, -0.88]]) {
+    for (const [x, z] of [[RADSTAND, SPUR], [RADSTAND, -SPUR], [-RADSTAND, SPUR], [-RADSTAND, -SPUR]]) {
       const rad = new T.Group();
       const r = new T.Mesh(radGeo, reifenMat); r.castShadow = true; rad.add(r);
       rad.add(new T.Mesh(felgeGeo, felgeMat));
-      rad.position.set(x, 0.36, z);
+      rad.position.set(x, 0.34, z);
       g.add(rad); teile.raeder.push(rad);
     }
     g.userData.teile = teile;
@@ -690,14 +861,14 @@
     const innen = new T.MeshLambertMaterial({ color: 0x0b0b0c });
     const carbon = new T.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.5, metalness: 0.3 });
     const box = (b, h, t, x, y, z, mat) => { const m = new T.Mesh(new T.BoxGeometry(b, h, t), mat); m.position.set(x, y, z); c.add(m); return m; };
-    box(0.5, 0.2, 1.8, 0.75, 0.86, 0, innen);            // Armaturenbrett
-    box(0.25, 0.08, 0.45, 0.55, 0.97, -0.35, carbon);     // Instrumententräger
+    box(0.6, 0.2, 1.7, 0.72, 0.85, 0, innen);             // Armaturenbrett
+    box(0.22, 0.07, 0.42, 0.5, 0.97, -0.35, carbon);      // Instrumententräger
     box(1.6, 0.05, 1.6, -0.65, 1.45, 0, innen);           // Dachhimmel
     box(0.9, 0.35, 0.05, -0.1, 0.9, -0.84, innen);        // Türverkleidungen
     box(0.9, 0.35, 0.05, -0.1, 0.9, 0.84, innen);
     for (const s of [-1, 1]) box(0.04, 0.6, 0.05, 0.62, 1.2, s * 0.8, carbon).rotation.z = 0.85;   // A-Säulen
     const lenkrad = new T.Group();
-    lenkrad.position.set(0.3, 0.9, -0.35);
+    lenkrad.position.set(0.28, 0.93, -0.35);
     const kranz = new T.Mesh(new T.TorusGeometry(0.16, 0.02, 8, 28), carbon);
     kranz.rotation.y = Math.PI / 2;
     lenkrad.add(kranz);
@@ -774,7 +945,7 @@
     { name: "Rot", farbe: 0xd6402f, grip: 12.6, nummer: 7 },
     { name: "Blau", farbe: 0x2f6fd6, grip: 12.2, nummer: 22 },
     { name: "Grün", farbe: 0x2fa863, grip: 11.8, nummer: 44 },
-    { name: "Du", farbe: 0xe8b84a, spieler: true, nummer: 1 }
+    { name: "Du", farbe: 0x4cb832, spieler: true, rexy: true, nummer: 77 }
   ];
   const VMAX = 80, VMAX_KI = 74;
 
@@ -806,7 +977,7 @@
   const autos = [];
   let spieler = null, cockpit = null;
   for (const f of FAHRER) {
-    const a = { ...f, mesh: baueAuto(f.farbe, f.nummer), profil: f.spieler ? null : tempoProfil(f.grip) };
+    const a = { ...f, mesh: baueAuto(f), profil: f.spieler ? null : tempoProfil(f.grip) };
     autos.push(a);
     if (f.spieler) { spieler = a; cockpit = baueCockpit(a.mesh); }
   }
@@ -1174,7 +1345,8 @@
     m.updateMatrixWorld();
     const art = ANSICHTEN[ansicht];
     cockpit.visible = art === "cockpit";
-    teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = art !== "cockpit";
+    teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = art !== "cockpit";
+    for (const sp of teile.spiegel) sp.visible = art !== "cockpit";
     const ruetteln = (a.flaeche === "kerb" ? 0.012 : a.flaeche === "asphalt" ? 0 : 0.03) * Math.min(1, a.v / 20) + a.anprall * 0.08;
     const zz = () => (Math.random() - 0.5) * ruetteln;
     let fov;
@@ -1187,7 +1359,7 @@
       fov = 62 + a.v * 0.12;
     } else {
       kamPos = null;
-      kamera.position.copy(m.localToWorld(art === "cockpit" ? hv1.set(-0.3, 1.18, -0.35) : hv1.set(0.6, 1.08, 0)));
+      kamera.position.copy(m.localToWorld(art === "cockpit" ? hv1.set(-0.3, 1.24, -0.35) : hv1.set(0.6, 1.08, 0)));
       kamera.position.x += zz(); kamera.position.y += zz();
       const blick = art === "cockpit" ? hv2.set(20, 0.6, -0.35) : hv2.set(20, 0.7, 0);
       blick.z += a.lenk * 2.5 + (a.drift ? -Math.sin(a.schlupf) * 6 : 0);   // Blick in die Kurve
@@ -1211,7 +1383,7 @@
       m.position.set(a.x, 0, a.z);
       m.rotation.y = -a.w;
       m.rotation.x = a.spieler ? Math.max(-0.04, Math.min(0.04, -a.gier * a.v * 0.0012)) : 0;   // Seitenneigung
-      const dreh = a.v * dt / 0.36;
+      const dreh = a.v * dt / 0.34;
       for (const [k, rad] of m.userData.teile.raeder.entries()) {
         rad.children[0].rotation.z -= dreh;
         rad.children[1].rotation.z -= dreh;
@@ -1226,8 +1398,8 @@
       const rutscht = a.spieler && a.v > 6 && (a.drift || Math.abs(a.schlupf) > 0.12);
       if (rutscht && (a.flaeche === "asphalt" || a.flaeche === "kerb")) {
         const c = Math.cos(a.w), s = Math.sin(a.w);
-        const hx = a.x - c * 1.45, hz = a.z - s * 1.45;
-        const lx = hx + s * 0.88, lz = hz - c * 0.88, rx = hx - s * 0.88, rz = hz + c * 0.88;
+        const hx = a.x - c * RADSTAND, hz = a.z - s * RADSTAND;
+        const lx = hx + s * SPUR, lz = hz - c * SPUR, rx = hx - s * SPUR, rz = hz + c * SPUR;
         if (a.radSpur) { spurStueck(a.radSpur[0], a.radSpur[1], lx, lz); spurStueck(a.radSpur[2], a.radSpur[3], rx, rz); }
         a.radSpur = [lx, lz, rx, rz];
         a.rauchUhr -= dt;
