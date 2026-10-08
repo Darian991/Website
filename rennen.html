@@ -22,8 +22,6 @@
   .hud { top: 12px; left: 12px; padding: 10px 14px; line-height: 1.5; font-size: 15px; display: flex; gap: 12px; align-items: center; }
   .hud canvas { display: block; }
   .risse { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
-  .wischer { position: fixed; left: 34%; bottom: 7%; width: 7px; height: 64vh; margin-left: -3px; border-radius: 4px; pointer-events: none;
-    background: linear-gradient(90deg, #050505, #2c2c2c 60%, #0a0a0a); transform-origin: 50% 100%; display: none; box-shadow: 0 0 6px rgba(0,0,0,0.6); }
   .wahl { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
   .box .wahlKnopf { margin: 0; background: #2a362d; color: var(--text); border: 1px solid #3a4a3e; padding: 8px 16px; font-size: 15px; }
   .box .wahlKnopf.an { background: var(--accent); color: #1a1406; border-color: var(--accent); }
@@ -41,6 +39,10 @@
   .tacho .kmh small { font-size: 13px; font-weight: 400; color: var(--muted); }
   .tacho .gang { font-size: 15px; color: var(--muted); margin-top: 4px; }
   .tacho .gang b { color: var(--text); font-size: 22px; }
+  .tacho .limiter { display: none; margin-top: 6px; padding: 3px 8px; border-radius: 5px; background: #1f56c4; color: #fff; font-weight: 800; font-size: 13px; letter-spacing: 1px; text-align: center; }
+  .tacho .limiter.an { display: block; animation: limiterBlink 0.9s steps(2, start) infinite; }
+  @keyframes limiterBlink { to { background: #0e2c6a; } }
+  .steuerung #limiterKnopf.an { background: #1f56c4; border-color: #6d97ea; }
   .drehzahl { height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; margin-top: 6px; overflow: hidden; }
   .drehzahl i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #38b26b, var(--accent) 70%, var(--rot)); }
   .minikarte { top: 12px; right: 12px; padding: 6px; }
@@ -105,14 +107,13 @@
 <body>
 <div id="buehne"></div>
 
-<canvas class="risse" id="tropfen" width="960" height="540"></canvas>
-<div class="wischer" id="wischer"></div>
 <canvas class="risse" id="risse" width="1280" height="720"></canvas>
 <div class="panel hud"><div id="hud"></div><canvas id="schadenBild" width="44" height="84" aria-label="Schaden am Auto"></canvas></div>
 <div class="panel minikarte"><canvas id="karte" width="170" height="150"></canvas></div>
 <div class="panel tacho">
   <div class="kmh" id="kmh">0 <small>km/h</small></div>
   <div class="gang">Gang <b id="gang">1</b></div>
+  <div class="limiter" id="limiter">PIT LIMITER</div>
   <div class="drehzahl"><i id="drehzahl"></i></div>
 </div>
 <div class="spiegel" id="spiegel"></div>
@@ -122,7 +123,7 @@
 <div class="hinweis" id="hinweis"></div>
 <div class="ampel" id="ampel"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="los" id="losText">LOS!</div>
-<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · C Kamera · L Ideallinie · G Grafik · F Vollbild · M Ton · R Neustart · Esc Menü</div>
+<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · P Pit-Limiter · C Kamera · L Ideallinie · G Grafik · F Vollbild · M Ton · R Neustart · Esc Menü</div>
 
 <div class="touch" id="touch">
   <div class="grp">
@@ -159,6 +160,7 @@
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
     <p><b>Boxengasse:</b> rechts vor der Start-Ziel-Geraden abbiegen, in der Gasse gilt 200 km/h. Halte im gelben Rahmen deiner Box, dann repariert deine Mannschaft das Auto.</p>
     <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und mit jedem Schaden wirst du langsamer – bei vollem Schaden bleibt gut die Hälfte des Tempos, und der Motor setzt aus.</p>
+    <p><b>Pit-Limiter:</b> Vor der Boxengasse mit <kbd>P</kbd> einschalten – er hält dich auf 200 km/h. Wer ohne Limiter zu schnell durch die Gasse fährt, bekommt 5 Sekunden Strafe. Nach der Ausfahrt wieder mit <kbd>P</kbd> ausschalten.</p>
     <p><kbd>C</kbd> Kamera · <kbd>L</kbd> Ideallinie · <kbd>G</kbd> Grafik · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton · <kbd>R</kbd> Neustart</p>
     <div class="wahl" role="group" aria-label="Wetter">
       <button type="button" class="wahlKnopf an" data-wetter="sonne">☀️ Sonne</button>
@@ -189,6 +191,7 @@
 
 <div class="steuerung">
   <button id="vollbild" type="button">⛶ Vollbild</button>
+  <button class="imRennen" id="limiterKnopf" type="button" hidden>🅿 Pit-Limiter</button>
   <button class="imRennen" id="neustartKnopf" type="button" hidden>↻ Neustart</button>
   <button class="imRennen" id="menueKnopf" type="button" hidden>☰ Menü</button>
 </div>
@@ -337,13 +340,22 @@
   const inGasse = (i, seite) => { const c = gasseMitte(relIdx(i)); return c !== null && seite > HALB + 0.5 && Math.abs(seite - c) <= GASSE.halb + 0.6; };
   const imBegrenzer = (i, seite) => { const r = relIdx(i); return r >= GASSE.mauerVon && r <= GASSE.mauerBis && seite > GASSE.mauer; };
   const boxIdx = (k) => wrap(-31 + k * 3);
+  // Abstand der Leitplanke rechts neben der Gasse in Ein- und Ausfahrt; an den Enden läuft sie in die Streckenplanke über
+  const GASSE_PLANKE = { bisEin: -36, abAus: 19 };
+  function gassePlanke(r) {
+    const c = gasseMitte(r); if (c === null) return null;
+    const o = c + GASSE.halb + 0.9;
+    const t = Math.max(0, 1 - (r - GASSE.ein) / 5, 1 - (GASSE.aus - r) / 5);
+    return o + (WAND - o) * Math.min(1, t);
+  }
   // seitliche Grenzen (Leitplanken, Boxenmauer, Garagen) an einem Streckenpunkt
   function grenzen(i, seite) {
     let links = -(KIES[i] === -1 ? WAND - 0.7 : WAND), rechts = KIES[i] === 1 ? WAND - 0.7 : WAND;
     const r = relIdx(i);
     if (r >= GASSE.ein && r <= GASSE.aus) {
       rechts = GASSE.garage - 0.4;
-      if (r >= GASSE.mauerVon && r <= GASSE.mauerBis) {
+      if (r < GASSE_PLANKE.bisEin || r > GASSE_PLANKE.abAus) rechts = gassePlanke(r) - 0.3;
+      if (r >= GASSE.mauerVon - 1 && r <= GASSE.mauerBis + 1) {
         if (seite < GASSE.mauer) rechts = GASSE.mauer - 0.25; else links = GASSE.mauer + 0.25;
       }
     }
@@ -738,6 +750,73 @@
     for (const o of [-0.18, 0.18]) band(vonM, nM, GASSE.mauer + o, GASSE.mauer + o, 0, 1.15, MAT.mauer, 6, true);
     band(vonM, nM, GASSE.mauer - 0.18, GASSE.mauer + 0.18, 1.15, 1.15, MAT.mauer, 6);
     band(vonM, nM, GASSE.mauer, GASSE.mauer, 1.15, 3.6, MAT.zaun, 3);
+    // weiße Randlinien der Gasse und eine gestrichelte Trennlinie zur Arbeitsspur vor den Garagen
+    const linie = (i0, n, o) => band(i0, n, typeof o === "function" ? (i) => o(i) - 0.1 : o - 0.1, typeof o === "function" ? (i) => o(i) + 0.1 : o + 0.1, 0.036, 0.036, MAT.weiss, 4);
+    linie(wrap(GASSE.ein), GASSE.aus - GASSE.ein, (i) => c(i) - GASSE.halb + 0.15);
+    linie(wrap(GASSE.ein), GASSE_PLANKE.bisEin - GASSE.ein, (i) => c(i) + GASSE.halb - 0.15);
+    linie(wrap(GASSE_PLANKE.abAus), GASSE.aus - GASSE_PLANKE.abAus, (i) => c(i) + GASSE.halb - 0.15);
+    for (let r = -34; r < 16; r += 2) linie(wrap(r), 1, GASSE.mitte + GASSE.halb - 0.15);
+    // durchgezogene Linie am Streckenrand: Ein- und Ausfahrt dürfen nicht abgekürzt werden
+    linie(wrap(GASSE.ein - 12), GASSE.mauerVon - GASSE.ein + 12, HALB + 0.25);
+    linie(wrap(GASSE.mauerBis), GASSE.aus - GASSE.mauerBis + 10, HALB + 0.25);
+    // Sperrflächen zwischen Strecke und Gasse: Asphalt mit weißen Schrägstreifen
+    const sperr = new T.MeshLambertMaterial({ map: leinwandTextur(128, 128, (g, b, h) => {
+      g.fillStyle = "#3a3c3f"; g.fillRect(0, 0, b, h);
+      rauschen(g, b, h, 1500, ["#2e3033", "#47494c"], 2);
+      g.strokeStyle = "#ecebe6"; g.lineWidth = 22;
+      for (let k = -b; k < 2 * b; k += 64) { g.beginPath(); g.moveTo(k, h); g.lineTo(k + h, 0); g.stroke(); }
+    }, true) });
+    sperr.polygonOffset = true; sperr.polygonOffsetFactor = -3; sperr.polygonOffsetUnits = -12;
+    const innenKante = (i) => HALB + 0.4, gasseKante = (i) => Math.max(HALB + 0.4, c(i) - GASSE.halb - 0.05);
+    band(wrap(GASSE.ein), GASSE.mauerVon - GASSE.ein, innenKante, gasseKante, 0.034, 0.034, sperr, 4);
+    band(wrap(GASSE.mauerBis), GASSE.aus - GASSE.mauerBis, innenKante, gasseKante, 0.034, 0.034, sperr, 4);
+    // Leitplanke rechts der Gasse an Ein- und Ausfahrt
+    for (const [von, bis] of [[GASSE.ein, GASSE_PLANKE.bisEin], [GASSE_PLANKE.abAus, GASSE.aus]]) {
+      const o = (i) => gassePlanke(relIdx(i));
+      band(wrap(von), bis - von, o, o, 0.45, 1.0, stahl, 4, true);
+      band(wrap(von), bis - von, (i) => o(i) + 0.15, (i) => o(i) + 0.15, 0.45, 1.0, stahl, 4);
+      band(wrap(von), bis - von, o, (i) => o(i) + 0.15, 1.0, 1.0, stahl, 4);
+    }
+    // gelb-schwarze Anpralldämpfer vor den Mauerenden
+    const daempferMat = new T.MeshLambertMaterial({ map: leinwandTextur(256, 64, (g, b, h) => {
+      g.fillStyle = "#f2c200"; g.fillRect(0, 0, b, h);
+      g.fillStyle = "#151515";
+      for (let x = -64; x < b + 64; x += 48) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x + 24, 0); g.lineTo(x + 56, h); g.lineTo(x + 32, h); g.fill(); }
+    }) });
+    for (const [r, vor] of [[GASSE.mauerVon, -2.2], [GASSE.mauerBis, 2.2]]) {
+      anStrecke(wrap(r), (g) => {
+        const d = new T.Mesh(new T.BoxGeometry(4, 1.1, 0.9), [daempferMat, daempferMat, MAT.betonDunkel, MAT.betonDunkel, daempferMat, daempferMat]);
+        d.position.set(vor, 0.55, GASSE.mauer); g.add(d);
+        const nase = new T.Mesh(new T.CylinderGeometry(0.45, 0.45, 1.1, 16, 1, false, 0, Math.PI), daempferMat);
+        nase.position.set(vor + Math.sign(vor) * 2, 0.55, GASSE.mauer); nase.rotation.y = vor < 0 ? Math.PI : 0; g.add(nase);
+      });
+    }
+    // Schilder: "PIT IN" mit Pfeil vor der Einfahrt, "PIT OUT" an der Ausfahrt, dazu eine Einfahrtsampel
+    const schildMat = (text, pfeil, farbe) => new T.MeshLambertMaterial({ map: leinwandTextur(256, 128, (g, b, h) => {
+      g.fillStyle = farbe; g.fillRect(0, 0, b, h);
+      g.strokeStyle = "#fff"; g.lineWidth = 6; g.strokeRect(6, 6, b - 12, h - 12);
+      g.fillStyle = "#fff"; g.font = "900 46px system-ui, sans-serif"; g.textAlign = "left"; g.textBaseline = "middle";
+      g.fillText(text, 22, 66);
+      if (pfeil) { g.beginPath(); g.moveTo(186, 40); g.lineTo(226, 64); g.lineTo(186, 88); g.lineTo(186, 74); g.lineTo(160, 74); g.lineTo(160, 54); g.lineTo(186, 54); g.fill(); }
+    }) });
+    const pfahlGeo = new T.CylinderGeometry(0.07, 0.07, 3, 8);
+    const schildAufstellen = (r, seite, mat, w = 2.4) => anStrecke(wrap(r), (g) => {
+      const pf = new T.Mesh(pfahlGeo, MAT.stahl); pf.position.set(0, 1.5, seite); g.add(pf);
+      const sc = new T.Mesh(new T.PlaneGeometry(w, w / 2), mat); sc.position.set(-0.08, 2.5, seite); sc.rotation.y = -Math.PI / 2; g.add(sc);
+      const rueck = new T.Mesh(new T.PlaneGeometry(w, w / 2), MAT.betonDunkel); rueck.position.set(-0.06, 2.5, seite); rueck.rotation.y = Math.PI / 2; g.add(rueck);
+    });
+    const pitIn = schildMat("PIT IN", true, "#1f56c4");
+    for (const r of [GASSE.ein - 70, GASSE.ein - 35]) schildAufstellen(r, HALB + 2.6, pitIn);
+    schildAufstellen(GASSE.ein + 2, HALB + 1.2, pitIn, 1.8);
+    schildAufstellen(GASSE.aus - 6, gasseMitte(GASSE.aus - 6) - GASSE.halb - 1.0, schildMat("PIT OUT", false, "#1f56c4"), 1.8);
+    anStrecke(wrap(GASSE.mauerVon - 2), (g) => {
+      const mast = new T.Mesh(new T.BoxGeometry(0.25, 2.2, 0.25), MAT.betonDunkel); mast.position.set(0, 1.1, GASSE.mauer + 4.2); g.add(mast);
+      const kasten = new T.Mesh(new T.BoxGeometry(0.3, 0.8, 0.4), new T.MeshLambertMaterial({ color: 0x111111 })); kasten.position.set(0, 2.5, GASSE.mauer + 4.2); g.add(kasten);
+      const gruen = new T.Mesh(new T.CircleGeometry(0.13, 16), new T.MeshBasicMaterial({ color: 0x3cff6a }));
+      gruen.position.set(-0.16, 2.3, GASSE.mauer + 4.2); gruen.rotation.y = -Math.PI / 2; g.add(gruen);
+      const rot = new T.Mesh(new T.CircleGeometry(0.13, 16), new T.MeshBasicMaterial({ color: 0x2a0806 }));
+      rot.position.set(-0.16, 2.7, GASSE.mauer + 4.2); rot.rotation.y = -Math.PI / 2; g.add(rot);
+    });
     // Tempolimit: weiße Linie quer über die Gasse und Schild an der Mauer
     const schild = new T.MeshLambertMaterial({ map: leinwandTextur(256, 128, (g, b, h) => {
       g.fillStyle = "#fff"; g.fillRect(0, 0, b, h);
@@ -1694,15 +1773,80 @@
       innen: new T.MeshStandardMaterial({ map: faser, roughness: 1, metalness: 0, envMapIntensity: 0.25 }),
       carbon: new T.MeshStandardMaterial({ map: koeper, roughness: 0.32, metalness: 0.1, envMapIntensity: 0.7 }),
       kaefig: new T.MeshStandardMaterial({ color: 0x8f9296, roughness: 0.45, metalness: 0.7 }),
-      metall: new T.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.3, metalness: 0.9 })
+      metall: new T.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.3, metalness: 0.9 }),
+      schlaufe: new T.MeshLambertMaterial({ color: new T.Color(0xc81e1e).convertSRGBToLinear() }),
+      wischer: new T.MeshLambertMaterial({ color: 0x0a0a0a }),
+      toenung: new T.MeshBasicMaterial({ color: 0x1c2a30, transparent: true, opacity: 0.1, depthWrite: false, side: T.DoubleSide, fog: false }),
+      // Spiegelung: weißes Metall gibt die Umgebung (Himmel) als schwachen Glanz auf der Scheibe wieder
+      glanz: (() => { const m = new T.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0.06, transparent: true, opacity: 0.09, depthWrite: false, side: T.DoubleSide, envMapIntensity: 1 }); m.userData.spiegelt = true; return m; })()
     };
   })();
   for (const m of Object.values(COCKPIT_MAT)) GETEILT.add(m);
+  // Frontscheibe als Bild: fast durchsichtig, schwarzer Rand mit Punktraster, dunkler Blendstreifen mit Schriftzug
+  const scheibenCache = {};
+  function frontScheibe(typId) {
+    if (scheibenCache[typId]) return scheibenCache[typId];
+    const glasTex = leinwandTextur(1024, 512, (g, b, h) => {
+      g.clearRect(0, 0, b, h);
+      g.fillStyle = "rgba(110,135,145,0.07)"; g.fillRect(0, 0, b, h);
+      // Blendstreifen oben
+      const streifen = g.createLinearGradient(0, 0, 0, 92);
+      streifen.addColorStop(0, "rgba(8,10,14,0.95)"); streifen.addColorStop(0.85, "rgba(8,10,14,0.9)"); streifen.addColorStop(1, "rgba(8,10,14,0)");
+      g.fillStyle = streifen; g.fillRect(0, 0, b, 92);
+      g.fillStyle = "rgba(240,240,236,0.92)"; g.font = "italic 900 44px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(typId === "gt3rs" ? "GT3 RS" : "RACING", b / 2, 40);
+      // schwarzer Siebdruckrand mit nach innen kleiner werdenden Punkten
+      g.fillStyle = "#050505";
+      g.fillRect(0, 0, 26, h); g.fillRect(b - 26, 0, 26, h); g.fillRect(0, h - 30, b, 30);
+      for (let k = 0; k < 4; k++) {
+        const r = 5 - k * 1.1, ab = 32 + k * 11;
+        for (let y = 0; y < h - 30; y += 11) { g.beginPath(); g.arc(ab, y, r, 0, 7); g.arc(b - ab, y, r, 0, 7); g.fill(); }
+        for (let x = 30; x < b - 30; x += 11) { g.beginPath(); g.arc(x, h - ab - 2, r, 0, 7); g.fill(); }
+      }
+      // leichte Wischspuren
+      g.strokeStyle = "rgba(255,255,255,0.025)"; g.lineWidth = 10;
+      for (const [mx, rr] of [[0.3, 330], [0.3, 250], [0.68, 330], [0.68, 250]]) { g.beginPath(); g.arc(b * mx, h + 20, rr, Math.PI * 1.08, Math.PI * 1.92); g.stroke(); }
+    });
+    const tropfenTex = leinwandTextur(1024, 512, (g, b, h) => {
+      g.clearRect(0, 0, b, h);
+      for (let k = 0; k < 900; k++) {
+        const x = Math.random() * b, y = Math.random() * h, r = 1.5 + Math.random() ** 3 * 7;
+        g.fillStyle = "rgba(20,26,30,0.35)"; g.beginPath(); g.ellipse(x, y + r * 0.25, r, r * 1.1, 0, 0, 7); g.fill();
+        g.fillStyle = "rgba(205,218,228,0.45)"; g.beginPath(); g.ellipse(x, y, r * 0.85, r * 0.95, 0, 0, 7); g.fill();
+        g.fillStyle = "rgba(255,255,255,0.7)"; g.beginPath(); g.arc(x - r * 0.3, y - r * 0.35, r * 0.25, 0, 7); g.fill();
+        if (r > 5 && Math.random() < 0.5) { g.fillStyle = "rgba(205,218,228,0.3)"; g.fillRect(x - r * 0.3, y, r * 0.6, 10 + Math.random() * 30); }
+      }
+    });
+    const art = { transparent: true, depthWrite: false, side: T.DoubleSide, fog: false };
+    const ergebnis = { glas: new T.MeshBasicMaterial({ map: glasTex, ...art }), tropfen: new T.MeshBasicMaterial({ map: tropfenTex, ...art }) };
+    GETEILT.add(ergebnis.glas); GETEILT.add(ergebnis.tropfen);
+    return (scheibenCache[typId] = ergebnis);
+  }
   function baueCockpit(auto, typId) {
     const typ = FAHRZEUGE[typId], [, sy, sz] = typ.sitz, dy = sy - 1.24;
     const c = new T.Group();
     const { innen, carbon, kaefig } = COCKPIT_MAT;
     const box = (b, h, t, x, y, z, mat) => { const m = new T.Mesh(new T.BoxGeometry(b, h, t), mat); m.position.set(x, y, z); c.add(m); return m; };
+    // Glasfläche aus vier Ecken (unten links, unten rechts, oben links, oben rechts), in der Mitte etwas nach vorn gewölbt.
+    // Ohne eigenes Material: getönte Scheibe mit Spiegelung.
+    const scheibe = (ecken, teile, mat, ohneSpiegel) => {
+      const [ul, ur, ol, or] = ecken.map((e) => new T.Vector3(...e));
+      const pos = [], uv = [], idx = [];
+      for (let k = 0; k <= teile; k++) {
+        const t = k / teile, wolb = Math.sin(t * Math.PI) * 0.045 * (teile > 1 ? 1 : 0);
+        const u = ul.clone().lerp(ur, t), o = ol.clone().lerp(or, t);
+        u.x += wolb; o.x += wolb * 0.6;
+        pos.push(u.x, u.y, u.z, o.x, o.y, o.z); uv.push(t, 0, t, 1);
+        if (k < teile) { const a = 2 * k; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+      }
+      const g = new T.BufferGeometry();
+      g.setAttribute("position", new T.Float32BufferAttribute(pos, 3)); g.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+      g.setIndex(idx); g.computeVertexNormals();
+      const m = new T.Mesh(g, mat || COCKPIT_MAT.toenung);
+      m.renderOrder = 2; c.add(m);
+      if (!ohneSpiegel) { const sp = new T.Mesh(g, COCKPIT_MAT.glanz); sp.renderOrder = 3; c.add(sp); }
+      return m;
+    };
     // Rohr zwischen zwei Punkten (Überrollkäfig)
     const rohr = (a, b, r = 0.02) => {
       const va = new T.Vector3(...a), vb = new T.Vector3(...b), l = va.distanceTo(vb);
@@ -1728,14 +1872,40 @@
       box(0.3, 0.16, 0.22, 0.5, 0.78 + dy, 0, carbon);                    // Mittelkonsole
       box(1.6, 0.05, 1.6 * breit, -0.65, 1.45 + dy, 0, innen);            // Dachhimmel
       for (const s of [-1, 1]) {
-        box(0.9, 0.35, 0.05, -0.1, 0.9 + dy, s * 0.84 * breit, innen);    // Türverkleidung
-        box(0.04, 0.6, 0.05, 0.62, 1.2 + dy, s * 0.8 * breit, innen).rotation.z = 0.85;    // A-Säule
+        // geschlossene Tür: Verkleidung bis zur Fensterkante, Carbon-Sims oben, rote Zugschlaufe wie im Rennwagen
+        box(1.45, 0.44, 0.06, -0.15, 0.85 + dy, s * 0.85 * breit, innen);
+        box(1.45, 0.035, 0.12, -0.15, 1.075 + dy, s * 0.82 * breit, carbon);
+        box(0.26, 0.035, 0.012, 0.05, 0.96 + dy, s * 0.815 * breit, COCKPIT_MAT.schlaufe);
+        // Seitenscheibe mit Rahmen und B-Säule
+        const zs = s * 0.84 * breit;
+        scheibe([[0.8, 1.09 + dy, zs], [-0.78, 1.09 + dy, zs], [0.38, 1.4 + dy, zs * 0.97], [-0.78, 1.4 + dy, zs * 0.97]], 1, null);
+        box(0.08, 0.33, 0.05, -0.8, 1.245 + dy, zs, innen);              // B-Säule
+        rohr([0.38, 1.405 + dy, zs * 0.97], [-0.8, 1.405 + dy, zs * 0.97], 0.018).material = innen;
+        box(0.09, 0.64, 0.16, 0.62, 1.2 + dy, s * 0.8 * breit, innen).rotation.z = 0.85;   // A-Säule mit Verkleidung
         // Überrollkäfig wie im Rennwagen: entlang der A-Säule und unter dem Dach
         const zk = s * 0.74 * breit;
         rohr([0.8, 0.93 + dy, zk], [0.36, 1.37 + dy, zk * 0.95]);
         rohr([0.36, 1.37 + dy, zk * 0.95], [-0.9, 1.39 + dy, zk * 0.95]);
       }
       rohr([0.36, 1.37 + dy, -0.7 * breit], [0.36, 1.37 + dy, 0.7 * breit]);
+      // Windschutzscheibe: leicht gewölbt, schwarzer Siebdruckrand, Blendstreifen oben, Spiegelung des Himmels
+      const fs = frontScheibe(typId);
+      const unten = [0.87, 0.97 + dy], oben = [0.37, 1.41 + dy], bu = 0.86 * breit, bo = 0.76 * breit;
+      scheibe([[unten[0], unten[1], -bu], [unten[0], unten[1], bu], [oben[0], oben[1], -bo], [oben[0], oben[1], bo]], 10, fs.glas);
+      // Regentropfen und Scheibenwischer (nur bei Regen in Bewegung)
+      const tropfen = scheibe([[unten[0] - 0.006, unten[1], -bu], [unten[0] - 0.006, unten[1], bu], [oben[0] - 0.006, oben[1], -bo], [oben[0] - 0.006, oben[1], bo]], 10, fs.tropfen, true);
+      const normale = new T.Vector3(oben[1] - unten[1], unten[0] - oben[0], 0).normalize();
+      const wischer = [];
+      for (const zp of [-0.55 * bu, 0.1 * bu]) {
+        const dreh = new T.Group();
+        dreh.position.set(unten[0] + 0.02, unten[1] + 0.04, zp).addScaledVector(normale, 0.025);
+        dreh.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), normale);
+        const schwenk = new T.Group(); dreh.add(schwenk);
+        const arm = new T.Mesh(new T.BoxGeometry(0.012, 0.012, 0.62), COCKPIT_MAT.wischer);
+        arm.position.z = 0.31; schwenk.add(arm);
+        c.add(dreh); wischer.push(schwenk);
+      }
+      Object.assign(c.userData, { tropfen, wischer });
       lenkrad.position.set(0.28, 0.93 + dy, sz);
       // Rennlenkrad: Kranz in Alcantara, Mittelteil aus Carbon, gelbe Markierung oben, Schaltwippen
       const kranz = new T.Mesh(new T.TorusGeometry(0.17, 0.023, 12, 40), innen);
@@ -1749,7 +1919,7 @@
         const speiche = new T.Mesh(new T.BoxGeometry(0.03, 0.045, 0.11), carbon); speiche.position.set(0, -0.01, s * 0.11); lenkrad.add(speiche);
         const wippe = new T.Mesh(new T.BoxGeometry(0.008, 0.11, 0.05), COCKPIT_MAT.metall); wippe.position.set(0.045, 0.02, s * 0.13); wippe.rotation.x = s * 0.25; lenkrad.add(wippe);
       }
-      const unten = new T.Mesh(new T.BoxGeometry(0.03, 0.12, 0.04), carbon); unten.position.y = -0.1; lenkrad.add(unten);
+      const kinn = new T.Mesh(new T.BoxGeometry(0.03, 0.12, 0.04), carbon); kinn.position.y = -0.1; lenkrad.add(kinn);
     }
     const anzeigeLeinwand = document.createElement("canvas"); anzeigeLeinwand.width = 128; anzeigeLeinwand.height = 64;
     const anzeigeTex = new T.CanvasTexture(anzeigeLeinwand); anzeigeTex.encoding = T.sRGBEncoding;
@@ -1758,7 +1928,7 @@
     lenkrad.add(anzeige);
     c.add(lenkrad);
     auto.add(c);
-    c.userData = { lenkrad, anzeigeLeinwand, anzeigeTex };
+    c.userData = Object.assign(c.userData || {}, { lenkrad, anzeigeLeinwand, anzeigeTex });
     return c;
   }
 
@@ -1872,10 +2042,12 @@
   regenMesh.frustumCulled = false; regenMesh.visible = false;
   szene.add(regenMesh);
   let regenErster = true;
+  const regenBlick = new T.Vector3();
   function regenBewegen(dt, kam) {
     if (!regenMesh.visible) return;
     const cx = kam.position.x, cy = kam.position.y, cz = kam.position.z, fall = 16 * dt;
-    const tx = spieler.vx * 0.035, tz = spieler.vz * 0.035;
+    const tx = spieler.vx * 0.035, tz = spieler.vz * 0.035, imAuto = ANSICHTEN[ansicht] === "cockpit";
+    const blick = kam.getWorldDirection(regenBlick);
     for (let k = 0; k < REGEN_N; k++) {
       let x = regenTropfen[3 * k], y = regenTropfen[3 * k + 1], z = regenTropfen[3 * k + 2];
       if (regenErster) { x += cx; y += cy - 8; z += cz; }
@@ -1884,7 +2056,9 @@
       if (x - cx > 40) x -= 80; else if (x - cx < -40) x += 80;
       if (z - cz > 40) z -= 80; else if (z - cz < -40) z += 80;
       regenTropfen[3 * k] = x; regenTropfen[3 * k + 1] = y; regenTropfen[3 * k + 2] = z;
-      regenLinien.set([x, y, z, x + tx, y + 0.56, z + tz], 6 * k);
+      // im Cockpit regnet es nicht ins Auto: Tropfen direkt um die Kamera werden ausgelassen
+      if (imAuto && ((x - cx) ** 2 + (z - cz) ** 2 < 6.5 || (x - cx) * blick.x + (y - cy) * blick.y + (z - cz) * blick.z < 1.6)) regenLinien.set([x, y, z, x, y, z], 6 * k);
+      else regenLinien.set([x, y, z, x + tx, y + 0.56, z + tz], 6 * k);
     }
     regenErster = false;
     regenGeo.attributes.position.needsUpdate = true;
@@ -2240,7 +2414,7 @@
         spur: s * 1.5, spurZiel: 0, anprall: 0, gang: 1, drehzahl: 900, gasWert: 0,
         schaden: { gesamt: 0, vorn: 0, hinten: 0, links: 0, rechts: 0 }, trefferUhr: 0, motorRauchUhr: 0,
         gangIst: 1, schaltUhr: 0, gL: 0, gQ: 0, altVl: 0, gischtUhr: 0, stottern: 0, schadenMeldung: 0, hoechstTempo: a.st.vmax,
-        boxenstopp: null, willBox: false, letzterStopp: -1, fehler: 0
+        boxenstopp: null, willBox: false, letzterStopp: -1, fehler: 0, limiter: false, strafe: 0, gasseGestraft: false
       });
       reparieren(a);
     });
@@ -2268,6 +2442,7 @@
     if (e.code === "KeyR" && zustand !== "menue") neuesRennen();
     if (e.code === "Escape" && zustand !== "menue") zumMenue();
     if (e.code === "KeyC") ansicht = (ansicht + 1) % ANSICHTEN.length;
+    if (e.code === "KeyP" && zustand !== "menue") limiterUmschalten();
     if (e.code === "KeyM") stumm = !stumm;
     if (e.code === "KeyL") linieAn = !linieAn;
     if (e.code === "KeyG" && pp) { effekte = !effekte; melde(effekte ? "Grafik: hoch (Leuchten, Unschärfe, Farbabstimmung)" : "Grafik: schnell"); }
@@ -2306,9 +2481,17 @@
     const aufGras = a.flaeche === "gras", imKies = a.flaeche === "kies";
     // Schaden kostet deutlich Leistung: bei 100 % nur noch gut die Hälfte des Höchsttempos
     const sd = a.schaden.gesamt / 100;
-    const st = a.st, begrenzt = imBegrenzer(a.idx, a.seite);
+    const st = a.st, begrenzt = !!a.limiter, inDerGasse = imBegrenzer(a.idx, a.seite);
     let vmax = Math.min(st.vmax, imKies ? 22 * st.gelaende : aufGras ? 34 * st.gelaende : st.vmax) * (1 - sd * 0.45);
-    if (begrenzt) vmax = Math.min(vmax, GASSE.tempo);   // Boxengassen-Begrenzer
+    if (begrenzt) vmax = Math.min(vmax, GASSE.tempo);   // Pit-Limiter
+    // ohne Limiter zu schnell in der Boxengasse: 5 Sekunden Strafe (einmal pro Durchfahrt)
+    if (inDerGasse && !begrenzt && vl > GASSE.tempo + 1 && !a.gasseGestraft && a.fertig === null) {
+      a.gasseGestraft = true; a.strafe += 5;
+      a.schadenText = "Zu schnell in der Boxengasse! +5 s Strafe (Pit-Limiter: P)"; a.schadenMeldung = 3;
+    }
+    if (!inDerGasse && relIdx(a.idx) > GASSE.mauerBis + 2) a.gasseGestraft = false;
+    // Limiter am Anschlag: der Motor wird im schnellen Takt abgeriegelt
+    if (begrenzt && e.gas && vl > GASSE.tempo - 1 && !(a.stottern > 0) && Math.random() < dt * 9) a.stottern = 0.05;
     a.hoechstTempo = st.vmax * (1 - sd * 0.45);
     // ein schwer beschädigter Motor setzt immer wieder kurz aus
     if (a.stottern > 0) a.stottern -= dt;
@@ -2495,7 +2678,7 @@
       if (a.runde >= 1) a.besteRunde = Math.min(a.besteRunde, rennzeit - a.rundenStart);
       a.runde = neueRunde;
       a.rundenStart = rennzeit;
-      if (a.runde > RUNDEN && a.fertig === null) a.fertig = rennzeit;
+      if (a.runde > RUNDEN && a.fertig === null) a.fertig = rennzeit + (a.strafe || 0);
     }
   }
 
@@ -2611,42 +2794,6 @@
       }
       if (zone === "vorn" && menge > 12) risseZeichnen(false);
     }
-  }
-
-  // Regentropfen auf der Frontscheibe, ein Wischer räumt sie weg (nur im Cockpit)
-  const tropfenLeinwand = document.getElementById("tropfen"), tg = tropfenLeinwand.getContext("2d");
-  const wischerEl = document.getElementById("wischer");
-  const WP = { x: 0.34 * 960, y: 0.93 * 540, lang: 0.64 * 540 };
-  let wischWinkel = -78, wischRichtung = 1, wischPause = 0;
-  function tropfenZeichnen(dt, sichtbar) {
-    tropfenLeinwand.style.display = wischerEl.style.display = sichtbar ? "block" : "none";
-    if (!sichtbar) return;
-    // Fahrtwind bläst Tropfen weg
-    tg.globalCompositeOperation = "destination-out";
-    tg.fillStyle = "rgba(0,0,0," + Math.min(0.25, 0.004 + spieler.v * 0.0012) + ")";
-    tg.fillRect(0, 0, 960, 540);
-    tg.globalCompositeOperation = "source-over";
-    const neu = Math.floor(dt * (60 + spieler.v * 2) + Math.random());
-    for (let k = 0; k < neu; k++) {
-      const x = Math.random() * 960, y = Math.random() * 420, r = 1.5 + Math.random() * 4.5;
-      const v = tg.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
-      v.addColorStop(0, "rgba(255,255,255,0.55)"); v.addColorStop(0.6, "rgba(200,210,220,0.18)"); v.addColorStop(1, "rgba(0,0,0,0.22)");
-      tg.fillStyle = v; tg.beginPath(); tg.arc(x, y, r, 0, 7); tg.fill();
-    }
-    // Wischer: schwingt hin und her und wischt die überstrichene Fläche frei
-    const alt = wischWinkel;
-    if (wischPause > 0) wischPause -= dt;
-    else {
-      wischWinkel += wischRichtung * dt * 260;
-      if (wischWinkel > 78) { wischWinkel = 78; wischRichtung = -1; }
-      if (wischWinkel < -78) { wischWinkel = -78; wischRichtung = 1; wischPause = 0.5; }
-    }
-    const a0 = (Math.min(alt, wischWinkel) - 92) * Math.PI / 180, a1 = (Math.max(alt, wischWinkel) - 88) * Math.PI / 180;
-    tg.globalCompositeOperation = "destination-out";
-    tg.beginPath(); tg.arc(WP.x, WP.y, WP.lang, a0, a1); tg.arc(WP.x, WP.y, WP.lang * 0.12, a1, a0, true); tg.closePath();
-    tg.fillStyle = "#000"; tg.fill();
-    tg.globalCompositeOperation = "source-over";
-    wischerEl.style.transform = "rotate(" + wischWinkel + "deg)";
   }
 
   // Sprünge in der Frontscheibe (nur im Cockpit sichtbar)
@@ -2874,7 +3021,7 @@
   /* ---------- Anzeige ---------- */
   const $ = (id) => document.getElementById(id);
   const ui = {
-    hud: $("hud"), kmh: $("kmh"), gang: $("gang"), drehzahl: $("drehzahl"), 
+    hud: $("hud"), kmh: $("kmh"), gang: $("gang"), limiter: $("limiter"), drehzahl: $("drehzahl"), 
     drift: $("drift"), driftWert: $("driftWert"), hinweis: $("hinweis"), ampel: $("ampel"), los: $("losText"),
     start: $("start"), losKnopf: $("los"), ziel: $("ziel"), zielTitel: $("zielTitel"), zielText: $("zielText"),
     zielTabelle: $("zielTabelle"), nochmal: $("nochmal"), karte: $("karte")
@@ -2921,6 +3068,7 @@
   }
   $("neustartKnopf").onclick = () => { fokusHolen(); tonStarten(); neuesRennen(); };
   $("menueKnopf").onclick = zumMenue;
+  $("limiterKnopf").onclick = () => { fokusHolen(); limiterUmschalten(); };
   $("zumMenue").onclick = zumMenue;
   const ampelLampen = [...ui.ampel.children];
 
@@ -2958,11 +3106,17 @@
     sg.fillStyle = schadenFarbe(sd.rechts); sg.fillRect(35, 16, 5, 52);
     sg.fillStyle = schadenFarbe(sd.gesamt); sg.globalAlpha = 0.55; sg.fillRect(13, 22, 18, 40); sg.globalAlpha = 1;
   }
-  let letzteAnzeige = 0, letzteLenkradAnzeige = "";
+  let letzteAnzeige = 0, letzteLenkradAnzeige = "", limiterAnzeige = null;
+  function limiterUmschalten() {
+    if (!spieler || spieler.fertig !== null) return;
+    spieler.limiter = !spieler.limiter;
+    melde(spieler.limiter ? "Pit-Limiter an · 200 km/h" : "Pit-Limiter aus");
+  }
   function anzeige(jetzt) {
     const a = spieler;
     ui.kmh.innerHTML = Math.round(a.v * 3.6) + " <small>km/h</small>";
     ui.gang.textContent = a.gang;
+    if (limiterAnzeige !== a.limiter) { limiterAnzeige = a.limiter; ui.limiter.classList.toggle("an", a.limiter); $("limiterKnopf").classList.toggle("an", a.limiter); }
     ui.drehzahl.style.width = Math.max(0, Math.min(100, (a.drehzahl - 900) / 81)) + "%";
     lenkradAnzeige(a, jetzt);
     const zeigeDrift = a.kette > 5;
@@ -2974,7 +3128,9 @@
       const r = relIdx(a.idx);
       if (a.boxenstopp) hinweis = "Boxenstopp – Reparatur " + Math.min(100, Math.round(a.boxenstopp.zeit / a.boxenstopp.dauer * 100)) + " %";
       else if (a.schadenMeldung > 0) hinweis = a.schadenText;
-      else if (imBegrenzer(a.idx, a.seite)) hinweis = Math.abs(r - relIdx(boxIdx(a.box))) < 40 && a.letzterStopp !== a.runde ? "Halte im gelben Rahmen deiner Box" : "Boxengasse · Begrenzer " + Math.round(GASSE.tempo * 3.6) + " km/h";
+      else if (imBegrenzer(a.idx, a.seite)) hinweis = !a.limiter ? "Pit-Limiter einschalten! Taste P" : Math.abs(r - relIdx(boxIdx(a.box))) < 40 && a.letzterStopp !== a.runde ? "Halte im gelben Rahmen deiner Box" : "Boxengasse · Limiter " + Math.round(GASSE.tempo * 3.6) + " km/h";
+      else if (!a.limiter && a.seite > HALB - 1 && r >= GASSE.ein - 25 && r < GASSE.mauerVon) hinweis = "Boxeneinfahrt – Pit-Limiter mit P einschalten";
+      else if (a.limiter && r > GASSE.mauerBis + 4 && r < GASSE.mauerBis + 120) hinweis = "Ausfahrt – Pit-Limiter mit P ausschalten";
       else if (a.flaeche === "kies") hinweis = "Im Kiesbett!";
       else if (a.flaeche === "gras") hinweis = "Im Gras!";
       else if (a.schaden.gesamt >= 40 && r > -150 && r < GASSE.ein) hinweis = "Reparieren? Rechts in die Boxengasse";
@@ -3002,7 +3158,8 @@
     if (ANSICHTEN[ansicht] !== "cockpit") return;
     const leds = Math.max(0, Math.min(10, Math.floor((a.drehzahl - 6000) / 270)));
     const blitz = leds >= 10 && Math.floor(jetzt / 70) % 2 === 0;
-    const text = a.gang + "|" + Math.round(a.v * 3.6) + "|" + leds + "|" + blitz;
+    const pit = a.limiter && Math.floor(jetzt / 450) % 2 === 0;
+    const text = a.gang + "|" + Math.round(a.v * 3.6) + "|" + leds + "|" + blitz + "|" + a.limiter + pit;
     if (text === letzteLenkradAnzeige) return;
     letzteLenkradAnzeige = text;
     const { anzeigeLeinwand: c, anzeigeTex } = cockpit.userData;
@@ -3017,6 +3174,7 @@
     g.fillText(a.gang, 8, 42);
     g.fillStyle = "#f4f1ea"; g.font = "bold 26px system-ui"; g.textAlign = "right";
     g.fillText(Math.round(a.v * 3.6), 122, 44);
+    if (a.limiter) { g.fillStyle = pit ? "#2f6cf0" : "#16306e"; g.fillRect(36, 20, 50, 40); g.fillStyle = "#fff"; g.font = "bold 20px system-ui"; g.textAlign = "center"; g.fillText("PIT", 61, 41); }
     anzeigeTex.needsUpdate = true;
   }
 
@@ -3028,7 +3186,7 @@
     const neu = a.fertig < bestzeit;
     if (neu) { bestzeit = a.fertig; speichereBest(bestzeit); }
     ui.zielTitel.textContent = mein === 1 ? "🏆 Sieg!" : "Platz " + mein;
-    ui.zielText.textContent = "Gesamtzeit " + zeit(a.fertig) + " · schnellste Runde " + zeit(a.besteRunde) +
+    ui.zielText.textContent = "Gesamtzeit " + zeit(a.fertig) + (a.strafe ? " (inkl. " + a.strafe + " s Strafe)" : "") + " · schnellste Runde " + zeit(a.besteRunde) +
       " · " + a.driftPunkte + " Driftpunkte · Schaden " + Math.round(a.schaden.gesamt) + " %" + (neu ? " · Neuer Rekord!" : "");
     ui.zielTabelle.innerHTML = reihenfolge.map((b, i) =>
       "<tr" + (b.spieler ? ' class="du"' : "") + "><td>" + (i + 1) + ".</td><td>" + b.name + "</td><td>" +
@@ -3110,6 +3268,7 @@
 
   let kamPos = null;
   const hv1 = new T.Vector3(), hv2 = new T.Vector3();
+  let wischerZeit = 0;
   function kameraSetzen(dt) {
     const a = spieler, m = a.mesh, teile = m.userData.teile;
     m.updateMatrixWorld();
@@ -3131,6 +3290,13 @@
     }
     const art = ANSICHTEN[ansicht];
     cockpit.visible = art === "cockpit";
+    if (cockpit.visible && cockpit.userData.wischer) {
+      // Scheibenwischer: bei Regen hin und her (etwa alle 1,3 s), sonst in Ruhe unten
+      wischerZeit = nass ? wischerZeit + dt : 0;
+      const w = nass ? (1 - Math.cos(wischerZeit * Math.PI * 2 / 1.3)) / 2 : 0;
+      for (const d of cockpit.userData.wischer) d.rotation.y = -w * 1.55;
+      cockpit.userData.tropfen.visible = nass;
+    }
     teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = art !== "cockpit";
     for (const sp of teile.spiegel) if (sp.parent === m) sp.visible = art !== "cockpit";
     risseLeinwand.style.display = art === "cockpit" && rissAnzahl ? "block" : "none";
@@ -3427,7 +3593,6 @@
     spurenUndRauch(dt);
     kameraSetzen(dt);
     regenBewegen(dt, kamera);
-    tropfenZeichnen(dt, nass && ANSICHTEN[ansicht] === "cockpit" && zustand !== "menue");
     tonAktualisieren(spieler, zustand === "ampel" || zustand === "rennen" || zustand === "auslauf");
 
     renderer.setScissorTest(false);
