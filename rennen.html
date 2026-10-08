@@ -19,7 +19,9 @@
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; touch-action: none; user-select: none; -webkit-user-select: none; }
   #buehne canvas { display: block; }
   .panel { position: fixed; background: var(--panel); border-radius: 10px; pointer-events: none; font-variant-numeric: tabular-nums; }
-  .hud { top: 12px; left: 12px; padding: 10px 14px; line-height: 1.5; font-size: 15px; }
+  .hud { top: 12px; left: 12px; padding: 10px 14px; line-height: 1.5; font-size: 15px; display: flex; gap: 12px; align-items: center; }
+  .hud canvas { display: block; }
+  .risse { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
   .hud b { color: var(--accent); }
   .tacho { bottom: 16px; right: 16px; padding: 10px 16px; text-align: right; min-width: 150px; }
   .tacho .kmh { font-size: 40px; font-weight: 800; line-height: 1; }
@@ -87,7 +89,8 @@
 <body>
 <div id="buehne"></div>
 
-<div class="panel hud" id="hud"></div>
+<canvas class="risse" id="risse" width="1280" height="720"></canvas>
+<div class="panel hud"><div id="hud"></div><canvas id="schadenBild" width="44" height="84" aria-label="Schaden am Auto"></canvas></div>
 <div class="panel minikarte"><canvas id="karte" width="170" height="150"></canvas></div>
 <div class="panel tacho">
   <div class="kmh" id="kmh">0 <small>km/h</small></div>
@@ -101,12 +104,13 @@
 <div class="hinweis" id="hinweis"></div>
 <div class="ampel" id="ampel"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="los" id="losText">LOS!</div>
-<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · C Kamera · F Vollbild · M Ton · R Neustart</div>
+<div class="tasten">↑↓←→ / WASD fahren · Leertaste Handbremse · C Kamera · L Ideallinie · G Grafik · F Vollbild · M Ton · R Neustart</div>
 
 <div class="touch" id="touch">
   <div class="grp">
     <button data-taste="links" aria-label="Links">◀</button>
     <button data-taste="rechts" aria-label="Rechts">▶</button>
+    <button class="klein" data-aktion="linie" aria-label="Ideallinie ein/aus">LINIE</button>
   </div>
   <div class="grp">
     <button class="klein" data-aktion="kamera" aria-label="Kamera wechseln">CAM</button>
@@ -122,7 +126,8 @@
     <p>3 Runden auf dem Rennkurs gegen drei Gegner, aus dem Cockpit gesehen. Du fährst den grünen Porsche 911 GT3 RS im T-Rex-Look „Rexy“ mit der Nummer 77 und startest von ganz hinten.</p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
-    <p><kbd>C</kbd> Cockpit / Motorhaube / Verfolger · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton aus/an · <kbd>R</kbd> Neustart</p>
+    <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und der Motor verliert Leistung.</p>
+    <p><kbd>C</kbd> Kamera · <kbd>L</kbd> Ideallinie · <kbd>G</kbd> Grafik · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton · <kbd>R</kbd> Neustart</p>
     <button id="los">Rennen starten</button>
   </div>
 </div>
@@ -247,6 +252,28 @@
     for (let k = 0; k < l; k++) KIES[wrap(i0 + k)] = seite;
     kiesStuecke.push([i0, l, seite]);
   }
+
+  // Ideallinie: so lange geglättet, bis sie die Kurven möglichst gerade schneidet (Scheitelpunkte innen)
+  const LINIE_O = (() => {
+    const o = new Float64Array(N), rand = HALB - 1.4;
+    for (const [k, runden] of [[14, 250], [6, 300], [3, 200]])
+      for (let it = 0; it < runden; it++)
+        for (let i = 0; i < N; i++) {
+          const a = wrap(i - k), b = wrap(i + k);
+          const mx = (BAHN[a][0] + NX[a] * o[a] + BAHN[b][0] + NX[b] * o[b]) / 2;
+          const mz = (BAHN[a][1] + NZ[a] * o[a] + BAHN[b][1] + NZ[b] * o[b]) / 2;
+          const ziel = (mx - BAHN[i][0]) * NX[i] + (mz - BAHN[i][1]) * NZ[i];
+          o[i] = Math.max(-rand, Math.min(rand, o[i] + (ziel - o[i]) * 0.6));
+        }
+    return o;
+  })();
+  const LX = BAHN.map(([x], i) => x + NX[i] * LINIE_O[i]), LZ = BAHN.map(([, z], i) => z + NZ[i] * LINIE_O[i]);
+  const LK = BAHN.map((_, i) => {
+    const a = wrap(i - 3), b = wrap(i + 3);
+    const w1 = Math.atan2(LZ[i] - LZ[a], LX[i] - LX[a]), w2 = Math.atan2(LZ[b] - LZ[i], LX[b] - LX[i]);
+    const laenge = Math.hypot(LX[b] - LX[a], LZ[b] - LZ[a]) || 1;
+    return winkelDiff(w1, w2) / (laenge / 2);
+  });
 
   let minX = Infinity, minZ = Infinity, maxX = -Infinity, maxZ = -Infinity;
   for (const [x, z] of BAHN) { minX = Math.min(minX, x); minZ = Math.min(minZ, z); maxX = Math.max(maxX, x); maxZ = Math.max(maxZ, z); }
@@ -377,11 +404,15 @@
   }
 
   const MAT = {
-    asphalt: new T.MeshStandardMaterial({ map: asphaltTex, roughness: 0.92, metalness: 0 }),
-    kerb: new T.MeshStandardMaterial({ map: kerbTex, roughness: 0.7 }),
+    asphalt: new T.MeshStandardMaterial({ map: asphaltTex, roughness: 0.88, metalness: 0, envMapIntensity: 0.35,
+      bumpScale: 0.025, bumpMap: (() => { const t = leinwandTextur(512, 512, (g, b, h) => {
+        g.fillStyle = "#808080"; g.fillRect(0, 0, b, h);
+        rauschen(g, b, h, 60000, ["#5a5a5a", "#a8a8a8", "#707070", "#909090", "#ffffff", "#303030"], 2);
+      }, true); t.encoding = T.LinearEncoding; return t; })() }),
+    kerb: new T.MeshStandardMaterial({ map: kerbTex, roughness: 0.55, envMapIntensity: 0.5 }),
     gras: new T.MeshLambertMaterial({ map: grasTex }),
     kies: new T.MeshLambertMaterial({ map: kiesTex }),
-    planke: new T.MeshStandardMaterial({ map: leitplankeTex, roughness: 0.4, metalness: 0.5, side: T.DoubleSide }),
+    planke: new T.MeshStandardMaterial({ map: leitplankeTex, roughness: 0.3, metalness: 0.7, side: T.DoubleSide }),
     reifen: new T.MeshLambertMaterial({ map: reifenTex, side: T.DoubleSide }),
     beton: new T.MeshLambertMaterial({ color: 0xbfbcb4 }),
     betonDunkel: new T.MeshLambertMaterial({ color: 0x8c8a84 }),
@@ -612,6 +643,61 @@
     for (const t of [stamm, krone, tanne]) { t.castShadow = !grob; szene.add(t); }
   }
 
+  // Himmel als Shader: Verlauf vom Horizont zum Zenit, Sonnenscheibe mit Hof
+  const SONNE_RICHTUNG = new T.Vector3(-0.45, 1, -0.35).normalize();
+  const himmelMat = new T.ShaderMaterial({
+    side: T.BackSide, depthWrite: false,
+    uniforms: { sonne: { value: SONNE_RICHTUNG } },
+    vertexShader: "varying vec3 vR; void main() { vR = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `
+      uniform vec3 sonne; varying vec3 vR;
+      void main() {
+        vec3 r = normalize(vR);
+        float h = r.y;
+        vec3 zenit = vec3(0.035, 0.13, 0.42), horizont = vec3(0.42, 0.55, 0.72), unten = vec3(0.22, 0.27, 0.25);
+        vec3 farbe = h > 0.0 ? mix(horizont, zenit, pow(h, 0.5)) : mix(horizont, unten, pow(min(-h * 4.0, 1.0), 0.6));
+        float s = max(dot(r, sonne), 0.0);
+        farbe += vec3(1.0, 0.8, 0.5) * (pow(s, 8.0) * 0.18 + pow(s, 90.0) * 0.6);
+        farbe += vec3(1.0, 0.96, 0.88) * smoothstep(0.99935, 0.9997, s) * 30.0;
+        gl_FragColor = vec4(farbe, 1.0);
+        #include <tonemapping_fragment>
+        #include <encodings_fragment>
+      }`
+  });
+
+  // Grashalme in Büscheln neben der Strecke (nur auf kräftigen Geräten)
+  if (!grob) {
+    const halm = new T.BufferGeometry();
+    const pos = [];
+    for (let k = 0; k < 3; k++) {
+      const w = k * Math.PI / 3, c = Math.cos(w) * 0.05, sn = Math.sin(w) * 0.05, neig = (k - 1) * 0.12;
+      pos.push(-c, 0, -sn, c, 0, sn, neig, 1, neig * 0.5);
+    }
+    halm.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
+    halm.computeVertexNormals();
+    const anzahl = 60000;
+    const gras = new T.InstancedMesh(halm, new T.MeshLambertMaterial({ color: 0xffffff, side: T.DoubleSide }), anzahl);
+    const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), sk = new T.Vector3(), farbe = new T.Color(), yAchse = new T.Vector3(0, 1, 0);
+    let k = 0;
+    for (let versuch = 0; versuch < anzahl * 3 && k < anzahl; versuch++) {
+      const i = (zufall() * N) | 0, seite = zufall() < 0.5 ? -1 : 1;
+      const r = zufall();
+      const ab = r < 0.6 ? HALB + KERB + 0.3 + zufall() * 6 : r < 0.85 ? WAND + 0.6 + zufall() * 5 : HALB + KERB + 6 + zufall() * 30;
+      if (Math.abs(ab - WAND) < 0.8) continue;
+      if (ab < WAND && KIES[i] === seite) continue;
+      if (ab > WAND && i < 60 && i > -1 && seite < 0) continue;
+      if (ab > WAND && (i > N - 60) && seite < 0) continue;
+      const vor = (zufall() - 0.5) * SCHRITT;
+      p.set(BAHN[i][0] + NX[i] * seite * ab + Math.cos(RICHTUNG[i]) * vor, 0, BAHN[i][1] + NZ[i] * seite * ab + Math.sin(RICHTUNG[i]) * vor);
+      q.setFromAxisAngle(yAchse, zufall() * 6.3);
+      const h = 0.1 + zufall() * 0.2;
+      gras.setMatrixAt(k, m.compose(p, q, sk.set(2 + zufall() * 2, h, 2 + zufall() * 2)));
+      gras.setColorAt(k++, farbe.setHSL(0.25 + zufall() * 0.05, 0.5, 0.17 + zufall() * 0.1));
+    }
+    gras.count = k;
+    szene.add(gras);
+  }
+
   // Hügel, Himmel, Wolken
   const himmelKugel = (() => {
     const mat = new T.MeshStandardMaterial({ color: 0x5d7a55, flatShading: true, roughness: 1 });
@@ -621,12 +707,7 @@
       huegel.position.set(MITTE[0] + Math.cos(w) * r, h / 2 - 5, MITTE[1] + Math.sin(w) * r);
       szene.add(huegel);
     }
-    const himmelTex = leinwandTextur(16, 256, (g, b, h) => {
-      const v = g.createLinearGradient(0, 0, 0, h);
-      v.addColorStop(0, "#3d7ad1"); v.addColorStop(0.42, "#8fb9e6"); v.addColorStop(0.5, "#c4d8ec"); v.addColorStop(1, "#c4d8ec");
-      g.fillStyle = v; g.fillRect(0, 0, b, h);
-    });
-    const himmel = new T.Mesh(new T.SphereGeometry(3000, 32, 16), new T.MeshBasicMaterial({ map: himmelTex, side: T.BackSide, fog: false, depthWrite: false }));
+    const himmel = new T.Mesh(new T.SphereGeometry(3000, 48, 24), himmelMat);
     himmel.renderOrder = -2;
     szene.add(himmel);
     const wolkenTex = leinwandTextur(128, 128, (g, b, h) => {
@@ -646,20 +727,40 @@
   })();
 
   // Licht
-  szene.add(new T.HemisphereLight(0xcfe3ff, 0x4a6a3a, 0.75));
+  szene.add(new T.HemisphereLight(0xcfe3ff, 0x4a6a3a, 0.6));
   const sonne = new T.DirectionalLight(0xfff1dd, 1.6);
   sonne.castShadow = !grob;
-  sonne.shadow.mapSize.set(2048, 2048);
-  Object.assign(sonne.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 10, far: 400 });
+  sonne.shadow.mapSize.set(grob ? 1024 : 4096, grob ? 1024 : 4096);
+  Object.assign(sonne.shadow.camera, { left: -60, right: 60, top: 60, bottom: -60, near: 10, far: 400 });
+  sonne.shadow.normalBias = 0.02;
   sonne.shadow.camera.updateProjectionMatrix();
   sonne.shadow.bias = -0.0005;
   szene.add(sonne, sonne.target);
-  const SONNE = new T.Vector3(-0.45, 1, -0.35).normalize().multiplyScalar(180);
+  const SONNE = SONNE_RICHTUNG.clone().multiplyScalar(180);
+
+  // Spiegelungen: eine weichgezeichnete Umgebung aus Himmel und Boden für Lack, Glas und Metall
+  szene.environment = (() => {
+    const s = new T.Scene();
+    s.add(new T.Mesh(new T.SphereGeometry(100, 32, 16), himmelMat));
+    const boden = new T.Mesh(new T.CircleGeometry(95, 32), new T.MeshBasicMaterial({ color: 0x2e4a24 }));
+    boden.rotation.x = -Math.PI / 2; boden.position.y = -3;
+    s.add(boden);
+    const pm = new T.PMREMGenerator(renderer);
+    const env = pm.fromScene(s, 0.02).texture;
+    pm.dispose();
+    return env;
+  })();
+  // die Umgebung hellt matte Flächen sonst zu stark auf; Lack und Glas dürfen kräftiger spiegeln
+  const umgebungDaempfen = (wurzel) => wurzel.traverse((o) => {
+    if (!o.isMesh) return;
+    for (const m of [].concat(o.material)) if (m.isMeshStandardMaterial && !m.userData.spiegelt) m.envMapIntensity = Math.min(m.envMapIntensity, 0.3);
+  });
 
   /* ---------- Autos: 911 GT3 RS ---------- */
-  const glasMat = new T.MeshStandardMaterial({ color: 0x0d1418, roughness: 0.05, metalness: 0.8 });
+  const glasMat = new T.MeshPhysicalMaterial({ color: 0x05080a, roughness: 0.03, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.7 });
+  glasMat.userData.spiegelt = true;
   const reifenMat = new T.MeshStandardMaterial({ color: 0x141414, roughness: 0.9 });
-  const felgeMat = new T.MeshStandardMaterial({ color: 0x2a2b2e, roughness: 0.35, metalness: 0.8 });
+  const felgeMat = new T.MeshStandardMaterial({ color: 0x2a2b2e, roughness: 0.25, metalness: 0.9 });
   const schwarzMat = new T.MeshStandardMaterial({ color: 0x151515, roughness: 0.6 });
   const radGeo = new T.CylinderGeometry(0.34, 0.34, 0.3, 20); radGeo.rotateX(Math.PI / 2);
   const felgeGeo = new T.CylinderGeometry(0.23, 0.23, 0.32, 10); felgeGeo.rotateX(Math.PI / 2);
@@ -829,16 +930,22 @@
     const g = new T.Group();
     g.rotation.order = "YXZ";
     const css = "#" + f.farbe.toString(16).padStart(6, "0");
-    const seite = new T.MeshStandardMaterial({ map: f.rexy ? rexySeite : einfarbigSeite(css), roughness: 0.3, metalness: 0.25 });
-    const oben = f.rexy ? new T.MeshStandardMaterial({ map: rexyOben, roughness: 0.3, metalness: 0.25 })
-      : new T.MeshStandardMaterial({ color: f.farbe, roughness: 0.25, metalness: 0.5 });
+    // Lack mit Klarlackschicht: spiegelt Himmel und Sonne
+    const lackArt = { roughness: 0.42, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 0.55 };
+    const seite = new T.MeshPhysicalMaterial({ map: f.rexy ? rexySeite : einfarbigSeite(css), ...lackArt });
+    const oben = f.rexy ? new T.MeshPhysicalMaterial({ map: rexyOben, ...lackArt })
+      : new T.MeshPhysicalMaterial({ color: f.farbe, ...lackArt });
+    seite.userData.spiegelt = oben.userData.spiegelt = true;
     const teile = {};
     const teil = (geo, mat, x, y, z) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
     const box = (b, h, t, x, y, z, mat) => teil(new T.BoxGeometry(b, h, t), mat, x, y, z);
     const kugel = (sx, sy, sz, x, y, z, mat) => { const m = teil(new T.SphereGeometry(1, 20, 12), mat, x, y, z); m.scale.set(sx, sy, sz); return m; };
 
-    teil(VORDERWAGEN_GEO, [seite, oben], 0, 0, 0);
-    teile.hinterwagen = teil(HINTERWAGEN_GEO, [seite, oben], 0, 0, 0);
+    const ab = (name, m) => { (teile.abnehmbar[name] = teile.abnehmbar[name] || []).push(m); return m; };
+    teile.abnehmbar = {};
+    teile.vorderwagen = teil(VORDERWAGEN_GEO.clone(), [seite, oben], 0, 0, 0);
+    teile.hinterwagen = teil(HINTERWAGEN_GEO.clone(), [seite, oben], 0, 0, 0);
+    teile.blech = [teile.vorderwagen, teile.hinterwagen];
     teile.kabine = teil(KABINE_GEO, glasMat, 0, 0, 0);
     teile.dachTeil = box(0.85, 0.04, 1.2, -0.42, 1.315, 0, oben);
     for (const s of [-1, 1]) {
@@ -848,20 +955,20 @@
       box(0.3, 0.025, 0.15, 1.5, 0.775, s * 0.3, schwarzMat).rotation.z = -0.12;   // Luftauslässe auf der Haube
       box(0.34, 0.02, 0.2, 1.28, 0.885, s * 0.66, lamellenMat);       // Lamellen über den Vorderrädern
       box(0.34, 0.16, 0.03, -0.62, 0.6, s * 0.955, schwarzMat);       // Lufteinlass vor dem Hinterrad
-      box(0.08, 0.66, 0.06, -1.98, 1.24, s * 0.42, schwarzMat);       // Schwanenhals-Halter
-      box(0.56, 0.24, 0.03, -2.1, 1.58, s * 0.93, schwarzMat);        // Endplatten
+      ab("fluegel", box(0.08, 0.66, 0.06, -1.98, 1.24, s * 0.42, schwarzMat));   // Schwanenhals-Halter
+      ab("fluegel", box(0.56, 0.24, 0.03, -2.1, 1.58, s * 0.93, schwarzMat));    // Endplatten
       const schrift = new T.Mesh(schriftGeo, schriftMat);              // Schriftzug unten an der Tür
       schrift.position.set(0.1, 0.3, s * 0.958); schrift.rotation.y = s > 0 ? 0 : Math.PI;
       g.add(schrift);
-      (teile.spiegel = teile.spiegel || []).push(box(0.14, 0.11, 0.24, 0.6, 1.0, s * 1.02, oben));   // Außenspiegel
+      (teile.spiegel = teile.spiegel || []).push(ab(s < 0 ? "spiegelL" : "spiegelR", box(0.14, 0.11, 0.24, 0.6, 1.0, s * 1.02, oben)));   // Außenspiegel
     }
     box(0.38, 0.025, 0.5, 1.8, 0.745, 0, schwarzMat).rotation.z = -0.15;   // großer Auslass in der Fronthaube
-    box(0.52, 0.05, 1.86, -2.1, 1.56, 0, schwarzMat);                 // Heckflügel über Dachhöhe
-    box(0.28, 0.04, 1.86, -1.93, 1.63, 0, schwarzMat).rotation.z = 0.3;   // verstellbare Klappe (DRS)
+    ab("fluegel", box(0.52, 0.05, 1.86, -2.1, 1.56, 0, schwarzMat));            // Heckflügel über Dachhöhe
+    ab("fluegel", box(0.28, 0.04, 1.86, -1.93, 1.63, 0, schwarzMat)).rotation.z = 0.3;   // verstellbare Klappe (DRS)
     const heckSchrift = new T.Mesh(new T.PlaneGeometry(0.55, 0.1), schriftMat);
     heckSchrift.position.set(-2.4, 0.56, 0); heckSchrift.rotation.y = -Math.PI / 2;
     g.add(heckSchrift);
-    box(0.3, 0.1, 1.95, 2.28, 0.2, 0, schwarzMat);                    // Frontsplitter
+    ab("splitter", box(0.3, 0.1, 1.95, 2.28, 0.2, 0, schwarzMat));              // Frontsplitter
     box(0.25, 0.18, 1.6, -2.28, 0.28, 0, schwarzMat);                 // Diffusor
     box(0.04, 0.06, 1.7, -2.33, 0.78, 0, new T.MeshBasicMaterial({ color: 0xcc1010 }));   // Leuchtband hinten
     for (const s of [-1, 1]) teil(new T.CylinderGeometry(0.05, 0.05, 0.12, 10).rotateZ(Math.PI / 2), felgeMat, -2.35, 0.35, s * 0.12);
@@ -887,7 +994,15 @@
       rad.position.set(x, 0.34, z);
       g.add(rad); teile.raeder.push(rad);
     }
+    // Ausgangszustand merken, damit ein neues Rennen alles repariert
+    for (const m of teile.blech) {
+      m.userData.form = m.geometry.attributes.position.array.slice();
+      m.userData.normalen = m.geometry.attributes.normal.array.slice();
+    }
+    for (const liste of Object.values(teile.abnehmbar))
+      for (const m of liste) m.userData.ursprung = { pos: m.position.clone(), quat: m.quaternion.clone() };
     g.userData.teile = teile;
+    umgebungDaempfen(g);
     szene.add(g);
     return g;
   }
@@ -957,10 +1072,57 @@
     rauch.push({ s, leben: 0, vx: 0, vz: 0 });
   }
   let rauchNaechster = 0;
-  function rauchen(x, z, vx, vz) {
+  function rauchen(x, z, vx, vz, farbe = 0xffffff, hoehe = 0.4) {
     const r = rauch[rauchNaechster]; rauchNaechster = (rauchNaechster + 1) % rauch.length;
     r.leben = 1; r.vx = vx * 0.3 + (Math.random() - 0.5) * 2; r.vz = vz * 0.3 + (Math.random() - 0.5) * 2;
-    r.s.position.set(x, 0.4, z); r.s.visible = true;
+    r.s.position.set(x, hoehe, z); r.s.visible = true;
+    r.s.material.color.setHex(farbe);
+  }
+
+  // Funken beim Schleifen an der Leitplanke und bei Zusammenstößen
+  const funkenTex = leinwandTextur(32, 32, (g) => {
+    const v = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+    v.addColorStop(0, "rgba(255,255,230,1)"); v.addColorStop(0.3, "rgba(255,190,60,0.9)"); v.addColorStop(1, "rgba(255,120,0,0)");
+    g.fillStyle = v; g.fillRect(0, 0, 32, 32);
+  });
+  const funken = [];
+  for (let k = 0; k < 160; k++) {
+    const sp = new T.Sprite(new T.SpriteMaterial({ map: funkenTex, transparent: true, depthWrite: false, blending: T.AdditiveBlending, color: 0xffffff }));
+    sp.visible = false; sp.scale.set(0.18, 0.18, 1); szene.add(sp);
+    funken.push({ s: sp, leben: 0, vx: 0, vy: 0, vz: 0 });
+  }
+  let funkeNaechster = 0;
+  function funkeln(x, y, z, vx, vz, anzahl) {
+    for (let k = 0; k < anzahl; k++) {
+      const f = funken[funkeNaechster]; funkeNaechster = (funkeNaechster + 1) % funken.length;
+      f.leben = 0.3 + Math.random() * 0.4;
+      f.vx = vx * 0.6 + (Math.random() - 0.5) * 9; f.vz = vz * 0.6 + (Math.random() - 0.5) * 9; f.vy = 1 + Math.random() * 4;
+      f.s.position.set(x, y, z); f.s.visible = true;
+    }
+  }
+  // abgefallene Teile fliegen und bleiben liegen
+  let truemmer = [];
+  function teileBewegen(dt) {
+    for (const f of funken) {
+      if (!f.s.visible) continue;
+      f.leben -= dt;
+      if (f.leben <= 0) { f.s.visible = false; continue; }
+      f.vy -= 9.8 * dt;
+      f.s.position.x += f.vx * dt; f.s.position.y = Math.max(0.03, f.s.position.y + f.vy * dt); f.s.position.z += f.vz * dt;
+      if (f.s.position.y <= 0.03) { f.vy *= -0.4; f.vx *= 0.6; f.vz *= 0.6; }
+      f.s.material.opacity = Math.min(1, f.leben * 3);
+    }
+    for (const t of truemmer) {
+      if (t.ruhe) continue;
+      t.vy -= 9.8 * dt;
+      t.m.position.x += t.vx * dt; t.m.position.y += t.vy * dt; t.m.position.z += t.vz * dt;
+      t.m.rotation.x += t.rx * dt; t.m.rotation.y += t.ry * dt; t.m.rotation.z += t.rz * dt;
+      if (t.m.position.y < 0.08) {
+        t.m.position.y = 0.08; t.vy = Math.abs(t.vy) * 0.3;
+        t.vx *= 0.5; t.vz *= 0.5; t.rx *= 0.5; t.ry *= 0.5; t.rz *= 0.5;
+        if (Math.hypot(t.vx, t.vz) < 0.3 && t.vy < 0.5) t.ruhe = true;
+      }
+    }
   }
   function rauchBewegen(dt) {
     for (const r of rauch) {
@@ -979,20 +1141,21 @@
      Spiel
      ========================================================= */
   const FAHRER = [
-    { name: "Rot", farbe: 0xd6402f, grip: 12.6, nummer: 7 },
-    { name: "Blau", farbe: 0x2f6fd6, grip: 12.2, nummer: 22 },
-    { name: "Grün", farbe: 0x2fa863, grip: 11.8, nummer: 44 },
+    { name: "Rot", farbe: 0xd6402f, grip: 12.0, nummer: 7 },
+    { name: "Blau", farbe: 0x2f6fd6, grip: 11.6, nummer: 22 },
+    { name: "Grün", farbe: 0x2fa863, grip: 11.2, nummer: 44 },
     { name: "Du", farbe: 0x4cb832, spieler: true, rexy: true, nummer: 77 }
   ];
   const VMAX = 80, VMAX_KI = 74;
 
-  // Wunschtempo der Gegner je Streckenpunkt: Kurvengrenze, rückwärts heruntergebremst
-  function tempoProfil(grip) {
-    const v = KR.map((k) => Math.min(VMAX_KI, Math.sqrt(grip / Math.max(Math.abs(k), 1e-4))));
+  // Höchsttempo je Punkt der Ideallinie: Kurvengrenze, rückwärts heruntergebremst
+  function tempoProfil(grip, verzoegerung = 17, vmax = VMAX_KI) {
+    const v = LK.map((k) => Math.min(vmax, Math.sqrt(grip / Math.max(Math.abs(k), 1e-4))));
     for (let r = 0; r < 2; r++)
-      for (let i = N - 1; i >= 0; i--) v[i] = Math.min(v[i], Math.sqrt(v[wrap(i + 1)] ** 2 + 2 * 17 * SCHRITT));
+      for (let i = N - 1; i >= 0; i--) v[i] = Math.min(v[i], Math.sqrt(v[wrap(i + 1)] ** 2 + 2 * verzoegerung * SCHRITT));
     return v;
   }
+  const SPIELER_PROFIL = tempoProfil(15, 24, VMAX);
 
   function lage(x, z, start, fenster) {
     let best = Infinity, idx = start;
@@ -1027,9 +1190,14 @@
         vx: 0, vz: 0, v: 0, gier: 0, lenk: 0, idx: i, seite: s * 3.2,
         runde: 0, fortschritt: i - N, rundenStart: 0, besteRunde: Infinity, fertig: null,
         drift: false, kette: 0, driftPunkte: 0, schlupf: 0, flaeche: "asphalt", radSpur: null, rauchUhr: 0,
-        spur: s * 1.5, spurZiel: s * 1.5, anprall: 0, gang: 1, drehzahl: 900, gasWert: 0
+        spur: s * 1.5, spurZiel: 0, anprall: 0, gang: 1, drehzahl: 900, gasWert: 0,
+        schaden: { gesamt: 0, vorn: 0, hinten: 0, links: 0, rechts: 0 }, trefferUhr: 0, motorRauchUhr: 0
       });
+      reparieren(a);
     });
+    for (const t of truemmer) szene.remove(t.m);
+    truemmer = [];
+    risseZeichnen(true);
     spurPos.fill(0);
     spurAnzahl = 0; spurGeaendert = true;
     rennzeit = 0; ampelUhr = 0; ampelAus = 5.6 + Math.random() * 0.9;
@@ -1044,19 +1212,25 @@
     ArrowLeft: "links", KeyA: "links", ArrowRight: "rechts", KeyD: "rechts", Space: "handbremse"
   };
   const ANSICHTEN = ["cockpit", "haube", "verfolger"];
-  let ansicht = 0, stumm = false;
+  let ansicht = 0, stumm = false, linieAn = true;
   addEventListener("keydown", (e) => {
     if (KEYS[e.code]) { tasten[KEYS[e.code]] = true; e.preventDefault(); }
     if (e.repeat) return;
     if (e.code === "KeyR" && zustand !== "menue") neuesRennen();
     if (e.code === "KeyC") ansicht = (ansicht + 1) % ANSICHTEN.length;
     if (e.code === "KeyM") stumm = !stumm;
+    if (e.code === "KeyL") linieAn = !linieAn;
+    if (e.code === "KeyG" && pp) { effekte = !effekte; melde(effekte ? "Grafik: hoch (Leuchten, Unschärfe, Farbabstimmung)" : "Grafik: schnell"); }
     if (e.code === "KeyF" && kannVollbild) vollbild(!istVollbild());
     if (e.code === "Enter" && zustand === "menue") ui.losKnopf.click();
   });
   addEventListener("keyup", (e) => { if (KEYS[e.code]) tasten[KEYS[e.code]] = false; });
   addEventListener("blur", () => { for (const k in tasten) tasten[k] = false; });
   document.querySelectorAll("#touch button").forEach((b) => {
+    if (b.dataset.aktion === "linie") {
+      b.addEventListener("pointerdown", (e) => { e.preventDefault(); linieAn = !linieAn; });
+      return;
+    }
     if (b.dataset.aktion === "kamera") {
       b.addEventListener("pointerdown", (e) => { e.preventDefault(); ansicht = (ansicht + 1) % ANSICHTEN.length; });
       return;
@@ -1080,10 +1254,11 @@
     a.idx = l.i; a.seite = l.seite;
     a.flaeche = untergrund(a);
     const aufGras = a.flaeche === "gras", imKies = a.flaeche === "kies";
-    const vmax = imKies ? 22 : aufGras ? 34 : VMAX;
+    const sd = a.schaden.gesamt / 100;
+    const vmax = (imKies ? 22 : aufGras ? 34 : VMAX) * (1 - sd * 0.22);
 
-    // Gas, Bremse, Handbremse, Luft- und Rollwiderstand
-    if (e.gas && vl > -1) vl += 13.5 * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
+    // Gas, Bremse, Handbremse, Luft- und Rollwiderstand; ein beschädigter Motor zieht schwächer
+    if (e.gas && vl > -1) vl += 13.5 * (1 - sd * 0.4) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
     if (e.bremse) vl -= (vl > 0.5 ? 30 : 9) * dt;
     if (e.handbremse) vl -= Math.sign(vl) * Math.min(Math.abs(vl), 7 * dt);
     vl -= vl * (0.02 + 0.0004 * Math.abs(vl)) * dt;
@@ -1105,11 +1280,13 @@
     // Driftassistent: bei sehr großem Winkel fangen die Reifen das Auto wieder, statt es zu drehen
     if (Math.abs(a.schlupf) > 0.8) grip += (Math.abs(a.schlupf) - 0.8) * 14;
     if (aufGras) grip *= 0.5; else if (imKies) grip *= 0.6;
+    if (a.ohneFluegel && v > 30) grip *= 0.9;          // ohne Heckflügel fehlt Abtrieb
 
     let gierMax = Math.min(v / 2.6 * Math.tan(0.6), 1.15 * 15.5 / Math.max(v, 1));
     if (a.drift) gierMax *= 1.7;
     let zielGier = a.lenk * gierMax * (vl >= 0 ? 1 : -1);
     if (a.drift) zielGier += -Math.sin(a.schlupf) * 0.6 * (Math.abs(a.schlupf) < 0.8 ? 1 : -0.5);   // das Heck drängt nach außen, ab großem Winkel zurück
+    zielGier += (a.schaden.rechts - a.schaden.links) / 100 * 0.12 * Math.min(1, v / 20);      // verbogene Spur zieht zur Seite
     a.gier += (zielGier - a.gier) * Math.min(1, dt * (a.drift ? 3.5 : 8));
 
     // erst drehen, dann zieht die Seitenhaftung die Fahrtrichtung nach
@@ -1134,7 +1311,11 @@
       const zuviel = Math.abs(a.seite) - grenze;
       a.x -= nx * zuviel; a.z -= nz * zuviel; a.seite = s * grenze;
       const vn = a.vx * nx + a.vz * nz;
+      // Funken, wenn das Auto an der Planke entlangschrammt
+      const tangential = Math.abs(-a.vx * nz + a.vz * nx);
+      if (tangential > 6 && Math.random() < 0.7) funkeln(a.x + nx * 1.0, 0.45, a.z + nz * 1.0, a.vx, a.vz, 2);
       if (vn > 0) {
+        treffer(a, vn, a.x + nx * 1.2, a.z + nz * 1.2);
         a.vx -= nx * vn * 1.4; a.vz -= nz * vn * 1.4;
         const daempf = Math.max(0.55, 1 - vn * 0.03);
         a.vx *= daempf; a.vz *= daempf;
@@ -1169,13 +1350,13 @@
   function fahreKI(a, dt) {
     const l = lage(a.x, a.z, a.idx, 10);
     a.idx = l.i; a.seite = l.seite;
-    if (Math.random() < dt * 0.25) a.spurZiel = (Math.random() - 0.5) * 7;
+    if (Math.random() < dt * 0.25) a.spurZiel = (Math.random() - 0.5) * 2.4;
     a.spur += (a.spurZiel - a.spur) * dt * 0.5;
     const zi = wrap(a.idx + 3 + Math.floor(a.v / 7));
-    const tx = BAHN[zi][0] + NX[zi] * a.spur, tz = BAHN[zi][1] + NZ[zi] * a.spur;
+    const tx = LX[zi] + NX[zi] * a.spur, tz = LZ[zi] + NZ[zi] * a.spur;
     const d = winkelDiff(a.w, Math.atan2(tz - a.z, tx - a.x));
     a.w += Math.max(-1.6, Math.min(1.6, d * 3)) * dt;
-    const wunsch = a.profil[wrap(a.idx + 2)];
+    const wunsch = a.profil[wrap(a.idx + 2)] * (1 - a.schaden.gesamt / 100 * 0.3);
     if (a.v < wunsch) a.v += 12.5 * Math.max(0.1, 1 - (a.v / VMAX) ** 2) * dt;
     else a.v -= Math.min(28, (a.v - wunsch) * 5) * dt;
     a.v = Math.max(0, a.v);
@@ -1209,6 +1390,9 @@
           const rv = (b.vx - a.vx) * nx + (b.vz - a.vz) * nz;
           if (rv < 0) {
             const imp = -rv * 0.75;
+            const px = (a.x + b.x) / 2, pz = (a.z + b.z) / 2;
+            treffer(a, imp * 1.3, px, pz); treffer(b, imp * 1.3, px, pz);
+            if (imp > 3) funkeln(px, 0.5, pz, (a.vx + b.vx) / 2, (a.vz + b.vz) / 2, Math.min(14, imp | 0));
             a.vx -= nx * imp / 2; a.vz -= nz * imp / 2; b.vx += nx * imp / 2; b.vz += nz * imp / 2;
             for (const c of [a, b]) {
               if (c.spieler) { c.anprall = Math.max(c.anprall, Math.min(1, imp / 10)); c.kette = 0; }
@@ -1217,6 +1401,123 @@
           }
         }
       }
+  }
+
+  /* ---------- Schaden ---------- */
+  const hash = (x, y, z) => { const v = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return v - Math.floor(v); };
+  // Blech eindrücken: Punkte um den Einschlag wandern nach innen, die Normalen dort werden neu berechnet
+  function verbeulen(a, ix, iz, tiefe) {
+    const nl = Math.hypot(ix / 2.3, iz / 0.95) || 1;
+    const nx = -(ix / 2.3) / nl, nz = -(iz / 0.95) / nl;
+    for (const mesh of a.mesh.userData.teile.blech) {
+      const pos = mesh.geometry.attributes.position, arr = pos.array, norm = mesh.geometry.attributes.normal;
+      const bewegt = new Set();
+      for (let k = 0; k < pos.count; k++) {
+        const x = arr[3 * k], y = arr[3 * k + 1], z = arr[3 * k + 2];
+        const d = Math.hypot(x - ix, (y - 0.6) * 0.8, z - iz);
+        if (d >= 0.95) continue;
+        const f = (1 - d / 0.95) ** 2 * tiefe * (0.7 + 0.6 * hash(x, y, z));
+        arr[3 * k] += nx * f; arr[3 * k + 2] += nz * f; arr[3 * k + 1] -= f * 0.25;
+        bewegt.add(k);
+      }
+      if (!bewegt.size) continue;
+      const schluessel = (k) => Math.round(arr[3 * k] * 500) + "," + Math.round(arr[3 * k + 1] * 500) + "," + Math.round(arr[3 * k + 2] * 500);
+      const summe = new Map();
+      const va = new T.Vector3(), vb = new T.Vector3(), vc = new T.Vector3(), ab = new T.Vector3(), cb = new T.Vector3();
+      for (let t = 0; t < pos.count; t += 3) {
+        if (!bewegt.has(t) && !bewegt.has(t + 1) && !bewegt.has(t + 2)) continue;
+        va.fromArray(arr, 3 * t); vb.fromArray(arr, 3 * t + 3); vc.fromArray(arr, 3 * t + 6);
+        cb.subVectors(vc, vb); ab.subVectors(va, vb); cb.cross(ab);
+        for (let e = 0; e < 3; e++) {
+          const s = schluessel(t + e), alt = summe.get(s);
+          if (alt) alt.add(cb); else summe.set(s, cb.clone());
+        }
+      }
+      for (const k of bewegt) {
+        const n = summe.get(schluessel(k));
+        if (n) { n.normalize(); norm.setXYZ(k, n.x, n.y, n.z); }
+      }
+      pos.needsUpdate = true; norm.needsUpdate = true;
+    }
+  }
+  function abfallen(a, name) {
+    const liste = a.mesh.userData.teile.abnehmbar[name];
+    if (!liste || liste[0].parent !== a.mesh) return;
+    for (const m of liste) {
+      szene.attach(m);
+      truemmer.push({ m, vx: a.vx * 0.6 + (Math.random() - 0.5) * 4, vy: 2 + Math.random() * 3, vz: a.vz * 0.6 + (Math.random() - 0.5) * 4,
+        rx: (Math.random() - 0.5) * 9, ry: (Math.random() - 0.5) * 9, rz: (Math.random() - 0.5) * 9, ruhe: false });
+    }
+    if (name === "fluegel") a.ohneFluegel = true;
+  }
+  function reparieren(a) {
+    const teile = a.mesh.userData.teile;
+    for (const m of teile.blech) {
+      m.geometry.attributes.position.array.set(m.userData.form);
+      m.geometry.attributes.normal.array.set(m.userData.normalen);
+      m.geometry.attributes.position.needsUpdate = m.geometry.attributes.normal.needsUpdate = true;
+    }
+    for (const liste of Object.values(teile.abnehmbar))
+      for (const m of liste) {
+        if (m.parent !== a.mesh) a.mesh.add(m);
+        m.position.copy(m.userData.ursprung.pos); m.quaternion.copy(m.userData.ursprung.quat);
+      }
+    a.ohneFluegel = false;
+  }
+  // Einschlag mit der Geschwindigkeit stoss (m/s) am Weltpunkt px/pz
+  function treffer(a, stoss, px, pz) {
+    if (stoss < 3 || rennzeit - a.trefferUhr < 0.25) return;
+    a.trefferUhr = rennzeit;
+    const dx = px - a.x, dz = pz - a.z, c = Math.cos(a.w), s = Math.sin(a.w);
+    let lx = dx * c + dz * s, lz = -dx * s + dz * c;
+    const t = 1 / Math.max(Math.abs(lx) / 2.3, Math.abs(lz) / 0.95, 1e-3);
+    lx *= t; lz *= t;
+    const menge = (stoss - 3) * 2.6;
+    const sd = a.schaden;
+    const zone = Math.abs(lx) / 2.3 > Math.abs(lz) / 0.95 ? (lx > 0 ? "vorn" : "hinten") : (lz > 0 ? "rechts" : "links");
+    sd[zone] = Math.min(100, sd[zone] + menge);
+    sd.gesamt = Math.min(100, sd.gesamt + menge * 0.6);
+    verbeulen(a, lx, lz, Math.min(0.28, 0.03 + menge * 0.006));
+    if (sd.vorn >= 45) abfallen(a, "splitter");
+    if (sd.hinten >= 50) abfallen(a, "fluegel");
+    if (sd.links >= 40) abfallen(a, "spiegelL");
+    if (sd.rechts >= 40) abfallen(a, "spiegelR");
+    if (a.spieler) {
+      crashTon(stoss);
+      if (zone === "vorn" && menge > 12) risseZeichnen(false);
+    }
+  }
+
+  // Sprünge in der Frontscheibe (nur im Cockpit sichtbar)
+  const risseLeinwand = document.getElementById("risse"), rg = risseLeinwand.getContext("2d");
+  let rissAnzahl = 0;
+  function risseZeichnen(loeschen) {
+    if (loeschen) { rg.clearRect(0, 0, 1280, 720); rissAnzahl = 0; return; }
+    if (rissAnzahl >= 4) return;
+    rissAnzahl++;
+    const cx = 250 + Math.random() * 780, cy = 140 + Math.random() * 240;
+    // milchiger Fleck am Einschlag
+    const hof = rg.createRadialGradient(cx, cy, 0, cx, cy, 70);
+    hof.addColorStop(0, "rgba(255,255,255,0.55)"); hof.addColorStop(1, "rgba(255,255,255,0)");
+    rg.fillStyle = hof; rg.beginPath(); rg.arc(cx, cy, 70, 0, 7); rg.fill();
+    // Sprünge: erst dunkler Schatten, dann helle Kante, damit man sie vor Himmel und Asphalt sieht
+    const linien = [];
+    const strahlen = 9 + (Math.random() * 7 | 0);
+    for (let k = 0; k < strahlen; k++) {
+      let w = k / strahlen * Math.PI * 2 + Math.random() * 0.4, x = cx, y = cy;
+      const pfadPunkte = [[x, y]], laenge = 120 + Math.random() * 300;
+      for (let l = 0; l < laenge; l += 14) { w += (Math.random() - 0.5) * 0.5; x += Math.cos(w) * 14; y += Math.sin(w) * 14; pfadPunkte.push([x, y]); }
+      linien.push(pfadPunkte);
+    }
+    for (let ring = 1; ring <= 3; ring++) {
+      const r = ring * (16 + Math.random() * 10), pfadPunkte = [];
+      for (let k = 0; k <= 24; k++) { const w = k / 24 * Math.PI * 2, rr = r * (0.8 + Math.random() * 0.4); pfadPunkte.push([cx + Math.cos(w) * rr, cy + Math.sin(w) * rr]); }
+      linien.push(pfadPunkte);
+    }
+    for (const [farbe, breite] of [["rgba(0,0,0,0.45)", 3], ["rgba(245,248,252,0.9)", 1.4]]) {
+      rg.strokeStyle = farbe; rg.lineWidth = breite;
+      for (const l of linien) { rg.beginPath(); l.forEach(([x, y], i) => i ? rg.lineTo(x, y) : rg.moveTo(x, y)); rg.stroke(); }
+    }
   }
 
   const platz = () => [...autos].sort((a, b) => {
@@ -1256,8 +1557,20 @@
       const rumpelLaut = C.createGain(); rumpelLaut.gain.value = 0;
       rausch.connect(rumpel); rumpel.connect(rumpelLaut); rumpelLaut.connect(gesamt);
       rausch.start();
-      ton = { C, filter, motorLaut, o1, o2, band, quietschLaut, rumpelLaut };
+      ton = { C, filter, motorLaut, o1, o2, band, quietschLaut, rumpelLaut, puffer, gesamt };
     } catch { ton = null; }
+  }
+  function crashTon(stoss) {
+    if (!ton || stumm) return;
+    const C = ton.C, t = C.currentTime, laut = Math.min(1, stoss / 16);
+    const q = C.createBufferSource(); q.buffer = ton.puffer;
+    const tief = C.createBiquadFilter(); tief.type = "lowpass"; tief.frequency.value = 700 + laut * 1200;
+    const g = C.createGain(); g.gain.setValueAtTime(0.9 * laut, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35 + laut * 0.3);
+    q.connect(tief); tief.connect(g); g.connect(ton.gesamt); q.start(t, Math.random() * 0.5); q.stop(t + 0.8);
+    const o = C.createOscillator(); o.type = "square"; o.frequency.setValueAtTime(180 + Math.random() * 120, t);
+    o.frequency.exponentialRampToValueAtTime(60, t + 0.2);
+    const og = C.createGain(); og.gain.setValueAtTime(0.25 * laut, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    o.connect(og); og.connect(ton.gesamt); o.start(t); o.stop(t + 0.25);
   }
   function tonAktualisieren(a, laeuft) {
     if (!ton) return;
@@ -1341,6 +1654,17 @@
     }
   }
 
+  const sg = document.getElementById("schadenBild").getContext("2d");
+  const schadenFarbe = (w) => w < 15 ? "#3ee07a" : w < 45 ? "#f4c430" : w < 75 ? "#ff8c2a" : "#ff3b2f";
+  function schadenZeichnen(sd) {
+    sg.clearRect(0, 0, 44, 84);
+    sg.fillStyle = "rgba(255,255,255,0.12)"; sg.beginPath(); sg.roundRect ? sg.roundRect(8, 6, 28, 72, 9) : sg.rect(8, 6, 28, 72); sg.fill();
+    sg.fillStyle = schadenFarbe(sd.vorn); sg.fillRect(11, 4, 22, 6);
+    sg.fillStyle = schadenFarbe(sd.hinten); sg.fillRect(11, 74, 22, 6);
+    sg.fillStyle = schadenFarbe(sd.links); sg.fillRect(4, 16, 5, 52);
+    sg.fillStyle = schadenFarbe(sd.rechts); sg.fillRect(35, 16, 5, 52);
+    sg.fillStyle = schadenFarbe(sd.gesamt); sg.globalAlpha = 0.55; sg.fillRect(13, 22, 18, 40); sg.globalAlpha = 1;
+  }
   let letzteAnzeige = 0, letzteLenkradAnzeige = "";
   function anzeige(jetzt) {
     const a = spieler;
@@ -1362,7 +1686,9 @@
       "Runde " + zeit(aktuell) + "<br>" +
       "Beste " + zeit(a.besteRunde) + "<br>" +
       "Driftpunkte <b>" + a.driftPunkte + "</b><br>" +
+      "Schaden <b>" + Math.round(a.schaden.gesamt) + " %</b><br>" +
       "Rekord " + zeit(bestzeit);
+    schadenZeichnen(a.schaden);
     zeichneKarte();
     const text = a.gang + "|" + Math.round(a.v * 3.6);
     if (text !== letzteLenkradAnzeige && ANSICHTEN[ansicht] === "cockpit") {
@@ -1387,7 +1713,7 @@
     if (neu) { bestzeit = a.fertig; speichereBest(bestzeit); }
     ui.zielTitel.textContent = mein === 1 ? "🏆 Sieg!" : "Platz " + mein;
     ui.zielText.textContent = "Gesamtzeit " + zeit(a.fertig) + " · schnellste Runde " + zeit(a.besteRunde) +
-      " · " + a.driftPunkte + " Driftpunkte" + (neu ? " · Neuer Rekord!" : "");
+      " · " + a.driftPunkte + " Driftpunkte · Schaden " + Math.round(a.schaden.gesamt) + " %" + (neu ? " · Neuer Rekord!" : "");
     ui.zielTabelle.innerHTML = reihenfolge.map((b, i) =>
       "<tr" + (b.spieler ? ' class="du"' : "") + "><td>" + (i + 1) + ".</td><td>" + b.name + "</td><td>" +
       (b.fertig !== null ? zeit(b.fertig) : "Runde " + Math.min(RUNDEN, Math.max(1, b.runde))) + "</td></tr>").join("");
@@ -1400,6 +1726,7 @@
     B = innerWidth; H = innerHeight;
     renderer.setSize(B, H);
     kamera.aspect = B / H; kamera.updateProjectionMatrix();
+    if (typeof pp !== "undefined" && pp) pp.groesse(B, H, renderer.getPixelRatio());
   }
   addEventListener("resize", groesse); groesse();
 
@@ -1469,6 +1796,7 @@
       cockpit.visible = false;
       teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = true;
       for (const sp of teile.spiegel) sp.visible = true;
+      risseLeinwand.style.display = "none";
       const t = performance.now() / 1000 * 0.25;
       kamera.position.set(a.x + Math.cos(t) * 7.2, 1.7, a.z + Math.sin(t) * 7.2);
       kamera.lookAt(hv2.set(a.x, 0.75, a.z));
@@ -1482,7 +1810,8 @@
     const art = ANSICHTEN[ansicht];
     cockpit.visible = art === "cockpit";
     teile.kabine.visible = teile.dachTeil.visible = teile.nr.visible = teile.hinterwagen.visible = art !== "cockpit";
-    for (const sp of teile.spiegel) sp.visible = art !== "cockpit";
+    for (const sp of teile.spiegel) if (sp.parent === m) sp.visible = art !== "cockpit";
+    risseLeinwand.style.display = art === "cockpit" && rissAnzahl ? "block" : "none";
     const ruetteln = (a.flaeche === "kerb" ? 0.012 : a.flaeche === "asphalt" ? 0 : 0.03) * Math.min(1, a.v / 20) + a.anprall * 0.08;
     const zz = () => (Math.random() - 0.5) * ruetteln;
     let fov;
@@ -1539,7 +1868,16 @@
         a.rauchUhr -= dt;
         if (a.rauchUhr <= 0) { a.rauchUhr = 0.035; rauchen(lx, lz, a.vx, a.vz); rauchen(rx, rz, a.vx, a.vz); }
       } else a.radSpur = null;
+      // ein schwer beschädigter Motor qualmt
+      if (a.schaden.gesamt > 55 && zustand !== "menue") {
+        a.motorRauchUhr -= dt;
+        if (a.motorRauchUhr <= 0) {
+          a.motorRauchUhr = a.schaden.gesamt > 80 ? 0.05 : 0.12;
+          rauchen(a.x - Math.cos(a.w) * 1.9, a.z - Math.sin(a.w) * 1.9, a.vx, a.vz, a.schaden.gesamt > 80 ? 0x2a2a2a : 0x8a8a8a, 0.9);
+        }
+      }
     }
+    teileBewegen(dt);
     if (spurGeaendert) {
       spurGeo.attributes.position.needsUpdate = true;
       spurGeo.setDrawRange(0, spurAnzahl * 6);
@@ -1548,7 +1886,121 @@
     rauchBewegen(dt);
   }
 
+  umgebungDaempfen(szene);
+
+  /* ---------- Ideallinie auf der Fahrbahn ---------- */
+  const LINIE_LAENGE = 170;
+  const pfeilTex = leinwandTextur(64, 64, (g, b, h) => {
+    g.fillStyle = "rgba(255,255,255,0.4)"; g.fillRect(0, 0, b, h);
+    g.fillStyle = "rgba(255,255,255,1)";
+    g.beginPath(); g.moveTo(4, 46); g.lineTo(32, 14); g.lineTo(60, 46); g.lineTo(60, 60); g.lineTo(32, 30); g.lineTo(4, 60); g.closePath(); g.fill();
+  }, true);
+  const linieGeo = new T.BufferGeometry();
+  const linieLage = new Float32Array((LINIE_LAENGE + 1) * 6), linieFarbe = new Float32Array((LINIE_LAENGE + 1) * 6), linieUv = new Float32Array((LINIE_LAENGE + 1) * 4);
+  linieGeo.setAttribute("position", new T.BufferAttribute(linieLage, 3).setUsage(T.DynamicDrawUsage));
+  linieGeo.setAttribute("color", new T.BufferAttribute(linieFarbe, 3).setUsage(T.DynamicDrawUsage));
+  linieGeo.setAttribute("uv", new T.BufferAttribute(linieUv, 2).setUsage(T.DynamicDrawUsage));
+  {
+    const idx = [];
+    for (let k = 0; k < LINIE_LAENGE; k++) { const a = 2 * k; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+    linieGeo.setIndex(idx);
+  }
+  const linieMesh = new T.Mesh(linieGeo, new T.MeshBasicMaterial({ map: pfeilTex, vertexColors: true, transparent: true, opacity: 0.9,
+    depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -24, toneMapped: false }));
+  linieMesh.frustumCulled = false;
+  szene.add(linieMesh);
+  const GRUEN = [0.1, 0.85, 0.25], GELB = [1.0, 0.72, 0.0], ROT = [1.0, 0.1, 0.05];
+  function linieAktualisieren() {
+    linieMesh.visible = linieAn && zustand !== "menue";
+    if (!linieMesh.visible) return;
+    const a = spieler, start = a.fortschritt + 3;
+    for (let k = 0; k <= LINIE_LAENGE; k++) {
+      const i = wrap(start + k);
+      const breite = 0.75 * Math.min(1, k / 8) * Math.min(1, (LINIE_LAENGE - k) / 30);
+      const x = LX[i], z = LZ[i], o = 6 * k;
+      linieLage[o] = x - NX[i] * breite; linieLage[o + 1] = 0.04; linieLage[o + 2] = z - NZ[i] * breite;
+      linieLage[o + 3] = x + NX[i] * breite; linieLage[o + 4] = 0.04; linieLage[o + 5] = z + NZ[i] * breite;
+      // Farbe: wie viel schneller bin ich gerade als an dieser Stelle möglich?
+      const d = a.v - SPIELER_PROFIL[i];
+      const f1 = Math.max(0, Math.min(1, (d + 9) / 6)), f2 = Math.max(0, Math.min(1, d / 3));
+      for (let c = 0; c < 3; c++) {
+        const wert = f2 > 0 ? GELB[c] + (ROT[c] - GELB[c]) * f2 : GRUEN[c] + (GELB[c] - GRUEN[c]) * f1;
+        linieFarbe[o + c] = linieFarbe[o + 3 + c] = wert;
+      }
+      const v = (start + k) * SCHRITT / 2.6;
+      linieUv.set([0, v, 1, v], 4 * k);
+    }
+    linieGeo.attributes.position.needsUpdate = linieGeo.attributes.color.needsUpdate = linieGeo.attributes.uv.needsUpdate = true;
+  }
+
+  /* ---------- Nachbearbeitung: Leuchten, Bewegungsunschärfe, Farbabstimmung ---------- */
+  var pp = !grob && renderer.capabilities.isWebGL2 && T.WebGLMultisampleRenderTarget ? (() => {
+    const opt = { type: T.HalfFloatType, format: T.RGBAFormat, depthBuffer: false };
+    const szeneRT = new T.WebGLMultisampleRenderTarget(4, 4, { type: T.HalfFloatType, format: T.RGBAFormat });
+    szeneRT.samples = 4;
+    const hell = new T.WebGLRenderTarget(4, 4, opt), blurA = new T.WebGLRenderTarget(4, 4, opt), blurB = new T.WebGLRenderTarget(4, 4, opt);
+    const vs = "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }";
+    const mat = (uniforms, fs) => new T.ShaderMaterial({ uniforms, vertexShader: vs, fragmentShader: fs, depthTest: false, depthWrite: false });
+    const hellMat = mat({ tex: { value: null } }, `
+      uniform sampler2D tex; varying vec2 vUv;
+      void main() { vec3 c = texture2D(tex, vUv).rgb; float l = max(c.r, max(c.g, c.b));
+        gl_FragColor = vec4(c * max(l - 1.1, 0.0) / max(l, 1e-4), 1.0); }`);
+    const blurMat = mat({ tex: { value: null }, schritt: { value: new T.Vector2() } }, `
+      uniform sampler2D tex; uniform vec2 schritt; varying vec2 vUv;
+      void main() {
+        vec3 c = texture2D(tex, vUv).rgb * 0.227;
+        c += (texture2D(tex, vUv + schritt * 1.38).rgb + texture2D(tex, vUv - schritt * 1.38).rgb) * 0.316;
+        c += (texture2D(tex, vUv + schritt * 3.23).rgb + texture2D(tex, vUv - schritt * 3.23).rgb) * 0.07;
+        gl_FragColor = vec4(c, 1.0); }`);
+    const endMat = mat({ szene: { value: null }, leuchten: { value: null }, tempo: { value: 0 }, zeit: { value: 0 } }, `
+      uniform sampler2D szene, leuchten; uniform float tempo, zeit; varying vec2 vUv;
+      vec3 aces(vec3 x) { return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }
+      void main() {
+        vec2 d = vUv - 0.5;
+        float st = tempo * 0.045 * smoothstep(0.12, 0.6, length(d));
+        vec3 c = vec3(0.0);
+        for (int i = 0; i < 8; i++) c += texture2D(szene, vUv - d * st * float(i) / 7.0).rgb;
+        c /= 8.0;
+        c += texture2D(leuchten, vUv).rgb * 0.7;
+        c = aces(c * 0.62);
+        float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+        c = mix(vec3(l), c, 1.22);                       // etwas kräftigere Farben
+        c = (c - 0.5) * 1.08 + 0.5;                      // etwas mehr Kontrast
+        c = pow(max(c, 0.0), vec3(1.0 / 2.2));
+        c *= 1.0 - 0.35 * pow(length(d) * 1.3, 2.4);     // Vignette
+        c += (fract(sin(dot(vUv * (zeit + 1.0), vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
+        gl_FragColor = vec4(c, 1.0); }`);
+    const quad = new T.Mesh(new T.PlaneGeometry(2, 2), hellMat);
+    quad.frustumCulled = false;
+    const quadSzene = new T.Scene(); quadSzene.add(quad);
+    const kam = new T.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const pass = (material, ziel) => { quad.material = material; renderer.setRenderTarget(ziel); renderer.render(quadSzene, kam); };
+    return {
+      groesse(b, h, pr) {
+        szeneRT.setSize(Math.round(b * pr), Math.round(h * pr));
+        for (const rt of [hell, blurA, blurB]) rt.setSize(Math.max(1, Math.round(b / 4)), Math.max(1, Math.round(h / 4)));
+      },
+      zeichnen(tempo) {
+        renderer.setRenderTarget(szeneRT);
+        renderer.render(szene, kamera);
+        hellMat.uniforms.tex.value = szeneRT.texture; pass(hellMat, hell);
+        const sx = 1 / hell.width, sy = 1 / hell.height;
+        blurMat.uniforms.tex.value = hell.texture; blurMat.uniforms.schritt.value.set(sx, 0); pass(blurMat, blurA);
+        blurMat.uniforms.tex.value = blurA.texture; blurMat.uniforms.schritt.value.set(0, sy); pass(blurMat, blurB);
+        blurMat.uniforms.tex.value = blurB.texture; blurMat.uniforms.schritt.value.set(sx * 2.5, 0); pass(blurMat, blurA);
+        blurMat.uniforms.tex.value = blurA.texture; blurMat.uniforms.schritt.value.set(0, sy * 2.5); pass(blurMat, blurB);
+        endMat.uniforms.szene.value = szeneRT.texture; endMat.uniforms.leuchten.value = blurB.texture;
+        endMat.uniforms.tempo.value = tempo; endMat.uniforms.zeit.value = (performance.now() % 10000) / 1000;
+        pass(endMat, null);
+      }
+    };
+  })() : null;
+  let effekte = !!pp;
+  if (pp) pp.groesse(B, H, renderer.getPixelRatio());
+
   /* ---------- Hauptschleife ---------- */
+  const bildZeiten = [];
+  let leistungGeprueft = false;
   let zustand = "menue", rennzeit = 0, ampelUhr = 0, ampelAus = 6, nachZiel = 0, zuletzt = performance.now();
   const ruhe = { gas: false, bremse: true, links: false, rechts: false, handbremse: false };
   neuesRennen(); zustand = "menue";
@@ -1571,6 +2023,16 @@
         ui.ampel.style.display = "none";
         ui.los.style.opacity = 1;
         setTimeout(() => { ui.los.style.opacity = 0; }, 900);
+      }
+    }
+
+    // läuft es mit allen Effekten zu langsam, einmal automatisch auf schnell schalten
+    if (effekte && zustand === "rennen" && !leistungGeprueft) {
+      bildZeiten.push(jetzt);
+      if (bildZeiten.length > 90) {
+        const ms = (bildZeiten[bildZeiten.length - 1] - bildZeiten[30]) / (bildZeiten.length - 31);
+        leistungGeprueft = true;
+        if (ms > 26) { effekte = false; melde("Grafik wurde für flüssiges Fahren auf „schnell“ gestellt. Mit G schaltest du die Effekte wieder ein."); }
       }
     }
 
@@ -1601,7 +2063,12 @@
     renderer.setScissorTest(false);
     renderer.setViewport(0, 0, B, H);
     renderer.shadowMap.needsUpdate = true;     // Schatten nur einmal je Bild, nicht für jeden Spiegel neu
-    renderer.render(szene, kamera);
+    linieAktualisieren();
+    if (effekte) {
+      pp.zeichnen(zustand === "menue" ? 0 : Math.max(0, Math.min(1, (spieler.v - 35) / 45)));
+      renderer.setRenderTarget(null);
+      renderer.setViewport(0, 0, B, H);
+    } else renderer.render(szene, kamera);
     spiegelZeichnen();
     anzeige(jetzt);
     requestAnimationFrame(schleife);
