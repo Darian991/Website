@@ -1183,7 +1183,7 @@
   });
 
   /* ---------- Autos: 911 GT3 RS ---------- */
-  const glasMat = new T.MeshPhysicalMaterial({ color: 0x05080a, roughness: 0.03, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.7 });
+  const glasMat = new T.MeshPhysicalMaterial({ color: 0x020304, roughness: 0.05, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 0.38 });
   glasMat.userData.spiegelt = true;
   const reifenMat = new T.MeshStandardMaterial({ color: 0x141414, roughness: 0.9 });
   // Reifenflanke: Gummi mit erhabener Schrift und farbigem Ring wie bei Rennreifen
@@ -1207,13 +1207,14 @@
   const felgeMat = new T.MeshStandardMaterial({ color: 0x2a2b2e, roughness: 0.25, metalness: 0.9 });
   const schwarzMat = new T.MeshStandardMaterial({ color: 0x151515, roughness: 0.6 });
   // Felge mit zehn Speichen, Zentralverschluss, Bremsscheibe und roter Bremszange dahinter
-  const felgeBildMat = new T.MeshStandardMaterial({ roughness: 0.28, metalness: 0.85, map: leinwandTextur(256, 256, (g, b, h) => {
+  const felgeBild = (dunkel) => new T.MeshStandardMaterial({ roughness: dunkel ? 0.4 : 0.28, metalness: 0.85, map: leinwandTextur(256, 256, (g, b, h) => {
     const c = b / 2;
     g.fillStyle = "#1a1a1c"; g.beginPath(); g.arc(c, c, c, 0, 7); g.fill();
     g.fillStyle = "#6d6f72"; g.beginPath(); g.arc(c, c, c * 0.8, 0, 7); g.fill();          // Bremsscheibe
     g.fillStyle = "#4e5053"; for (let k = 0; k < 36; k++) { const w = k / 36 * 6.283; g.beginPath(); g.arc(c + Math.cos(w) * c * 0.62, c + Math.sin(w) * c * 0.62, 3, 0, 7); g.fill(); }
     g.fillStyle = "#c81e1e"; g.save(); g.translate(c, c); g.rotate(-0.6); g.fillRect(c * 0.45, -26, 30, 52); g.restore();   // Bremszange
-    const metall = g.createLinearGradient(0, 0, b, b); metall.addColorStop(0, "#e4e7ea"); metall.addColorStop(1, "#7d8186");
+    const metall = g.createLinearGradient(0, 0, b, b);
+    metall.addColorStop(0, dunkel ? "#3c3e42" : "#e4e7ea"); metall.addColorStop(1, dunkel ? "#141517" : "#7d8186");
     g.fillStyle = metall;
     for (let k = 0; k < 10; k++) {
       g.save(); g.translate(c, c); g.rotate(k / 10 * Math.PI * 2);
@@ -1222,9 +1223,10 @@
     }
     g.lineWidth = 10; g.strokeStyle = metall; g.beginPath(); g.arc(c, c, c * 0.93, 0, 7); g.stroke();   // Felgenhorn
     g.fillStyle = "#2b2c2f"; g.beginPath(); g.arc(c, c, c * 0.2, 0, 7); g.fill();
-    g.fillStyle = "#b4b8bc"; g.beginPath(); for (let k = 0; k < 6; k++) { const w = k / 6 * 6.283; g[k ? "lineTo" : "moveTo"](c + Math.cos(w) * 16, c + Math.sin(w) * 16); } g.fill();   // Zentralmutter
+    g.fillStyle = dunkel ? "#d2232a" : "#b4b8bc"; g.beginPath(); for (let k = 0; k < 6; k++) { const w = k / 6 * 6.283; g[k ? "lineTo" : "moveTo"](c + Math.cos(w) * 16, c + Math.sin(w) * 16); } g.fill();   // Zentralmutter
   }) });
-  felgeBildMat.userData.spiegelt = true;
+  const felgeBildMat = felgeBild(false), felgeDunkelMat = felgeBild(true);
+  felgeBildMat.userData.spiegelt = felgeDunkelMat.userData.spiegelt = true;
   // Seitenansichten der Karosserien in Metern (x nach vorn, y nach oben), mit Radausschnitten.
   // Vorder- und Hinterwagen sind getrennt, damit man im Cockpit über die Haube schaut.
   // Befehle: [x, y] = Linie, ["q", kx, ky, x, y] = Kurve, ["r", mitte, radius] = Radbogen
@@ -1254,29 +1256,38 @@
       vorder: [[0.7, 0.2], ["r", 1.23, 0.45], [2.18, 0.2], ["q", 2.36, 0.22, 2.34, 0.42], ["q", 2.3, 0.6, 2.05, 0.66], ["q", 1.4, 0.74, 0.75, 0.86], [0.7, 0.865], [0.7, 0.2]],
       hinter: [[0.7, 0.865], [-1.5, 0.9], ["q", -2.0, 0.9, -2.26, 0.8], ["q", -2.36, 0.6, -2.3, 0.28], [-2.15, 0.2], ["r", -1.23, 0.45], [0.7, 0.2], [0.7, 0.865]],
       kabine: [[0.78, 0.84], ["q", 0.35, 1.05, 0.0, 1.27], ["q", -0.45, 1.34, -0.8, 1.26], ["q", -1.3, 1.12, -1.75, 0.88], [0.78, 0.84]], kabineBreite: 1.38,
-      dach: [0.85, 1.2, -0.42, 1.315],
-      sitz: [-0.3, 1.24, -0.35], spiegel: [0.6, 1.0, 1.02], nummerTuer: [0.1, 0.66, 1.0], nummerDach: [-0.42, 1.34],
-      heck: [[0.04, 0.06, 1.7, -2.33, 0.78, 0], [0.05, 0.12, 0.32, -2.335, 0.7, 0.62], [0.05, 0.12, 0.32, -2.335, 0.7, -0.62], [0.03, 0.035, 0.5, -0.95, 1.245, 0]],
+      dach: [0.85, 1.2, -0.42, 1.315], cSaeule: -0.95,
+      // Querschnitte des 911: [x, Mitte oben, Kotflügelkrone, Lage der Krone (Anteil der Breite), halbe Breite]
+      // Flache Fronthaube zwischen hohen Kotflügeln, schmale Taille an den Türen, breite Hinterbacken
+      karosserie: [
+        [2.42, 0.4, 0.43, 0.55, 0.6], [2.34, 0.5, 0.56, 0.62, 0.82], [2.24, 0.57, 0.67, 0.68, 0.9], [2.1, 0.61, 0.75, 0.7, 0.94],
+        [1.9, 0.64, 0.8, 0.71, 0.965], [1.6, 0.68, 0.83, 0.72, 0.975], [1.25, 0.72, 0.84, 0.72, 0.975], [0.95, 0.77, 0.835, 0.73, 0.965],
+        [0.7, 0.83, 0.845, 0.75, 0.95], [0.3, 0.85, 0.86, 0.8, 0.945], [-0.2, 0.86, 0.875, 0.8, 0.955], [-0.6, 0.87, 0.9, 0.78, 0.985],
+        [-1.0, 0.88, 0.935, 0.76, 1.01], [-1.4, 0.885, 0.935, 0.76, 1.01], [-1.8, 0.87, 0.9, 0.76, 0.99], [-2.1, 0.83, 0.85, 0.74, 0.95],
+        [-2.28, 0.74, 0.75, 0.7, 0.9], [-2.4, 0.55, 0.56, 0.65, 0.78]],
+      sitz: [-0.3, 1.24, -0.35], spiegel: [0.5, 0.94, 1.02], nummerTuer: [0.05, 0.6, 1.0], nummerDach: [-0.42, 1.34],
+      heck: [[0.04, 0.05, 1.5, -2.305, 0.715, 0], [0.03, 0.035, 0.5, -0.98, 1.215, 0]],
       maul: [2.41, 0.36, 1.5],
       teile: (h) => {
         for (const s of [-1, 1]) {
-          h.kugel(0.72, 0.15, 0.27, 1.5, 0.74, s * 0.66, h.oben);                    // vordere Kotflügel
-          h.kugel(0.95, 0.16, 0.3, -1.25, 0.84, s * 0.7, h.oben);                    // breite Hinterbacken
-          h.kugel(0.13, 0.1, 0.13, 2.08, 0.75, s * 0.66, h.lichtMat);                // runde Scheinwerfer
-          h.dbox(0.3, 0.025, 0.15, 1.5, 0.775, s * 0.3, h.schwarz).rotation.z = -0.12;
-          h.dbox(0.34, 0.02, 0.2, 1.28, 0.885, s * 0.66, lamellenMat);               // Lamellen über den Vorderrädern
-          h.dbox(0.34, 0.16, 0.03, -0.62, 0.6, s * 0.955, h.schwarz);                // Lufteinlass vor dem Hinterrad
-          h.ab("fluegel", h.box(0.08, 0.66, 0.06, -1.98, 1.24, s * 0.42, h.schwarz)); // Schwanenhals-Halter
-          h.ab("fluegel", h.box(0.56, 0.24, 0.03, -2.1, 1.58, s * 0.93, h.schwarz));  // Endplatten
-          h.schrift(0.1, 0.3, s * 0.958, s);
-          h.auspuff(-2.35, 0.35, s * 0.12);
+          // große runde Scheinwerfer vorn auf den Kotflügeln, mit schwarzem Rand
+          h.kugel(0.15, 0.13, 0.155, 2.04, 0.665, s * 0.64, h.schwarz).rotation.z = -0.55;
+          h.kugel(0.14, 0.12, 0.145, 2.055, 0.672, s * 0.64, h.glasDunkel).rotation.z = -0.55;
+          h.scheinwerfer(2.178, 0.748, s * 0.64, 0.1);
+          h.dbox(0.34, 0.02, 0.2, 1.3, 0.85, s * 0.7, lamellenMat).rotation.z = -0.04;     // Lamellen über den Vorderrädern
+          h.dbox(0.36, 0.15, 0.03, -0.66, 0.56, s * 0.985, h.schwarz);                     // Lufteinlass vor dem Hinterrad
+          h.dbox(0.24, 0.012, 0.14, 2.2, 0.36, s * 0.86, h.schwarz).rotation.x = s * 0.15; // Flics an den Ecken
+          h.ab("fluegel", h.box(0.09, 0.56, 0.05, -2.0, 1.12, s * 0.42, h.schwarz)).rotation.z = -0.22;   // Schwanenhals
+          h.ab("fluegel", h.box(0.52, 0.27, 0.025, -2.12, 1.37, s * 0.93, h.schwarz));                  // Endplatten
+          h.schrift(0.0, 0.36, s * 0.99, s);
+          h.auspuff(-2.33, 0.42, s * 0.1);
         }
-        h.dbox(0.38, 0.025, 0.5, 1.8, 0.745, 0, h.schwarz).rotation.z = -0.15;       // großer Auslass in der Fronthaube
-        h.ab("fluegel", h.box(0.52, 0.05, 1.86, -2.1, 1.56, 0, h.schwarz));          // Heckflügel über Dachhöhe
-        h.ab("fluegel", h.box(0.28, 0.04, 1.86, -1.93, 1.63, 0, h.schwarz)).rotation.z = 0.3;
-        h.heckSchrift(-2.4, 0.56);
-        h.ab("splitter", h.box(0.3, 0.1, 1.95, 2.28, 0.2, 0, h.schwarz));
-        h.box(0.25, 0.18, 1.6, -2.28, 0.28, 0, h.schwarz);                           // Diffusor
+        h.dbox(0.3, 0.012, 0.6, 1.85, 0.645, 0, h.schwarz).rotation.z = -0.12;           // Auslass in der Fronthaube
+        h.ab("fluegel", h.box(0.42, 0.04, 1.84, -2.12, 1.37, 0, h.schwarz));            // Heckflügel
+        h.ab("fluegel", h.box(0.22, 0.03, 1.84, -1.96, 1.42, 0, h.schwarz)).rotation.z = 0.3;
+        h.heckSchrift(-2.35, 0.58);
+        h.ab("splitter", h.box(0.26, 0.03, 1.8, 2.2, 0.13, 0, h.schwarz));
+        h.box(0.3, 0.1, 1.4, -2.12, 0.24, 0, h.schwarz);                                 // Diffusor
       }
     },
     supersport: {
@@ -1294,8 +1305,6 @@
         for (const s of [-1, 1]) {
           h.licht(0.3, 0.05, 0.35, 2.2, 0.46, s * 0.68).rotation.z = -0.25;           // schmale Scheinwerfer
           h.dbox(0.7, 0.22, 0.03, -0.55, 0.55, s * 1.005, h.schwarz);                // große Seitenlufteinlässe
-          h.kugel(0.85, 0.12, 0.3, -1.35, 0.86, s * 0.72, h.oben);
-          h.kugel(0.7, 0.1, 0.28, 1.35, 0.66, s * 0.7, h.oben);
           h.ab("fluegel", h.box(0.06, 0.1, 0.05, -2.15, 0.95, s * 0.6, h.schwarz));
           h.auspuff(-2.38, 0.42, s * 0.18);
         }
@@ -1319,8 +1328,6 @@
       teile: (h) => {
         h.box(1.5, 0.3, 0.03, -1.55, 1.0, 0, h.oben);                                // Haifischflosse
         for (const s of [-1, 1]) {
-          h.kugel(0.75, 0.2, 0.3, 1.5, 0.52, s * 0.7, h.oben);                       // hohe Radkästen
-          h.kugel(0.9, 0.18, 0.32, -1.5, 0.74, s * 0.7, h.oben);
           h.licht(0.25, 0.05, 0.25, 2.0, 0.6, s * 0.7).rotation.z = -0.4;
           h.ab("fluegel", h.box(0.6, 0.35, 0.03, -2.25, 1.0, s * 0.95, h.schwarz));
         }
@@ -1408,20 +1415,215 @@
       }
     }
   };
+
+  /* ---------- Gerundete Karosserie aus Querschnitten ----------
+     Statt einer dick ausgeschnittenen Seitenansicht wird der Wagen aus vielen Querschnitten entlang der Länge
+     zusammengesetzt: gewölbte Flanken, eingezogene Schultern, erhöhte Kotflügel und echte Radausschnitte. */
+  const TRENNUNG = 0.7;   // Vorder-/Hinterwagen (im Cockpit sieht man nur den Vorderwagen)
+  // Höhe einer geschlossenen Form an der Stelle x: [unten, oben] oder null
+  function profilBei(punkte, x) {
+    let o = -Infinity, u = Infinity;
+    for (let k = 0; k < punkte.length; k++) {
+      const a = punkte[k], b = punkte[(k + 1) % punkte.length];
+      if (a.x === b.x || (a.x - x) * (b.x - x) > 0) continue;
+      const y = a.y + (b.y - a.y) * (x - a.x) / (b.x - a.x);
+      o = Math.max(o, y); u = Math.min(u, y);
+    }
+    return o === -Infinity ? null : [u, o];
+  }
+  // weich zwischen Stützstellen interpolieren (Catmull-Rom auf jeder Spalte)
+  function glattInterpolieren(tabelle, x) {
+    let k = 0;
+    while (k < tabelle.length - 2 && tabelle[k + 1][0] > x) k++;
+    const a = tabelle[Math.max(0, k - 1)], b = tabelle[k], c = tabelle[k + 1], d = tabelle[Math.min(tabelle.length - 1, k + 2)];
+    const t = (b[0] - x) / (b[0] - c[0] || 1), t2 = t * t, t3 = t2 * t;
+    return b.map((_, i) => i === 0 ? x : 0.5 * (2 * b[i] + (-a[i] + c[i]) * t + (2 * a[i] - 5 * b[i] + 4 * c[i] - d[i]) * t2 + (-a[i] + 3 * b[i] - 3 * c[i] + d[i]) * t3));
+  }
+  // Querschnitte für einen Fahrzeugtyp: {x, yB Boden, yL Unterkante Flanke, yS Schulter, zS Lage der Schulter, yT Mitte oben, w halbe Breite}
+  function karosserieStationen(typ) {
+    const roh = [...form(typ.vorder, typ.y0).getPoints(24), ...form(typ.hinter, typ.y0).getPoints(24)];
+    const boegen = [...typ.vorder, ...typ.hinter].filter((b) => b[0] === "r").map((b) => ({ m: b[1], r: b[2], y: typ.y0 + 0.05 }));
+    const xs = roh.map((p) => p.x), x0 = Math.min(...xs), x1 = Math.max(...xs);
+    const vorn = form(typ.vorder, typ.y0).getPoints(24), hinten = form(typ.hinter, typ.y0).getPoints(24);
+    const hoehe = (x) => profilBei(x >= TRENNUNG ? vorn : hinten, x) || profilBei(x >= TRENNUNG ? hinten : vorn, x);
+    const stellen = [];
+    for (let x = x1 - 0.002; x > x0 + 0.002; x -= 0.06) stellen.push(x);
+    for (const b of boegen) for (const d of [-1, 1]) stellen.push(b.m + d * (b.r - 0.004), b.m + d * (b.r + 0.004));
+    stellen.push(TRENNUNG + 0.0001, TRENNUNG - 0.0001, x0 + 0.003, x1 - 0.003);
+    stellen.sort((a, b) => b - a);
+    const halb = typ.breite / 2, L = x1 - x0, xm = (x0 + x1) / 2;
+    const fein = typ.karosserie;   // eigene Stützstellen (911) für Kotflügel und Schultern
+    return stellen.map((x) => {
+      const h = hoehe(x) || [typ.y0, typ.y0 + 0.2];
+      let yL = h[0], yB = h[0], yT = h[1], yS = yT, zS = 0.8, w;
+      const imBogen = boegen.find((b) => Math.abs(x - b.m) < b.r);
+      if (imBogen) { yB = typ.y0; yL = Math.max(h[0], imBogen.y + Math.sqrt(imBogen.r ** 2 - (x - imBogen.m) ** 2)); }
+      // in der Draufsicht vorn und hinten abgerundet
+      const e = 0.5, ueber = Math.max(0, Math.abs(x - xm) - (L / 2 - e)) / e;
+      w = halb * (1 - ueber ** 2 * 0.3);
+      if (fein) {
+        const [, fT, fS, fZ, fW] = glattInterpolieren(fein, x);
+        yT = Math.max(fT, yL + 0.06); yS = Math.max(fS, yT); zS = fZ; w = fW;
+      } else {
+        // Kotflügel: über den Rädern wölbt sich die Schulter über den Radbogen hinaus
+        zS = 0.78;
+        for (const b of boegen) {
+          const d = Math.abs(x - b.m) / (b.r + 0.25);
+          if (d >= 1) continue;
+          const buckel = Math.cos(d * Math.PI / 2) ** 2, krone = b.y + b.r + 0.09;
+          if (krone > yS) { yS = yS + (krone - yS) * buckel; zS = 0.78 + (Math.min(0.9, typ.spur / halb) - 0.78) * buckel; }
+        }
+      }
+      return { x, yB, yL: Math.min(yL, yS - 0.04), yS, zS, yT, w };
+    });
+  }
+  // halber Querschnitt (z >= 0) vom Boden in der Mitte bis oben in der Mitte
+  function halbschnitt(s, offen) {
+    const { yB, yL, yS, yT, w } = s, zS = w * s.zS, rand = offen ? 0.04 : 0.07;
+    const mitteSeite = yL + (yS - yL) * 0.5;
+    const p = [[0, yB], [w * 0.5, yB], [w * 0.56, yB + (yL - yB) * 0.98], [w - rand, yL], [w - 0.005, yL + 0.07],
+      [w, mitteSeite], [w - 0.025, yS - 0.07], [zS + (w - zS) * 0.45, yS - 0.008], [zS, yS], [zS * 0.5, yT + (yS - yT) * 0.35], [0, yT]];
+    const kurve = new T.SplineCurve(p.map(([z, y]) => new T.Vector2(z, y)));
+    return kurve.getPoints(20).map((q) => [q.x, q.y]);
+  }
+  // Körper aus Ringen; teilt Dreiecke nach Blickrichtung in Flanke (Gruppe 0), oben/hinten (1) und Front (2)
+  function loftGeo(ringe, mitFront) {
+    const gruppen = [[], [], []];
+    const n = new T.Vector3(), a = new T.Vector3(), b = new T.Vector3(), c = new T.Vector3(), m = new T.Vector3();
+    const normale = (p1, p2, p3) => { a.set(...p1); b.set(...p2); c.set(...p3); return n.subVectors(c, b).cross(m.subVectors(a, b)).normalize(); };
+    const p = (rr, kk) => [rr.x, rr.punkte[kk][1], rr.punkte[kk][0]];
+    // alle Ringe sind gleich aufgebaut: die Drehrichtung einmal oben in der Mitte prüfen (Normale muss nach oben zeigen)
+    const oben = ringe[0].punkte.reduce((best, q, k, arr) => q[1] > arr[best][1] ? k : best, 0);
+    const o2 = (oben + 1) % ringe[0].punkte.length;
+    const umdrehen = normale(p(ringe[0], oben), p(ringe[0], o2), p(ringe[1], o2)).y < 0;
+    const dreieck = (p1, p2, p3, wende) => {
+      if (wende) [p2, p3] = [p3, p2];
+      normale(p1, p2, p3);
+      if (!isFinite(n.x)) return;
+      const gruppe = mitFront && n.x > 0.55 ? 2 : Math.abs(n.z) > 0.5 && Math.abs(n.z) > Math.abs(n.x) ? 0 : 1;
+      gruppen[gruppe].push([p1, p2, p3]);
+    };
+    for (let j = 0; j < ringe.length; j++) {
+      const r = ringe[j];
+      if (j < ringe.length - 1) {
+        const r2 = ringe[j + 1];
+        for (let k = 0; k < r.punkte.length; k++) {
+          const k2 = (k + 1) % r.punkte.length;
+          dreieck(p(r, k), p(r, k2), p(r2, k2), umdrehen);
+          dreieck(p(r, k), p(r2, k2), p(r2, k), umdrehen);
+        }
+      }
+      if (r.deckel) {   // Stirnfläche schließen: Normale zeigt nach vorn (+1) bzw. hinten (-1)
+        const yM = r.punkte.reduce((s, q) => s + q[1], 0) / r.punkte.length, zentrum = [r.x, yM, 0];
+        for (let k = 0; k < r.punkte.length; k++) {
+          const k2 = (k + 1) % r.punkte.length, q1 = p(r, k), q2 = p(r, k2);
+          normale(q1, q2, zentrum);
+          if (isFinite(n.x)) dreieck(q1, q2, zentrum, n.x * r.deckel < 0);
+        }
+      }
+    }
+    // weiche Normalen über gleiche Punkte, aber Kanten über 60 Grad bleiben scharf
+    const alle = [].concat(...gruppen), pos = [], uv = [], nor = [];
+    const fn = alle.map(([p1, p2, p3]) => { a.set(...p1); b.set(...p2); c.set(...p3); return new T.Vector3().subVectors(c, b).cross(m.subVectors(a, b)).normalize(); });
+    const schl = (q) => Math.round(q[0] * 400) + "," + Math.round(q[1] * 400) + "," + Math.round(q[2] * 400);
+    const anPunkt = new Map();
+    alle.forEach((t, i) => t.forEach((q) => { const k = schl(q); (anPunkt.get(k) || anPunkt.set(k, []).get(k)).push(i); }));
+    const geo = new T.BufferGeometry();
+    let start = 0, i = 0;
+    gruppen.forEach((liste, gi) => {
+      for (const t of liste) {
+        for (const q of t) {
+          pos.push(...q);
+          const summe = new T.Vector3();
+          for (const j of anPunkt.get(schl(q))) if (fn[j].dot(fn[i]) > 0.5) summe.add(fn[j]);
+          summe.normalize(); nor.push(summe.x, summe.y, summe.z);
+          if (gi === 0) uv.push(q[0], q[1]);
+          else if (gi === 1) uv.push(fn[i].x < -0.5 ? q[0] - q[1] : q[0], 1 - q[2]);   // Heckflächen: Höhe einrechnen, sonst Streifen
+          else uv.push(q[2], q[1]);
+        }
+        i++;
+      }
+      geo.addGroup(start, liste.length * 3, gi); start += liste.length * 3;
+    });
+    geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
+    geo.setAttribute("normal", new T.Float32BufferAttribute(nor, 3));
+    geo.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+    return geo;
+  }
+  function ringAus(s, offen) {
+    const halb = halbschnitt(s, offen);
+    const punkte = [...halb.map(([z, y]) => [z, y]), ...halb.slice(1, -1).reverse().map(([z, y]) => [-z, y])];
+    return { x: s.x, punkte };
+  }
+  function karosserieGeo(typ, mitFront) {
+    const st = karosserieStationen(typ);
+    const ringe = st.map((s) => ringAus(s, typ.offen));
+    const vorne = ringe.filter((r) => r.x >= TRENNUNG), hinten = ringe.filter((r) => r.x <= TRENNUNG);
+    vorne[0].deckel = 1; vorne[vorne.length - 1].deckel = -1;
+    hinten[0].deckel = 1; hinten[hinten.length - 1].deckel = -1;
+    return { vorder: loftGeo(vorne, mitFront), hinter: loftGeo(hinten, mitFront), stationen: st };
+  }
+  // Glaskuppel: Windschutzscheibe, Seitenfenster, Dach (lackiert) und beim 911 die hinteren Seitenteile
+  function kabinenGeo(typ, stationen) {
+    const pk = form(typ.kabine, typ.y0).getPoints(30);
+    const xs = pk.map((p) => p.x), x0 = Math.min(...xs) + 0.01, x1 = Math.max(...xs) - 0.01;
+    const breite = (x) => { let w = stationen[0].w; for (const s of stationen) if (s.x >= x) w = s.w; return w; };
+    const ringe = [];
+    for (let x = x1; x >= x0 - 1e-6; x -= 0.05) {
+      const h = profilBei(pk, x); if (!h) continue;
+      const [yB, yR] = h, hoch = Math.max(0.005, yR - yB);
+      const wb = Math.min(typ.kabineBreite / 2, breite(x) - 0.1), wt = wb * 0.76;
+      const halb = new T.SplineCurve([[wb, yB], [wb - 0.03, yB + hoch * 0.25], [wt + (wb - wt) * 0.3, yB + hoch * 0.75], [wt, yR - Math.min(0.07, hoch * 0.3)], [wt * 0.55, yR - Math.min(0.012, hoch * 0.05)], [0, yR]]
+        .map(([z, y]) => new T.Vector2(z, y))).getPoints(16).map((p) => [p.x, p.y]);
+      ringe.push({ x, punkte: [[0, yB], ...halb, ...halb.slice(0, -1).reverse().map(([z, y]) => [-z, y])] });
+    }
+    ringe[0].deckel = 1; ringe[ringe.length - 1].deckel = -1;
+    const geo = loftGeo(ringe, false);
+    // Gruppen neu zuordnen: 0 Glas, 1 Flanke lackiert, 2 Dach lackiert
+    const pos = geo.attributes.position.array, nor = geo.attributes.normal.array, uv = geo.attributes.uv.array;
+    const dach = typ.dach ? [typ.dach[2] - typ.dach[0] / 2, typ.dach[2] + typ.dach[0] / 2] : null;
+    const tris = [];
+    for (let t = 0; t < pos.length / 9; t++) {
+      const cx = (pos[9 * t] + pos[9 * t + 3] + pos[9 * t + 6]) / 3, ny = (nor[9 * t + 1] + nor[9 * t + 4] + nor[9 * t + 7]) / 3, nz = Math.abs(nor[9 * t + 2] + nor[9 * t + 5] + nor[9 * t + 8]) / 3;
+      let gr = 0;
+      if (dach && ny > 0.82 && cx > dach[0] && cx < dach[1]) gr = 2;
+      else if (typ.cSaeule !== undefined && nz > 0.45 && cx < typ.cSaeule) gr = 1;
+      tris.push([gr, t]);
+    }
+    tris.sort((p, q) => p[0] - q[0]);
+    const nPos = [], nNor = [], nUv = [];
+    const g2 = new T.BufferGeometry();
+    let start = 0, letzte = -1, anzahl = 0;
+    for (const [gr, t] of tris) {
+      if (gr !== letzte) { if (anzahl) g2.addGroup(start, anzahl, letzte); start += anzahl; anzahl = 0; letzte = gr; }
+      for (let e = 0; e < 3; e++) {
+        const v = 3 * t + e;
+        nPos.push(pos[3 * v], pos[3 * v + 1], pos[3 * v + 2]); nNor.push(nor[3 * v], nor[3 * v + 1], nor[3 * v + 2]);
+        nUv.push(gr === 2 ? pos[3 * v] : pos[3 * v], gr === 2 ? 1 - pos[3 * v + 2] : pos[3 * v + 1]);
+      }
+      anzahl += 3;
+    }
+    if (anzahl) g2.addGroup(start, anzahl, letzte);
+    g2.setAttribute("position", new T.Float32BufferAttribute(nPos, 3));
+    g2.setAttribute("normal", new T.Float32BufferAttribute(nNor, 3));
+    g2.setAttribute("uv", new T.Float32BufferAttribute(nUv, 2));
+    return g2;
+  }
+  // halbe Breite und Höhe der Karosserie an einer Stelle (für Nummern, Schriftzüge, Spiegel)
+  function stationBei(stationen, x) { let best = stationen[0]; for (const s of stationen) if (Math.abs(s.x - x) < Math.abs(best.x - x)) best = s; return best; }
   const geoSpeicher = {};
   function typGeo(id) {
     if (geoSpeicher[id]) return geoSpeicher[id];
-    const t = FAHRZEUGE[id], rund = t.offen ? 0.06 : 0.09;
+    const t = FAHRZEUGE[id], k = karosserieGeo(t, true);
     const r = {
-      vorder: extrudiert(form(t.vorder, t.y0), t.breite, rund),
-      hinter: extrudiert(form(t.hinter, t.y0), t.breite, rund),
-      kabine: t.kabine ? extrudiert(form(t.kabine, t.y0), t.kabineBreite, 0.06) : null,
+      vorder: k.vorder, hinter: k.hinter, stationen: k.stationen,
+      kabine: t.kabine ? kabinenGeo(t, k.stationen) : null,
       rad: new T.CylinderGeometry(t.rad, t.rad, t.radBreite, 28).rotateX(Math.PI / 2),
       liner: new T.CylinderGeometry(t.rad + 0.07, t.rad + 0.07, t.radBreite + 0.14, 16, 1, true, Math.PI / 2, Math.PI).rotateX(Math.PI / 2),
       schatten: new T.PlaneGeometry(4.9, t.breite + (t.offen ? 1.0 : 0.5)).rotateX(-Math.PI / 2),
       felge: new T.CircleGeometry(t.rad * 0.76, 28)
     };
-    for (const g of Object.values(r)) if (g) g.userData.geteilt = true;
+    for (const g of Object.values(r)) if (g && g.isBufferGeometry) g.userData.geteilt = true;
     return (geoSpeicher[id] = r);
   }
 
@@ -1445,11 +1647,19 @@
   function pfad(g, P, punkte) { g.beginPath(); punkte.forEach(([x, y], i) => i ? g.lineTo(...P(x, y)) : g.moveTo(...P(x, y))); g.closePath(); }
 
   // „Rexy“: grüner T-Rex mit aufgerissenem Maul an der Front
-  const REXY_GRUEN = "#4cb832", REXY_DUNKEL = "#1d5a17";
+  const REXY_GRUEN = "#3bc23d", REXY_DUNKEL = "#1a6a1c";
+  const tupfen = (g, b, h, anzahl, gross) => {
+    for (let k = 0; k < anzahl; k++) {
+      const x = Math.random() * b, y = Math.random() * h, r = gross * (0.4 + Math.random() * 0.8);
+      g.fillStyle = Math.random() < 0.7 ? "rgba(22,105,28,0.85)" : "rgba(14,80,20,0.9)";
+      g.beginPath(); g.ellipse(x, y, r, r * (0.8 + Math.random() * 0.3), Math.random() * 3, 0, 7); g.fill();
+    }
+  };
   const rexySeite = seitenTextur((g, b, h, P) => {
     const verlauf = g.createLinearGradient(0, P(0, 1.0)[1], 0, P(0, 0.2)[1]);
-    verlauf.addColorStop(0, "#5fc93f"); verlauf.addColorStop(1, "#2e7f25");
+    verlauf.addColorStop(0, "#45cc45"); verlauf.addColorStop(1, "#2a9a2c");
     g.fillStyle = verlauf; g.fillRect(0, 0, b, h);
+    tupfen(g, b, h, 140, 14);
     // Bauch
     g.fillStyle = "#c6e07a";
     pfad(g, P, [[2.4, 0.15], [2.4, 0.3], [1.6, 0.38], [1.0, 0.4], [0.2, 0.36], [-0.5, 0.3], [-0.85, 0.15]]);
@@ -1503,29 +1713,65 @@
   });
   const rexyOben = leinwandTextur(256, 256, (g, b, h) => {
     g.fillStyle = REXY_GRUEN; g.fillRect(0, 0, b, h);
+    tupfen(g, b, h, 26, 9);
     for (let k = 0; k < 500; k++) {
       g.strokeStyle = "rgba(10,50,8,0.25)"; g.lineWidth = 1.5;
       g.beginPath(); g.arc(Math.random() * b, Math.random() * h, 5 + Math.random() * 4, 0.15 * Math.PI, 0.85 * Math.PI); g.stroke();
     }
   }, true);
   rexyOben.repeat.set(1.4, 1.4);
-  // Maul von vorn gesehen, auf der Bugschürze
-  const rexyFront = leinwandTextur(512, 112, (g, b, h) => {
-    g.fillStyle = "#4a0a0e";
-    g.beginPath(); g.moveTo(0, h * 0.5); g.quadraticCurveTo(b / 2, -h * 0.25, b, h * 0.5); g.quadraticCurveTo(b / 2, h * 1.2, 0, h * 0.5); g.fill();
-    g.fillStyle = "#b8394d"; g.beginPath(); g.ellipse(b / 2, h * 0.78, b * 0.3, h * 0.14, 0, 0, Math.PI * 2); g.fill();
-    g.fillStyle = "#f6f1de";
-    for (let x = 30; x < b - 20; x += 26) {
-      const yo = h * 0.5 - Math.sin(x / b * Math.PI) * h * 0.36, yu = h * 0.5 + Math.sin(x / b * Math.PI) * h * 0.34;
-      g.beginPath(); g.moveTo(x - 9, yo); g.lineTo(x + 9, yo); g.lineTo(x, yo + 22); g.fill();
-      g.beginPath(); g.moveTo(x - 8, yu); g.lineTo(x + 8, yu); g.lineTo(x, yu - 18); g.fill();
+  // Front wie beim echten Rexy: aufgerissenes Maul mit weißen Zähnen über die ganze Bugschürze, darüber schmale Augen.
+  // Textur-Koordinaten der Frontflächen: quer z (-1,1 … 1,1 m) und Höhe y (0 … 1,1 m)
+  const rexyFront = leinwandTextur(1024, 512, (g, b, h) => {
+    const P = (z, y) => [(z / 2.2 + 0.5) * b, (1 - y / 1.1) * h];
+    g.fillStyle = REXY_GRUEN; g.fillRect(0, 0, b, h);
+    tupfen(g, b, h, 20, 10);
+    // Maul: Oberlippe zieht sich zu den Seiten nach oben, Unterkiefer knapp über dem Splitter
+    const oberlippe = (z) => 0.4 + Math.pow(Math.abs(z) / 0.95, 2.2) * 0.12, unterlippe = (z) => 0.16 + Math.pow(Math.abs(z) / 0.95, 3) * 0.1;
+    const rand = (f, von, bis, schritte) => { const r = []; for (let k = 0; k <= schritte; k++) { const z = von + (bis - von) * k / schritte; r.push(P(z, f(z))); } return r; };
+    const oben = rand(oberlippe, -0.98, 0.98, 40), unten = rand(unterlippe, 0.98, -0.98, 40);
+    g.beginPath(); [...oben, ...unten].forEach((q, k) => k ? g.lineTo(...q) : g.moveTo(...q)); g.closePath();
+    g.fillStyle = "#1a0606"; g.fill();
+    g.lineWidth = 10; g.strokeStyle = "#a3262c"; g.lineJoin = "round"; g.stroke();   // rote Lippen
+    g.lineWidth = 3; g.strokeStyle = "#5a0f12"; g.stroke();
+    // Zähne: oben lang und spitz nach unten, unten kürzer nach oben
+    g.fillStyle = "#f7f4ea"; g.strokeStyle = "rgba(60,40,30,0.5)"; g.lineWidth = 1.5;
+    for (let z = -0.9; z <= 0.91; z += 0.105) {
+      const yo = oberlippe(z) - 0.005, lang = 0.12 - Math.abs(z) * 0.035;
+      g.beginPath(); g.moveTo(...P(z - 0.045, yo)); g.lineTo(...P(z + 0.045, yo)); g.lineTo(...P(z, yo - lang)); g.closePath(); g.fill(); g.stroke();
+      const yu = unterlippe(z + 0.05) + 0.005;
+      g.beginPath(); g.moveTo(...P(z + 0.01, yu)); g.lineTo(...P(z + 0.09, yu)); g.lineTo(...P(z + 0.05, yu + 0.075)); g.closePath(); g.fill(); g.stroke();
     }
+    // Augen: schmal und schräg, rot umrandet, gelbe Iris
+    for (const s of [-1, 1]) {
+      const [ax, ay] = P(s * 0.36, 0.565);
+      g.save(); g.translate(ax, ay); g.rotate(s * 0.22);
+      g.fillStyle = "#a3262c"; g.beginPath(); g.ellipse(0, 0, 62, 20, 0, 0, 7); g.fill();
+      g.fillStyle = "#f2d23a"; g.beginPath(); g.ellipse(0, 1, 52, 13, 0, 0, 7); g.fill();
+      g.fillStyle = "#1a0606"; g.beginPath(); g.ellipse(s * 8, 1, 8, 12, 0, 0, 7); g.fill();
+      g.strokeStyle = REXY_DUNKEL; g.lineWidth = 7; g.lineCap = "round";
+      g.beginPath(); g.moveTo(-66, -14 - s * 4); g.quadraticCurveTo(0, -36, 66, -14 + s * 4); g.stroke();   // Lid
+      g.restore();
+    }
+    // Nasenlöcher
+    g.fillStyle = "#123d0f";
+    for (const s of [-1, 1]) { g.beginPath(); g.ellipse(...P(s * 0.08, 0.5), 9, 6, s * 0.4, 0, 7); g.fill(); }
   });
+  rexyFront.repeat.set(1 / 2.2, 1 / 1.1);
+  rexyFront.offset.set(0.5, 0);
+  const rexySpiegelMat = new T.MeshPhysicalMaterial({ color: new T.Color(0xd2232a).convertSRGBToLinear(), roughness: 0.4, clearcoat: 1, clearcoatRoughness: 0.05 });
+  const rexyBlendeMat = new T.MeshBasicMaterial({ map: leinwandTextur(512, 70, (g, b, h) => {
+    g.fillStyle = REXY_GRUEN; g.fillRect(0, 0, b, h);
+    g.fillStyle = "#f4f4f0"; g.font = "800 46px system-ui, sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    if (g.letterSpacing !== undefined) g.letterSpacing = "10px";
+    g.fillText("PORSCHE", b / 2, h / 2 + 2);
+  }) });
 
   /* ---------- Lackierungen: Muster mit zwei Farben ---------- */
   const FARBEN = [
     ["Rot", 0xc8102e], ["Weiß", 0xf2f2ee], ["Schwarz", 0x18191b], ["Gelb", 0xf2c41c], ["Blau", 0x1f5fbf], ["Hellblau", 0x7cc4ec],
-    ["Orange", 0xf07a1a], ["Grün", 0x1f9a4a], ["Silber", 0xa9adb3], ["Lila", 0x7a3fc2], ["Pink", 0xe8508f], ["Gold", 0xc9a227]
+    ["Orange", 0xf07a1a], ["Grün", 0x1f9a4a], ["Silber", 0xa9adb3], ["Lila", 0x7a3fc2], ["Pink", 0xe8508f], ["Gold", 0xc9a227],
+    ["Gelbgrün", 0xc4e01c], ["Rexy-Grün", 0x3bc23d]
   ];
   const hexCss = (f) => "#" + f.toString(16).padStart(6, "0");
   const mischen = (css, ziel, anteil) => "#" + new T.Color(css).lerp(new T.Color(ziel), anteil).getHexString();
@@ -1539,6 +1785,22 @@
   const rechteck = (g, P, x0, y0, x1, y1) => { pfad(g, P, [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]); g.fill(); };
   const MUSTER = {
     rexy: { name: "Rexy 🦖" },
+    lemans: {
+      // wie der Langstrecken-Prototyp aus Le Mans: oben hell, unten schwarz, dazwischen ein geschwungenes rotes Band
+      name: "Le Mans",
+      seite: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        const linie = (d) => [[2.7, 0.42 + d], [1.6, 0.5 + d], [0.6, 0.47 + d], [-0.6, 0.56 + d], [-1.6, 0.7 + d], [-2.7, 0.78 + d]];
+        g.fillStyle = "#141416"; pfad(g, P, [...linie(0), [-2.7, 0], [2.7, 0]]); g.fill();
+        g.fillStyle = c2; pfad(g, P, [...linie(0.075), ...linie(0).reverse()]); g.fill();
+        g.fillStyle = "rgba(255,255,255,0.35)";   // feines Muster im Band
+        for (let x = -2.6; x < 2.6; x += 0.035) { const y = 0.47 + Math.sin(x * 1.3) * 0.03 + (x < 0 ? -x * 0.1 : 0); g.fillRect(...P(x, y + 0.045), 3, 3); }
+      },
+      oben: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = c2; for (const s of [-1, 1]) rechteck(g, P, -2.6, s * 0.86, 2.6, s * 0.92);
+      }
+    },
     einfarbig: {
       name: "Einfarbig",
       seite: (g, b, h, P, c1, c2) => { g.fillStyle = c1; g.fillRect(0, 0, b, h); g.fillStyle = c2; rechteck(g, P, -2.6, 0.42, 2.6, 0.48); }
@@ -1633,12 +1895,12 @@
     const schluessel = lack.muster + "|" + lack.c1 + "|" + lack.c2;
     if (lackSpeicher.has(schluessel)) return lackSpeicher.get(schluessel);
     let r;
-    if (lack.muster === "rexy") r = { seite: rexySeite, oben: rexyOben };
+    if (lack.muster === "rexy") r = { seite: rexySeite, oben: rexyOben, front: rexyFront };
     else {
       const m = MUSTER[lack.muster] || MUSTER.einfarbig, c1 = hexCss(lack.c1), c2 = hexCss(lack.c2);
       r = { seite: seitenTextur((g, b, h, P) => m.seite(g, b, h, P, c1, c2)), oben: m.oben ? obenTextur((g, b, h, P) => m.oben(g, b, h, P, c1, c2)) : null };
     }
-    for (const t of [r.seite, r.oben]) if (t) GETEILT.add(t);
+    for (const t of [r.seite, r.oben, r.front]) if (t) GETEILT.add(t);
     lackSpeicher.set(schluessel, r);
     return r;
   }
@@ -1656,6 +1918,23 @@
     g.fillStyle = "#ffffff"; g.fillText("GT3 RS", b / 2, h / 2 + 2);
   }) });
 
+  // Scheinwerfer wie beim 911: Chromring, dunkle Linse, vier LED-Punkte als Tagfahrlicht
+  const scheinwerferGeo = new T.CircleGeometry(1, 32); scheinwerferGeo.userData.geteilt = true;
+  const scheinwerferMat = new T.MeshBasicMaterial({ toneMapped: false, map: leinwandTextur(256, 256, (g, b) => {
+    const c = b / 2;
+    const ring = g.createRadialGradient(c, c, c * 0.8, c, c, c); ring.addColorStop(0, "#9aa0a8"); ring.addColorStop(0.5, "#e9edf2"); ring.addColorStop(1, "#5a5f66");
+    g.fillStyle = ring; g.beginPath(); g.arc(c, c, c, 0, 7); g.fill();
+    const linse = g.createRadialGradient(c * 0.85, c * 0.8, 4, c, c, c * 0.82); linse.addColorStop(0, "#3a4048"); linse.addColorStop(1, "#0b0d10");
+    g.fillStyle = linse; g.beginPath(); g.arc(c, c, c * 0.82, 0, 7); g.fill();
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const x = c + dx * c * 0.36, y = c + dy * c * 0.36, v = g.createRadialGradient(x, y, 0, x, y, c * 0.2);
+      v.addColorStop(0, "#ffffff"); v.addColorStop(0.45, "#eef6ff"); v.addColorStop(1, "rgba(200,225,255,0)");
+      g.fillStyle = v; g.beginPath(); g.arc(x, y, c * 0.2, 0, 7); g.fill();
+    }
+    const mitte = g.createRadialGradient(c, c, 0, c, c, c * 0.2); mitte.addColorStop(0, "#fffbe8"); mitte.addColorStop(1, "rgba(255,250,230,0)");
+    g.fillStyle = mitte; g.beginPath(); g.arc(c, c, c * 0.2, 0, 7); g.fill();
+  }) });
+  scheinwerferMat.color.setScalar(1.4);
   // Auto zeigt in lokaler +X-Richtung, +Z ist rechts
   function baueAuto(f, typId) {
     const typ = FAHRZEUGE[typId], geo = typGeo(typId);
@@ -1680,38 +1959,59 @@
     const h = {
       g, teile, oben, seite, schwarz: schwarzMat, lichtMat, box, dbox, kugel, ab,
       licht: (b, hh, t, x, y, z) => box(b, hh, t, x, y, z, lichtMat),
+      glasDunkel: glasMat,
+      // runde LED-Scheinwerferscheibe, nach vorn oben geneigt
+      scheinwerfer: (x, y, z, r) => { const m = new T.Mesh(scheinwerferGeo, scheinwerferMat); m.scale.setScalar(r); m.position.set(x, y, z); m.lookAt(x + 0.85, y + 0.55, z); m.updateMatrix(); details.add(m); return m; },
       auspuff: (x, y, z) => { const r = new T.Mesh(auspuffGeo, felgeMat); r.position.set(x, y, z); details.add(r); },
       schrift: (x, y, z, s) => { const m = new T.Mesh(schriftGeo, schriftMat); m.position.set(x, y, z); m.rotation.y = s > 0 ? 0 : Math.PI; details.add(m); },
       heckSchrift: (x, y) => { const m = new T.Mesh(heckSchriftGeo, schriftMat); m.position.set(x, y, 0); m.rotation.y = -Math.PI / 2; details.add(m); }
     };
 
-    teile.vorderwagen = teil(geo.vorder.clone(), [seite, oben], 0, 0, 0);
-    teile.hinterwagen = teil(geo.hinter.clone(), [seite, oben], 0, 0, 0);
+    // Frontflächen: eigenes Bild (Rexy-Maul) oder die Grundfarbe; Muster der Oberseite passen dort nicht hin
+    const front = stoffe.front ? new T.MeshPhysicalMaterial({ map: stoffe.front, ...lackArt })
+      : stoffe.oben ? new T.MeshPhysicalMaterial({ color: new T.Color(lack.c1).convertSRGBToLinear(), ...lackArt }) : oben;
+    front.userData.spiegelt = true;
+    teile.vorderwagen = teil(geo.vorder.clone(), [seite, oben, front], 0, 0, 0);
+    teile.hinterwagen = teil(geo.hinter.clone(), [seite, oben, front], 0, 0, 0);
     teile.blech = [teile.vorderwagen, teile.hinterwagen];
-    teile.kabine = geo.kabine ? teil(geo.kabine, glasMat, 0, 0, 0) : new T.Group();
-    teile.dachTeil = typ.dach ? box(typ.dach[0], 0.04, typ.dach[1], typ.dach[2], typ.dach[3], 0, oben) : new T.Group();
+    teile.kabine = geo.kabine ? teil(geo.kabine, [glasMat, seite, oben], 0, 0, 0) : new T.Group();
+    teile.dachTeil = new T.Group();
     g.add(teile.kabine, teile.dachTeil);
     typ.teile(h);
-    for (const s of [-1, 1])   // Außenspiegel
-      teile.spiegel.push(ab(s < 0 ? "spiegelL" : "spiegelR", box(0.14, 0.11, 0.24, typ.spiegel[0], typ.spiegel[1], s * typ.spiegel[2], oben)));
+    const spiegelMat = lack.muster === "rexy" ? rexySpiegelMat : oben;
+    for (const s of [-1, 1]) {   // Außenspiegel auf einem kurzen Arm an der Tür
+      const sp = ab(s < 0 ? "spiegelL" : "spiegelR", kugel(0.085, 0.06, 0.12, typ.spiegel[0], typ.spiegel[1], s * typ.spiegel[2], spiegelMat));
+      teile.spiegel.push(sp);
+      dbox(0.08, 0.025, 0.14, typ.spiegel[0] + 0.02, typ.spiegel[1] - 0.07, s * (typ.spiegel[2] - 0.12), h.schwarz);
+    }
     // Rückleuchten: glimmen normal, leuchten beim Bremsen hell auf (Werte über 1 bringen das Leuchten zum Strahlen)
     const bremsMat = new T.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
     bremsMat.color.setRGB(0.35, 0.02, 0.02);
     teile.bremsMat = bremsMat;
     for (const [b, hh, t, x, y, z] of typ.heck) box(b, hh, t, x, y, z, bremsMat);
-    if (lack.muster === "rexy") {
-      const maul = new T.Mesh(new T.PlaneGeometry(typ.maul[2], typ.maul[2] * 0.2), new T.MeshBasicMaterial({ map: rexyFront, transparent: true }));
-      maul.position.set(typ.maul[0], typ.maul[1], 0); maul.rotation.y = Math.PI / 2; g.add(maul);
+    if (lack.muster === "rexy" && typ.kabine) {
+      // Blendstreifen mit Schriftzug oben auf der Frontscheibe
+      const pk = form(typ.kabine, typ.y0).getPoints(40), xa = Math.max(...pk.map((q) => q.x));
+      const ha = profilBei(pk, xa - 0.6), hb = profilBei(pk, xa - 0.72);
+      if (ha && hb) {
+        const mitte = new T.Vector3(xa - 0.66, (ha[1] + hb[1]) / 2 + 0.008, 0), richt = new T.Vector3(-0.12, hb[1] - ha[1], 0).normalize();
+        const blende = new T.Mesh(new T.PlaneGeometry(0.95, 0.13), rexyBlendeMat);
+        blende.position.copy(mitte); blende.lookAt(mitte.clone().add(new T.Vector3(richt.y, -richt.x, 0)));
+        details.add(blende);
+      }
     }
-    // Startnummern an den Seiten und oben
+    // Startnummern an den Seiten und oben, direkt auf der Haut der Karosserie
     const nrMat = new T.MeshBasicMaterial({ map: zahlTex(String(f.nummer)) });
+    const tuerSt = stationBei(geo.stationen, typ.nummerTuer[0]);
+    const tuerY = Math.min(typ.nummerTuer[1], tuerSt.yS - 0.24), tuerZ = typ.offen ? typ.nummerTuer[2] : tuerSt.w + 0.012;
     for (const s of [-1, 1]) {
-      const tuer = new T.Mesh(new T.PlaneGeometry(0.42, 0.42), nrMat);
-      tuer.position.set(typ.nummerTuer[0], typ.nummerTuer[1], s * typ.nummerTuer[2]); tuer.rotation.y = s > 0 ? 0 : Math.PI;
+      const tuer = new T.Mesh(new T.PlaneGeometry(0.36, 0.36), nrMat);
+      tuer.position.set(typ.nummerTuer[0], tuerY, s * tuerZ); tuer.rotation.y = s > 0 ? 0 : Math.PI;
       details.add(tuer);
     }
-    const nr = new T.Mesh(new T.PlaneGeometry(0.6, 0.6), nrMat);
-    nr.rotation.x = -Math.PI / 2; nr.rotation.z = -Math.PI / 2; nr.position.set(typ.nummerDach[0], typ.nummerDach[1] + 0.02, 0);
+    const nr = new T.Mesh(new T.PlaneGeometry(0.5, 0.5), nrMat);
+    const dachH = typ.kabine ? profilBei(form(typ.kabine, typ.y0).getPoints(40), typ.nummerDach[0]) : null;
+    nr.rotation.x = -Math.PI / 2; nr.rotation.z = -Math.PI / 2; nr.position.set(typ.nummerDach[0], dachH ? dachH[1] + 0.006 : typ.nummerDach[1] + 0.02, 0);
     g.add(nr); teile.nr = nr;
     teile.raeder = [];
     for (const [x, z] of [[typ.radstand, typ.spur], [typ.radstand, -typ.spur], [-typ.radstand, typ.spur], [-typ.radstand, -typ.spur]]) {
@@ -1721,7 +2021,7 @@
         const liner = new T.Mesh(geo.liner, linerMat);
         liner.position.set(x, typ.rad, z - Math.sign(z) * 0.06); g.add(liner);
       }
-      const dreher = new T.Group(), felge = new T.Mesh(geo.felge, felgeBildMat);
+      const dreher = new T.Group(), felge = new T.Mesh(geo.felge, lack.muster === "rexy" ? felgeDunkelMat : felgeBildMat);
       felge.position.z = Math.sign(z) * (typ.radBreite / 2 + 0.002); if (z < 0) felge.rotation.y = Math.PI;
       dreher.add(felge); rad.add(dreher);
       rad.position.set(x, typ.rad, z);
@@ -1743,7 +2043,7 @@
     return g;
   }
   // Speicher eines ausgetauschten Autos freigeben (geteilte Formen und Stoffe bleiben)
-  const GETEILT = new Set([glasMat, reifenMat, flankeMat, linerMat, bodenSchattenMat, felgeMat, felgeBildMat, schwarzMat, lamellenMat, schriftMat]);
+  const GETEILT = new Set([glasMat, reifenMat, flankeMat, linerMat, bodenSchattenMat, felgeMat, felgeBildMat, felgeDunkelMat, schwarzMat, lamellenMat, schriftMat, rexySpiegelMat, rexyBlendeMat, scheinwerferMat]);
   function entsorgen(wurzel) {
     wurzel.traverse((o) => {
       if (!o.isMesh) return;
