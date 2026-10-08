@@ -138,7 +138,9 @@
 <div class="overlay" id="start">
   <div class="box">
     <h1>🏁 Grand Prix</h1>
-    <p>3 Runden auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du startest mit der Nummer 77 von ganz hinten. Das Feld ist gemischt: Formelwagen, Prototypen, Supersportwagen, GT3 RS, Muscle-Cars und Rallye-Autos.</p>
+    <p>Ein Rennen auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du startest mit der Nummer 77 von ganz hinten. Das Feld ist gemischt: Formelwagen, Prototypen, Supersportwagen, GT3 RS, Muscle-Cars und Rallye-Autos.</p>
+    <div class="garageTitel">Runden</div>
+    <div class="wahl" id="rundenWahl"></div>
     <div class="garageTitel">Auto</div>
     <div class="wahl wahlAuto" id="autoWahl"></div>
     <div class="garageTitel">Lackierung</div>
@@ -152,7 +154,7 @@
     <p class="autoInfo" id="autoInfo"></p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
-    <p><b>Boxengasse:</b> rechts vor der Start-Ziel-Geraden abbiegen, in der Gasse gilt 60 km/h. Halte im gelben Rahmen deiner Box, dann repariert deine Mannschaft das Auto.</p>
+    <p><b>Boxengasse:</b> rechts vor der Start-Ziel-Geraden abbiegen, in der Gasse gilt 200 km/h. Halte im gelben Rahmen deiner Box, dann repariert deine Mannschaft das Auto.</p>
     <p><b>Ideallinie:</b> grün = Vollgas, gelb = gleich bremsen, rot = jetzt bremsen. <b>Vorsicht:</b> Einschläge verbeulen das Auto, Teile fallen ab, und mit jedem Schaden wirst du langsamer – bei vollem Schaden bleibt gut die Hälfte des Tempos, und der Motor setzt aus.</p>
     <p><kbd>C</kbd> Kamera · <kbd>L</kbd> Ideallinie · <kbd>G</kbd> Grafik · <kbd>F</kbd> Vollbild · <kbd>M</kbd> Ton · <kbd>R</kbd> Neustart</p>
     <div class="wahl" role="group" aria-label="Wetter">
@@ -190,7 +192,8 @@
   /* =========================================================
      Strecke
      ========================================================= */
-  const RUNDEN = 3;
+  let RUNDEN = 3;
+  try { const r = +localStorage.getItem("rennstrecke-runden"); if ([1, 3, 5, 10, 20].includes(r)) RUNDEN = r; } catch {}
   const HALB = 7;          // halbe Fahrbahnbreite in Metern
   const KERB = 1.6;        // Randsteinbreite
   const WAND = 19;         // Abstand der Leitplanke zur Mitte
@@ -308,7 +311,7 @@
 
   /* ---------- Boxengasse: parallel zur Start-Ziel-Geraden, rechts im Innenfeld ---------- */
   // Angaben als Streckenpunkte relativ zur Startlinie und Seitenabstand von der Streckenmitte
-  const GASSE = { ein: -45, mauerVon: -28, mauerBis: 98, aus: 118, mitte: 23.6, halb: 3.6, mauer: 19.5, garage: 30, tempo: 60 / 3.6 };
+  const GASSE = { ein: -45, mauerVon: -28, mauerBis: 98, aus: 118, mitte: 23.6, halb: 3.6, mauer: 19.5, garage: 30, tempo: 200 / 3.6 };
   const BOX_STAND = GASSE.mitte + 1.6;           // dort hält das Auto in seiner Box
   const relIdx = (i) => (i > N / 2 ? i - N : i);
   const glatt = (t) => t * t * (3 - 2 * t);
@@ -412,14 +415,16 @@
     g.fillStyle = v; g.fillRect(0, 0, b, h);
     g.fillStyle = "#5c6166"; g.fillRect(0, 0, 6, h);
   }, true);
-  const reifenTex = leinwandTextur(128, 64, (g, b, h) => {
-    g.fillStyle = "#151515"; g.fillRect(0, 0, b, h);
-    for (let y = 0; y < 2; y++) for (let x = 0; x < 5; x++) {
-      const cx = x * 32 + (y ? 16 : 0), cy = 16 + y * 32;
-      g.fillStyle = "#2a2a2a"; g.beginPath(); g.arc(cx, cy, 14, 0, 7); g.fill();
-      g.fillStyle = "#0b0b0b"; g.beginPath(); g.arc(cx, cy, 6, 0, 7); g.fill();
+  // Reifenstapel von vorn: u läuft die Höhe hinauf, v an der Strecke entlang
+  const reifenTex = leinwandTextur(128, 128, (g, b, h) => {
+    g.fillStyle = "#0c0c0c"; g.fillRect(0, 0, b, h);
+    for (let reihe = 0; reihe < 4; reihe++) for (let spalte = 0; spalte < 2; spalte++) {
+      const x = reihe * 32 + 2, y = spalte * 64 + 3;
+      const v = g.createLinearGradient(x, 0, x + 28, 0);
+      v.addColorStop(0, "#1a1a1a"); v.addColorStop(0.5, "#3a3a3a"); v.addColorStop(1, "#141414");
+      g.fillStyle = v; g.beginPath(); g.roundRect ? g.roundRect(x, y, 28, 58, 10) : g.rect(x, y, 28, 58); g.fill();
     }
-    g.fillStyle = "#e9e9e9"; g.fillRect(0, h * 0.44, b, h * 0.12);
+    g.fillStyle = "#e9e9e9"; g.fillRect(64 - 6, 0, 12, h);        // weißes Band in halber Höhe
   }, true);
   const publikumTex = leinwandTextur(512, 64, (g, b, h) => {
     g.fillStyle = "#3c4048"; g.fillRect(0, 0, b, h);
@@ -550,19 +555,64 @@
     else band(i0, l, HALB + KERB, WAND - 1, 0.025, 0.025, MAT.kies, 12);
     band(i0, l, seite * (WAND - 0.7), seite * (WAND - 0.7), 0, 1.0, MAT.reifen, 2.4, true);
   }
-  band(0, N, -WAND, -WAND, 0.35, 1.0, MAT.planke, 4, true);
-  band(wrap(GASSE.aus + 1), N - (GASSE.aus + 1 - GASSE.ein), WAND, WAND, 0.35, 1.0, MAT.planke, 4, true);
+  // Leitplanken wie an echten Rennstrecken: zwei übereinanderliegende Stahlschienen mit W-Profil auf Pfosten,
+  // dahinter ein Fangzaun. profilBand zieht einen Querschnitt (Abstand nach außen, Höhe) an der Strecke entlang.
+  function profilBand(i0, n, seite, profil, mat, vLaenge, schatten) {
+    const pos = [], uv = [], idx = [], P = profil.length;
+    for (let k = 0; k <= n; k++) {
+      const i = wrap(i0 + k), [x, z] = BAHN[i];
+      profil.forEach(([d, y], j) => {
+        const o = seite * (WAND + d);
+        pos.push(x + NX[i] * o, y, z + NZ[i] * o);
+        uv.push(j / (P - 1), k * SCHRITT / vLaenge);
+      });
+      if (k < n) for (let j = 0; j < P - 1; j++) { const a = k * P + j, b = a + P; idx.push(a, b, a + 1, a + 1, b, b + 1); }
+    }
+    const geo = new T.BufferGeometry();
+    geo.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
+    geo.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const m = new T.Mesh(geo, mat);
+    m.castShadow = !!schatten; m.receiveShadow = true;
+    szene.add(m);
+  }
+  const W_PROFIL = [];
+  for (const unten of [0.42, 0.76])   // zwei Schienen übereinander
+    for (const [d, y] of [[0, 0], [-0.05, 0.03], [-0.09, 0.08], [-0.06, 0.13], [-0.03, 0.165], [-0.06, 0.2], [-0.09, 0.25], [-0.05, 0.3], [0, 0.33]])
+      W_PROFIL.push([d, unten + y]);
+  const stahl = new T.MeshStandardMaterial({ side: T.DoubleSide, metalness: 0.75, roughness: 0.38, map: leinwandTextur(64, 256, (g, b, h) => {
+    g.fillStyle = "#b9bec3"; g.fillRect(0, 0, b, h);
+    for (let k = 0; k < 160; k++) { g.fillStyle = "rgba(" + (Math.random() < 0.5 ? "90,95,100" : "230,233,236") + ",0.25)"; g.fillRect(Math.random() * b, 0, 1 + Math.random() * 2, h); }
+    g.fillStyle = "rgba(70,60,45,0.35)"; g.fillRect(0, h * 0.85, b, h * 0.15);       // Schmutz unten
+  }, true) });
+  stahl.userData.spiegelt = true;
+  const zaunAb = 1.6;
+  for (const seite of [-1, 1]) {
+    // rechts lässt die Boxengasse eine Lücke
+    const i0 = seite < 0 ? 0 : wrap(GASSE.aus + 1), n = seite < 0 ? N : N - (GASSE.aus + 1 - GASSE.ein);
+    profilBand(i0, n, seite, W_PROFIL, stahl, 4, true);
+    profilBand(i0, n, seite, [[zaunAb, 0], [zaunAb, 3.6]], MAT.zaun, 3);
+  }
+
   {
-    const pfosten = new T.InstancedMesh(new T.BoxGeometry(0.12, 0.8, 0.12), MAT.betonDunkel, N * 2);
+    // Pfosten der Leitplanken (Doppel-T-Träger) und Masten des Fangzauns
+    const pfosten = new T.InstancedMesh(new T.BoxGeometry(0.1, 1.25, 0.16), new T.MeshStandardMaterial({ color: 0x7c8186, metalness: 0.6, roughness: 0.5 }), N * 2);
+    const masten = new T.InstancedMesh(new T.CylinderGeometry(0.05, 0.05, 3.8, 6), new T.MeshStandardMaterial({ color: 0x55595e, metalness: 0.5, roughness: 0.5 }), N);
     const m = new T.Matrix4();
-    let k = 0;
+    let k = 0, km = 0;
     for (let i = 0; i < N; i++) for (const s of [-1, 1]) {
       if (s === 1 && relIdx(i) >= GASSE.ein && relIdx(i) <= GASSE.aus) continue;
-      m.makeTranslation(BAHN[i][0] + NX[i] * s * (WAND + 0.15), 0.4, BAHN[i][1] + NZ[i] * s * (WAND + 0.15));
+      m.makeTranslation(BAHN[i][0] + NX[i] * s * (WAND + 0.14), 0.62, BAHN[i][1] + NZ[i] * s * (WAND + 0.14));
       pfosten.setMatrixAt(k++, m);
+      if (i % 3 === 0) {
+        m.makeTranslation(BAHN[i][0] + NX[i] * s * (WAND + 1.6), 1.9, BAHN[i][1] + NZ[i] * s * (WAND + 1.6));
+        masten.setMatrixAt(km++, m);
+      }
     }
-    pfosten.count = k;
-    szene.add(pfosten);
+    pfosten.count = k; masten.count = km;
+    pfosten.castShadow = masten.castShadow = !grob;
+    szene.add(pfosten, masten);
   }
 
   // Werbebanden an den Geraden
@@ -574,7 +624,7 @@
       const s = (n++ % 2) ? 1 : -1;
       if (s === 1 && relIdx(i) >= GASSE.ein - 3 && relIdx(i) <= GASSE.aus + 3) continue;
       const tafel = new T.Mesh(geo, WERBUNG[n % WERBUNG.length]);
-      tafel.position.set(BAHN[i][0] + NX[i] * s * (WAND + 0.6), 1.65, BAHN[i][1] + NZ[i] * s * (WAND + 0.6));
+      tafel.position.set(BAHN[i][0] + NX[i] * s * (WAND + 2.4), 1.65, BAHN[i][1] + NZ[i] * s * (WAND + 2.4));
       tafel.lookAt(BAHN[i][0], 1.65, BAHN[i][1]);
       szene.add(tafel);
       const ruecken = new T.Mesh(rueckGeo, MAT.betonDunkel);
@@ -651,7 +701,7 @@
     const schild = new T.MeshLambertMaterial({ map: leinwandTextur(256, 128, (g, b, h) => {
       g.fillStyle = "#fff"; g.fillRect(0, 0, b, h);
       g.strokeStyle = "#d0142b"; g.lineWidth = 12; g.beginPath(); g.arc(64, 64, 50, 0, 7); g.stroke();
-      g.fillStyle = "#111"; g.font = "900 48px system-ui"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("60", 64, 66);
+      g.fillStyle = "#111"; g.font = "900 48px system-ui"; g.textAlign = "center"; g.textBaseline = "middle"; g.font = "900 38px system-ui"; g.fillText("200", 64, 66); g.font = "900 48px system-ui";
       g.font = "900 40px system-ui"; g.fillText("PIT", 186, 66);
     }) });
     for (const r of [GASSE.mauerVon, GASSE.mauerBis]) {
@@ -710,70 +760,127 @@
     g.add(glas);
   });
 
-  // Bäume: gemalte Silhouetten auf zwei gekreuzten Flächen, wie in vielen Rennspielen
-  function baumTextur(tanne) {
-    const t = leinwandTextur(256, 512, (g, b, h) => {
+  // Bäume: fein gemalte Silhouetten auf drei gekreuzten Flächen, mehrere Sorten
+  function baumTextur(art, saat) {
+    let s = saat;
+    const z = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    const leinwand = document.createElement("canvas"); leinwand.width = 512; leinwand.height = 1024;
+    ((g, b, h) => {
       g.clearRect(0, 0, b, h);
-      g.fillStyle = "#4a3526";
-      g.beginPath(); g.moveTo(b / 2 - 9, h); g.lineTo(b / 2 + 9, h); g.lineTo(b / 2 + 4, h * 0.35); g.lineTo(b / 2 - 4, h * 0.35); g.fill();
-      if (tanne) {
-        for (let lage = 0; lage < 14; lage++) {
-          const y = h * 0.06 + lage * h * 0.058, breite = 18 + lage * 8.5;
-          for (let k = 0; k < 26; k++) {
-            const x = b / 2 + (Math.random() - 0.5) * 2 * breite, yy = y + Math.random() * h * 0.07;
-            const hell = 0.12 + (1 - lage / 14) * 0.06 + Math.random() * 0.06 + (x < b / 2 ? 0.03 : 0);
-            g.fillStyle = "hsl(" + (130 + Math.random() * 15) + ",42%," + (hell * 100) + "%)";
-            g.beginPath(); g.moveTo(x, yy - 14); g.lineTo(x + 16, yy + 10); g.lineTo(x - 16, yy + 10); g.fill();
+      const mx = b / 2;
+      // Stamm mit Rinde: dunkle Ränder, hellere Mitte, feine Längsrisse
+      const stammOben = art === "tanne" ? h * 0.08 : h * 0.42, dick = art === "tanne" ? 11 : art === "breit" ? 22 : 17;
+      const rinde = g.createLinearGradient(mx - dick, 0, mx + dick, 0);
+      rinde.addColorStop(0, "#3e2c20"); rinde.addColorStop(0.45, "#8a705a"); rinde.addColorStop(1, "#33251a");
+      g.fillStyle = rinde;
+      g.beginPath(); g.moveTo(mx - dick, h); g.lineTo(mx + dick, h); g.lineTo(mx + dick * 0.35, stammOben); g.lineTo(mx - dick * 0.35, stammOben); g.fill();
+      g.strokeStyle = "rgba(20,12,6,0.5)"; g.lineWidth = 1.5;
+      for (let k = 0; k < 14; k++) { const x = mx + (z() - 0.5) * dick * 1.3; g.beginPath(); g.moveTo(x, h); g.lineTo(x + (z() - 0.5) * 6, stammOben + z() * 80); g.stroke(); }
+      if (art === "tanne") {
+        // Nadelbaum: hängende Äste in Lagen, nach unten breiter, Spitzen heller
+        for (let lage = 0; lage < 26; lage++) {
+          const y = h * 0.05 + lage * h * 0.031, breite = 14 + lage * 8.6 + z() * 10;
+          for (const seite of [-1, 1]) {
+            const ende = mx + seite * breite, tiefe = 18 + lage * 1.2;
+            for (let n = 0; n < 34; n++) {
+              const t = z(), x = mx + (ende - mx) * t, yy = y + t * t * tiefe + (z() - 0.5) * 10;
+              const hell = 27 + t * 16 + (seite < 0 ? 6 : 0) + z() * 8 - lage * 0.2;
+              g.strokeStyle = "hsl(" + (135 + z() * 18) + ",38%," + hell + "%)"; g.lineWidth = 2.2;
+              g.beginPath(); g.moveTo(x, yy); g.lineTo(x + seite * (6 + z() * 8), yy + 6 + z() * 8); g.stroke();
+            }
           }
         }
       } else {
-        g.strokeStyle = "#4a3526"; g.lineWidth = 5;
-        for (const [dx, dy] of [[-50, -80], [55, -95], [-30, -130], [40, -150]]) {
-          g.beginPath(); g.moveTo(b / 2, h * 0.62); g.lineTo(b / 2 + dx, h * 0.62 + dy); g.stroke();
+        // Laubbaum: Äste, dann Blätterbüschel; hinten und unten dunkler, oben links von der Sonne hell
+        const kx = mx, ky = art === "hoch" ? h * 0.3 : h * 0.33, rx = art === "breit" ? 235 : art === "hoch" ? 150 : 200, ry = art === "hoch" ? 290 : 250;
+        g.strokeStyle = "#3e2d20";
+        for (let k = 0; k < 9; k++) {
+          const w = -Math.PI / 2 + (z() - 0.5) * 2.4; g.lineWidth = 3 + z() * 5;
+          g.beginPath(); g.moveTo(mx, stammOben + 40); g.quadraticCurveTo(mx + Math.cos(w) * rx * 0.3, ky + 60, mx + Math.cos(w) * rx * 0.75, ky + Math.sin(w) * ry * 0.6); g.stroke();
         }
-        for (let k = 0; k < 420; k++) {
-          const w = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random());
-          const x = b / 2 + Math.cos(w) * r * 108, y = h * 0.36 + Math.sin(w) * r * 150;
-          const licht = (b / 2 - x) / 216 + (h * 0.36 - y) / 300;
-          g.fillStyle = "hsl(" + (88 + Math.random() * 30) + ",40%," + (16 + licht * 14 + Math.random() * 10) + "%)";
-          g.beginPath(); g.arc(x, y, 9 + Math.random() * 16, 0, 7); g.fill();
+        const bueschel = [];
+        for (let k = 0; k < 46; k++) {
+          const w = z() * Math.PI * 2, r = Math.sqrt(z()) * 0.92;
+          bueschel.push({ x: kx + Math.cos(w) * r * rx, y: ky + Math.sin(w) * r * ry, r: 30 + z() * 34 });
+        }
+        bueschel.sort((p, q) => q.y - p.y);
+        for (const bu of bueschel) {
+          const licht = ((kx - bu.x) / rx * 0.5 + (ky - bu.y) / ry * 0.7);
+          for (let n = 0; n < 70; n++) {
+            const w = z() * Math.PI * 2, r = Math.sqrt(z()) * bu.r, x = bu.x + Math.cos(w) * r, y = bu.y + Math.sin(w) * r * 0.85;
+            const innen = 1 - r / bu.r;
+            const hell = 36 + licht * 16 + (1 - innen) * 8 + (Math.sin(w) < 0 ? 6 : -3) + z() * 10;
+            g.fillStyle = "hsl(" + (82 + z() * 30) + "," + (40 + z() * 16) + "%," + Math.max(22, Math.min(62, hell)) + "%)";
+            g.beginPath(); g.ellipse(x, y, 4 + z() * 5, 2.5 + z() * 3, z() * 3, 0, 7); g.fill();
+          }
         }
       }
-    });
+    })(leinwand.getContext("2d"), 512, 1024);
+    // Durchsichtige Pixel bekommen Blattgrün statt Schwarz. Sonst mischt sich beim Verkleinern
+    // für die Entfernung Schwarz in die Blätter, und die Bäume wirken von weitem wie Scherenschnitte.
+    const bild = leinwand.getContext("2d").getImageData(0, 0, 512, 1024), d = bild.data;
+    const grund = art === "tanne" ? [46, 78, 44] : [78, 104, 48];
+    for (let k = 0; k < d.length; k += 4) if (d[k + 3] < 128) { d[k] = grund[0]; d[k + 1] = grund[1]; d[k + 2] = grund[2]; }
+    const t = new T.DataTexture(d, 512, 1024, T.RGBAFormat);
+    t.flipY = true; t.generateMipmaps = true; t.minFilter = T.LinearMipmapLinearFilter; t.magFilter = T.LinearFilter;
+    t.anisotropy = aniso; t.encoding = T.sRGBEncoding; t.needsUpdate = true;
     return t;
   }
   {
+    // drei Flächen im Winkel von 60 Grad; Normalen zeigen nach oben, damit alle Seiten gleich hell sind
+    const pos = [], uv = [], idx = [];
+    for (let k = 0; k < 3; k++) {
+      const w = k * Math.PI / 3, c = Math.cos(w) * 0.5, s = Math.sin(w) * 0.5, o = 4 * k;
+      pos.push(-c, 0, -s, c, 0, s, c, 1, s, -c, 1, -s);
+      uv.push(0, 0, 1, 0, 1, 1, 0, 1);
+      idx.push(o, o + 1, o + 2, o, o + 2, o + 3);
+    }
     const flaechen = new T.BufferGeometry();
-    flaechen.setAttribute("position", new T.Float32BufferAttribute([
-      -0.5, 0, 0, 0.5, 0, 0, 0.5, 1, 0, -0.5, 1, 0,
-      0, 0, -0.5, 0, 0, 0.5, 0, 1, 0.5, 0, 1, -0.5], 3));
-    flaechen.setAttribute("normal", new T.Float32BufferAttribute(new Array(24).fill(0).map((_, i) => (i % 3 === 1 ? 1 : 0)), 3));
-    flaechen.setAttribute("uv", new T.Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1], 2));
-    flaechen.setIndex([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
-    const anzahl = 1100;
-    const arten = [false, true].map((tanne) => {
-      const map = baumTextur(tanne);
-      const mesh = new T.InstancedMesh(flaechen, new T.MeshLambertMaterial({ map, alphaTest: 0.5, side: T.DoubleSide }), anzahl);
-      mesh.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map, alphaTest: 0.5 });
+    flaechen.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
+    flaechen.setAttribute("normal", new T.Float32BufferAttribute(pos.map((_, i) => (i % 3 === 1 ? 1 : 0)), 3));
+    flaechen.setAttribute("uv", new T.Float32BufferAttribute(uv, 2));
+    flaechen.setIndex(idx);
+    const anzahl = 1300;
+    const SORTEN = [
+      { art: "rund", saat: 5, hoehe: [9, 15], breite: 0.82, anteil: 0.24 },
+      { art: "hoch", saat: 17, hoehe: [11, 18], breite: 0.6, anteil: 0.18 },
+      { art: "breit", saat: 29, hoehe: [8, 13], breite: 0.95, anteil: 0.18 },
+      { art: "tanne", saat: 41, hoehe: [12, 22], breite: 0.48, anteil: 0.22 },
+      { art: "tanne", saat: 53, hoehe: [9, 16], breite: 0.52, anteil: 0.18 }
+    ].map((sorte) => {
+      const map = baumTextur(sorte.art, sorte.saat);
+      const mesh = new T.InstancedMesh(flaechen, new T.MeshLambertMaterial({ map, alphaTest: 0.45, side: T.DoubleSide }), anzahl);
+      mesh.customDepthMaterial = new T.MeshDepthMaterial({ depthPacking: T.RGBADepthPacking, map, alphaTest: 0.45 });
       mesh.castShadow = !grob;
       mesh.userData.k = 0;
-      return mesh;
+      return { ...sorte, mesh };
     });
     const m = new T.Matrix4(), q = new T.Quaternion(), farbe = new T.Color(), p = new T.Vector3(), sk = new T.Vector3(), yAchse = new T.Vector3(0, 1, 0);
+    const setzen = (sorte, x, z, h, b) => {
+      const mesh = sorte.mesh;
+      if (mesh.userData.k >= anzahl) return;
+      q.setFromAxisAngle(yAchse, zufall() * Math.PI);
+      mesh.setMatrixAt(mesh.userData.k, m.compose(p.set(x, 0, z), q, sk.set(h * b, h, h * b)));
+      mesh.setColorAt(mesh.userData.k++, farbe.setHSL(0, 0, 0.82 + zufall() * 0.3));
+    };
+    const naechsteBahn = (x, z) => { let nah = Infinity; for (let i = 0; i < N; i += 2) { const d = (BAHN[i][0] - x) ** 2 + (BAHN[i][1] - z) ** 2; if (d < nah) nah = d; } return Math.sqrt(nah); };
     for (let versuch = 0, k = 0; versuch < anzahl * 6 && k < anzahl; versuch++) {
       const x = minX - 350 + zufall() * (maxX - minX + 700), z = minZ - 350 + zufall() * (maxZ - minZ + 700);
-      if (Math.hypot(x - BAHN[0][0], z - BAHN[0][1]) < 170) continue;
-      let nah = Infinity;
-      for (let i = 0; i < N; i += 2) { const d = (BAHN[i][0] - x) ** 2 + (BAHN[i][1] - z) ** 2; if (d < nah) nah = d; }
-      if (Math.sqrt(nah) < WAND + 14) continue;
-      const tanne = zufall() < 0.35, art = arten[tanne ? 1 : 0];
-      const h = tanne ? 11 + zufall() * 9 : 9 + zufall() * 7;
-      q.setFromAxisAngle(yAchse, zufall() * Math.PI);
-      art.setMatrixAt(art.userData.k, m.compose(p.set(x, 0, z), q, sk.set(h * (tanne ? 0.5 : 0.78), h, h * (tanne ? 0.5 : 0.78))));
-      art.setColorAt(art.userData.k++, farbe.setHSL(0, 0, 0.85 + zufall() * 0.3));
+      if (Math.hypot(x - BAHN[0][0], z - BAHN[0][1]) < 170 || naechsteBahn(x, z) < WAND + 14) continue;
+      let w = zufall(), sorte = SORTEN[0];
+      for (const so of SORTEN) { if (w < so.anteil) { sorte = so; break; } w -= so.anteil; }
+      setzen(sorte, x, z, sorte.hoehe[0] + zufall() * (sorte.hoehe[1] - sorte.hoehe[0]), sorte.breite);
       k++;
     }
-    for (const art of arten) { art.count = art.userData.k; szene.add(art); }
+    // Büsche hinter den Zäunen
+    for (let versuch = 0, k = 0; versuch < 3000 && k < 500; versuch++) {
+      const i = (zufall() * N) | 0, seite = zufall() < 0.5 ? -1 : 1, ab = WAND + 4 + zufall() * 9;
+      if (seite === 1 && relIdx(i) >= GASSE.ein - 4 && relIdx(i) <= GASSE.aus + 4) continue;
+      if (Math.hypot(BAHN[i][0] - BAHN[0][0], BAHN[i][1] - BAHN[0][1]) < 170) continue;
+      setzen(SORTEN[2], BAHN[i][0] + NX[i] * seite * ab, BAHN[i][1] + NZ[i] * seite * ab, 1.6 + zufall() * 1.6, 1.9);
+      k++;
+    }
+    for (const so of SORTEN) { so.mesh.count = so.mesh.userData.k; szene.add(so.mesh); }
   }
 
   // Himmel als Shader: Verlauf vom Horizont zum Zenit, Sonnenscheibe mit Hof
@@ -903,6 +1010,24 @@
   const glasMat = new T.MeshPhysicalMaterial({ color: 0x05080a, roughness: 0.03, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 0.7 });
   glasMat.userData.spiegelt = true;
   const reifenMat = new T.MeshStandardMaterial({ color: 0x141414, roughness: 0.9 });
+  // Reifenflanke: Gummi mit erhabener Schrift und farbigem Ring wie bei Rennreifen
+  const flankeMat = new T.MeshStandardMaterial({ roughness: 0.85, map: leinwandTextur(256, 256, (g, b, h) => {
+    const c = b / 2;
+    g.fillStyle = "#151515"; g.fillRect(0, 0, b, h);
+    g.strokeStyle = "#2a2a2a"; g.lineWidth = 2; for (const r of [0.97, 0.8]) { g.beginPath(); g.arc(c, c, c * r, 0, 7); g.stroke(); }
+    g.strokeStyle = "#d6b21a"; g.lineWidth = 4; g.beginPath(); g.arc(c, c, c * 0.84, 0, 7); g.stroke();
+    g.fillStyle = "#cfcfcf"; g.font = "bold 15px system-ui"; g.textAlign = "center"; g.textBaseline = "middle";
+    for (const [w0, text] of [[0, "RENNSPORT"], [Math.PI, "SLICK"]]) {
+      [...text].forEach((ch, k) => { const w = w0 - 0.5 + k * 0.12; g.save(); g.translate(c + Math.cos(w) * c * 0.9, c + Math.sin(w) * c * 0.9); g.rotate(w + Math.PI / 2); g.fillText(ch, 0, 0); g.restore(); });
+    }
+  }) });
+  const linerMat = new T.MeshStandardMaterial({ color: 0x0b0b0b, roughness: 0.95, side: T.DoubleSide });
+  const bodenSchattenMat = new T.MeshBasicMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -32,
+    map: leinwandTextur(128, 64, (g, b, h) => {
+      const v = g.createRadialGradient(b / 2, h / 2, 4, b / 2, h / 2, b / 2);
+      v.addColorStop(0, "rgba(0,0,0,0.75)"); v.addColorStop(0.6, "rgba(0,0,0,0.45)"); v.addColorStop(1, "rgba(0,0,0,0)");
+      g.save(); g.scale(1, h / b); g.fillStyle = v; g.fillRect(0, 0, b, b); g.restore();
+    }) });
   const felgeMat = new T.MeshStandardMaterial({ color: 0x2a2b2e, roughness: 0.25, metalness: 0.9 });
   const schwarzMat = new T.MeshStandardMaterial({ color: 0x151515, roughness: 0.6 });
   // Felge mit zehn Speichen, Zentralverschluss, Bremsscheibe und roter Bremszange dahinter
@@ -1115,7 +1240,9 @@
       vorder: extrudiert(form(t.vorder, t.y0), t.breite, rund),
       hinter: extrudiert(form(t.hinter, t.y0), t.breite, rund),
       kabine: t.kabine ? extrudiert(form(t.kabine, t.y0), t.kabineBreite, 0.06) : null,
-      rad: new T.CylinderGeometry(t.rad, t.rad, t.radBreite, 22).rotateX(Math.PI / 2),
+      rad: new T.CylinderGeometry(t.rad, t.rad, t.radBreite, 28).rotateX(Math.PI / 2),
+      liner: new T.CylinderGeometry(t.rad + 0.07, t.rad + 0.07, t.radBreite + 0.14, 16, 1, true, Math.PI / 2, Math.PI).rotateX(Math.PI / 2),
+      schatten: new T.PlaneGeometry(4.9, t.breite + (t.offen ? 1.0 : 0.5)).rotateX(-Math.PI / 2),
       felge: new T.CircleGeometry(t.rad * 0.76, 28)
     };
     for (const g of Object.values(r)) if (g) g.userData.geteilt = true;
@@ -1127,6 +1254,13 @@
     const t = leinwandTextur(1536, 480, (g, b, h) => {
       const P = (x, y) => [(x / 4.8 + 0.5) * b, (1 - y / 1.5) * h];
       malen(g, b, h, P);
+      // Spaltmaße der Tür und Türgriff, dazu leichte Abdunklung zum Schweller hin
+      g.strokeStyle = "rgba(0,0,0,0.42)"; g.lineWidth = 2.5;
+      g.beginPath(); g.moveTo(...P(0.72, 0.86)); g.lineTo(...P(0.72, 0.33)); g.lineTo(...P(-0.62, 0.33)); g.lineTo(...P(-0.62, 0.88)); g.stroke();
+      g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(...P(-0.5, 0.74), 34, 6);
+      const schweller = g.createLinearGradient(0, P(0, 0.45)[1], 0, P(0, 0.15)[1]);
+      schweller.addColorStop(0, "rgba(0,0,0,0)"); schweller.addColorStop(1, "rgba(0,0,0,0.3)");
+      g.fillStyle = schweller; g.fillRect(0, P(0, 0.45)[1], b, h);
     });
     t.repeat.set(1 / 4.8, 1 / 1.5);
     t.offset.set(0.5, 0);
@@ -1406,13 +1540,19 @@
     teile.raeder = [];
     for (const [x, z] of [[typ.radstand, typ.spur], [typ.radstand, -typ.spur], [-typ.radstand, typ.spur], [-typ.radstand, -typ.spur]]) {
       const rad = new T.Group();
-      const r = new T.Mesh(geo.rad, reifenMat); r.castShadow = true; rad.add(r);
+      const r = new T.Mesh(geo.rad, [reifenMat, flankeMat, flankeMat]); r.castShadow = true; rad.add(r);
+      if (!typ.offen) {   // Radhausschale: kein Durchblick durch den Radausschnitt
+        const liner = new T.Mesh(geo.liner, linerMat);
+        liner.position.set(x, typ.rad, z - Math.sign(z) * 0.06); g.add(liner);
+      }
       const dreher = new T.Group(), felge = new T.Mesh(geo.felge, felgeBildMat);
       felge.position.z = Math.sign(z) * (typ.radBreite / 2 + 0.002); if (z < 0) felge.rotation.y = Math.PI;
       dreher.add(felge); rad.add(dreher);
       rad.position.set(x, typ.rad, z);
       g.add(rad); teile.raeder.push(rad);
     }
+    // weicher Schatten direkt unter dem Auto lässt es auf der Straße stehen statt zu schweben
+    const boden = new T.Mesh(geo.schatten, bodenSchattenMat); boden.position.y = 0.035; g.add(boden);
     // Ausgangszustand merken, damit ein neues Rennen alles repariert
     for (const m of teile.blech) {
       m.userData.form = m.geometry.attributes.position.array.slice();
@@ -1427,7 +1567,7 @@
     return g;
   }
   // Speicher eines ausgetauschten Autos freigeben (geteilte Formen und Stoffe bleiben)
-  const GETEILT = new Set();
+  const GETEILT = new Set([glasMat, reifenMat, flankeMat, linerMat, bodenSchattenMat, felgeMat, felgeBildMat, schwarzMat, lamellenMat, schriftMat]);
   function entsorgen(wurzel) {
     wurzel.traverse((o) => {
       if (!o.isMesh) return;
@@ -1819,7 +1959,7 @@
         blick = Math.atan2(-NZ[i], -NX[i]);
       }
       if (c.neu) { c.x = zx; c.z = zz; c.w = blick; c.neu = false; }
-      const dx = zx - c.x, dz = zz - c.z, d = Math.hypot(dx, dz), schritt = Math.min(d, 5.5 * dt);
+      const dx = zx - c.x, dz = zz - c.z, d = Math.hypot(dx, dz), schritt = Math.min(d, 10 * dt);
       if (d > 0.05) { c.x += dx / d * schritt; c.z += dz / d * schritt; }
       const zielW = d > 0.3 ? Math.atan2(dz, dx) : blick;
       c.w += winkelDiff(c.w, zielW) * Math.min(1, dt * 8);
@@ -1848,7 +1988,8 @@
     if (a.letzterStopp === a.runde || !inGasse(a.idx, a.seite)) return;
     const naheBox = Math.abs(relIdx(a.idx) - relIdx(boxIdx(a.box))) <= 2 && Math.abs(a.seite - BOX_STAND) < 1.7;
     if (naheBox && a.v < (a.spieler ? 1.5 : 2.5) && (a.spieler || a.willBox)) {
-      a.boxenstopp = { zeit: 0, dauer: 2.8 + a.schaden.gesamt * 0.07 };
+      a.boxenstopp = { zeit: 0, dauer: 1.5 };
+      if (Math.hypot(a.x - spieler.x, a.z - spieler.z) < 60) schlagschrauber();
       a.v = 0; a.vx = 0; a.vz = 0; a.bremst = false;
     }
   }
@@ -1859,7 +2000,7 @@
     const d = WETTER[wetter];
     for (const a of autos) {
       a.st = FAHRZEUGE[a.typ].st;
-      if (!a.spieler) a.profil = tempoProfil(a.grip / 15.5 * a.st.grip * d.grip, (nass ? 12 : 17) * a.st.bremse / 30, a.st.vmax * 0.925);
+      if (!a.spieler) a.profil = tempoProfil(a.grip / 15.5 * a.st.grip * d.grip * 0.94, (nass ? 12 : 16) * a.st.bremse / 30, a.st.vmax * 0.9);
     }
     const st = spieler.st;
     SPIELER_PROFIL = tempoProfil(st.grip * 0.97 * d.grip, (nass ? 16 : 24) * st.bremse / 30, st.vmax);
@@ -1898,6 +2039,16 @@
     try { localStorage.setItem("rennstrecke-auto2", JSON.stringify({ typ: spielerTyp, lack })); } catch {}
   }
   {
+    const rundenWahl = document.getElementById("rundenWahl");
+    const rundenZeigen = () => rundenWahl.querySelectorAll("button").forEach((b) => b.classList.toggle("an", +b.dataset.runden === RUNDEN));
+    for (const r of [1, 3, 5, 10, 20]) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "wahlKnopf"; b.dataset.runden = r; b.textContent = r;
+      b.onclick = () => { RUNDEN = r; rundenZeigen(); try { localStorage.setItem("rennstrecke-runden", r); } catch {} };
+      rundenWahl.appendChild(b);
+    }
+    rundenZeigen();
+  }
+  {
     const knopf = (eltern, klasse, text, wenn) => {
       const b = document.createElement("button"); b.type = "button"; b.className = klasse; b.textContent = text; b.onclick = wenn;
       eltern.appendChild(b); return b;
@@ -1933,10 +2084,10 @@
     MAT.gras.color.setHex(nass ? 0x9aa69a : 0xffffff);
     regenMesh.visible = nass; regenErster = true;
     klasseAnpassen();
-    document.querySelectorAll(".wahlKnopf").forEach((k) => k.classList.toggle("an", k.dataset.wetter === w));
+    document.querySelectorAll("[data-wetter]").forEach((k) => k.classList.toggle("an", k.dataset.wetter === w));
     try { localStorage.setItem("rennstrecke-wetter", w); } catch {}
   }
-  document.querySelectorAll(".wahlKnopf").forEach((k) => k.addEventListener("click", () => wetterSetzen(k.dataset.wetter)));
+  document.querySelectorAll("[data-wetter]").forEach((k) => k.addEventListener("click", () => wetterSetzen(k.dataset.wetter)));
 
   function neuesRennen() {
     autos.forEach((a, k) => {
@@ -2150,14 +2301,14 @@
     else if (!zurBox && a.v > 28 && a.profil[wrap(a.idx + 14)] < a.v - 10 && Math.random() < dt * (nass ? 0.014 : 0.006)) a.fehler = 1.3 + Math.random();
     if (zurBox) {
       if (imBegrenzer(a.idx, a.seite) || (r > GASSE.mauerVon - 14 && r <= GASSE.mauerBis)) wunsch = Math.min(wunsch, GASSE.tempo - 1);
-      if (a.willBox) { const rest = (relIdx(boxIdx(a.box)) - r) * SCHRITT; if (rest > -4) wunsch = Math.min(wunsch, Math.sqrt(2 * 5 * Math.max(0, rest - 0.5))); }
+      if (a.willBox) { const rest = (relIdx(boxIdx(a.box)) - r) * SCHRITT; if (rest > -4) wunsch = Math.min(wunsch, Math.sqrt(2 * 14 * Math.max(0, rest - 0.5))); }
     }
     if (vorne && abstand < 2.5 && Math.abs(vorne.seite - a.seite) < 2.2) wunsch = Math.min(wunsch, vorne.v - 0.5);
     // neben der Strecke bremsen Gras und Kies
     if (a.flaeche === "gras") wunsch = Math.min(wunsch, 26);
     if (a.flaeche === "kies") wunsch = Math.min(wunsch, 14);
     a.bremst = a.v > wunsch + 0.8;
-    if (a.v < wunsch) a.v += a.st.beschl * 0.93 * Math.max(0.1, 1 - (a.v / a.st.vmax) ** 2) * dt;
+    if (a.v < wunsch) a.v += a.st.beschl * 0.86 * Math.max(0.1, 1 - (a.v / a.st.vmax) ** 2) * dt;
     else a.v -= Math.min(a.flaeche === "kies" ? 20 : 28, (a.v - wunsch) * 5) * dt;
     a.v = Math.max(0, a.v);
     a.vx = Math.cos(a.w) * a.v; a.vz = Math.sin(a.w) * a.v;
@@ -2403,57 +2554,112 @@
   let bestzeit = ladeBest();
 
   /* ---------- Ton ---------- */
+  // Jeder Motor bekommt ein eigenes Obertonspektrum. Grundton ist ein Arbeitsspiel (zwei Kurbelumdrehungen),
+  // stark klingen die Zündungen und ihre Vielfachen, leise Zwischentöne machen den Klang rau und lebendig.
+  const MOTOREN = {
+    gt3rs: { zyl: 6, hoch: 1, rau: 1 }, supersport: { zyl: 10, hoch: 1, rau: 0.8 }, prototyp: { zyl: 6, hoch: 1.12, rau: 0.9 },
+    formel: { zyl: 6, hoch: 1.38, rau: 0.7 }, muscle: { zyl: 8, hoch: 0.82, rau: 1.5 }, rallye: { zyl: 4, hoch: 1.08, rau: 1.2, turbo: true }
+  };
+  const TRIBUENEN = [-22, 12].map((v) => { const i = wrap(v); return [BAHN[i][0] - NX[i] * (WAND + 10), BAHN[i][1] - NZ[i] * (WAND + 10)]; });
   let ton = null;
+  function motorWelle(C, id) {
+    const m = MOTOREN[id], n = 96, re = new Float32Array(n), im = new Float32Array(n);
+    let saat = 11 + m.zyl * 7;
+    const z = () => (saat = (saat * 16807) % 2147483647) / 2147483647;
+    for (let k = 1; k < n; k++) {
+      let amp = k % m.zyl === 0 ? 1 : k % (m.zyl / 2) === 0 ? 0.55 : m.rau * (0.08 + z() * 0.22);
+      amp /= Math.pow(Math.max(1, k / m.zyl), 1.15);
+      if (k < m.zyl / 2) amp *= 0.6;
+      const phase = z() * Math.PI * 2;
+      re[k] = amp * Math.cos(phase); im[k] = amp * Math.sin(phase);
+    }
+    return C.createPeriodicWave(re, im);
+  }
+  const weichBegrenzen = (k) => { const c = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 512 - 1; c[i] = Math.tanh(x * k) / Math.tanh(k); } return c; };
   function tonStarten() {
     if (ton) { if (ton.C.state === "suspended") ton.C.resume(); return; }
     try {
       const C = new (window.AudioContext || window.webkitAudioContext)();
-      const gesamt = C.createGain(); gesamt.gain.value = 0.9; gesamt.connect(C.destination);
-      const filter = C.createBiquadFilter(); filter.type = "lowpass"; filter.frequency.value = 800; filter.Q.value = 2;
-      const motorLaut = C.createGain(); motorLaut.gain.value = 0;
-      filter.connect(motorLaut); motorLaut.connect(gesamt);
-      const o1 = C.createOscillator(); o1.type = "sawtooth"; o1.connect(filter); o1.start();
-      const o2 = C.createOscillator(); o2.type = "square";
-      const o2g = C.createGain(); o2g.gain.value = 0.35; o2.connect(o2g); o2g.connect(filter); o2.start();
-      // Obertöne und etwas Verzerrung geben dem Boxermotor sein raues Kreischen
-      const o3 = C.createOscillator(); o3.type = "sawtooth";
-      const o3g = C.createGain(); o3g.gain.value = 0.18; o3.connect(o3g); o3g.connect(filter); o3.start();
-      const verzerrung = C.createWaveShaper();
-      const kurve = new Float32Array(1024); for (let k = 0; k < 1024; k++) { const x = k / 512 - 1; kurve[k] = Math.tanh(x * 2.2); }
-      verzerrung.curve = kurve;
-      filter.disconnect(); filter.connect(verzerrung); verzerrung.connect(motorLaut);
-      const puffer = C.createBuffer(1, C.sampleRate, C.sampleRate);
-      const daten = puffer.getChannelData(0);
+      // Ausgang: Kompressor gegen Übersteuern, dazu etwas Raumhall von Tribünen und Boxengebäude
+      const kompressor = C.createDynamicsCompressor();
+      kompressor.threshold.value = -14; kompressor.ratio.value = 4; kompressor.attack.value = 0.005; kompressor.release.value = 0.2;
+      kompressor.connect(C.destination);
+      const gesamt = C.createGain(); gesamt.gain.value = 0.9; gesamt.connect(kompressor);
+      const hall = C.createConvolver(), ir = C.createBuffer(2, Math.round(C.sampleRate * 1.4), C.sampleRate);
+      for (let k = 0; k < 2; k++) { const d = ir.getChannelData(k); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); }
+      hall.buffer = ir;
+      const hallLaut = C.createGain(); hallLaut.gain.value = 0.12;
+      gesamt.connect(hall); hall.connect(hallLaut); hallLaut.connect(kompressor);
+      // Rauschen als Rohstoff für Ansaugen, Reifen, Wind, Regen und Publikum
+      const puffer = C.createBuffer(1, C.sampleRate * 2, C.sampleRate), daten = puffer.getChannelData(0);
       for (let k = 0; k < daten.length; k++) daten[k] = Math.random() * 2 - 1;
       const rausch = C.createBufferSource(); rausch.buffer = puffer; rausch.loop = true;
-      const band = C.createBiquadFilter(); band.type = "bandpass"; band.frequency.value = 1500; band.Q.value = 3;
+      const gefiltert = (art, frequenz, q) => { const f = C.createBiquadFilter(); f.type = art; f.frequency.value = frequenz; f.Q.value = q; rausch.connect(f); const g = C.createGain(); g.gain.value = 0; f.connect(g); g.connect(gesamt); return { f, g }; };
+
+      // Motor: zwei leicht verstimmte Oszillatoren -> Bass -> Auspuffresonanz -> Drosselklappe -> sanfte Sättigung
+      const motorMix = C.createGain(); motorMix.gain.value = 0.5;
+      const oA = C.createOscillator(), oB = C.createOscillator(); oB.detune.value = 9;
+      oA.connect(motorMix); oB.connect(motorMix); oA.start(); oB.start();
+      const bass = C.createBiquadFilter(); bass.type = "lowshelf"; bass.frequency.value = 140; bass.gain.value = 7;
+      const auspuff = C.createBiquadFilter(); auspuff.type = "peaking"; auspuff.frequency.value = 380; auspuff.Q.value = 1.1; auspuff.gain.value = 5;
+      const offen = C.createBiquadFilter(); offen.type = "lowpass"; offen.frequency.value = 1200; offen.Q.value = 0.9;
+      const saettigung = C.createWaveShaper(); saettigung.curve = weichBegrenzen(2.5); saettigung.oversample = "2x";
+      const motorLaut = C.createGain(); motorLaut.gain.value = 0;
+      motorMix.connect(bass); bass.connect(auspuff); auspuff.connect(offen); offen.connect(saettigung); saettigung.connect(motorLaut); motorLaut.connect(gesamt);
+      // Ansaugen: Rauschen, das im Takt der Zündungen pulsiert
+      const ansaugBand = C.createBiquadFilter(); ansaugBand.type = "bandpass"; ansaugBand.Q.value = 1.6;
+      const takt = C.createGain(); takt.gain.value = 0.5;
+      const taktO = C.createOscillator(); taktO.type = "square";
+      const taktTiefe = C.createGain(); taktTiefe.gain.value = 0.5;
+      taktO.connect(taktTiefe); taktTiefe.connect(takt.gain); taktO.start();
+      const ansaugLaut = C.createGain(); ansaugLaut.gain.value = 0;
+      rausch.connect(ansaugBand); ansaugBand.connect(takt); takt.connect(ansaugLaut); ansaugLaut.connect(gesamt);
+      // Turbolader (Rallye-Auto): Pfeifen mit dem Ladedruck
+      const turboO = C.createOscillator(); turboO.type = "sine";
+      const turboLaut = C.createGain(); turboLaut.gain.value = 0;
+      turboO.connect(turboLaut); turboLaut.connect(gesamt); turboO.start();
+      // Reifen: Ton mit leichtem Flattern plus Rauschen
+      const quietschO = C.createOscillator(); quietschO.type = "triangle";
+      const flattern = C.createOscillator(); flattern.frequency.value = 7;
+      const flatterTiefe = C.createGain(); flatterTiefe.gain.value = 30;
+      flattern.connect(flatterTiefe); flatterTiefe.connect(quietschO.frequency); flattern.start();
+      const quietschTon = C.createGain(); quietschTon.gain.value = 0.22;
+      const quietschBand = C.createBiquadFilter(); quietschBand.type = "bandpass"; quietschBand.frequency.value = 1500; quietschBand.Q.value = 4;
       const quietschLaut = C.createGain(); quietschLaut.gain.value = 0;
-      rausch.connect(band); band.connect(quietschLaut); quietschLaut.connect(gesamt);
-      const rumpel = C.createBiquadFilter(); rumpel.type = "lowpass"; rumpel.frequency.value = 180;
-      const rumpelLaut = C.createGain(); rumpelLaut.gain.value = 0;
-      rausch.connect(rumpel); rumpel.connect(rumpelLaut); rumpelLaut.connect(gesamt);
-      const wind = C.createBiquadFilter(); wind.type = "lowpass"; wind.frequency.value = 700;
-      const windLaut = C.createGain(); windLaut.gain.value = 0;
-      rausch.connect(wind); wind.connect(windLaut); windLaut.connect(gesamt);
-      const regenF = C.createBiquadFilter(); regenF.type = "highpass"; regenF.frequency.value = 2500;
-      const regenLaut = C.createGain(); regenLaut.gain.value = 0;
-      rausch.connect(regenF); regenF.connect(regenLaut); regenLaut.connect(gesamt);
-      // Motor des nächsten Gegners
-      const gegnerO = C.createOscillator(); gegnerO.type = "sawtooth";
-      const gegnerF = C.createBiquadFilter(); gegnerF.type = "lowpass"; gegnerF.frequency.value = 900;
-      const gegnerLaut = C.createGain(); gegnerLaut.gain.value = 0;
-      gegnerO.connect(gegnerF); gegnerF.connect(gegnerLaut); gegnerLaut.connect(gesamt); gegnerO.start();
+      quietschO.connect(quietschTon); quietschTon.connect(quietschLaut); rausch.connect(quietschBand); quietschBand.connect(quietschLaut);
+      quietschLaut.connect(gesamt); quietschO.start();
+      const rumpel = gefiltert("lowpass", 180, 0.7), wind = gefiltert("lowpass", 700, 0.7), regen = gefiltert("highpass", 2500, 0.7);
+      const publikum = gefiltert("bandpass", 900, 0.6);
+      // Gegner: die zwei nächsten Motoren mit Stereo-Position und Doppler
+      const stimmen = [0, 1].map(() => {
+        const o = C.createOscillator(), f = C.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = 1600;
+        const g = C.createGain(); g.gain.value = 0;
+        const pan = C.createStereoPanner ? C.createStereoPanner() : null;
+        o.connect(f); f.connect(g);
+        if (pan) { g.connect(pan); pan.connect(gesamt); } else g.connect(gesamt);
+        o.start();
+        return { o, g, pan, typ: null };
+      });
       rausch.start();
-      ton = { C, filter, motorLaut, o1, o2, o3, band, quietschLaut, rumpelLaut, puffer, gesamt, windLaut, regenLaut, gegnerO, gegnerLaut, altGas: 0 };
+      const wellen = {};
+      ton = {
+        C, gesamt, puffer, oA, oB, auspuff, offen, motorLaut, taktO, ansaugBand, ansaugLaut, turboO, turboLaut,
+        quietschO, quietschBand, quietschLaut, rumpel, wind, regen, publikum, stimmen, typ: null, altGas: 0, ladedruck: 0,
+        welle: (id) => wellen[id] || (wellen[id] = motorWelle(C, id))
+      };
     } catch { ton = null; }
   }
-  function crashTon(stoss) {
+  // kurzer Rauschstoß durch einen Filter, für Knallen, Abblasen, Schlagschrauber
+  function stoss(zeit, dauer, laut, art, frequenz, q) {
+    const C = ton.C, quelle = C.createBufferSource(); quelle.buffer = ton.puffer;
+    const f = C.createBiquadFilter(); f.type = art; f.frequency.value = frequenz; f.Q.value = q;
+    const g = C.createGain(); g.gain.setValueAtTime(laut, zeit); g.gain.exponentialRampToValueAtTime(0.001, zeit + dauer);
+    quelle.connect(f); f.connect(g); g.connect(ton.gesamt); quelle.start(zeit, Math.random() * 1.5); quelle.stop(zeit + dauer + 0.02);
+  }
+  function crashTon(staerke) {
     if (!ton || stumm) return;
-    const C = ton.C, t = C.currentTime, laut = Math.min(1, stoss / 16);
-    const q = C.createBufferSource(); q.buffer = ton.puffer;
-    const tief = C.createBiquadFilter(); tief.type = "lowpass"; tief.frequency.value = 700 + laut * 1200;
-    const g = C.createGain(); g.gain.setValueAtTime(0.9 * laut, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35 + laut * 0.3);
-    q.connect(tief); tief.connect(g); g.connect(ton.gesamt); q.start(t, Math.random() * 0.5); q.stop(t + 0.8);
+    const C = ton.C, t = C.currentTime, laut = Math.min(1, staerke / 16);
+    stoss(t, 0.35 + laut * 0.3, 0.9 * laut, "lowpass", 700 + laut * 1200, 0.7);
     const o = C.createOscillator(); o.type = "square"; o.frequency.setValueAtTime(180 + Math.random() * 120, t);
     o.frequency.exponentialRampToValueAtTime(60, t + 0.2);
     const og = C.createGain(); og.gain.setValueAtTime(0.25 * laut, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
@@ -2462,49 +2668,66 @@
   // Knallen im Auspuff, wenn man bei hoher Drehzahl vom Gas geht oder hochschaltet
   function fehlzuendung(anzahl) {
     if (!ton || stumm) return;
-    const C = ton.C;
-    let t = C.currentTime + 0.03;
-    for (let k = 0; k < anzahl; k++) {
-      t += 0.04 + Math.random() * 0.09;
-      const q = C.createBufferSource(); q.buffer = ton.puffer;
-      const bp = C.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 500 + Math.random() * 700; bp.Q.value = 1.5;
-      const g = C.createGain(); g.gain.setValueAtTime(0.5 + Math.random() * 0.4, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-      q.connect(bp); bp.connect(g); g.connect(ton.gesamt); q.start(t, Math.random() * 0.8); q.stop(t + 0.07);
-    }
+    let t = ton.C.currentTime + 0.03;
+    for (let k = 0; k < anzahl; k++) { t += 0.04 + Math.random() * 0.09; stoss(t, 0.05, 0.5 + Math.random() * 0.4, "bandpass", 500 + Math.random() * 700, 1.5); }
+  }
+  // Schlagschrauber der Mechaniker beim Boxenstopp
+  function schlagschrauber() {
+    if (!ton || stumm) return;
+    const t = ton.C.currentTime;
+    for (let k = 0; k < 4; k++) for (let r = 0; r < 5; r++) stoss(t + 0.1 + k * 0.3 + r * 0.035, 0.03, 0.35, "bandpass", 1800, 2.5);
   }
   function tonAktualisieren(a, laeuft) {
     if (!ton) return;
-    const t = ton.C.currentTime;
-    const f = a.drehzahl / 60 * a.st.klang;          // Zündfrequenz: Zündungen je Umdrehung hängen vom Motor ab
-    ton.o1.frequency.setTargetAtTime(f, t, 0.02);
-    ton.o2.frequency.setTargetAtTime(f * 0.5, t, 0.02);
-    ton.o3.frequency.setTargetAtTime(f * 2, t, 0.02);
-    ton.filter.frequency.setTargetAtTime(400 + a.gasWert * 2200 + a.drehzahl * 0.15, t, 0.04);
-    const aus = stumm || !laeuft;
-    const schalten = a.schaltUhr > 0 || a.stottern > 0 ? 0.35 : 1;
-    ton.motorLaut.gain.setTargetAtTime(aus ? 0 : (0.045 + a.gasWert * 0.075) * schalten, t, 0.025);
-    if (laeuft && ton.altGas > 0.7 && a.gasWert < 0.4 && a.drehzahl > 5500) fehlzuendung(2 + (Math.random() * 4 | 0));
+    const t = ton.C.currentTime, m = MOTOREN[a.typ], aus = stumm || !laeuft;
+    if (ton.typ !== a.typ) { const w = ton.welle(a.typ); ton.oA.setPeriodicWave(w); ton.oB.setPeriodicWave(w); ton.typ = a.typ; }
+    const f0 = a.drehzahl / 120 * m.hoch, zuendung = f0 * m.zyl, last = a.gasWert;
+    const unterbrochen = a.schaltUhr > 0 || a.stottern > 0 ? 0.3 : 1;
+    ton.oA.frequency.setTargetAtTime(f0, t, 0.015); ton.oB.frequency.setTargetAtTime(f0, t, 0.015);
+    ton.offen.frequency.setTargetAtTime(700 + last * 3800 + a.drehzahl * 0.25, t, 0.04);
+    ton.auspuff.frequency.setTargetAtTime(Math.min(900, 180 + zuendung * 0.6), t, 0.05);
+    ton.motorLaut.gain.setTargetAtTime(aus ? 0 : (0.07 + last * 0.11) * unterbrochen, t, 0.02);
+    ton.taktO.frequency.setTargetAtTime(zuendung, t, 0.015);
+    ton.ansaugBand.frequency.setTargetAtTime(Math.min(5000, 600 + zuendung * 3), t, 0.03);
+    ton.ansaugLaut.gain.setTargetAtTime(aus ? 0 : last * 0.08 * unterbrochen * Math.min(1, a.drehzahl / 6000), t, 0.03);
+    // Turbolader: Druck baut sich mit Gas und Drehzahl auf, beim Gaswegnehmen bläst das Ventil ab
+    ton.ladedruck += ((m.turbo ? last * Math.min(1, a.drehzahl / 7000) : 0) - ton.ladedruck) * 0.08;
+    ton.turboO.frequency.setTargetAtTime(1600 + ton.ladedruck * 4200, t, 0.05);
+    ton.turboLaut.gain.setTargetAtTime(aus ? 0 : ton.ladedruck * 0.025, t, 0.05);
+    if (!aus && m.turbo && ton.altGas > 0.7 && last < 0.4 && ton.ladedruck > 0.3) stoss(t, 0.35, 0.18, "highpass", 2500, 0.7);
+    if (laeuft && ton.altGas > 0.7 && last < 0.4 && a.drehzahl > 5500) fehlzuendung(2 + (Math.random() * 4 | 0));
     if (laeuft && a.hochgeschaltet && Math.random() < 0.45) fehlzuendung(1);
     a.hochgeschaltet = false;
-    ton.altGas = a.gasWert;
-    ton.windLaut.gain.setTargetAtTime(aus ? 0 : Math.min(0.22, (a.v / 80) ** 2 * 0.22), t, 0.1);
-    ton.regenLaut.gain.setTargetAtTime(aus || !nass ? 0 : 0.07 + a.v * 0.0006, t, 0.2);
-    let naechster = null, abstand = 70;
-    for (const b of autos) {
-      if (b === a) continue;
-      const d = Math.hypot(b.x - a.x, b.z - a.z);
-      if (d < abstand) { abstand = d; naechster = b; }
-    }
-    if (naechster) {
-      let gg = 1; while (gg < 6 && naechster.v > GANG_V[gg] * 0.93) gg++;
-      ton.gegnerO.frequency.setTargetAtTime(Math.max(1100, naechster.v / GANG_V[gg] * 9000) / 60 * naechster.st.klang, t, 0.05);
-    }
-    ton.gegnerLaut.gain.setTargetAtTime(aus || !naechster ? 0 : (1 - abstand / 70) ** 2 * 0.07, t, 0.08);
+    ton.altGas = last;
+    // Reifen, Randsteine, Wind, Regen, Publikum
     const quietsch = (a.drift || Math.abs(a.schlupf) > 0.12) && a.v > 6 && (a.flaeche === "asphalt" || a.flaeche === "kerb");
-    ton.quietschLaut.gain.setTargetAtTime(aus || !quietsch ? 0 : Math.min(0.22, 0.06 + Math.abs(a.schlupf) * 0.3), t, 0.04);
-    ton.band.frequency.setTargetAtTime(1300 + a.v * 6, t, 0.1);
-    const holpert = a.flaeche !== "asphalt";
-    ton.rumpelLaut.gain.setTargetAtTime(aus || !holpert ? 0 : Math.min(0.5, a.v * 0.02), t, 0.05);
+    ton.quietschO.frequency.setTargetAtTime(850 + Math.abs(a.schlupf) * 500 + a.v * 2, t, 0.05);
+    ton.quietschBand.frequency.setTargetAtTime(1300 + a.v * 6, t, 0.1);
+    ton.quietschLaut.gain.setTargetAtTime(aus || !quietsch ? 0 : Math.min(0.2, 0.05 + Math.abs(a.schlupf) * 0.28), t, 0.04);
+    ton.rumpel.g.gain.setTargetAtTime(aus || a.flaeche === "asphalt" ? 0 : Math.min(0.5, a.v * 0.02), t, 0.05);
+    ton.wind.g.gain.setTargetAtTime(aus ? 0 : Math.min(0.22, (a.v / 80) ** 2 * 0.22), t, 0.1);
+    ton.regen.g.gain.setTargetAtTime(aus || !nass ? 0 : 0.07 + a.v * 0.0006, t, 0.2);
+    const tribuene = Math.min(...TRIBUENEN.map(([x, z]) => Math.hypot(a.x - x, a.z - z)));
+    ton.publikum.g.gain.setTargetAtTime(aus ? 0 : Math.max(0, 1 - tribuene / 170) * 0.06, t, 0.3);
+    // Gegner: die zwei nächsten, mit Position links/rechts und höherem Ton, wenn sie näher kommen
+    const nahe = autos.filter((b) => b !== a).map((b) => ({ b, d: Math.hypot(b.x - a.x, b.z - a.z) })).sort((p, q) => p.d - q.d).slice(0, 2);
+    ton.stimmen.forEach((s, k) => {
+      const n = nahe[k];
+      if (aus || !n || n.d > 80) { s.g.gain.setTargetAtTime(0, t, 0.1); return; }
+      const b = n.b, mb = MOTOREN[b.typ], skala = b.st.vmax / 80;
+      if (s.typ !== b.typ) { s.o.setPeriodicWave(ton.welle(b.typ)); s.typ = b.typ; }
+      let gg = 1; while (gg < 6 && b.v > GANG_V[gg] * skala * 0.93) gg++;
+      const rpm = Math.max(1500, b.v / (GANG_V[gg] * skala) * 9000);
+      const d = Math.max(n.d, 0.5), dx = (a.x - b.x) / d, dz = (a.z - b.z) / d;
+      const naehern = (b.vx - a.vx) * dx + (b.vz - a.vz) * dz;
+      const doppler = 343 / (343 - Math.max(-60, Math.min(60, naehern)));
+      s.o.frequency.setTargetAtTime(rpm / 120 * mb.hoch * doppler, t, 0.05);
+      s.g.gain.setTargetAtTime((1 - n.d / 80) ** 2 * 0.09, t, 0.06);
+      if (s.pan) {
+        const seitlich = (b.x - a.x) * -Math.sin(a.w) + (b.z - a.z) * Math.cos(a.w);
+        s.pan.pan.setTargetAtTime(Math.max(-1, Math.min(1, seitlich / Math.max(4, n.d))), t, 0.05);
+      }
+    });
   }
 
   /* ---------- Anzeige ---------- */
@@ -2600,7 +2823,7 @@
       const r = relIdx(a.idx);
       if (a.boxenstopp) hinweis = "Boxenstopp – Reparatur " + Math.min(100, Math.round(a.boxenstopp.zeit / a.boxenstopp.dauer * 100)) + " %";
       else if (a.schadenMeldung > 0) hinweis = a.schadenText;
-      else if (imBegrenzer(a.idx, a.seite)) hinweis = Math.abs(r - relIdx(boxIdx(a.box))) < 14 && a.letzterStopp !== a.runde ? "Halte im gelben Rahmen deiner Box" : "Boxengasse · Begrenzer 60 km/h";
+      else if (imBegrenzer(a.idx, a.seite)) hinweis = Math.abs(r - relIdx(boxIdx(a.box))) < 40 && a.letzterStopp !== a.runde ? "Halte im gelben Rahmen deiner Box" : "Boxengasse · Begrenzer " + Math.round(GASSE.tempo * 3.6) + " km/h";
       else if (a.flaeche === "kies") hinweis = "Im Kiesbett!";
       else if (a.flaeche === "gras") hinweis = "Im Gras!";
       else if (a.schaden.gesamt >= 40 && r > -150 && r < GASSE.ein) hinweis = "Reparieren? Rechts in die Boxengasse";
