@@ -356,10 +356,19 @@
   renderer.shadowMap.type = T.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = false;
   document.getElementById("buehne").appendChild(renderer.domElement);
+  // Tastatur: das Spielfeld kann den Fokus bekommen; ein Klick hinein holt ihn zurück
+  renderer.domElement.tabIndex = 0;
+  renderer.domElement.style.outline = "none";
+  const fokusHolen = () => { try { window.focus(); renderer.domElement.focus({ preventScroll: true }); } catch {} };
+  renderer.domElement.addEventListener("pointerdown", fokusHolen);
 
   const szene = new T.Scene();
   szene.fog = new T.Fog(0xc4d8ec, 300, 2300);
   const kamera = new T.PerspectiveCamera(72, 1, 0.1, 4000);
+  // Ebene 1 sieht nur die Hauptkamera: Gras, Bäume und Zäune fallen in Spiegeln und Schatten weg (spart viel Rechenzeit)
+  const NUR_HAUPTBILD = 1;
+  kamera.layers.enable(NUR_HAUPTBILD);
+  const nurHauptbild = (o) => { o.layers.set(NUR_HAUPTBILD); return o; };
 
   const aniso = renderer.capabilities.getMaxAnisotropy();
   function leinwandTextur(b, h, malen, wiederholen) {
@@ -576,6 +585,7 @@
     const m = new T.Mesh(geo, mat);
     m.castShadow = !!schatten; m.receiveShadow = true;
     szene.add(m);
+    return m;
   }
   const W_PROFIL = [];
   for (const unten of [0.42, 0.76])   // zwei Schienen übereinander
@@ -592,7 +602,7 @@
     // rechts lässt die Boxengasse eine Lücke
     const i0 = seite < 0 ? 0 : wrap(GASSE.aus + 1), n = seite < 0 ? N : N - (GASSE.aus + 1 - GASSE.ein);
     profilBand(i0, n, seite, W_PROFIL, stahl, 4, true);
-    profilBand(i0, n, seite, [[zaunAb, 0], [zaunAb, 3.6]], MAT.zaun, 3);
+    nurHauptbild(profilBand(i0, n, seite, [[zaunAb, 0], [zaunAb, 3.6]], MAT.zaun, 3));
   }
 
   {
@@ -880,7 +890,7 @@
       setzen(SORTEN[2], BAHN[i][0] + NX[i] * seite * ab, BAHN[i][1] + NZ[i] * seite * ab, 1.6 + zufall() * 1.6, 1.9);
       k++;
     }
-    for (const so of SORTEN) { so.mesh.count = so.mesh.userData.k; szene.add(so.mesh); }
+    for (const so of SORTEN) { so.mesh.count = so.mesh.userData.k; so.mesh.castShadow = false; nurHauptbild(so.mesh); szene.add(so.mesh); }
   }
 
   // Himmel als Shader: Verlauf vom Horizont zum Zenit, Sonnenscheibe mit Hof
@@ -909,6 +919,7 @@
   });
 
   // Grashalme in Büscheln neben der Strecke (nur auf kräftigen Geräten)
+  let grasMesh = null;
   if (!grob) {
     const halm = new T.BufferGeometry();
     const pos = [];
@@ -918,7 +929,7 @@
     }
     halm.setAttribute("position", new T.Float32BufferAttribute(pos, 3));
     halm.computeVertexNormals();
-    const anzahl = 60000;
+    const anzahl = 32000;
     const gras = new T.InstancedMesh(halm, new T.MeshLambertMaterial({ color: 0xffffff, side: T.DoubleSide }), anzahl);
     const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), sk = new T.Vector3(), farbe = new T.Color(), yAchse = new T.Vector3(0, 1, 0);
     let k = 0;
@@ -939,7 +950,8 @@
       gras.setColorAt(k++, farbe.setHSL(0.25 + zufall() * 0.05, 0.5, 0.17 + zufall() * 0.1));
     }
     gras.count = k;
-    szene.add(gras);
+    nurHauptbild(gras); szene.add(gras);
+    grasMesh = gras;
   }
 
   // Hügel, Himmel, Wolken
@@ -976,7 +988,7 @@
   szene.add(himmelLicht);
   const sonne = new T.DirectionalLight(0xfff1dd, 1.6);
   sonne.castShadow = !grob;
-  sonne.shadow.mapSize.set(grob ? 1024 : 4096, grob ? 1024 : 4096);
+  sonne.shadow.mapSize.set(grob ? 1024 : 2048, grob ? 1024 : 2048);
   Object.assign(sonne.shadow.camera, { left: -60, right: 60, top: 60, bottom: -60, near: 10, far: 400 });
   sonne.shadow.normalBias = 0.02;
   sonne.shadow.camera.updateProjectionMatrix();
@@ -2767,10 +2779,12 @@
   document.addEventListener("webkitfullscreenchange", vollbildGeaendert);
 
   ui.losKnopf.onclick = () => {
+    fokusHolen();
     ui.start.hidden = true; tonStarten(); neuesRennen();
     if (grob && kannVollbild && !istVollbild()) vollbild(true, true);   // auf dem Handy gleich bildschirmfüllend
   };
-  ui.nochmal.onclick = () => { tonStarten(); neuesRennen(); };
+  ui.nochmal.onclick = () => {
+    fokusHolen(); tonStarten(); neuesRennen(); };
   const ampelLampen = [...ui.ampel.children];
 
   const zeit = (s) => {
@@ -2919,26 +2933,32 @@
     const w = Math.round(Math.min(220, B * 0.18)), h = Math.round(w * 0.6);
     return { x: k === 1 ? 12 : B - w - 12, y: Math.round(Math.max(H * 0.4, 200)), w, h };
   }
+  let spiegelBild = 0, seitenSpiegel = true;
   function spiegelZeichnen() {
     const zeigen = ANSICHTEN[ansicht] === "cockpit" && zustand !== "menue";
-    for (const sp of SPIEGEL) sp.div.style.display = zeigen ? "block" : "none";
+    SPIEGEL.forEach((sp, k) => { sp.div.style.display = zeigen && (k === 0 || seitenSpiegel) ? "block" : "none"; });
     if (!zeigen) return;
+    const neuRechnen = spiegelBild++ % 3 === 0;   // die Spiegelbilder nur jedes dritte Bild neu berechnen
     const m = spieler.mesh, teile = m.userData.teile, pr = renderer.getPixelRatio();
     cockpit.visible = false;
     teile.hinterwagen.visible = teile.kabine.visible = true;
     SPIEGEL.forEach((sp, k) => {
+      if (k > 0 && !seitenSpiegel) return;
       const r = spiegelRahmen(k);
       Object.assign(sp.div.style, { left: r.x - 4 + "px", top: r.y - 4 + "px", width: r.w + 8 + "px", height: r.h + 8 + "px" });
       const bw = Math.max(1, Math.round(r.w * pr)), bh = Math.max(1, Math.round(r.h * pr));
-      if (sp.rt.width !== bw || sp.rt.height !== bh) sp.rt.setSize(bw, bh);
-      sp.kam.aspect = r.w / r.h; sp.kam.updateProjectionMatrix();
-      sp.kam.position.copy(m.localToWorld(hv1.set(...sp.pos)));
-      sp.kam.lookAt(m.localToWorld(hv2.set(...sp.ziel)));
-      m.visible = sp.eigenesAuto;
-      himmelKugel.position.copy(sp.kam.position);
-      renderer.setRenderTarget(sp.rt);
-      renderer.render(szene, sp.kam);
-      renderer.setRenderTarget(null);
+      const neueGroesse = sp.rt.width !== bw || sp.rt.height !== bh;
+      if (neueGroesse) sp.rt.setSize(bw, bh);
+      if (neuRechnen || neueGroesse) {
+        sp.kam.aspect = r.w / r.h; sp.kam.updateProjectionMatrix();
+        sp.kam.position.copy(m.localToWorld(hv1.set(...sp.pos)));
+        sp.kam.lookAt(m.localToWorld(hv2.set(...sp.ziel)));
+        m.visible = sp.eigenesAuto;
+        himmelKugel.position.copy(sp.kam.position);
+        renderer.setRenderTarget(sp.rt);
+        renderer.render(szene, sp.kam);
+        renderer.setRenderTarget(null);
+      }
       renderer.setScissorTest(true);
       renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
       renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h);
@@ -3191,7 +3211,7 @@
   if (pp) pp.groesse(B, H, renderer.getPixelRatio());
 
   /* ---------- Hauptschleife ---------- */
-  const bildZeiten = [];
+  let messStart = performance.now(), messBilder = 0, messRunde = 0;
   let leistungGeprueft = false;
   let zustand = "menue", rennzeit = 0, ampelUhr = 0, ampelAus = 6, nachZiel = 0, zuletzt = performance.now();
   const ruhe = { gas: false, bremse: true, links: false, rechts: false, handbremse: false };
@@ -3200,7 +3220,8 @@
   neuesRennen(); zustand = "menue";
 
   function schleife(jetzt) {
-    const dt = Math.min(0.033, Math.max(0, (jetzt - zuletzt) / 1000));
+    // bis 0,1 s pro Bild in echter Zeit rechnen; so fährt das Auto auch auf langsamen Geräten normal schnell
+    const dt = Math.min(0.1, Math.max(0, (jetzt - zuletzt) / 1000));
     zuletzt = jetzt;
 
     if (zustand === "ampel") {
@@ -3220,18 +3241,29 @@
       }
     }
 
-    // läuft es mit allen Effekten zu langsam, einmal automatisch auf schnell schalten
-    if (effekte && zustand === "rennen" && !leistungGeprueft) {
-      bildZeiten.push(jetzt);
-      if (bildZeiten.length > 90) {
-        const ms = (bildZeiten[bildZeiten.length - 1] - bildZeiten[30]) / (bildZeiten.length - 31);
-        leistungGeprueft = true;
-        if (ms > 26) { effekte = false; melde("Grafik wurde für flüssiges Fahren auf „schnell“ gestellt. Mit G schaltest du die Effekte wieder ein."); }
-      }
+    // läuft es zu langsam, Stufe für Stufe Details abschalten: Effekte, dann Schatten, Gras und Seitenspiegel, dann Auflösung.
+    // Gemessen wird alle 2 Sekunden; die ersten Sekunden nach dem Laden zählen nicht (Shader werden übersetzt).
+    messBilder++;
+    if (!leistungGeprueft && jetzt - messStart > 2000) {
+      const bps = messBilder * 1000 / (jetzt - messStart);
+      messStart = jetzt; messBilder = 0;
+      if (messRunde++ < 1) { /* Aufwärmen */ }
+      else if (bps >= 40) leistungGeprueft = true;
+      else if (effekte) { effekte = false; melde("Grafik auf „schnell“ gestellt, damit es flüssig läuft. Mit G kommen die Effekte zurück."); }
+        else if (renderer.shadowMap.enabled || (grasMesh && grasMesh.visible) || seitenSpiegel) {
+          renderer.shadowMap.enabled = false; sonne.castShadow = false;
+          if (grasMesh) grasMesh.visible = false;
+          seitenSpiegel = false;
+          szene.traverse((o) => { if (o.material) for (const m of [].concat(o.material)) m.needsUpdate = true; });
+          melde("Schatten, Grashalme und Seitenspiegel ausgeschaltet, damit es flüssig läuft.");
+      } else if (renderer.getPixelRatio() > 0.75) {
+        renderer.setPixelRatio(Math.max(0.75, renderer.getPixelRatio() - 0.5)); groesse();
+        melde("Auflösung verringert, damit es flüssig läuft.");
+      } else leistungGeprueft = true;
     }
 
     if (zustand === "rennen" || zustand === "auslauf") {
-      const schritte = 2, h = dt / schritte;
+      const schritte = Math.max(2, Math.ceil(dt / 0.0125)), h = dt / schritte;
       for (let s = 0; s < schritte; s++) {
         rennzeit += h;
         for (const a of autos) {
