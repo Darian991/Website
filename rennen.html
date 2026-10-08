@@ -33,6 +33,8 @@
   .box .farbKnopf { margin: 0; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); font-size: 18px; line-height: 1; }
   .box .farbKnopf.an { border: 3px solid var(--accent); box-shadow: 0 0 0 2px #141a17, 0 0 10px var(--accent); }
   .autoInfo { font-size: 14px; }
+  .farben { flex-wrap: wrap; gap: 6px; }
+  .box .farben .farbKnopf { width: 28px; height: 28px; }
   .hud b { color: var(--accent); }
   .tacho { bottom: 16px; right: 16px; padding: 10px 16px; text-align: right; min-width: 150px; }
   .tacho .kmh { font-size: 40px; font-weight: 800; line-height: 1; }
@@ -136,11 +138,17 @@
 <div class="overlay" id="start">
   <div class="box">
     <h1>🏁 Grand Prix</h1>
-    <p>3 Runden auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du startest mit der Nummer 77 von ganz hinten. Alle fahren dasselbe Auto wie du.</p>
+    <p>3 Runden auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du startest mit der Nummer 77 von ganz hinten. Das Feld ist gemischt: Formelwagen, Prototypen, Supersportwagen, GT3 RS, Muscle-Cars und Rallye-Autos.</p>
     <div class="garageTitel">Auto</div>
     <div class="wahl wahlAuto" id="autoWahl"></div>
     <div class="garageTitel">Lackierung</div>
-    <div class="wahl" id="lackWahl"></div>
+    <div class="wahl wahlAuto" id="musterWahl"></div>
+    <div id="farbZeilen">
+      <div class="garageTitel">Farbe</div>
+      <div class="wahl farben" id="farbe1"></div>
+      <div class="garageTitel">Zweitfarbe</div>
+      <div class="wahl farben" id="farbe2"></div>
+    </div>
     <p class="autoInfo" id="autoInfo"></p>
     <p><kbd>↑</kbd>/<kbd>W</kbd> Gas · <kbd>↓</kbd>/<kbd>S</kbd> Bremse · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> Lenken</p>
     <p><b>Driften:</b> In der Kurve kurz die <kbd>Leertaste</kbd> (Handbremse) ziehen, dann mit Gas und Gegenlenken das Heck halten. Lange Drifts geben Punkte.</p>
@@ -1204,15 +1212,125 @@
     }
   });
 
-  // Gegner: einfarbig mit weißem Streifen
-  function einfarbigSeite(farbe) {
-    return seitenTextur((g, b, h, P) => {
-      g.fillStyle = farbe; g.fillRect(0, 0, b, h);
-      g.fillStyle = "rgba(255,255,255,0.92)";
-      pfad(g, P, [[2.4, 0.42], [-2.4, 0.42], [-2.4, 0.5], [2.4, 0.5]]); g.fill();
-      g.fillStyle = "rgba(0,0,0,0.25)";
-      pfad(g, P, [[2.4, 0.2], [-2.4, 0.2], [-2.4, 0.3], [2.4, 0.3]]); g.fill();
-    });
+  /* ---------- Lackierungen: Muster mit zwei Farben ---------- */
+  const FARBEN = [
+    ["Rot", 0xc8102e], ["Weiß", 0xf2f2ee], ["Schwarz", 0x18191b], ["Gelb", 0xf2c41c], ["Blau", 0x1f5fbf], ["Hellblau", 0x7cc4ec],
+    ["Orange", 0xf07a1a], ["Grün", 0x1f9a4a], ["Silber", 0xa9adb3], ["Lila", 0x7a3fc2], ["Pink", 0xe8508f], ["Gold", 0xc9a227]
+  ];
+  const hexCss = (f) => "#" + f.toString(16).padStart(6, "0");
+  const mischen = (css, ziel, anteil) => "#" + new T.Color(css).lerp(new T.Color(ziel), anteil).getHexString();
+  // Oberseite (Dach, Haube, Heck): Koordinaten in Metern, längs x und quer z. Muster dort hängen nur von z ab.
+  function obenTextur(malen) {
+    const t = leinwandTextur(512, 256, (g, b, h) => malen(g, b, h, (x, z) => [(x / 4.8 + 0.5) * b, (z / 2.2 + 0.5) * h]));
+    t.repeat.set(1 / 4.8, 1 / 2.2);
+    t.offset.set(0.5, 0.5 - 1 / 2.2);
+    return t;
+  }
+  const rechteck = (g, P, x0, y0, x1, y1) => { pfad(g, P, [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]); g.fill(); };
+  const MUSTER = {
+    rexy: { name: "Rexy 🦖" },
+    einfarbig: {
+      name: "Einfarbig",
+      seite: (g, b, h, P, c1, c2) => { g.fillStyle = c1; g.fillRect(0, 0, b, h); g.fillStyle = c2; rechteck(g, P, -2.6, 0.42, 2.6, 0.48); }
+    },
+    streifen: {
+      name: "Rennstreifen",
+      seite: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = c2; rechteck(g, P, -2.6, 0.36, 2.6, 0.44); rechteck(g, P, -2.6, 0.47, 2.6, 0.5);
+      },
+      oben: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = c2; for (const s of [-1, 1]) rechteck(g, P, -2.6, s * 0.07, 2.6, s * 0.3);
+      }
+    },
+    zweifarbig: {
+      name: "Zweifarbig",
+      seite: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = c2; pfad(g, P, [[2.6, 0], [2.6, 0.42], [0.6, 0.5], [-1.0, 0.68], [-2.6, 0.8], [-2.6, 0]]); g.fill();
+        g.strokeStyle = "#fff"; g.lineWidth = 5; g.beginPath(); g.moveTo(...P(2.6, 0.44)); g.lineTo(...P(0.6, 0.52)); g.lineTo(...P(-1.0, 0.7)); g.lineTo(...P(-2.6, 0.82)); g.stroke();
+      }
+    },
+    flammen: {
+      name: "Flammen",
+      seite: (g, b, h, P, c1) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        for (let k = 0; k < 8; k++) {
+          const y0 = 0.3 + k * 0.065, lang = 1.4 + ((k * 37) % 11) / 11 * 1.8;
+          const v = g.createLinearGradient(...P(2.5, 0), ...P(2.5 - lang, 0));
+          v.addColorStop(0, "#fff4a8"); v.addColorStop(0.3, "#ffc21a"); v.addColorStop(0.7, "#ff5a00"); v.addColorStop(1, "rgba(190,20,0,0.9)");
+          g.fillStyle = v;
+          g.beginPath(); g.moveTo(...P(2.55, y0 - 0.06));
+          g.quadraticCurveTo(...P(2.5 - lang * 0.5, y0 + 0.13), ...P(2.5 - lang, y0 + 0.03));
+          g.quadraticCurveTo(...P(2.5 - lang * 0.45, y0 - 0.02), ...P(2.55, y0 + 0.06)); g.fill();
+        }
+      }
+    },
+    karo: {
+      name: "Zielflagge",
+      seite: (g, b, h, P, c1) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        for (let x = -2.6, i = 0; x < 2.6; x += 0.09, i++) for (let r = 0; r < 2; r++) {
+          g.fillStyle = (i + r) % 2 ? "#111" : "#f4f4f4"; rechteck(g, P, x, 0.3 + r * 0.09, x + 0.09, 0.39 + r * 0.09);
+        }
+        for (let x = -2.6, i = 0; x < -1.5; x += 0.12, i++) for (let r = 0; r < 4; r++) {
+          g.fillStyle = (i + r) % 2 ? "#111" : "#f4f4f4"; rechteck(g, P, x, 0.55 + r * 0.12, x + 0.12, 0.67 + r * 0.12);
+        }
+      }
+    },
+    blitz: {
+      name: "Blitz",
+      seite: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        const oben = [[2.5, 0.58], [1.3, 0.76], [1.05, 0.56], [-0.2, 0.74], [-0.45, 0.52], [-2.6, 0.7]];
+        const unten = oben.slice().reverse().map(([x, y]) => [x + 0.06, y - 0.13]);
+        g.fillStyle = c2; g.strokeStyle = "#111"; g.lineWidth = 6;
+        pfad(g, P, [...oben, ...unten]); g.fill(); g.stroke();
+      }
+    },
+    retro: {
+      name: "Retro",
+      seite: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = "#111"; rechteck(g, P, -2.6, 0.33, 2.6, 0.73);
+        g.fillStyle = c2; rechteck(g, P, -2.6, 0.35, 2.6, 0.71);
+        g.fillStyle = "#fff"; g.beginPath(); g.arc(...P(0.05, 0.53), 70, 0, 7); g.fill();
+      },
+      oben: (g, b, h, P, c1, c2) => {
+        g.fillStyle = c1; g.fillRect(0, 0, b, h);
+        g.fillStyle = "#111"; rechteck(g, P, -2.6, -0.38, 2.6, 0.38);
+        g.fillStyle = c2; rechteck(g, P, -2.6, -0.35, 2.6, 0.35);
+      }
+    },
+    tarnung: {
+      name: "Tarnung",
+      seite: (g, b, h, P, c1, c2) => { g.fillStyle = c1; g.fillRect(0, 0, b, h); tarnFlecken(g, b, h, c1, c2); },
+      oben: (g, b, h, P, c1, c2) => { g.fillStyle = c1; g.fillRect(0, 0, b, h); tarnFlecken(g, b, h, c1, c2); }
+    }
+  };
+  function tarnFlecken(g, b, h, c1, c2) {
+    const farben = [mischen(c1, "#000", 0.35), mischen(c1, "#fff", 0.25), c2];
+    let saat = 3;
+    const z = () => (saat = (saat * 16807) % 2147483647) / 2147483647;
+    for (let k = 0; k < 140; k++) {
+      g.fillStyle = farben[k % 3];
+      g.beginPath(); g.ellipse(z() * b, z() * h, 18 + z() * 46, 10 + z() * 26, z() * 3, 0, 7); g.fill();
+    }
+  }
+  const lackSpeicher = new Map();
+  function lackStoffe(lack) {
+    const schluessel = lack.muster + "|" + lack.c1 + "|" + lack.c2;
+    if (lackSpeicher.has(schluessel)) return lackSpeicher.get(schluessel);
+    let r;
+    if (lack.muster === "rexy") r = { seite: rexySeite, oben: rexyOben };
+    else {
+      const m = MUSTER[lack.muster] || MUSTER.einfarbig, c1 = hexCss(lack.c1), c2 = hexCss(lack.c2);
+      r = { seite: seitenTextur((g, b, h, P) => m.seite(g, b, h, P, c1, c2)), oben: m.oben ? obenTextur((g, b, h, P) => m.oben(g, b, h, P, c1, c2)) : null };
+    }
+    for (const t of [r.seite, r.oben]) if (t) GETEILT.add(t);
+    lackSpeicher.set(schluessel, r);
+    return r;
   }
 
   const lamellenMat = new T.MeshStandardMaterial({ roughness: 0.6, map: leinwandTextur(64, 64, (g, b, h) => {
@@ -1233,12 +1351,12 @@
     const typ = FAHRZEUGE[typId], geo = typGeo(typId);
     const g = new T.Group();
     g.rotation.order = "YXZ";
-    const css = "#" + f.farbe.toString(16).padStart(6, "0");
     // Lack mit Klarlackschicht: spiegelt Himmel und Sonne
     const lackArt = { roughness: 0.42, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 0.55 };
-    const seite = new T.MeshPhysicalMaterial({ map: f.rexy ? rexySeite : einfarbigSeite(css), ...lackArt });
-    const oben = f.rexy ? new T.MeshPhysicalMaterial({ map: rexyOben, ...lackArt })
-      : new T.MeshPhysicalMaterial({ color: new T.Color(f.farbe).convertSRGBToLinear(), ...lackArt });
+    const lack = f.lack, stoffe = lackStoffe(lack);
+    const seite = new T.MeshPhysicalMaterial({ map: stoffe.seite, ...lackArt });
+    const oben = stoffe.oben ? new T.MeshPhysicalMaterial({ map: stoffe.oben, ...lackArt })
+      : new T.MeshPhysicalMaterial({ color: new T.Color(lack.c1).convertSRGBToLinear(), ...lackArt });
     seite.userData.spiegelt = oben.userData.spiegelt = true;
     const teile = { abnehmbar: {}, spiegel: [] };
     const teil = (gg, mat, x, y, z) => { const m = new T.Mesh(gg, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
@@ -1271,7 +1389,7 @@
     bremsMat.color.setRGB(0.35, 0.02, 0.02);
     teile.bremsMat = bremsMat;
     for (const [b, hh, t, x, y, z] of typ.heck) box(b, hh, t, x, y, z, bremsMat);
-    if (f.rexy) {
+    if (lack.muster === "rexy") {
       const maul = new T.Mesh(new T.PlaneGeometry(typ.maul[2], typ.maul[2] * 0.2), new T.MeshBasicMaterial({ map: rexyFront, transparent: true }));
       maul.position.set(typ.maul[0], typ.maul[1], 0); maul.rotation.y = Math.PI / 2; g.add(maul);
     }
@@ -1538,14 +1656,19 @@
     for (const n of ["position", "alpha", "groesse"]) gischtGeo.attributes[n].needsUpdate = true;
   }
 
-  // 15 Gegner, die schnellsten starten vorn; du startest als Letzter
+  // 15 Gegner in einem gemischten Feld: schnelle Klassen starten vorn, du startest als Letzter
+  const KI_TYPEN = ["formel", "formel", "prototyp", "prototyp", "formel", "supersport", "prototyp", "supersport",
+    "gt3rs", "supersport", "gt3rs", "muscle", "gt3rs", "muscle", "rallye"];
+  const KI_MUSTER = ["streifen", "retro", "flammen", "zweifarbig", "karo", "blitz", "tarnung", "einfarbig"];
   const FAHRER = [
     ["Rot", 0xd6402f, 7], ["Blau", 0x2f6fd6, 22], ["Orange", 0xf07a1a, 4], ["Gelb", 0xf2c41c, 11],
     ["Weiß", 0xeeeeea, 3], ["Schwarz", 0x1c1d20, 99], ["Silber", 0xa9adb3, 63], ["Lila", 0x7a3fc2, 21],
     ["Pink", 0xe8508f, 14], ["Türkis", 0x1fb5a8, 31], ["Gold", 0xc9a227, 8], ["Dunkelrot", 0x8a1622, 16],
     ["Hellblau", 0x6cc3f0, 55], ["Grün", 0x2fa863, 44], ["Braun", 0x7a4a2a, 27]
-  ].map(([name, farbe, nummer], k) => ({ name, farbe, nummer, grip: 12.2 - k * 0.11 }))
-    .concat([{ name: "Du", farbe: 0x4cb832, spieler: true, rexy: true, nummer: 77 }]);
+  ].map(([name, farbe, nummer], k) => ({
+    name, farbe, nummer, grip: 12.2 - k * 0.11, typ: KI_TYPEN[k],
+    lack: { muster: KI_MUSTER[k % KI_MUSTER.length], c1: farbe, c2: k % 3 === 0 ? 0xf2f2ee : k % 3 === 1 ? 0x18191b : FARBEN[(k * 5) % FARBEN.length][1] }
+  })).concat([{ name: "Du", farbe: 0x4cb832, spieler: true, nummer: 77, typ: "gt3rs", lack: { muster: "rexy", c1: 0x4cb832, c2: 0xf2f2ee } }]);
   const VMAX = 80, VMAX_KI = 74;
 
   // Höchsttempo je Punkt der Ideallinie: Kurvengrenze, rückwärts heruntergebremst
@@ -1575,12 +1698,16 @@
     return "gras";
   }
 
-  let spielerTyp = "gt3rs", spielerLack = "rexy";
-  try { const w = (localStorage.getItem("rennstrecke-auto") || "").split("|"); if (FAHRZEUGE[w[0]]) { spielerTyp = w[0]; spielerLack = w[1] || "rexy"; } } catch {}
+  let spielerTyp = "gt3rs", spielerLack = { muster: "rexy", c1: 0x4cb832, c2: 0xf2f2ee };
+  try {
+    const w = JSON.parse(localStorage.getItem("rennstrecke-auto2") || "null");
+    if (w && FAHRZEUGE[w.typ] && MUSTER[w.lack.muster]) { spielerTyp = w.typ; spielerLack = w.lack; }
+  } catch {}
   const autos = [];
   let spieler = null, cockpit = null;
   for (const f of FAHRER) {
-    const a = { ...f, mesh: baueAuto(f, spielerTyp), st: FAHRZEUGE[spielerTyp].st, profil: f.spieler ? null : tempoProfil(f.grip) };
+    if (f.spieler) { f.typ = spielerTyp; f.lack = spielerLack; }
+    const a = { ...f, mesh: baueAuto(f, f.typ), st: FAHRZEUGE[f.typ].st, profil: f.spieler ? null : tempoProfil(f.grip) };
     autos.push(a);
     if (f.spieler) { spieler = a; cockpit = baueCockpit(a.mesh, spielerTyp); }
   }
@@ -1681,7 +1808,7 @@
       let zx, zz, blick;
       const imEinsatz = a.boxenstopp && c.aufgabe < AUFGABEN.length;
       if (imEinsatz) {
-        const [lx, lz] = AUFGABEN[c.aufgabe], typ = FAHRZEUGE[spielerTyp];
+        const [lx, lz] = AUFGABEN[c.aufgabe], typ = FAHRZEUGE[a.typ];
         const cw = Math.cos(a.w), sw = Math.sin(a.w);
         const ax = Math.abs(lx) === 1 ? lx * typ.radstand : lx, az = Math.abs(lz) === 1 ? lz * (typ.spur + 0.6) : lz;
         zx = a.x + cw * ax - sw * az; zz = a.z + sw * ax + cw * az;
@@ -1726,40 +1853,38 @@
     }
   }
 
-  /* ---------- Garage: Auto und Lackierung wählen ---------- */
-  const LACKE = [
-    { id: "rexy", name: "Rexy (T-Rex)", farbe: 0x4cb832, rexy: true }, { id: "rot", name: "Rot", farbe: 0xc8102e },
-    { id: "weiss", name: "Weiß", farbe: 0xf2f2ee }, { id: "schwarz", name: "Schwarz", farbe: 0x18191b },
-    { id: "gelb", name: "Gelb", farbe: 0xf2c41c }, { id: "blau", name: "Blau", farbe: 0x1f5fbf },
-    { id: "orange", name: "Orange", farbe: 0xf07a1a }, { id: "silber", name: "Silber", farbe: 0xa9adb3 }, { id: "lila", name: "Lila", farbe: 0x7a3fc2 }
-  ];
-  // alle Autos im Feld fahren dasselbe Modell wie du – wie in einem Markenpokal
+  /* ---------- Garage: Auto, Muster und Farben wählen ---------- */
+  // jedes Auto fährt mit den Werten seiner Klasse; das Können der Gegner steckt in a.grip
   function klasseAnpassen() {
-    const st = FAHRZEUGE[spielerTyp].st, d = WETTER[wetter];
+    const d = WETTER[wetter];
     for (const a of autos) {
-      a.st = st;
-      if (!a.spieler) a.profil = tempoProfil(a.grip * st.grip / 15.5 * d.grip, (nass ? 12 : 17) * st.bremse / 30, st.vmax * 0.925);
+      a.st = FAHRZEUGE[a.typ].st;
+      if (!a.spieler) a.profil = tempoProfil(a.grip / 15.5 * a.st.grip * d.grip, (nass ? 12 : 17) * a.st.bremse / 30, a.st.vmax * 0.925);
     }
+    const st = spieler.st;
     SPIELER_PROFIL = tempoProfil(st.grip * 0.97 * d.grip, (nass ? 16 : 24) * st.bremse / 30, st.vmax);
   }
   const punkte = (wert, min, max) => { const n = Math.max(1, Math.min(5, Math.round(1 + (wert - min) / (max - min) * 4))); return "●".repeat(n) + "○".repeat(5 - n); };
   function garageAnzeigen() {
-    const typ = FAHRZEUGE[spielerTyp], st = typ.st, lack = LACKE.find((l) => l.id === spielerLack);
+    const typ = FAHRZEUGE[spielerTyp], st = typ.st, lack = spielerLack;
     document.querySelectorAll("#autoWahl button").forEach((b) => b.classList.toggle("an", b.dataset.typ === spielerTyp));
-    document.querySelectorAll("#lackWahl button").forEach((b) => b.classList.toggle("an", b.dataset.lack === spielerLack));
-    document.getElementById("autoInfo").innerHTML = "<b>" + typ.name + "</b> in " + lack.name + " – " + typ.text + "<br>" +
+    document.querySelectorAll("#musterWahl button").forEach((b) => b.classList.toggle("an", b.dataset.muster === lack.muster));
+    document.querySelectorAll("#farbe1 button").forEach((b) => b.classList.toggle("an", +b.dataset.farbe === lack.c1));
+    document.querySelectorAll("#farbe2 button").forEach((b) => b.classList.toggle("an", +b.dataset.farbe === lack.c2));
+    document.getElementById("farbZeilen").hidden = lack.muster === "rexy";
+    const name = (f) => (FARBEN.find(([, w]) => w === f) || ["?"])[0];
+    document.getElementById("autoInfo").innerHTML = "<b>" + typ.name + "</b> · " + (lack.muster === "rexy" ? "Rexy" :
+      MUSTER[lack.muster].name + " in " + name(lack.c1) + "/" + name(lack.c2)) + " – " + typ.text + "<br>" +
       "Spitze " + Math.round(st.vmax * 3.6) + " km/h · Beschleunigung " + punkte(st.beschl, 12.5, 17) + " · Grip " + punkte(st.grip, 12.8, 19.5) +
       " · Bremse " + punkte(st.bremse, 26, 38);
   }
-  function fahrzeugWechseln(typId, lackId) {
+  function fahrzeugWechseln(typId, lack) {
     spielerTyp = FAHRZEUGE[typId] ? typId : "gt3rs";
-    spielerLack = LACKE.some((l) => l.id === lackId) ? lackId : "rexy";
-    const lack = LACKE.find((l) => l.id === spielerLack);
-    spieler.farbe = lack.farbe; spieler.rexy = !!lack.rexy;
-    for (const a of autos) {
-      entsorgen(a.mesh); szene.remove(a.mesh);
-      a.mesh = baueAuto(a, spielerTyp);
-    }
+    spielerLack = lack;
+    spieler.typ = spielerTyp; spieler.lack = lack;
+    spieler.farbe = lack.muster === "rexy" ? 0x4cb832 : lack.c1;
+    entsorgen(spieler.mesh); szene.remove(spieler.mesh);
+    spieler.mesh = baueAuto(spieler, spielerTyp);
     cockpit = baueCockpit(spieler.mesh, spielerTyp);
     letzteLenkradAnzeige = "";
     // Spiegelkameras an die Sitzposition und die Außenspiegel des neuen Autos setzen
@@ -1767,27 +1892,25 @@
     SPIEGEL[0].pos = [typ.sitz[0] + 0.6, typ.sitz[1] + 0.11, 0];
     SPIEGEL[1].pos = [typ.spiegel[0], typ.spiegel[1] + 0.02, -(typ.spiegel[2] + 0.18)];
     SPIEGEL[2].pos = [typ.spiegel[0], typ.spiegel[1] + 0.02, typ.spiegel[2] + 0.18];
-    anzugMesh.setColorAt(crew.findIndex((c) => c.auto.spieler), new T.Color(0xffd21a));
     klasseAnpassen();
     neuesRennen(); zustand = "menue";
     garageAnzeigen();
-    try { localStorage.setItem("rennstrecke-auto", spielerTyp + "|" + spielerLack); } catch {}
+    try { localStorage.setItem("rennstrecke-auto2", JSON.stringify({ typ: spielerTyp, lack })); } catch {}
   }
   {
-    const autoWahl = document.getElementById("autoWahl"), lackWahl = document.getElementById("lackWahl");
-    for (const [id, typ] of Object.entries(FAHRZEUGE)) {
-      const b = document.createElement("button"); b.type = "button"; b.className = "wahlKnopf"; b.dataset.typ = id; b.textContent = typ.name;
-      b.onclick = () => fahrzeugWechseln(id, spielerLack);
-      autoWahl.appendChild(b);
-    }
-    for (const lack of LACKE) {
-      const b = document.createElement("button"); b.type = "button"; b.className = "farbKnopf"; b.dataset.lack = lack.id;
-      b.title = lack.name; b.setAttribute("aria-label", lack.name);
-      b.style.background = lack.rexy ? "radial-gradient(circle at 35% 35%, #8fe36a, #2e7f25)" : "#" + lack.farbe.toString(16).padStart(6, "0");
-      if (lack.rexy) b.textContent = "🦖";
-      b.onclick = () => fahrzeugWechseln(spielerTyp, lack.id);
-      lackWahl.appendChild(b);
-    }
+    const knopf = (eltern, klasse, text, wenn) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = klasse; b.textContent = text; b.onclick = wenn;
+      eltern.appendChild(b); return b;
+    };
+    for (const [id, typ] of Object.entries(FAHRZEUGE))
+      knopf(document.getElementById("autoWahl"), "wahlKnopf", typ.name, () => fahrzeugWechseln(id, spielerLack)).dataset.typ = id;
+    for (const [id, m] of Object.entries(MUSTER))
+      knopf(document.getElementById("musterWahl"), "wahlKnopf", m.name, () => fahrzeugWechseln(spielerTyp, { ...spielerLack, muster: id })).dataset.muster = id;
+    for (const [nr, feld] of [["c1", "farbe1"], ["c2", "farbe2"]])
+      for (const [name, wert] of FARBEN) {
+        const b = knopf(document.getElementById(feld), "farbKnopf", "", () => fahrzeugWechseln(spielerTyp, { ...spielerLack, [nr]: wert }));
+        b.dataset.farbe = wert; b.title = name; b.setAttribute("aria-label", name); b.style.background = hexCss(wert);
+      }
   }
 
   /* ---------- Wetter ---------- */
@@ -2374,7 +2497,7 @@
     }
     if (naechster) {
       let gg = 1; while (gg < 6 && naechster.v > GANG_V[gg] * 0.93) gg++;
-      ton.gegnerO.frequency.setTargetAtTime(Math.max(1100, naechster.v / GANG_V[gg] * 9000) / 60 * a.st.klang, t, 0.05);
+      ton.gegnerO.frequency.setTargetAtTime(Math.max(1100, naechster.v / GANG_V[gg] * 9000) / 60 * naechster.st.klang, t, 0.05);
     }
     ton.gegnerLaut.gain.setTargetAtTime(aus || !naechster ? 0 : (1 - abstand / 70) ** 2 * 0.07, t, 0.08);
     const quietsch = (a.drift || Math.abs(a.schlupf) > 0.12) && a.v > 6 && (a.flaeche === "asphalt" || a.flaeche === "kerb");
