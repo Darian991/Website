@@ -419,11 +419,7 @@
   const asphaltTex = leinwandTextur(512, 512, (g, b, h) => {
     g.fillStyle = "#47494c"; g.fillRect(0, 0, b, h);
     rauschen(g, b, h, 26000, ["#3b3d40", "#525458", "#404245", "#5a5c60", "#36383a"], 2);
-    const verlauf = g.createLinearGradient(0, 0, b, 0);
-    verlauf.addColorStop(0.25, "rgba(20,20,22,0)");
-    verlauf.addColorStop(0.5, "rgba(20,20,22,0.22)");
-    verlauf.addColorStop(0.75, "rgba(20,20,22,0)");
-    g.fillStyle = verlauf; g.fillRect(0, 0, b, h);
+    rauschen(g, b, h, 5000, ["#6c6e72", "#7a7b7e", "#2c2d2f"], 1);   // einzelne Splittkörner
     g.fillStyle = "#eeeeea";
     g.fillRect(b * 0.018, 0, b * 0.014, h);
     g.fillRect(b * (1 - 0.032), 0, b * 0.014, h);
@@ -546,6 +542,33 @@
       g.fillStyle = "rgba(40,40,44,1)"; g.fillRect(0, 0, 4, 64);
     }, true) })
   };
+  {
+    const flecken = leinwandTextur(256, 256, (g, b, h) => {
+      g.fillStyle = "#808080"; g.fillRect(0, 0, b, h);
+      for (let k = 0; k < 90; k++) {
+        const x = Math.random() * b, y = Math.random() * h, r = 8 + Math.random() * 40, hell = Math.random() < 0.5;
+        const v = g.createRadialGradient(x, y, 0, x, y, r);
+        v.addColorStop(0, hell ? "rgba(170,170,170,0.5)" : "rgba(40,40,40,0.5)"); v.addColorStop(1, "rgba(128,128,128,0)");
+        g.fillStyle = v; g.fillRect(x - r, y - r, 2 * r, 2 * r);
+      }
+      // geflickte Stellen mit scharfem Rand
+      for (let k = 0; k < 7; k++) { g.fillStyle = "rgba(55,55,55,0.55)"; g.fillRect(Math.random() * b, Math.random() * h, 10 + Math.random() * 30, 6 + Math.random() * 14); }
+      // mit Bitumen vergossene Risse
+      g.strokeStyle = "rgba(20,20,20,0.6)"; g.lineWidth = 1.2;
+      for (let k = 0; k < 14; k++) {
+        let x = Math.random() * b, y = Math.random() * h; g.beginPath(); g.moveTo(x, y);
+        for (let n = 0; n < 8; n++) { x += (Math.random() - 0.5) * 18; y += (Math.random() - 0.5) * 18; g.lineTo(x, y); }
+        g.stroke();
+      }
+    }, true);
+    flecken.encoding = T.LinearEncoding;
+    MAT.asphalt.onBeforeCompile = (shader) => {
+      shader.uniforms.flecken = { value: flecken };
+      shader.vertexShader = "varying vec3 vWeltPos;\n" + shader.vertexShader.replace("#include <project_vertex>", "#include <project_vertex>\n  vWeltPos = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+      shader.fragmentShader = "uniform sampler2D flecken; varying vec3 vWeltPos;\n" + shader.fragmentShader.replace("#include <map_fragment>",
+        "#include <map_fragment>\n  float grob = texture2D(flecken, vWeltPos.xz / 90.0).r, fein = texture2D(flecken, vWeltPos.xz / 13.0 + 0.37).r;\n  diffuseColor.rgb *= (0.55 + grob * 0.9) * (0.8 + fein * 0.4);");
+    };
+  }
   // flache Beläge liegen knapp über dem Rasen; der Versatz verhindert Flimmern im Tiefenpuffer
   [[MAT.kies, 1], [MAT.asphalt, 2], [MAT.vorplatz, 2], [MAT.kerb, 3], [MAT.karo, 4], [MAT.weiss, 4]].forEach(([m, stufe]) => {
     m.polygonOffset = true; m.polygonOffsetFactor = -stufe; m.polygonOffsetUnits = -stufe * 4;
@@ -598,6 +621,43 @@
 
   // Fahrbahn, Randsteine, Kiesbetten, Reifenstapel, Leitplanken
   band(0, N, -HALB, HALB, 0.03, 0.03, MAT.asphalt, 2 * HALB);
+  // Gummiabrieb auf der Ideallinie: zwei dunkle Reifenspuren, dazu schwarze Bremsspuren vor den Kurven
+  {
+    const gummi = (deckkraft, streifen) => {
+      const m = new T.MeshBasicMaterial({ transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2.5, polygonOffsetUnits: -10,
+        map: leinwandTextur(128, 512, (g, b, h) => {
+          g.clearRect(0, 0, b, h);
+          const quer = g.createLinearGradient(0, 0, b, 0);
+          quer.addColorStop(0, "rgba(8,8,9,0)"); quer.addColorStop(0.5, "rgba(8,8,9," + deckkraft * 0.45 + ")"); quer.addColorStop(1, "rgba(8,8,9,0)");
+          g.fillStyle = quer; g.fillRect(0, 0, b, h);
+          for (const mitte of [0.2, 0.8]) {
+            const spur = g.createLinearGradient(b * (mitte - 0.13), 0, b * (mitte + 0.13), 0);
+            spur.addColorStop(0, "rgba(6,6,7,0)"); spur.addColorStop(0.5, "rgba(6,6,7," + deckkraft + ")"); spur.addColorStop(1, "rgba(6,6,7,0)");
+            g.fillStyle = spur; g.fillRect(0, 0, b, h);
+          }
+          for (let k = 0; k < streifen; k++) {   // einzelne Striche (blockierte Reifen)
+            const x = b * (Math.random() < 0.5 ? 0.2 : 0.8) + (Math.random() - 0.5) * 24, y = Math.random() * h, l = 40 + Math.random() * 200;
+            g.strokeStyle = "rgba(5,5,6," + (0.25 + Math.random() * 0.4) + ")"; g.lineWidth = 2 + Math.random() * 5;
+            g.beginPath(); g.moveTo(x, y); g.lineTo(x + (Math.random() - 0.5) * 6, y + l); g.stroke();
+          }
+          rauschen(g, b, h, 3000, ["rgba(0,0,0,0.12)", "rgba(255,255,255,0.03)"], 3);
+        }, true) });
+      return m;
+    };
+    const breit = 1.4, o1 = (i) => LINIE_O[i] - breit, o2 = (i) => LINIE_O[i] + breit;
+    band(0, N, o1, o2, 0.03, 0.03, gummi(0.32, 0), 9);
+    // Bremszonen: wo das mögliche Tempo vor einer Kurve stark sinkt
+    const v = LK.map((k) => Math.min(85, Math.sqrt(15 / Math.max(Math.abs(k), 1e-4))));
+    for (let r = 0; r < 2; r++) for (let i = N - 1; i >= 0; i--) v[i] = Math.min(v[i], Math.sqrt(v[wrap(i + 1)] ** 2 + 2 * 20 * SCHRITT));
+    const bremsMat = gummi(0.5, 26);
+    bremsMat.polygonOffsetFactor = -2.7; bremsMat.polygonOffsetUnits = -11;
+    let start = -1;
+    for (let i = 0; i <= N; i++) {
+      const bremst = i < N && v[wrap(i + 1)] < v[i] - 0.15;
+      if (bremst && start < 0) start = i;
+      if (!bremst && start >= 0) { if (i - start > 4) band(start, i - start, o1, o2, 0.03, 0.03, bremsMat, 9); start = -1; }
+    }
+  }
   for (const [i0, l] of abschnitte((i) => Math.abs(KR[i]) > 1 / 140, 3, 3)) {
     band(i0, l, -HALB - KERB, -HALB, 0.1, 0.04, MAT.kerb, 3);
     band(i0, l, HALB, HALB + KERB, 0.04, 0.1, MAT.kerb, 3);
@@ -1009,13 +1069,20 @@
   }
 
   // Himmel als Shader: Verlauf vom Horizont zum Zenit, Sonnenscheibe mit Hof
-  const SONNE_RICHTUNG = new T.Vector3(-0.45, 1, -0.35).normalize();
+  const SONNE_RICHTUNG = new T.Vector3(-0.55, 0.66, -0.45).normalize();   // Nachmittagssonne: warmes Licht, längere Schatten
   const himmelMat = new T.ShaderMaterial({
     side: T.BackSide, depthWrite: false,
-    uniforms: { sonne: { value: SONNE_RICHTUNG }, regen: { value: 0 } },
+    uniforms: { sonne: { value: SONNE_RICHTUNG }, regen: { value: 0 }, zeit: { value: 0 } },
     vertexShader: "varying vec3 vR; void main() { vR = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
     fragmentShader: `
-      uniform vec3 sonne; uniform float regen; varying vec3 vR;
+      uniform vec3 sonne; uniform float regen, zeit; varying vec3 vR;
+      // Wolken aus mehrlagigem Rauschen, von der Sonne beleuchtet: hell auf der Sonnenseite, grau an der Unterseite
+      float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float rauschen(vec2 p) {
+        vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+      }
+      float fbm(vec2 p) { float s = 0.0, a = 0.5; for (int i = 0; i < 6; i++) { s += a * rauschen(p); p = p * 2.07 + vec2(1.7, 9.2); a *= 0.5; } return s; }
       void main() {
         vec3 r = normalize(vR);
         float h = r.y;
@@ -1024,9 +1091,19 @@
         float s = max(dot(r, sonne), 0.0);
         farbe += (1.0 - regen) * vec3(1.0, 0.8, 0.5) * (pow(s, 8.0) * 0.18 + pow(s, 90.0) * 0.6);
         farbe += (1.0 - regen) * vec3(1.0, 0.96, 0.88) * smoothstep(0.99935, 0.9997, s) * 30.0;
+        if (h > 0.0) {
+          vec2 uv = r.xz / (h + 0.1) * 1.3 + vec2(zeit * 0.006, zeit * 0.002);
+          float n = fbm(uv), schwelle = mix(0.5, 0.3, regen);
+          float dichte = smoothstep(schwelle, schwelle + 0.28, n);
+          float n2 = fbm(uv + sonne.xz * 0.22);
+          float licht = clamp(0.6 + (n - n2) * 3.0, 0.0, 1.0);
+          vec3 wolke = mix(vec3(0.36, 0.4, 0.48), vec3(1.15, 1.1, 1.04), licht);
+          wolke += vec3(1.2, 0.95, 0.65) * pow(s, 5.0) * (1.0 - dichte) * 1.5;   // Silberrand nahe der Sonne
+          farbe = mix(farbe, wolke, dichte * smoothstep(0.0, 0.16, h) * 0.97);
+        }
         vec3 grau = h > 0.0 ? mix(vec3(0.27, 0.29, 0.31), vec3(0.13, 0.145, 0.165), pow(h, 0.6))
                             : mix(vec3(0.27, 0.29, 0.31), vec3(0.1, 0.11, 0.11), pow(min(-h * 4.0, 1.0), 0.6));
-        farbe = mix(farbe, grau, regen);
+        farbe = mix(farbe, grau, regen * 0.8);
         gl_FragColor = vec4(farbe, 1.0);
         #include <tonemapping_fragment>
         #include <encodings_fragment>
@@ -1130,27 +1207,13 @@
     const himmel = new T.Mesh(new T.SphereGeometry(3000, 48, 24), himmelMat);
     himmel.renderOrder = -2;
     szene.add(himmel);
-    const wolkenTex = leinwandTextur(128, 128, (g, b, h) => {
-      const v = g.createRadialGradient(64, 64, 4, 64, 64, 64);
-      v.addColorStop(0, "rgba(255,255,255,0.95)"); v.addColorStop(1, "rgba(255,255,255,0)");
-      g.fillStyle = v; g.fillRect(0, 0, b, h);
-    });
-    const wolkenMat = new T.SpriteMaterial({ map: wolkenTex, fog: false, depthWrite: false, transparent: true });
-    for (let k = 0; k < 40; k++) {
-      const s = new T.Sprite(wolkenMat);
-      const w = zufall() * Math.PI * 2, r = 600 + zufall() * 1600;
-      s.position.set(MITTE[0] + Math.cos(w) * r, 260 + zufall() * 260, MITTE[1] + Math.sin(w) * r);
-      s.scale.set(300 + zufall() * 300, 90 + zufall() * 60, 1);
-      szene.add(s);
-    }
-    himmel.userData.wolkenMat = wolkenMat;
     return himmel;
   })();
 
   // Licht
   const himmelLicht = new T.HemisphereLight(0xcfe3ff, 0x6a6650, 0.9);
   szene.add(himmelLicht);
-  const sonne = new T.DirectionalLight(0xfff1dd, 1.6);
+  const sonne = new T.DirectionalLight(0xffe6c4, 1.6);
   sonne.castShadow = !grob;
   sonne.shadow.mapSize.set(grob ? 1024 : 2048, grob ? 1024 : 2048);
   Object.assign(sonne.shadow.camera, { left: -60, right: 60, top: 60, bottom: -60, near: 10, far: 400 });
@@ -2042,6 +2105,12 @@
     szene.add(g);
     return g;
   }
+  // Lack des eigenen Autos bekommt die Würfelkarte der echten Umgebung
+  let weltSpiegel = null;
+  function lackSpiegeln(wurzel) {
+    if (!weltSpiegel) return;
+    wurzel.traverse((o) => { if (o.isMesh && o.parent === wurzel) for (const m of [].concat(o.material)) if (m.isMeshPhysicalMaterial && m !== glasMat && !GETEILT.has(m)) { m.envMap = weltSpiegel.textur; m.envMapIntensity = 0.75; m.needsUpdate = true; } });
+  }
   // Speicher eines ausgetauschten Autos freigeben (geteilte Formen und Stoffe bleiben)
   const GETEILT = new Set([glasMat, reifenMat, flankeMat, linerMat, bodenSchattenMat, felgeMat, felgeBildMat, felgeDunkelMat, schwarzMat, lamellenMat, schriftMat, rexySpiegelMat, rexyBlendeMat, scheinwerferMat]);
   function entsorgen(wurzel) {
@@ -2637,6 +2706,7 @@
     spieler.farbe = lack.muster === "rexy" ? 0x4cb832 : lack.c1;
     entsorgen(spieler.mesh); szene.remove(spieler.mesh);
     spieler.mesh = baueAuto(spieler, spielerTyp);
+    lackSpiegeln(spieler.mesh);
     cockpit = baueCockpit(spieler.mesh, spielerTyp);
     letzteLenkradAnzeige = "";
     // Spiegelkameras an die Sitzposition und die Außenspiegel des neuen Autos setzen
@@ -2694,7 +2764,6 @@
     // nasser Asphalt: dunkler und glatt, spiegelt Himmel, Autos und Lichter
     MAT.asphalt.roughness = d.rau; MAT.asphalt.envMapIntensity = d.glanz; MAT.asphalt.color.setHex(d.belag);
     MAT.kerb.roughness = d.kerbRau; MAT.kerb.envMapIntensity = nass ? 0.9 : 0.3;
-    himmelKugel.userData.wolkenMat.color.setHex(d.wolke);
     MAT.gras.color.setHex(nass ? 0x7d8a78 : 0xb4bba4);
     regenMesh.visible = nass; regenErster = true;
     klasseAnpassen();
@@ -3767,8 +3836,10 @@
         c += (texture2D(tex, vUv + schritt * 1.38).rgb + texture2D(tex, vUv - schritt * 1.38).rgb) * 0.316;
         c += (texture2D(tex, vUv + schritt * 3.23).rgb + texture2D(tex, vUv - schritt * 3.23).rgb) * 0.07;
         gl_FragColor = vec4(c, 1.0); }`);
-    const endMat = mat({ szene: { value: null }, leuchten: { value: null }, tempo: { value: 0 }, zeit: { value: 0 } }, `
-      uniform sampler2D szene, leuchten; uniform float tempo, zeit; varying vec2 vUv;
+    const endMat = mat({ szene: { value: null }, leuchten: { value: null }, tempo: { value: 0 }, zeit: { value: 0 },
+      sonnePos: { value: new T.Vector2() }, sonneDa: { value: 0 }, seiten: { value: 1 } }, `
+      uniform sampler2D szene, leuchten; uniform float tempo, zeit, sonneDa, seiten; uniform vec2 sonnePos; varying vec2 vUv;
+      float hell(vec2 p) { return dot(texture2D(szene, p).rgb, vec3(0.3, 0.6, 0.1)); }
       vec3 aces(vec3 x) { return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }
       void main() {
         vec2 d = vUv - 0.5;
@@ -3777,11 +3848,31 @@
         for (int i = 0; i < 8; i++) c += texture2D(szene, vUv - d * st * float(i) / 7.0).rgb;
         c /= 8.0;
         c += texture2D(leuchten, vUv).rgb * 0.7;
+        // Sonne im Bild: nur wenn sie wirklich zu sehen ist (helle Scheibe, nicht hinter Tribüne oder Baum)
+        float sicht = 0.0;
+        if (sonneDa > 0.0) {
+          for (int i = 0; i < 5; i++) { vec2 o = vec2(float(i - 2) * 0.006, float(i - 2) * 0.004 * seiten); sicht += smoothstep(1.5, 8.0, hell(sonnePos + o)); }
+          sicht *= sonneDa / 5.0;
+        }
         c = aces(c * 0.62);
+        if (sicht > 0.0) {
+          vec2 zuSonne = (vUv - sonnePos) * vec2(seiten, 1.0);
+          c += vec3(1.0, 0.82, 0.55) * sicht * (0.35 * exp(-length(zuSonne) * 5.0) + 0.12 * exp(-length(zuSonne) * 1.6));
+          // Linsenreflexe auf der Linie durch die Bildmitte
+          for (int i = 1; i <= 4; i++) {
+            float f = float(i) * 0.45;
+            vec2 q = (vUv - (sonnePos + (vec2(0.5) - sonnePos) * f * 1.1)) * vec2(seiten, 1.0);
+            float r = 0.02 + 0.025 * float(i);
+            c += vec3(0.55 + 0.1 * float(i), 0.75, 1.0 - 0.12 * float(i)) * sicht * 0.06 * smoothstep(r, r * 0.6, length(q));
+          }
+        }
         float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
-        c = mix(vec3(l), c, 1.22);                       // etwas kräftigere Farben
-        c = (c - 0.5) * 1.08 + 0.5;                      // etwas mehr Kontrast
+        c = mix(vec3(l), c, 1.15);                       // kräftige Farben
         c = pow(max(c, 0.0), vec3(1.0 / 2.2));
+        // Farbabstimmung wie im Kino: Schatten leicht blaugrün, Lichter warm, weiche S-Kurve für Kontrast
+        float lg = dot(c, vec3(0.2126, 0.7152, 0.0722));
+        c *= mix(vec3(0.95, 1.0, 1.05), vec3(1.05, 1.0, 0.93), smoothstep(0.1, 0.75, lg));
+        c = mix(c, c * c * (3.0 - 2.0 * c), 0.3);
         c *= 1.0 - 0.35 * pow(length(d) * 1.3, 2.4);     // Vignette
         c += (fract(sin(dot(vUv * (zeit + 1.0), vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
         gl_FragColor = vec4(c, 1.0); }`);
@@ -3795,6 +3886,7 @@
         szeneRT.setSize(Math.round(b * pr), Math.round(h * pr));
         for (const rt of [hell, blurA, blurB]) rt.setSize(Math.max(1, Math.round(b / 4)), Math.max(1, Math.round(h / 4)));
       },
+      sonne(pos, da, seiten) { endMat.uniforms.sonnePos.value.copy(pos); endMat.uniforms.sonneDa.value = da; endMat.uniforms.seiten.value = seiten; },
       zeichnen(tempo) {
         renderer.setRenderTarget(szeneRT);
         renderer.render(szene, kamera);
@@ -3812,6 +3904,29 @@
   })() : null;
   let effekte = !!pp;
   if (pp) pp.groesse(B, H, renderer.getPixelRatio());
+
+  // Spiegelungen im Lack: eine kleine Würfelkamera am eigenen Auto fotografiert reihum je eine Seite pro Bild
+  // (Strecke, Tribünen, andere Autos, Himmel). So spiegelt sich die echte Umgebung statt nur der Himmel.
+  weltSpiegel = pp ? (() => {
+    const rt = new T.WebGLCubeRenderTarget(128, { type: T.HalfFloatType, generateMipmaps: true, minFilter: T.LinearMipmapLinearFilter });
+    const cam = new T.CubeCamera(0.3, 900, rt);
+    let seite = 0;
+    return {
+      textur: rt.texture,
+      aktualisieren(auto) {
+        auto.mesh.visible = false;
+        cam.position.set(auto.x, 0.85, auto.z); cam.updateMatrixWorld(true);
+        rt.texture.generateMipmaps = seite === 5;
+        renderer.setRenderTarget(rt, seite); renderer.render(szene, cam.children[seite]);
+        renderer.setRenderTarget(null);
+        rt.texture.generateMipmaps = true;
+        auto.mesh.visible = true;
+        seite = (seite + 1) % 6;
+      }
+    };
+  })() : null;
+  if (weltSpiegel) lackSpiegeln(spieler.mesh);
+  const sonneBild = new T.Vector3(), sonneUv = new T.Vector2();
 
   /* ---------- Hauptschleife ---------- */
   let messStart = performance.now(), messBilder = 0, messRunde = 0, zuletztImMenue = null;
@@ -3893,6 +4008,7 @@
     spurenUndRauch(dt);
     kameraSetzen(dt);
     regenBewegen(dt, kamera);
+    himmelMat.uniforms.zeit.value = jetzt / 1000;
     tonAktualisieren(spieler, zustand === "ampel" || zustand === "rennen" || zustand === "auslauf");
 
     renderer.setScissorTest(false);
@@ -3900,10 +4016,15 @@
     renderer.shadowMap.needsUpdate = true;     // Schatten nur einmal je Bild, nicht für jeden Spiegel neu
     linieAktualisieren();
     if (effekte) {
+      sonneBild.copy(SONNE_RICHTUNG).multiplyScalar(2000).add(kamera.position).project(kamera);
+      const sichtbar = sonneBild.z < 1 && Math.abs(sonneBild.x) < 1.05 && Math.abs(sonneBild.y) < 1.05;
+      pp.sonne(sonneUv.set(sonneBild.x * 0.5 + 0.5, sonneBild.y * 0.5 + 0.5), sichtbar && !nass ? 1 : 0, B / H);
       pp.zeichnen(zustand === "menue" ? 0 : Math.max(0, Math.min(1, (spieler.v - 35) / 45)));
       renderer.setRenderTarget(null);
       renderer.setViewport(0, 0, B, H);
     } else renderer.render(szene, kamera);
+    if (effekte && weltSpiegel && zustand !== "menue") weltSpiegel.aktualisieren(spieler);
+    else if (effekte && weltSpiegel && messBilder % 4 === 0) weltSpiegel.aktualisieren(spieler);
     spiegelZeichnen();
     anzeige(jetzt);
     requestAnimationFrame(schleife);
