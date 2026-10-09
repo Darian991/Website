@@ -144,7 +144,12 @@
     <h1>🏁 Grand Prix</h1>
     <div class="garageTitel">Wie viele Runden?</div>
     <div class="wahl rundenWahl rundenGross"></div>
-    <p>Ein Rennen auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Du startest mit der Nummer 77 von ganz hinten. Das Feld ist gemischt: Formelwagen, Prototypen, Supersportwagen, GT3 RS, Muscle-Cars und Rallye-Autos.</p>
+    <div class="garageTitel">Qualifying vor dem Rennen?</div>
+    <div class="wahl" id="qualiWahl">
+      <button type="button" class="wahlKnopf" data-quali="0">Nein, von hinten starten</button>
+      <button type="button" class="wahlKnopf" data-quali="1">⏱ Ja, Startplatz herausfahren</button>
+    </div>
+    <p>Ein Rennen auf dem Rennkurs gegen 15 Gegner, aus dem Cockpit gesehen. Ohne Qualifying startest du mit der Nummer 77 von ganz hinten. Im Qualifying fährst du zwei gezeitete Runden allein auf der Strecke, deine beste Zeit bestimmt den Startplatz. Das Feld ist gemischt: Formelwagen, Prototypen, Supersportwagen, GT3 RS, Muscle-Cars und Rallye-Autos.</p>
     <div class="garageTitel">Auto</div>
     <div class="wahl wahlAuto" id="autoWahl"></div>
     <div class="garageTitel">Lackierung</div>
@@ -167,6 +172,18 @@
       <button type="button" class="wahlKnopf" data-wetter="regen">🌧️ Regen</button>
     </div>
     <button id="los">Rennen starten</button>
+  </div>
+</div>
+
+<div class="overlay" id="qualiFenster" hidden>
+  <div class="box">
+    <h1 id="qualiTitel">⏱ Qualifying</h1>
+    <p id="qualiText"></p>
+    <table id="qualiTabelle"></table>
+    <div class="wahl">
+      <button id="qualiWeiter">🏁 Zum Rennen</button>
+      <button id="qualiNochmal" type="button" class="wahlKnopf">↻ Qualifying nochmal</button>
+    </div>
   </div>
 </div>
 
@@ -209,6 +226,10 @@
      Strecke
      ========================================================= */
   let RUNDEN = 3;
+  const QUALI_RUNDEN = 2;          // gezeitete Runden im Qualifying (nach einem kurzen Anlauf)
+  let qualiAn = false;
+  try { qualiAn = localStorage.getItem("rennstrecke-quali") === "1"; } catch {}
+  let startReihenfolge = null;     // nach dem Qualifying: alle Autos nach ihrer Zeit sortiert
   try { const r = +localStorage.getItem("rennstrecke-runden"); if ([1, 3, 5, 10, 20].includes(r)) RUNDEN = r; } catch {}
   const HALB = 7;          // halbe Fahrbahnbreite in Metern
   const KERB = 1.6;        // Randsteinbreite
@@ -2773,7 +2794,8 @@
   document.querySelectorAll("[data-wetter]").forEach((k) => k.addEventListener("click", () => wetterSetzen(k.dataset.wetter)));
 
   function neuesRennen() {
-    autos.forEach((a, k) => {
+    autos.forEach((a, nr) => {
+      const k = startReihenfolge ? startReihenfolge.indexOf(a) : nr;
       const i = startIndex(k), s = startSeite(k);
       Object.assign(a, {
         x: BAHN[i][0] + NX[i] * s * 3.2, z: BAHN[i][1] + NZ[i] * s * 3.2, w: RICHTUNG[i],
@@ -2783,7 +2805,8 @@
         spur: s * 1.5, spurZiel: 0, anprall: 0, gang: 1, drehzahl: 900, gasWert: 0,
         schaden: { gesamt: 0, vorn: 0, hinten: 0, links: 0, rechts: 0 }, trefferUhr: 0, motorRauchUhr: 0,
         gangIst: 1, schaltUhr: 0, gL: 0, gQ: 0, altVl: 0, gischtUhr: 0, stottern: 0, schadenMeldung: 0, hoechstTempo: a.st.vmax,
-        boxenstopp: null, willBox: false, letzterStopp: -1, fehler: 0, limiter: false, strafe: 0, gasseGestraft: false
+        boxenstopp: null, willBox: false, letzterStopp: -1, fehler: 0, limiter: false, strafe: 0, gasseGestraft: false,
+        stopps: geplanteStopps()
       });
       reparieren(a);
     });
@@ -2797,6 +2820,62 @@
     kamPos = null;
   }
 
+  // Boxenstrategie der Gegner: ab 3 Runden ein Stopp, ab 10 Runden zwei, in zufälligen Runden
+  function geplanteStopps() {
+    if (RUNDEN < 3) return [];
+    const anzahl = RUNDEN >= 10 ? 2 : 1, stopps = [];
+    for (let k = 0; k < anzahl; k++) {
+      const von = Math.max(1, Math.floor(RUNDEN * k / anzahl) + 1), bis = Math.max(von, Math.floor(RUNDEN * (k + 1) / anzahl) - (k === anzahl - 1 ? 1 : 0));
+      stopps.push(von + Math.floor(Math.random() * (bis - von + 1)));
+    }
+    return stopps;
+  }
+
+  /* ---------- Qualifying ---------- */
+  // Du fährst allein: die Gegner stehen in ihren Garagen. Ihre Zeiten werden aus ihrem Tempo auf jedem Streckenpunkt berechnet.
+  function qualiStarten() {
+    startReihenfolge = null;
+    neuesRennen();
+    for (const a of autos) {
+      if (a.spieler) continue;
+      const i = boxIdx(a.box), o = GASSE.garage + 4;
+      Object.assign(a, { x: BAHN[i][0] + NX[i] * o, z: BAHN[i][1] + NZ[i] * o, w: Math.atan2(-NZ[i], -NX[i]), idx: i, seite: o, v: 0, vx: 0, vz: 0, stopps: [] });
+    }
+    // fliegender Start gut 300 m vor der Ziellinie
+    const i = wrap(-110), v = 32, w = Math.atan2(LZ[wrap(i + 1)] - LZ[i], LX[wrap(i + 1)] - LX[i]);
+    Object.assign(spieler, { x: LX[i], z: LZ[i], w, idx: i, seite: LINIE_O[i], v, vx: Math.cos(w) * v, vz: Math.sin(w) * v, fortschritt: -110, runde: 0, gang: 3, gangIst: 3 });
+    rennzeit = 0; zustand = "quali"; kamPos = null;
+    ui.ampel.style.display = "none"; $("qualiFenster").hidden = true;
+  }
+  // Rundenzeit eines Gegners: Tempo auf der Ideallinie, beim Beschleunigen durch die Motorleistung begrenzt
+  function rundenZeitKI(a) {
+    const p = a.profil;
+    let v = p[0], t = 0;
+    for (let runde = 0; runde < 2; runde++) {
+      t = 0;
+      for (let i = 0; i < N; i++) {
+        const ziel = p[wrap(i + 1)];
+        const beschl = a.st.beschl * 0.86 * Math.max(0.1, 1 - (v / a.st.vmax) ** 2);
+        const v2 = ziel < v ? ziel : Math.min(ziel, Math.sqrt(v * v + 2 * beschl * SCHRITT));
+        t += SCHRITT / Math.max(1, (v + v2) / 2); v = v2;
+      }
+    }
+    return t;
+  }
+  function qualiBeenden() {
+    const zeiten = autos.map((a) => ({ a, t: a.spieler ? a.besteRunde
+      : rundenZeitKI(a) * (1.012 + (Math.random() - 0.4) * 0.016) + (Math.random() < 0.12 ? 1 + Math.random() * 2 : 0) }));
+    zeiten.sort((p, q) => p.t - q.t);
+    startReihenfolge = zeiten.map((z) => z.a);
+    const mein = zeiten.findIndex((z) => z.a.spieler) + 1, schnellste = zeiten[0].t;
+    $("qualiTitel").textContent = mein === 1 ? "🥇 Pole-Position!" : "⏱ Startplatz " + mein;
+    $("qualiText").textContent = isFinite(spieler.besteRunde) ? "Deine beste Runde: " + zeit(spieler.besteRunde) : "Keine gültige Runde – du startest von hinten.";
+    $("qualiTabelle").innerHTML = zeiten.map((z, k) => "<tr" + (z.a.spieler ? ' class="du"' : "") + "><td>" + (k + 1) + ".</td><td>" + z.a.name + "</td><td>" +
+      (isFinite(z.t) ? zeit(z.t) : "–") + "</td><td>" + (k && isFinite(z.t) ? "+" + (z.t - schnellste).toFixed(3) + " s" : "") + "</td></tr>").join("");
+    zustand = "qualiEnde";
+    $("qualiFenster").hidden = false;
+  }
+
   /* ---------- Steuerung ---------- */
   const tasten = { gas: false, bremse: false, links: false, rechts: false, handbremse: false };
   const KEYS = {
@@ -2808,7 +2887,7 @@
   addEventListener("keydown", (e) => {
     if (KEYS[e.code]) { tasten[KEYS[e.code]] = true; e.preventDefault(); }
     if (e.repeat) return;
-    if (e.code === "KeyR" && zustand !== "menue") neuesRennen();
+    if (e.code === "KeyR" && zustand !== "menue") neustart();
     if (e.code === "Escape" && zustand !== "menue") zumMenue();
     if (e.code === "KeyC") ansicht = (ansicht + 1) % ANSICHTEN.length;
     if (e.code === "KeyP" && zustand !== "menue") limiterUmschalten();
@@ -2961,6 +3040,10 @@
     const r = relIdx(a.idx);
     // mit viel Schaden zum Reparieren an die Box
     if (!a.willBox && a.fertig === null && a.schaden.gesamt > 45 && r > -150 && r < -60) a.willBox = true;
+    // geplanter Stopp laut Strategie (frische Reifen, kleine Reparaturen)
+    if (!a.willBox && a.fertig === null && a.stopps && a.stopps.includes(a.runde) && a.letzterStopp !== a.runde && a.runde < RUNDEN && r > -150 && r < -60) {
+      a.willBox = true; a.stopps = a.stopps.filter((x) => x !== a.runde);
+    }
     const zurBox = a.willBox || (a.seite > GASSE.mauer - 1 && r >= GASSE.ein && r <= GASSE.aus && inGasse(a.idx, a.seite));
     // langsameres Auto direkt voraus? Dann daneben setzen und überholen, sonst dahinter bremsen
     let vorne = null, abstand = Infinity;
@@ -3047,7 +3130,7 @@
       if (a.runde >= 1) a.besteRunde = Math.min(a.besteRunde, rennzeit - a.rundenStart);
       a.runde = neueRunde;
       a.rundenStart = rennzeit;
-      if (a.runde > RUNDEN && a.fertig === null) a.fertig = rennzeit + (a.strafe || 0);
+      if (a.runde > RUNDEN && a.fertig === null && zustand !== "quali") a.fertig = rennzeit + (a.strafe || 0);
     }
   }
 
@@ -3425,17 +3508,31 @@
 
   ui.losKnopf.onclick = () => {
     fokusHolen();
-    ui.start.hidden = true; tonStarten(); neuesRennen();
+    ui.start.hidden = true; tonStarten();
+    startReihenfolge = null;
+    if (qualiAn) qualiStarten(); else neuesRennen();
     if (grob && kannVollbild && !istVollbild()) vollbild(true, true);   // auf dem Handy gleich bildschirmfüllend
   };
   ui.nochmal.onclick = () => {
     fokusHolen(); tonStarten(); neuesRennen(); };
   // Neustart mitten im Rennen und zurück ins Menü (dort Runden, Auto, Lack und Wetter wählen)
   function zumMenue() {
+    startReihenfolge = null; $("qualiFenster").hidden = true;
     neuesRennen(); zustand = "menue";
     ui.ziel.hidden = true; ui.start.hidden = false; ui.ampel.style.display = "none";
   }
-  $("neustartKnopf").onclick = () => { fokusHolen(); tonStarten(); neuesRennen(); };
+  const neustart = () => { if (zustand === "quali" || zustand === "qualiEnde") qualiStarten(); else neuesRennen(); };
+  $("neustartKnopf").onclick = () => { fokusHolen(); tonStarten(); neustart(); };
+  $("qualiWeiter").onclick = () => { fokusHolen(); $("qualiFenster").hidden = true; neuesRennen(); };
+  $("qualiNochmal").onclick = () => { fokusHolen(); qualiStarten(); };
+  {
+    const zeigen = () => document.querySelectorAll("#qualiWahl button").forEach((b) => b.classList.toggle("an", (b.dataset.quali === "1") === qualiAn));
+    document.querySelectorAll("#qualiWahl button").forEach((b) => b.onclick = () => {
+      qualiAn = b.dataset.quali === "1"; zeigen();
+      try { localStorage.setItem("rennstrecke-quali", qualiAn ? "1" : "0"); } catch {}
+    });
+    zeigen();
+  }
   $("menueKnopf").onclick = zumMenue;
   $("limiterKnopf").onclick = () => { fokusHolen(); limiterUmschalten(); };
   $("zumMenue").onclick = zumMenue;
@@ -3493,7 +3590,7 @@
     if (zeigeDrift) ui.driftWert.textContent = "+" + Math.round(a.kette);
     if (a.schadenMeldung > 0) a.schadenMeldung -= 1 / 60;
     let hinweis = "";
-    if (zustand === "rennen") {
+    if (zustand === "rennen" || zustand === "quali") {
       const r = relIdx(a.idx);
       if (a.boxenstopp) hinweis = "Boxenstopp – Reparatur " + Math.min(100, Math.round(a.boxenstopp.zeit / a.boxenstopp.dauer * 100)) + " %";
       else if (a.schadenMeldung > 0) hinweis = a.schadenText;
@@ -3504,12 +3601,20 @@
       else if (a.flaeche === "gras") hinweis = "Im Gras!";
       else if (a.schaden.gesamt >= 40 && r > -150 && r < GASSE.ein) hinweis = "Reparieren? Rechts in die Boxengasse";
     }
+    if (zustand === "quali" && !hinweis && a.runde === 0) hinweis = "Qualifying – die Zeit läuft ab der Ziellinie";
     ui.hinweis.textContent = hinweis;
 
     if (jetzt - letzteAnzeige < 100) return;
     letzteAnzeige = jetzt;
-    const reihenfolge = platz();
     const aktuell = a.runde >= 1 && a.fertig === null ? rennzeit - a.rundenStart : 0;
+    if (zustand === "quali" || zustand === "qualiEnde") {
+      ui.hud.innerHTML = "<b>QUALIFYING</b><br>" + (a.runde < 1 ? "Anlauf" : "Runde <b>" + Math.min(QUALI_RUNDEN, a.runde) + "/" + QUALI_RUNDEN + "</b>") + "<br>" +
+        "Runde " + zeit(aktuell) + "<br>" + "Beste " + zeit(a.besteRunde) + "<br>" +
+        "Schaden <b>" + Math.round(a.schaden.gesamt) + " %</b><br>" + "Rekord " + zeit(bestzeit);
+      schadenZeichnen(a.schaden); zeichneKarte();
+      return;
+    }
+    const reihenfolge = platz();
     ui.hud.innerHTML =
       "Platz <b>" + (reihenfolge.indexOf(a) + 1) + "/" + autos.length + "</b> · Runde <b>" + Math.max(1, Math.min(RUNDEN, a.runde)) + "/" + RUNDEN + "</b><br>" +
       "Zeit " + zeit(rennzeit) + "<br>" +
@@ -3981,11 +4086,13 @@
       } else leistungGeprueft = true;
     }
 
-    if (zustand === "rennen" || zustand === "auslauf") {
+    if (zustand === "rennen" || zustand === "auslauf" || zustand === "quali") {
+      const quali = zustand === "quali";
       const schritte = Math.max(2, Math.ceil(dt / 0.0125)), h = dt / schritte;
       for (let s = 0; s < schritte; s++) {
         rennzeit += h;
         for (const a of autos) {
+          if (quali && !a.spieler) continue;   // Gegner stehen in der Garage
           const alt = a.idx;
           if (a.spieler) fahreSpieler(a, h, a.fertig === null && !a.boxenstopp ? tasten : ruhe);
           else fahreKI(a, h);
@@ -3994,6 +4101,7 @@
         }
         zusammenstoesse();
       }
+      if (quali && spieler.runde > QUALI_RUNDEN) qualiBeenden();
       if (zustand === "rennen" && spieler.fertig !== null) { zustand = "auslauf"; nachZiel = 0; }
       if (zustand === "auslauf") {
         nachZiel += dt;
@@ -4009,7 +4117,7 @@
     kameraSetzen(dt);
     regenBewegen(dt, kamera);
     himmelMat.uniforms.zeit.value = jetzt / 1000;
-    tonAktualisieren(spieler, zustand === "ampel" || zustand === "rennen" || zustand === "auslauf");
+    tonAktualisieren(spieler, zustand === "ampel" || zustand === "rennen" || zustand === "auslauf" || zustand === "quali");
 
     renderer.setScissorTest(false);
     renderer.setViewport(0, 0, B, H);
