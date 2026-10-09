@@ -2905,10 +2905,14 @@
 
   /* ---------- Garage: Auto, Muster und Farben wählen ---------- */
   // jedes Auto fährt mit den Werten seiner Klasse; das Können der Gegner steckt in a.grip
+  // Nur dein Formelwagen: Raketenantrieb, 0 auf 999 km/h in 1 Sekunde (die Formelwagen der Gegner bleiben normal).
+  // Gleichbleibender Schub von 280 m/s² (gleicht auch den Luftwiderstand aus): nach knapp 1 s stehen 999 km/h auf dem Tacho.
+  const RAKETE = { ...FAHRZEUGE.formel.st, vmax: 999 / 3.6, beschl: 280, bremse: 120, grip: 30, rakete: true };
+  const spielerWerte = (typ) => (typ === "formel" ? RAKETE : FAHRZEUGE[typ].st);
   function klasseAnpassen() {
     const d = WETTER[wetter];
     for (const a of autos) {
-      a.st = FAHRZEUGE[a.typ].st;
+      a.st = a.spieler ? spielerWerte(a.typ) : FAHRZEUGE[a.typ].st;
       if (!a.spieler) a.profil = tempoProfil(a.grip / 15.5 * a.st.grip * d.grip * 0.94, (nass ? 12 : 16) * a.st.bremse / 30, a.st.vmax * 0.9);
     }
     const st = spieler.st;
@@ -2916,7 +2920,7 @@
   }
   const punkte = (wert, min, max) => { const n = Math.max(1, Math.min(5, Math.round(1 + (wert - min) / (max - min) * 4))); return "●".repeat(n) + "○".repeat(5 - n); };
   function garageAnzeigen() {
-    const typ = FAHRZEUGE[spielerTyp], st = typ.st, lack = spielerLack;
+    const typ = FAHRZEUGE[spielerTyp], st = spielerWerte(spielerTyp), lack = spielerLack;
     document.querySelectorAll("#autoWahl button").forEach((b) => b.classList.toggle("an", b.dataset.typ === spielerTyp));
     document.querySelectorAll("#musterWahl button").forEach((b) => b.classList.toggle("an", b.dataset.muster === lack.muster));
     document.querySelectorAll("#farbe1 button").forEach((b) => b.classList.toggle("an", +b.dataset.farbe === lack.c1));
@@ -2925,8 +2929,9 @@
     const name = (f) => (FARBEN.find(([, w]) => w === f) || ["?"])[0];
     document.getElementById("autoInfo").innerHTML = "<b>" + typ.name + "</b> · " + (lack.muster === "rexy" ? "Rexy" :
       MUSTER[lack.muster].name + " in " + name(lack.c1) + "/" + name(lack.c2)) + " – " + typ.text + "<br>" +
+      (st.rakete ? "🚀 <b>Nur für dich: Spitze 999 km/h, von 0 auf 999 in 1 Sekunde!</b> Vorsicht in den Kurven – früh und hart bremsen." :
       "Spitze " + Math.round(st.vmax * 3.6) + " km/h · Beschleunigung " + punkte(st.beschl, 12.5, 17) + " · Grip " + punkte(st.grip, 12.8, 19.5) +
-      " · Bremse " + punkte(st.bremse, 26, 38);
+      " · Bremse " + punkte(st.bremse, 26, 38));
   }
   function fahrzeugWechseln(typId, lack) {
     spielerTyp = FAHRZEUGE[typId] ? typId : "gt3rs";
@@ -3175,7 +3180,10 @@
     else if (sd > 0.5 && e.gas && Math.random() < dt * (sd - 0.4) * 3) a.stottern = 0.12 + Math.random() * 0.2;
 
     // Gas, Bremse, Handbremse, Luft- und Rollwiderstand; ein beschädigter Motor zieht schwächer
-    if (e.gas && vl > -1 && a.schaltUhr <= 0 && !(a.stottern > 0)) vl += st.beschl * (1 - sd * 0.6) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
+    if (st.rakete && e.gas && vl > -1 && !(a.stottern > 0)) {
+      const luft = vl * (0.02 + 0.0004 * Math.abs(vl)) * dt;   // wird unten wieder abgezogen
+      vl = Math.min(vmax + luft, vl + st.beschl * (1 - sd * 0.6) * dt + luft);
+    } else if (e.gas && vl > -1 && a.schaltUhr <= 0 && !(a.stottern > 0)) vl += st.beschl * (1 - sd * 0.6) * (nass ? 0.85 : 1) * Math.max(0, 1 - (vl / vmax) ** 2) * dt + (vl < 0 ? 18 * dt : 0);
     if (e.bremse) vl -= (vl > 0.5 ? st.bremse * (nass ? 0.7 : 1) : 9) * dt;
     if (begrenzt && vl > GASSE.tempo) vl -= (vl - GASSE.tempo) * Math.min(1, dt * 6);
     a.bremst = (e.bremse && vl > 0.5) || e.handbremse;
@@ -3248,7 +3256,7 @@
     if (a.schaltUhr > 0) a.schaltUhr -= dt;
     const drehzahlIm = (gg) => vb / (GANG_V[gg] * st.vmax / 80) * 9000;
     let g = a.gangIst;
-    if (g < 6 && drehzahlIm(g) > 8700) { g++; a.schaltUhr = 0.11; a.hochgeschaltet = true; }
+    if (g < 6 && drehzahlIm(g) > 8700) { g++; a.schaltUhr = st.rakete ? 0 : 0.11; a.hochgeschaltet = true; }
     else if (g > 1 && drehzahlIm(g) < (e.gas ? 4300 : 3800) && drehzahlIm(g - 1) < 8300) { g--; a.schaltUhr = 0.07; a.zwischengas = 0.12; }
     a.gangIst = g;
     a.gang = vl < -0.5 ? "R" : g;
