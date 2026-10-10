@@ -56,6 +56,15 @@
   .minikarte { top: 12px; right: 12px; padding: 6px; }
   .minikarte canvas { display: block; }
   .spiegel { position: fixed; border: 4px solid #111; border-radius: 10px; pointer-events: none; box-shadow: 0 2px 10px rgba(0,0,0,0.5); display: none; }
+  /* Warp-Effekt: Lichtstreifen, die aus der Bildmitte nach außen schießen */
+  .warp { position: fixed; inset: -20%; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 4;
+    background: repeating-conic-gradient(from 0deg, rgba(200,230,255,0.0) 0deg 2.2deg, rgba(220,240,255,0.55) 2.4deg 2.6deg, rgba(200,230,255,0) 2.8deg 5deg);
+    -webkit-mask: radial-gradient(circle, transparent 12%, #000 55%); mask: radial-gradient(circle, transparent 12%, #000 55%); animation: warpDreh 0.4s linear infinite; }
+  .warp.an { opacity: 1; }
+  @keyframes warpDreh { from { transform: scale(1) rotate(0deg); } to { transform: scale(1.25) rotate(3deg); } }
+  .tacho .kmh.riesig { font-size: 15px; letter-spacing: -0.3px; color: #7fd4ff; }
+  .steuerung #turboKnopf { background: #b3121f; border-color: #ff6a6a; font-weight: 800; }
+  .steuerung #turboKnopf.an { background: #ff2a2a; box-shadow: 0 0 16px #ff4a4a; }
   .drift { position: fixed; left: 50%; top: 26%; transform: translateX(-50%); text-align: center; pointer-events: none;
     font-weight: 800; font-size: 34px; color: var(--accent); text-shadow: 0 2px 12px rgba(0,0,0,0.7); opacity: 0; transition: opacity .2s; }
   .drift small { display: block; font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: 0.2em; }
@@ -128,6 +137,7 @@
 <div class="spiegel" id="spiegelL"></div>
 <div class="spiegel" id="spiegelR"></div>
 <div class="drift" id="drift"><small>DRIFT</small><span id="driftWert">0</span></div>
+<div class="warp" id="warp"></div>
 <div class="hinweis" id="hinweis"></div>
 <div class="ampel" id="ampel"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="los" id="losText">LOS!</div>
@@ -222,6 +232,7 @@
 <div class="steuerung">
   <button id="vollbild" type="button">⛶ Vollbild</button>
   <button class="imRennen" id="limiterKnopf" type="button" hidden>🅿 Pit-Limiter</button>
+  <button class="turboNur" id="turboKnopf" type="button" hidden>🚀 TURBO (halten)</button>
   <button class="imRennen" id="neustartKnopf" type="button" hidden>↻ Neustart</button>
   <button class="imRennen" id="menueKnopf" type="button" hidden>☰ Menü</button>
 </div>
@@ -3006,7 +3017,8 @@
     const name = (f) => (FARBEN.find(([, w]) => w === f) || ["?"])[0];
     document.getElementById("autoInfo").innerHTML = "<b>" + typ.name + "</b> · " + (lack.muster === "rexy" ? "Rexy" :
       MUSTER[lack.muster].name + " in " + name(lack.c1) + "/" + name(lack.c2)) + " – " + typ.text + "<br>" +
-      (st.rakete ? "🚀 <b>Nur für dich: Spitze 999 km/h, von 0 auf 999 in 1 Sekunde!</b> Vorsicht in den Kurven – früh und hart bremsen." :
+      (st.rakete ? "🚀 <b>Nur für dich: Spitze 999 km/h, von 0 auf 999 in 1 Sekunde!</b> Vorsicht in den Kurven – früh und hart bremsen.<br>" +
+        "<b>TURBO:</b> <kbd>T</kbd> gedrückt halten (oder den roten Knopf): 1.000.000.000.000.000.000 mph, von 0 auf Turbo in 0,000000000001 s. Runden mit Turbo zählen nicht für Rekorde." :
       "Spitze " + Math.round(st.vmax * 3.6) + " km/h · Beschleunigung " + punkte(st.beschl, 12.5, 17) + " · Grip " + punkte(st.grip, 12.8, 19.5) +
       " · Bremse " + punkte(st.bremse, 26, 38));
   }
@@ -3097,7 +3109,7 @@
         schaden: { gesamt: 0, vorn: 0, hinten: 0, links: 0, rechts: 0 }, trefferUhr: 0, motorRauchUhr: 0,
         gangIst: 1, schaltUhr: 0, gL: 0, gQ: 0, altVl: 0, gischtUhr: 0, stottern: 0, schadenMeldung: 0, hoechstTempo: a.st.vmax,
         boxenstopp: null, willBox: false, letzterStopp: -1, fehler: 0, limiter: false, strafe: 0, gasseGestraft: false,
-        stopps: geplanteStopps()
+        stopps: geplanteStopps(), warp: false, turboGenutzt: false, turboImRennen: false
       });
       reparieren(a);
     });
@@ -3188,13 +3200,14 @@
   }
 
   /* ---------- Steuerung ---------- */
-  const tasten = { gas: false, bremse: false, links: false, rechts: false, handbremse: false };
+  const tasten = { gas: false, bremse: false, links: false, rechts: false, handbremse: false, turbo: false };
   const KEYS = {
     ArrowUp: "gas", KeyW: "gas", ArrowDown: "bremse", KeyS: "bremse",
     ArrowLeft: "links", KeyA: "links", ArrowRight: "rechts", KeyD: "rechts", Space: "handbremse"
   };
   const ANSICHTEN = ["cockpit", "haube", "verfolger"];
   let ansicht = 0, stumm = false, linieAn = true;
+  addEventListener("keyup", (e) => { if (e.code === "KeyT") tasten.turbo = false; });
   addEventListener("keydown", (e) => {
     if (KEYS[e.code]) { tasten[KEYS[e.code]] = true; e.preventDefault(); }
     if (e.repeat) return;
@@ -3202,6 +3215,7 @@
     if (e.code === "Escape" && zustand !== "menue") zumMenue();
     if (e.code === "KeyC") ansicht = (ansicht + 1) % ANSICHTEN.length;
     if (e.code === "KeyP" && zustand !== "menue") limiterUmschalten();
+    if (e.code === "KeyT") tasten.turbo = true;
     if (e.code === "KeyM") stumm = !stumm;
     if (e.code === "KeyL") linieAn = !linieAn;
     if (e.code === "KeyG" && pp) { effekte = !effekte; melde(effekte ? "Grafik: hoch (Leuchten, Unschärfe, Farbabstimmung)" : "Grafik: schnell"); }
@@ -3228,7 +3242,27 @@
 
   /* ---------- Fahrphysik des Spielers ---------- */
   const GANG_V = [0, 19, 30, 41, 52, 64, 82];     // Tempo (m/s) je Gang bei 9000 Umdrehungen
+  // TURBO (nur Raketen-Formelwagen): das Auto schießt auf der Ideallinie dahin, schneller als das Spiel rechnen könnte.
+  // Der Tacho zeigt 1 000 000 000 000 000 000 mph; tatsächlich fährt das Auto 700 m/s, sonst wäre es in einem Bild aus der Welt.
+  const WARP_TEMPO = 700, TURBO_ANZEIGE = "1.000.000.000.000.000.000";
+  function warpFahren(a, dt) {
+    a.warp = true; a.turboGenutzt = true; a.turboImRennen = true;
+    a.warpRest = (a.warpRest || 0) + WARP_TEMPO * dt / SCHRITT;
+    const schritte = Math.floor(a.warpRest); a.warpRest -= schritte;
+    const i = wrap(a.idx + schritte), j = wrap(i + 1);
+    const w = Math.atan2(LZ[j] - LZ[i], LX[j] - LX[i]), f = a.warpRest;
+    Object.assign(a, { x: LX[i] + (LX[j] - LX[i]) * f, z: LZ[i] + (LZ[j] - LZ[i]) * f, w, idx: i, seite: LINIE_O[i], v: WARP_TEMPO,
+      vx: Math.cos(w) * WARP_TEMPO, vz: Math.sin(w) * WARP_TEMPO, gier: 0, lenk: 0, drift: false, schlupf: 0, flaeche: "asphalt",
+      gang: 6, gangIst: 6, drehzahl: 9100, gasWert: 1, bremst: false, limiter: false });
+  }
   function fahreSpieler(a, dt, e) {
+    if (a.st.rakete && e.turbo && zustand !== "menue") return warpFahren(a, dt);
+    if (a.warp) {
+      // Turbo losgelassen: sofort auf ein Tempo, mit dem man die nächste Kurve noch schafft
+      a.warp = false;
+      const v = Math.min(a.st.vmax, SPIELER_PROFIL[wrap(a.idx + 20)] * 0.9);
+      a.vx = Math.cos(a.w) * v; a.vz = Math.sin(a.w) * v; a.v = v;
+    }
     let fx = Math.cos(a.w), fz = Math.sin(a.w);
     let vl = a.vx * fx + a.vz * fz;            // längs
     let vq = -a.vx * fz + a.vz * fx;           // quer, > 0: Auto rutscht nach rechts
@@ -3462,7 +3496,8 @@
     a.fortschritt += schritt;
     const neueRunde = Math.floor(a.fortschritt / N) + 1;
     if (neueRunde > a.runde && a.fortschritt >= 0) {
-      if (a.runde >= 1) a.besteRunde = Math.min(a.besteRunde, rennzeit - a.rundenStart);
+      if (a.runde >= 1 && !a.turboGenutzt) a.besteRunde = Math.min(a.besteRunde, rennzeit - a.rundenStart);
+      a.turboGenutzt = !!a.warp;
       a.runde = neueRunde;
       a.rundenStart = rennzeit;
       if (a.runde > RUNDEN && a.fertig === null && zustand !== "quali" && !DRAG) a.fertig = rennzeit + (a.strafe || 0);
@@ -3473,6 +3508,7 @@
     for (let i = 0; i < autos.length; i++)
       for (let j = i + 1; j < autos.length; j++) {
         const a = autos[i], b = autos[j];
+        if (a.warp || b.warp) continue;   // im Turbo fliegt man durch
         const dx = b.x - a.x, dz = b.z - a.z, d = Math.hypot(dx, dz), min = 3.4;
         if (d > 0 && d < min) {
           const nx = dx / d, nz = dz / d, ueber = (min - d) / 2;
@@ -3901,6 +3937,11 @@
   }
   $("menueKnopf").onclick = zumMenue;
   $("limiterKnopf").onclick = () => { fokusHolen(); limiterUmschalten(); };
+  {
+    const k = $("turboKnopf");
+    k.addEventListener("pointerdown", (e) => { e.preventDefault(); fokusHolen(); tasten.turbo = true; });
+    for (const ende of ["pointerup", "pointercancel", "pointerleave"]) k.addEventListener(ende, () => { tasten.turbo = false; });
+  }
   $("zumMenue").onclick = zumMenue;
   const ampelLampen = [...ui.ampel.children];
 
@@ -3946,7 +3987,10 @@
   }
   function anzeige(jetzt) {
     const a = spieler;
-    ui.kmh.innerHTML = Math.round(a.v * 3.6) + " <small>km/h</small>";
+    ui.kmh.innerHTML = a.warp ? TURBO_ANZEIGE + " <small>mph</small>" : Math.round(a.v * 3.6) + " <small>km/h</small>";
+    ui.kmh.classList.toggle("riesig", !!a.warp);
+    $("warp").classList.toggle("an", !!a.warp);
+    $("turboKnopf").classList.toggle("an", !!a.warp);
     ui.gang.textContent = a.gang;
     if (limiterAnzeige !== a.limiter) { limiterAnzeige = a.limiter; ui.limiter.classList.toggle("an", a.limiter); $("limiterKnopf").classList.toggle("an", a.limiter); }
     ui.drehzahl.style.width = Math.max(0, Math.min(100, (a.drehzahl - 900) / 81)) + "%";
@@ -4022,7 +4066,7 @@
     g.fillStyle = "#3ee07a"; g.font = "bold 36px system-ui"; g.textAlign = "left"; g.textBaseline = "middle";
     g.fillText(a.gang, 8, 42);
     g.fillStyle = "#f4f1ea"; g.font = "bold 26px system-ui"; g.textAlign = "right";
-    g.fillText(Math.round(a.v * 3.6), 122, 44);
+    g.fillText(a.warp ? "WARP" : Math.round(a.v * 3.6), 122, 44);
     if (a.limiter) { g.fillStyle = pit ? "#2f6cf0" : "#16306e"; g.fillRect(36, 20, 50, 40); g.fillStyle = "#fff"; g.font = "bold 20px system-ui"; g.textAlign = "center"; g.fillText("PIT", 61, 41); }
     anzeigeTex.needsUpdate = true;
   }
@@ -4031,7 +4075,7 @@
     const a = spieler;
     if (DRAG) {
       const g = dragGegner, sieg = a.fertig !== null && (g.fertig === null || a.fertig < g.fertig);
-      const neu = a.fertig !== null && a.fertig < bestzeit;
+      const neu = a.fertig !== null && a.fertig < bestzeit && !a.turboImRennen;
       if (neu) { bestzeit = a.fertig; speichereBest(bestzeit); }
       const zeile = (b) => "<tr" + (b.spieler ? ' class="du"' : "") + "><td>" + b.name + "</td><td>" + FAHRZEUGE[b.typ].name + "</td><td>" +
         (b.fertig !== null ? b.fertig.toFixed(3) + " s" : "nicht im Ziel") + "</td><td>" + (b.fertig !== null ? Math.round(b.endTempo * 3.6) + " km/h" : "") + "</td></tr>";
@@ -4045,7 +4089,7 @@
     if (a.kette > 0) { a.driftPunkte += Math.round(a.kette); a.kette = 0; }
     const reihenfolge = platz();
     const mein = reihenfolge.indexOf(a) + 1;
-    const neu = a.fertig < bestzeit;
+    const neu = a.fertig < bestzeit && !a.turboImRennen;
     if (neu) { bestzeit = a.fertig; speichereBest(bestzeit); }
     ui.zielTitel.textContent = mein === 1 ? "🏆 Sieg!" : "Platz " + mein;
     ui.zielText.textContent = "Gesamtzeit " + zeit(a.fertig) + (a.strafe ? " (inkl. " + a.strafe + " s Strafe)" : "") + " · schnellste Runde " + zeit(a.besteRunde) +
@@ -4193,6 +4237,7 @@
       kamera.lookAt(m.localToWorld(blick));
       fov = (art === "cockpit" ? 70 : 68) + a.v * 0.13;
     }
+    fov = Math.min(a.warp ? 112 : 100, fov);
     kamera.fov += (fov - kamera.fov) * Math.min(1, dt * 3);
     kamera.updateProjectionMatrix();
     a.anprall = Math.max(0, a.anprall - dt * 2.5);
@@ -4507,6 +4552,7 @@
     crewBewegen(dt);
     const imMenue = zustand === "menue";
     if (imMenue !== zuletztImMenue) { zuletztImMenue = imMenue; for (const k of document.querySelectorAll(".imRennen")) k.hidden = imMenue; }
+    $("turboKnopf").hidden = imMenue || !spieler.st.rakete;
     spurenUndRauch(dt);
     kameraSetzen(dt);
     regenBewegen(dt, kamera);
