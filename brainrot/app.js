@@ -361,6 +361,10 @@ async function gespraech(schluessel) {
 
 /* ---------- Einrichten ---------- */
 function linksBauen() {
+  if (window.BRAINROT_IN_CLAUDE) {
+    $("#links").innerHTML = '<p class="leise">Dafür brauchst du einen eigenen Link: Stell den Ordner <b>brainrot</b> auf <b>app.netlify.com/drop</b> online. Dann stehen hier die Links zum Kopieren.</p>';
+    return;
+  }
   const basis = location.origin + location.pathname.replace(/index\.html$/, "");
   const box = $("#links");
   box.innerHTML = "";
@@ -406,15 +410,29 @@ function start() {
     tonKnopf();
   };
 
-  $("#zuruecksetzen").onclick = () => {
-    if (confirm("Wirklich alle Zahlen löschen?")) { speichern({ ...LEER }); zahlenZeigen(); }
+  /* Zweimal tippen statt confirm() – das gibt's nicht überall */
+  const reset = $("#zuruecksetzen");
+  let sicher = false;
+  reset.onclick = () => {
+    if (!sicher) {
+      sicher = true;
+      reset.textContent = "Wirklich? Nochmal tippen zum Löschen";
+      setTimeout(() => { sicher = false; reset.textContent = "Alles zurücksetzen"; }, 4000);
+      return;
+    }
+    sicher = false;
+    speichern({ ...LEER });
+    zahlenZeigen();
+    reset.textContent = "Gelöscht ✓";
+    setTimeout(() => (reset.textContent = "Alles zurücksetzen"), 2000);
   };
 
   linksBauen();
   zahlenZeigen();
 
   /* ?app=tiktok → sofort losreden (für die Kurzbefehl-Automation) */
-  const app = new URLSearchParams(location.search).get("app");
+  /* auch #tiktok geht – in Claude kommt nur das an */
+  const app = new URLSearchParams(location.search).get("app") || location.hash.slice(1);
   if (app && APPS[app]) gespraech(app);
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
