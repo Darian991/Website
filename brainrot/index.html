@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>brainrot – raus aus der App</title>
+  <meta name="description" content="brainrot redet dich raus aus TikTok, YouTube, Snapchat und Instagram – bevor du eine Stunde weg bist.">
+  <meta name="theme-color" content="#0e0b16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="brainrot">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="kopf">
+    <button class="logo" data-nav="start" aria-label="Zur Startseite">
+      <img src="icon.svg" alt="" width="32" height="32"><span>brainrot</span>
+    </button>
+    <div class="kopf__knoepfe">
+      <button class="rund" id="ton" aria-label="Stimme an/aus" title="Stimme an/aus">🔊</button>
+      <button class="rund" data-nav="einrichten" aria-label="Einrichten" title="Automatisch starten">⚙️</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Start -->
+    <section class="seite" id="start">
+      <h1>Was wolltest du<br>gerade öffnen?</h1>
+      <p class="leise">Tipp drauf. Ich red kurz mit dir.</p>
+
+      <div class="apps" id="apps"></div>
+
+      <div class="zahlen">
+        <div><b id="z-siege">0</b><span>mal widerstanden</span></div>
+        <div><b id="z-minuten">0</b><span>Minuten gerettet</span></div>
+        <div><b id="z-serie">0</b><span>Tage am Stück</span></div>
+      </div>
+
+      <button class="link" data-nav="einrichten">So startet brainrot automatisch, wenn du TikTok öffnest →</button>
+    </section>
+
+    <!-- Gespräch -->
+    <section class="seite" id="chat" hidden>
+      <div class="verlauf" id="verlauf" aria-live="polite"></div>
+      <div class="antworten" id="antworten"></div>
+    </section>
+
+    <!-- Einrichten -->
+    <section class="seite" id="einrichten" hidden>
+      <h1>Automatisch starten</h1>
+      <p>
+        Eine Website darf TikTok &amp; Co. nicht selbst löschen oder sperren – das darf nur dein Handy.
+        Aber du kannst dein Handy so einstellen, dass <b>brainrot jedes Mal aufgeht</b>, wenn du so eine App öffnest.
+      </p>
+
+      <h2>📱 iPhone</h2>
+      <ol>
+        <li>Öffne diese Seite in <b>Safari</b> → Teilen-Knopf → <b>„Zum Home-Bildschirm“</b>.</li>
+        <li>Öffne die App <b>Kurzbefehle</b> → unten <b>Automation</b> → <b>+</b>.</li>
+        <li>Wähle <b>App</b> → z. B. TikTok → <b>„Wird geöffnet“</b> → <b>Sofort ausführen</b>.</li>
+        <li>Aktion <b>„URL öffnen“</b> hinzufügen und diesen Link einfügen:</li>
+      </ol>
+      <div class="links" id="links"></div>
+
+      <h2>🤖 Android</h2>
+      <ol>
+        <li>Öffne diese Seite in <b>Chrome</b> → Menü ⋮ → <b>„App installieren“</b>.</li>
+        <li>Einstellungen → <b>Digital Wellbeing</b> → TikTok → <b>App-Timer</b> (z. B. 15 Min).</li>
+        <li>Leg brainrot auf den Platz, wo vorher TikTok war – und TikTok in einen Ordner ganz hinten.</li>
+      </ol>
+
+      <h2>🗑️ Ganz weg damit?</h2>
+      <p>Der stärkste Trick: App löschen und nur noch im Browser benutzen. Das ist so nervig, dass man es viel weniger macht.</p>
+
+      <h2>Deine Zahlen</h2>
+      <button class="knopf knopf--leise" id="zuruecksetzen">Alles zurücksetzen</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

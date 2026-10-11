@@ -1,0 +1,116 @@
+:root {
+  --bg: #0e0b16;
+  --karte: #1a1526;
+  --karte2: #251d36;
+  --text: #f4f0ff;
+  --leise: #a79cc4;
+  --pink: #ff3d7f;
+  --lila: #7b2cff;
+  --gruen: #2ee59d;
+  --verlauf: linear-gradient(135deg, var(--pink), var(--lila));
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+[hidden] { display: none !important; }
+
+.kopf {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(14, 11, 22, .85);
+  backdrop-filter: blur(10px);
+}
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.5px; }
+.logo img { border-radius: 9px; }
+.kopf__knoepfe { display: flex; gap: 8px; }
+.rund { width: 42px; height: 42px; border-radius: 50%; background: var(--karte); font-size: 19px; }
+
+main { max-width: 560px; margin: 0 auto; padding: 8px 16px 40px; }
+h1 { font-size: clamp(30px, 8vw, 40px); line-height: 1.1; letter-spacing: -1px; margin: 16px 0 6px; }
+h2 { font-size: 20px; margin: 28px 0 8px; }
+.leise { color: var(--leise); margin: 0 0 20px; }
+ol { padding-left: 22px; } li { margin: 6px 0; }
+
+/* App-Kacheln */
+.apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.app {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  padding: 18px; border-radius: 22px; background: var(--karte);
+  text-align: left; transition: transform .12s;
+}
+.app:active { transform: scale(.96); }
+.app__emoji { font-size: 34px; line-height: 1; }
+.app__name { font-weight: 700; font-size: 18px; }
+.app__klein { color: var(--leise); font-size: 13px; }
+
+/* Zahlen */
+.zahlen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 24px 0 16px; }
+.zahlen div { background: var(--karte); border-radius: 18px; padding: 14px 10px; text-align: center; }
+.zahlen b {
+  display: block; font-size: 28px; line-height: 1.1;
+  background: var(--verlauf); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.zahlen span { font-size: 12px; color: var(--leise); }
+.link { color: var(--leise); text-decoration: underline; text-underline-offset: 3px; padding: 6px 0; text-align: left; }
+
+/* Gespräch */
+#chat { display: flex; flex-direction: column; min-height: calc(100dvh - 90px); }
+.verlauf { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 8px 0 16px; }
+.blase {
+  max-width: 85%; padding: 12px 16px; border-radius: 20px; animation: rein .25s ease-out;
+  overflow-wrap: anywhere;
+}
+.blase--bot { align-self: flex-start; background: var(--karte2); border-bottom-left-radius: 6px; }
+.blase--ich { align-self: flex-end; background: var(--verlauf); border-bottom-right-radius: 6px; font-weight: 600; }
+.blase--tippt { display: flex; gap: 5px; padding: 16px 18px; }
+.blase--tippt i { width: 8px; height: 8px; border-radius: 50%; background: var(--leise); animation: hops 1s infinite; }
+.blase--tippt i:nth-child(2) { animation-delay: .15s; }
+.blase--tippt i:nth-child(3) { animation-delay: .3s; }
+@keyframes hops { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-5px); opacity: 1; } }
+@keyframes rein { from { opacity: 0; transform: translateY(8px); } }
+
+.antworten {
+  position: sticky; bottom: 0; display: flex; flex-direction: column; gap: 8px;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, var(--bg) 18px);
+}
+.knopf {
+  width: 100%; padding: 15px 18px; border-radius: 16px;
+  background: var(--karte); font-weight: 600; text-align: left;
+  animation: rein .25s ease-out;
+}
+.knopf--gut { background: var(--gruen); color: #04130c; text-align: center; font-weight: 800; }
+.knopf--leise { background: transparent; border: 1px solid var(--karte2); color: var(--leise); text-align: center; }
+.knopf:disabled { opacity: .45; cursor: default; }
+
+/* Atmen */
+.atmen { align-self: center; display: grid; place-items: center; width: 220px; height: 220px; margin: 10px 0; }
+.atmen__kreis {
+  grid-area: 1 / 1; width: 90px; height: 90px; border-radius: 50%;
+  background: var(--verlauf); opacity: .85; transition: transform 4s ease-in-out;
+}
+.atmen__kreis.gross { transform: scale(2.3); }
+.atmen__text { grid-area: 1 / 1; font-weight: 800; font-size: 20px; z-index: 1; }
+
+/* Einrichten */
+.links { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.kopierzeile { display: flex; gap: 8px; align-items: center; background: var(--karte); padding: 10px 12px; border-radius: 14px; }
+.kopierzeile code { flex: 1; font-size: 13px; color: var(--leise); overflow-wrap: anywhere; }
+.kopierzeile button { padding: 6px 12px; border-radius: 10px; background: var(--karte2); font-size: 14px; white-space: nowrap; }
+
+.konfetti { position: fixed; top: -20px; font-size: 26px; pointer-events: none; animation: fall 2.2s linear forwards; z-index: 10; }
+@keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
