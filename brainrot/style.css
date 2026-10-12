@@ -133,6 +133,19 @@ ol { padding-left: 22px; } li { margin: 6px 0; }
 .konfetti { position: fixed; top: -20px; font-size: 26px; pointer-events: none; animation: fall 2.2s linear forwards; z-index: 10; }
 @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
 
+/* iPad und größere Bildschirme */
+@media (min-width: 700px) {
+  body { font-size: 18px; }
+  main { max-width: 760px; padding: 16px 32px 48px; }
+  .kopf { padding: 16px max(32px, calc((100% - 760px) / 2 + 32px)); }
+  .apps { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .app { padding: 24px; }
+  .app__emoji { font-size: 42px; }
+  .zahlen b { font-size: 36px; }
+  .zahlen span { font-size: 14px; }
+  .blase { max-width: 70%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

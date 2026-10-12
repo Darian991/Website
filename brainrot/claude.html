@@ -136,6 +136,19 @@ ol { padding-left: 22px; } li { margin: 6px 0; }
 .konfetti { position: fixed; top: -20px; font-size: 26px; pointer-events: none; animation: fall 2.2s linear forwards; z-index: 10; }
 @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
 
+/* iPad und größere Bildschirme */
+@media (min-width: 700px) {
+  body { font-size: 18px; }
+  main { max-width: 760px; padding: 16px 32px 48px; }
+  .kopf { padding: 16px max(32px, calc((100% - 760px) / 2 + 32px)); }
+  .apps { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .app { padding: 24px; }
+  .app__emoji { font-size: 42px; }
+  .zahlen b { font-size: 36px; }
+  .zahlen span { font-size: 14px; }
+  .blase { max-width: 70%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -189,12 +202,13 @@ body { padding: 0; }
       <h1>brainrot Zugriff geben</h1>
       <p>
         Damit brainrot <b>automatisch aufpoppt</b>, wenn du YouTube, TikTok &amp; Co. öffnest,
-        gibst du ihm auf dem iPhone über die App <b>Kurzbefehle</b> Zugriff. Das dauert 2 Minuten pro App.
+        gibst du ihm auf dem iPhone oder iPad über die App <b>Kurzbefehle</b> Zugriff. Das dauert 2 Minuten pro App.
       </p>
 
-      <h2>📱 iPhone – Schritt für Schritt</h2>
+      <h2>📱 iPhone &amp; iPad – Schritt für Schritt</h2>
+      <p class="leise">Auf dem iPad geht alles genau gleich. Fehlt dort die App Kurzbefehle, lad sie kostenlos aus dem App Store.</p>
       <ol class="schritte">
-        <li>Öffne die App <b>Kurzbefehle</b> (ist schon auf jedem iPhone).</li>
+        <li>Öffne die App <b>Kurzbefehle</b>.</li>
         <li>Unten auf <b>Automation</b> tippen → oben rechts <b>+</b>.</li>
         <li><b>App</b> auswählen → bei „App“ auf <b>Auswählen</b> → <b>YouTube</b> anhaken → <b>Fertig</b>.</li>
         <li>Nur <b>„Wird geöffnet“</b> anlassen und <b>„Sofort ausführen“</b> wählen → <b>Weiter</b>.</li>
@@ -205,10 +219,10 @@ body { padding: 0; }
       <p class="leise">Für TikTok, Snapchat und Instagram einfach nochmal mit dem jeweiligen Link. Ab jetzt geht brainrot jedes Mal auf, wenn du die App öffnest, und redet mit dir.</p>
 
       <h2>🔒 Noch strenger</h2>
-      <p>Einstellungen → <b>Bildschirmzeit</b> → <b>App-Limits</b> → YouTube → z. B. 15 Minuten am Tag → <b>„Am Ende des Limits blockieren“</b> an. Danach sperrt das iPhone die App wirklich.</p>
+      <p>Einstellungen → <b>Bildschirmzeit</b> → <b>App-Limits</b> → YouTube → z. B. 15 Minuten am Tag → <b>„Am Ende des Limits blockieren“</b> an. Danach sperrt das iPhone oder iPad die App wirklich. Tipp: Lass einen Elternteil den Bildschirmzeit-Code festlegen, dann kannst du nicht schummeln. 😉</p>
 
       <h2>Warum nicht direkt in der App?</h2>
-      <p class="leise">Apple lässt keine normale App oder Website andere Apps sperren. Kurzbefehle und Bildschirmzeit sind die zwei Wege, die Apple selbst erlaubt.</p>
+      <p class="leise">Apple lässt auf iPhone und iPad keine normale App oder Website andere Apps sperren. Kurzbefehle und Bildschirmzeit sind die zwei Wege, die Apple selbst erlaubt.</p>
 
       <h2>Deine Zahlen</h2>
       <button class="knopf knopf--leise" id="zuruecksetzen">Alles zurücksetzen</button>

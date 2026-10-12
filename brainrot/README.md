@@ -17,13 +17,13 @@ automatisch unter `/brainrot/` erreichbar.
 
 ## Aufs Handy
 
-- **iPhone:** Link in Safari öffnen → Teilen → „Zum Home-Bildschirm“.
+- **iPhone & iPad:** Link in Safari öffnen → Teilen → „Zum Home-Bildschirm“.
 - **Android:** Link in Chrome öffnen → Menü ⋮ → „App installieren“.
 
 ## Automatisch starten, wenn du TikTok öffnest
 
 Eine Website darf andere Apps nicht sperren oder löschen – das darf nur das
-Handy selbst. Aber auf dem iPhone geht das hier:
+Handy selbst. Aber auf iPhone und iPad geht das hier:
 
 Kurzbefehle → Automation → + → App → TikTok → „Wird geöffnet“ →
 „Sofort ausführen“ → Aktion „URL öffnen“ mit
