@@ -24,7 +24,7 @@ ${lies("style.css")}${extra}
 </style>
 ${body}
 <script>
-window.BRAINROT_IN_CLAUDE = true;
+window.BRAINROT_LINK = "https://claude.ai/artifact/6x5KfruvGtUkqDUoGPXqnf";
 ${lies("app.js")}
 </script>
 `;

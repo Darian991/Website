@@ -39,41 +39,47 @@
         <div><b id="z-serie">0</b><span>Tage am Stück</span></div>
       </div>
 
-      <button class="link" data-nav="einrichten">So startet brainrot automatisch, wenn du TikTok öffnest →</button>
+      <button class="link" data-nav="einrichten">🔓 brainrot Zugriff geben: automatisch aufpoppen, wenn du YouTube öffnest →</button>
     </section>
 
     <!-- Gespräch -->
     <section class="seite" id="chat" hidden>
       <div class="verlauf" id="verlauf" aria-live="polite"></div>
-      <div class="antworten" id="antworten"></div>
+      <div class="unten">
+        <div class="antworten" id="antworten"></div>
+        <form class="eingabe" id="eingabe" hidden>
+          <input id="eingabe-text" type="text" autocomplete="off" enterkeyhint="send" maxlength="300"
+                 placeholder="Schreib zurück …" aria-label="Deine Antwort">
+          <button type="submit" aria-label="Senden">➤</button>
+        </form>
+      </div>
     </section>
 
     <!-- Einrichten -->
     <section class="seite" id="einrichten" hidden>
-      <h1>Automatisch starten</h1>
+      <h1>brainrot Zugriff geben</h1>
       <p>
-        Eine Website darf TikTok &amp; Co. nicht selbst löschen oder sperren – das darf nur dein Handy.
-        Aber du kannst dein Handy so einstellen, dass <b>brainrot jedes Mal aufgeht</b>, wenn du so eine App öffnest.
+        Damit brainrot <b>automatisch aufpoppt</b>, wenn du YouTube, TikTok &amp; Co. öffnest,
+        gibst du ihm auf dem iPhone über die App <b>Kurzbefehle</b> Zugriff. Das dauert 2 Minuten pro App.
       </p>
 
-      <h2>📱 iPhone</h2>
-      <ol>
-        <li>Öffne diese Seite in <b>Safari</b> → Teilen-Knopf → <b>„Zum Home-Bildschirm“</b>.</li>
-        <li>Öffne die App <b>Kurzbefehle</b> → unten <b>Automation</b> → <b>+</b>.</li>
-        <li>Wähle <b>App</b> → z. B. TikTok → <b>„Wird geöffnet“</b> → <b>Sofort ausführen</b>.</li>
-        <li>Aktion <b>„URL öffnen“</b> hinzufügen und diesen Link einfügen:</li>
+      <h2>📱 iPhone – Schritt für Schritt</h2>
+      <ol class="schritte">
+        <li>Öffne die App <b>Kurzbefehle</b> (ist schon auf jedem iPhone).</li>
+        <li>Unten auf <b>Automation</b> tippen → oben rechts <b>+</b>.</li>
+        <li><b>App</b> auswählen → bei „App“ auf <b>Auswählen</b> → <b>YouTube</b> anhaken → <b>Fertig</b>.</li>
+        <li>Nur <b>„Wird geöffnet“</b> anlassen und <b>„Sofort ausführen“</b> wählen → <b>Weiter</b>.</li>
+        <li><b>Neue leere Automation</b> → <b>Aktion hinzufügen</b> → nach <b>„URL öffnen“</b> suchen.</li>
+        <li>Den passenden Link unten kopieren und bei „URL“ einfügen → <b>Fertig</b>.</li>
       </ol>
       <div class="links" id="links"></div>
+      <p class="leise">Für TikTok, Snapchat und Instagram einfach nochmal mit dem jeweiligen Link. Ab jetzt geht brainrot jedes Mal auf, wenn du die App öffnest, und redet mit dir.</p>
 
-      <h2>🤖 Android</h2>
-      <ol>
-        <li>Öffne diese Seite in <b>Chrome</b> → Menü ⋮ → <b>„App installieren“</b>.</li>
-        <li>Einstellungen → <b>Digital Wellbeing</b> → TikTok → <b>App-Timer</b> (z. B. 15 Min).</li>
-        <li>Leg brainrot auf den Platz, wo vorher TikTok war – und TikTok in einen Ordner ganz hinten.</li>
-      </ol>
+      <h2>🔒 Noch strenger</h2>
+      <p>Einstellungen → <b>Bildschirmzeit</b> → <b>App-Limits</b> → YouTube → z. B. 15 Minuten am Tag → <b>„Am Ende des Limits blockieren“</b> an. Danach sperrt das iPhone die App wirklich.</p>
 
-      <h2>🗑️ Ganz weg damit?</h2>
-      <p>Der stärkste Trick: App löschen und nur noch im Browser benutzen. Das ist so nervig, dass man es viel weniger macht.</p>
+      <h2>Warum nicht direkt in der App?</h2>
+      <p class="leise">Apple lässt keine normale App oder Website andere Apps sperren. Kurzbefehle und Bildschirmzeit sind die zwei Wege, die Apple selbst erlaubt.</p>
 
       <h2>Deine Zahlen</h2>
       <button class="knopf knopf--leise" id="zuruecksetzen">Alles zurücksetzen</button>

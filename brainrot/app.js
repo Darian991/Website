@@ -96,7 +96,7 @@ function zahlenZeigen() {
 }
 
 /* ---------- Stimme ---------- */
-let tonAn = (() => { try { return localStorage.getItem("brainrot-ton") !== "aus"; } catch { return true; } })();
+let tonAn = (() => { try { return localStorage.getItem("brainrot-ton") === "an"; } catch { return false; } })();
 function tonKnopf() { $("#ton").textContent = tonAn ? "🔊" : "🔇"; }
 function sprechen(text) {
   if (!tonAn || !("speechSynthesis" in window)) return;
@@ -131,6 +131,8 @@ function unterhaltung() {
   const antworten = $("#antworten");
   verlauf.innerHTML = "";
   antworten.innerHTML = "";
+  $("#eingabe").hidden = true;
+  const aktiv = () => nr === lauf;
   const pruefe = () => { if (nr !== lauf) throw ABBRUCH; };
   const runter = () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
 
@@ -143,15 +145,20 @@ function unterhaltung() {
     return b;
   }
 
+  function tippt() {
+    const t = document.createElement("div");
+    t.className = "blase blase--bot blase--tippt";
+    t.innerHTML = "<i></i><i></i><i></i>";
+    verlauf.appendChild(t);
+    runter();
+    return t;
+  }
+
   async function sag(text) {
     pruefe();
-    const tippt = document.createElement("div");
-    tippt.className = "blase blase--bot blase--tippt";
-    tippt.innerHTML = "<i></i><i></i><i></i>";
-    verlauf.appendChild(tippt);
-    runter();
+    const punkte = tippt();
     await pause(Math.min(450 + text.length * 16, 1700));
-    tippt.remove();
+    punkte.remove();
     pruefe();
     blase(text, "bot");
     sprechen(text);
@@ -208,7 +215,7 @@ function unterhaltung() {
     antworten.innerHTML = "";
   }
 
-  return { sag, frag, atmen, pruefe, antworten };
+  return { sag, frag, atmen, pruefe, antworten, blase, tippt, aktiv };
 }
 
 function konfetti() {
@@ -224,11 +231,124 @@ function konfetti() {
   }
 }
 
+/* ---------- Antworten auf das, was man schreibt ---------- */
+/* In Claude antwortet Claude selbst. Sonst (z. B. auf Netlify) diese Liste. */
+const ANTWORTEN = [
+  [/traurig|stress|allein|einsam|angst|schlecht drauf|mies|wein|keiner mag|hass mich|ritz|nicht mehr leben/, [
+    "Das klingt nicht so gut. 💙 Scrollen macht so Momente oft noch schlimmer. Gibt es jemanden, dem du gerade schreiben oder den du anrufen kannst?",
+    "Danke, dass du das sagst. Wenn es dir richtig schlecht geht: Die Nummer gegen Kummer (116 111) ist kostenlos und anonym. Und rede mit jemandem, dem du vertraust. 💙"
+  ]],
+  [/langweil|bored|nix zu tun|nichts zu tun|öde|oede/, [
+    "Langeweile ist eigentlich gut – da kommen die besten Ideen her. Was hast du schon ewig nicht mehr gemacht?",
+    "Scrollen macht Langeweile nicht weg, es deckt sie nur zu. Nach 30 Minuten ist sie wieder da – plus schlechtes Gewissen. 😅",
+    "Was würdest du jetzt machen, wenn es gar kein Handy gäbe?"
+  ]],
+  [/kurz|\bmin|sekunde|schnell/, [
+    "„Nur kurz“ ist der gefährlichste Satz im Internet. 😄 Wie oft hat das schon geklappt?",
+    "Wenn's wirklich nur kurz ist: Stell jetzt einen Wecker auf 5 Minuten. Wenn du keinen stellen willst, weißt du, dass es nicht kurz wird.",
+    "Die App ist dafür gebaut, dass aus kurz lang wird. Du gegen hunderte Leute, die das programmiert haben. Ziemlich unfair, oder?"
+  ]],
+  [/schreib|geschrieben|nachricht|freund|chat|antwort|streak|flamme|snap/, [
+    "Dann antworte – aber nur das. Rein, zurückschreiben, raus. Kein Feed, keine Stories.",
+    "Kannst du auch per WhatsApp oder SMS antworten? Da gibt's keinen Feed, der dich festhält.",
+    "Flammen sind dafür gebaut, dich jeden Tag zurückzuholen. Ein echter Freund ist nicht sauer, wenn die mal ausgehen."
+  ]],
+  [/video|tutorial|schule|hausaufgab|lernen|referat|erklär|musik|lied|song/, [
+    "Fair, das ist ein echter Grund. Such genau das eine Video, schau es, und dann raus. Keine Vorschläge danach!",
+    "Tipp: Tipp das Video direkt in die Suche, statt auf die Startseite zu gehen. Da wartet nämlich das Kaninchenloch. 🐇",
+    "Musik geht auch ohne Videos – Spotify oder Radio an, Handy weglegen, fertig. 🎧"
+  ]],
+  [/müde|muede|schlaf|kaputt|erschöpft|chill|entspann|pause/, [
+    "Wenn du müde bist, macht Scrollen dich noch müder. Wie wär's mit 10 Minuten Augen zu?",
+    "Echte Pause = Handy weg. Scrollen ist für dein Gehirn eher Arbeit als Pause.",
+    "Chillen ist gut! Aber ohne Feed: Musik an, hinlegen, Decke anstarren. Klingt dumm, ist aber richtig gut."
+  ]],
+  [/gewohn|einfach so|weiß nicht|weiss nicht|keine ahnung|idk|egal|keine lust/, [
+    "Genau das ist der Trick: Dein Daumen war schneller als dein Kopf. Die App hat dich gerufen, nicht umgekehrt.",
+    "Wenn du nicht weißt warum, brauchst du's gerade wahrscheinlich nicht. 😉",
+    "Gewohnheiten kann man umbauen. Jedes Mal, wenn du hier landest und es lässt, wird's leichter."
+  ]],
+  [/nerv|halt die klappe|lass mich|hau ab|blöd|bloed|dumm|scheiß|scheiss/, [
+    "Haha, ich weiß, ich nerv. 😅 Das ist mein Job. Gib mir noch 30 Sekunden.",
+    "Du hast mich selbst eingestellt. 😄 Dein früheres Ich wollte, dass ich dich aufhalte.",
+    "Du darfst sauer auf mich sein. Aber ehrlich: Fühlst du dich nach einer Stunde Scrollen besser?"
+  ]],
+  [/^(ok|okay|ja|jo|stimmt|hast recht|du hast recht|fair|gut|na gut)\b/, [
+    "Stark! 💪 Dann tipp unten auf „Ich lass es“ – und leg das Handy kurz weg.",
+    "Sehr gut. Unten auf „Ich lass es“ – dann gibt's Konfetti. 🎉"
+  ]],
+  [/^(nein|nö|noe|nee|nope|no)\b/, [
+    "Okay. Warum nicht? Erzähl mal.",
+    "Hm. Was müsste passieren, damit du's lässt?",
+    "Fair. Dann sag mir ehrlich: Wie lange willst du rein?"
+  ]]
+];
+const ALLGEMEIN = [
+  "Verstehe. Und wie fühlst du dich meistens, wenn du nach einer Stunde wieder rauskommst?",
+  "Hm. Was würdest du machen, wenn es die App gerade nicht geben würde?",
+  "Klingt so, als wär's gerade nicht wirklich wichtig. Oder?",
+  "Erzähl mehr. Was ist der echte Grund?"
+];
+
+const schonGesagt = new Set();
+function antwortLokal(text) {
+  const t = text.toLowerCase();
+  const treffer = ANTWORTEN.find(([muster]) => muster.test(t));
+  const liste = treffer ? treffer[1] : ALLGEMEIN;
+  const frisch = liste.filter((x) => !schonGesagt.has(x));
+  const wahl = zufall(frisch.length ? frisch : liste);
+  schonGesagt.add(wahl);
+  return wahl;
+}
+
+let claudeFrage = null;
+let claudeAus = false;
+function claudeHolen() {
+  if (claudeAus || !window.claude || !window.claude.use) return null;
+  if (!claudeFrage) claudeFrage = window.claude.use("sample").catch(() => null);
+  return claudeFrage;
+}
+
+function anleitung(app, chat) {
+  const appName = app.url ? app.name : "eine App mit Endlos-Feed";
+  return `Du bist „brainrot“, ein lockerer Chat-Coach in einer Handy-App. Die Person wollte gerade ${appName} öffnen, und brainrot ist stattdessen aufgegangen. Dein Ziel: Sie mit Humor und Verständnis überzeugen, es zu lassen – oder die App nur ganz kurz und bewusst zu nutzen.
+
+Regeln:
+- Deutsch, locker, wie ein guter Kumpel. 1 bis 3 kurze Sätze, höchstens ein Emoji.
+- Nicht predigen, nicht beleidigen, kein schlechtes Gewissen machen. Gern eine Gegenfrage oder eine konkrete Idee, was man stattdessen machen kann.
+- Hat die Person einen echten Grund (Nachricht beantworten, Video für die Schule), hilf ihr, nur das zu tun und danach sofort rauszugehen.
+- Ist sie überzeugt, sag ihr, sie soll unten auf „Ich lass es“ tippen.
+- Erzählt sie von echten Sorgen (sehr traurig, Angst, jemand tut ihr weh), nimm das ernst und schlag vor, mit einer Vertrauensperson zu reden. Die Nummer gegen Kummer 116 111 ist kostenlos und anonym.
+
+Chat bis jetzt:
+${chat.map((m) => (m.wer === "ich" ? "Person: " : "brainrot: ") + m.text).join("\n")}
+
+Schreib jetzt nur die nächste Nachricht von brainrot, ohne „brainrot:“ davor.`;
+}
+
+async function antworte(app, chat) {
+  const frage = await claudeHolen();
+  if (frage) {
+    try {
+      const { text } = await frage(anleitung(app, chat), { modelTier: "quick", cache: false });
+      const sauber = text.trim().replace(/^brainrot:\s*/i, "");
+      if (sauber) return sauber;
+    } catch (e) {
+      if (e && e.code === "not_granted") claudeAus = true;
+    }
+  }
+  return antwortLokal(chat[chat.length - 1].text);
+}
+
 async function gespraech(schluessel) {
   const app = APPS[schluessel] || APPS.andere;
   zeige("chat");
-  const { sag, frag, atmen, antworten } = unterhaltung();
+  const { sag, frag, atmen, pruefe, antworten, blase, tippt, aktiv } = unterhaltung();
   const name = app.name;
+  const form = $("#eingabe");
+  const feld = $("#eingabe-text");
+  const chat = [];
+  const botSagt = async (text) => { await sag(text); chat.push({ wer: "bot", text }); };
 
   async function gewonnen(minuten) {
     const s = laden();
@@ -292,68 +412,107 @@ async function gespraech(schluessel) {
     return verloren();
   }
 
-  async function ideen() {
-    const schon = new Set();
-    for (;;) {
-      let alt = zufall(ALTERNATIVEN);
-      if (schon.size >= ALTERNATIVEN.length) schon.clear();
-      while (schon.has(alt)) alt = zufall(ALTERNATIVEN);
-      schon.add(alt);
-      await sag(`Wie wär's stattdessen mit: ${alt}`);
-      const wahl = await frag([
-        ["✅ Okay, ich lass es", "gut", "gut"],
-        ["🔁 Andere Idee", "neu"],
-        ["😩 Ich will trotzdem", "trotzdem"]
-      ]);
-      if (wahl === "gut") return gewonnen(app.minuten);
-      if (wahl === "trotzdem") return letzteChance();
-      await sag(zufall(["Okay, okay.", "Kein Ding.", "Nächster Versuch:"]));
-    }
+  /* Der Chat: Man schreibt selbst oder tippt einen Vorschlag an.
+     Fertig ist er erst, wenn man "Ich lass es" oder "Trotzdem" drückt. */
+  function chatten() {
+    return new Promise((entschieden) => {
+      let beschaeftigt = false;
+      const ideen = new Set();
+
+      async function senden(text) {
+        text = text.trim();
+        if (!text || beschaeftigt || !aktiv()) return;
+        beschaeftigt = true;
+        feld.value = "";
+        blase(text, "ich");
+        chat.push({ wer: "ich", text });
+        const punkte = tippt();
+        let antwort;
+        try { antwort = await antworte(app, chat); }
+        finally { punkte.remove(); }
+        if (!aktiv()) return;
+        blase(antwort, "bot");
+        sprechen(antwort);
+        chat.push({ wer: "bot", text: antwort });
+        beschaeftigt = false;
+      }
+
+      async function idee() {
+        if (beschaeftigt) return;
+        beschaeftigt = true;
+        if (ideen.size >= ALTERNATIVEN.length) ideen.clear();
+        let alt = zufall(ALTERNATIVEN);
+        while (ideen.has(alt)) alt = zufall(ALTERNATIVEN);
+        ideen.add(alt);
+        await botSagt(`Wie wär's stattdessen mit: ${alt}`);
+        beschaeftigt = false;
+      }
+
+      async function durchatmen() {
+        if (beschaeftigt) return;
+        beschaeftigt = true;
+        form.hidden = true;
+        await botSagt("Mach mit. Drei Atemzüge, zusammen mit mir.");
+        await atmen(3);
+        await botSagt("Und? Wie fühlt sich's jetzt an?");
+        beschaeftigt = false;
+        knoepfe();
+      }
+
+      function knoepfe() {
+        pruefe();
+        antworten.innerHTML = "";
+        const chips = document.createElement("div");
+        chips.className = "chips";
+        [
+          ["😐 Mir ist langweilig", () => senden("Mir ist langweilig")],
+          ["⏱️ Nur ganz kurz", () => senden("Ich will nur ganz kurz rein")],
+          ["💬 Jemand hat geschrieben", () => senden("Jemand hat mir geschrieben")],
+          ["💡 Idee", idee],
+          ["🫁 Atmen", durchatmen]
+        ].forEach(([text, tun]) => {
+          const c = document.createElement("button");
+          c.type = "button";
+          c.className = "chip";
+          c.textContent = text;
+          c.onclick = () => tun().catch((e) => { if (e !== ABBRUCH) throw e; });
+          chips.appendChild(c);
+        });
+        const reihe = document.createElement("div");
+        reihe.className = "reihe";
+        [["✅ Ich lass es", "gut", "knopf knopf--gut"], ["😩 Trotzdem", "trotzdem", "knopf knopf--leise"]].forEach(([text, wert, klasse]) => {
+          const k = document.createElement("button");
+          k.type = "button";
+          k.className = klasse;
+          k.textContent = text;
+          k.onclick = () => {
+            if (!aktiv()) return;
+            form.hidden = true;
+            antworten.innerHTML = "";
+            blase(text, "ich");
+            entschieden(wert);
+          };
+          reihe.appendChild(k);
+        });
+        antworten.append(chips, reihe);
+        form.hidden = false;
+      }
+
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        senden(feld.value).catch((err) => { if (err !== ABBRUCH) throw err; });
+      };
+      knoepfe();
+    });
   }
 
   try {
-    await sag(`Stopp. ✋ Du willst ${schluessel === "andere" ? "eine App" : name} öffnen?`);
-    await sag(zufall(app.fakten));
-    await sag("Ganz ehrlich: Warum gerade?");
-
-    const grund = await frag([
-      ["😐 Mir ist langweilig", "langweilig"],
-      ["🤷 Einfach so, Gewohnheit", "gewohnheit"],
-      ["🎯 Ich will was Bestimmtes", "bestimmt"],
-      ["💬 Jemand hat mir geschrieben", "nachricht"]
-    ]);
-
-    if (grund === "bestimmt" || grund === "nachricht") {
-      if (grund === "bestimmt") {
-        await sag("Okay, fair. Dann mach's wie ein Profi:");
-        await sag("Rein, das eine Ding erledigen, raus. Nicht durch den Feed scrollen.");
-      } else {
-        await sag("Dann antworte – aber nur das.");
-        await sag("Schreib zurück und mach die App sofort wieder zu. Keine Stories, kein Feed.");
-      }
-      const wahl = await frag([
-        ["🤝 Deal: max. 5 Minuten", "deal", "gut"],
-        ["✅ Kann auch warten, ich lass es", "lassen"],
-        ["😬 Ehrlich gesagt will ich nur scrollen", "scrollen"]
-      ]);
-      if (wahl === "deal") {
-        await sag("Deal. Stell dir einen 5-Minuten-Wecker. Ich vertrau dir. 🤝");
-        return gewonnen(Math.max(app.minuten - 5, 5));
-      }
-      if (wahl === "lassen") return gewonnen(app.minuten);
-      await sag("Danke für die Ehrlichkeit. Das ist schon mal mehr als die meisten. 😄");
-    } else if (grund === "langweilig") {
-      await sag("Langeweile ist eigentlich gut – da kommen die besten Ideen her.");
-      await sag("Wenn du jetzt scrollst, ist die Langeweile nicht weg. Sie ist nur zugedeckt.");
-    } else {
-      await sag("Genau das ist der Trick: Dein Daumen war schneller als dein Kopf.");
-      await sag("Du hast die App gar nicht wirklich öffnen wollen. Sie hat dich gerufen.");
-    }
-
-    await sag("Mach kurz mit. Drei Atemzüge, zusammen mit mir.");
-    await atmen(3);
-    await sag("Und? Fühlt sich der Daumen noch genauso an?");
-    await ideen();
+    await botSagt(`Stopp. ✋ Du willst ${schluessel === "andere" ? "eine App" : name} öffnen?`);
+    await botSagt(zufall(app.fakten));
+    await botSagt("Schreib mir ehrlich: Warum willst du gerade rein?");
+    const wahl = await chatten();
+    if (wahl === "gut") return await gewonnen(app.minuten);
+    return await letzteChance();
   } catch (e) {
     if (e !== ABBRUCH) throw e;
   }
@@ -361,15 +520,13 @@ async function gespraech(schluessel) {
 
 /* ---------- Einrichten ---------- */
 function linksBauen() {
-  if (window.BRAINROT_IN_CLAUDE) {
-    $("#links").innerHTML = '<p class="leise">Dafür brauchst du einen eigenen Link: Stell den Ordner <b>brainrot</b> auf <b>app.netlify.com/drop</b> online. Dann stehen hier die Links zum Kopieren.</p>';
-    return;
-  }
-  const basis = location.origin + location.pathname.replace(/index\.html$/, "");
+  /* In Claude kommt nur ein #anker an, kein ?app= */
+  const inClaude = !!window.BRAINROT_LINK;
+  const basis = inClaude ? window.BRAINROT_LINK : location.origin + location.pathname.replace(/index\.html$/, "");
   const box = $("#links");
   box.innerHTML = "";
-  ["tiktok", "youtube", "snapchat", "instagram"].forEach((k) => {
-    const url = basis + "?app=" + k;
+  ["youtube", "tiktok", "snapchat", "instagram"].forEach((k) => {
+    const url = basis + (inClaude ? "#" : "?app=") + k;
     const zeile = document.createElement("div");
     zeile.className = "kopierzeile";
     const code = document.createElement("code");
@@ -434,6 +591,11 @@ function start() {
   /* auch #tiktok geht – in Claude kommt nur das an */
   const app = new URLSearchParams(location.search).get("app") || location.hash.slice(1);
   if (app && APPS[app]) gespraech(app);
+  window.addEventListener("hashchange", () => {
+    const k = location.hash.slice(1);
+    if (APPS[k]) gespraech(k);
+  });
+  claudeHolen(); // schon mal nachfragen, ob Claude antworten kann
 
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
     navigator.serviceWorker.register("sw.js").catch(() => {});

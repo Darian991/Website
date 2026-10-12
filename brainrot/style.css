@@ -79,11 +79,33 @@ ol { padding-left: 22px; } li { margin: 6px 0; }
 @keyframes hops { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-5px); opacity: 1; } }
 @keyframes rein { from { opacity: 0; transform: translateY(8px); } }
 
-.antworten {
-  position: sticky; bottom: 0; display: flex; flex-direction: column; gap: 8px;
+.unten {
+  position: sticky; bottom: 0; display: flex; flex-direction: column; gap: 10px;
   padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
   background: linear-gradient(transparent, var(--bg) 18px);
 }
+.antworten { display: flex; flex-direction: column; gap: 8px; }
+.antworten:empty { display: none; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 8px 12px; border-radius: 999px; background: var(--karte);
+  border: 1px solid var(--karte2); font-size: 14px; animation: rein .25s ease-out;
+}
+.reihe { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+.reihe .knopf { padding: 13px 10px; }
+.eingabe { display: flex; gap: 8px; }
+.eingabe input {
+  flex: 1; min-width: 0; padding: 13px 16px; border-radius: 999px;
+  border: 1px solid var(--karte2); background: var(--karte); color: var(--text);
+  font: inherit; font-size: 16px; outline: none;
+}
+.eingabe input:focus { border-color: var(--pink); }
+.eingabe button {
+  width: 48px; height: 48px; flex: none; border-radius: 50%;
+  background: var(--verlauf); font-size: 18px; font-weight: 800;
+}
+.schritte li { margin: 8px 0; }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
 .knopf {
   width: 100%; padding: 15px 18px; border-radius: 16px;
   background: var(--karte); font-weight: 600; text-align: left;

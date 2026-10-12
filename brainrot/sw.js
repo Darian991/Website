@@ -1,6 +1,6 @@
 /* Damit brainrot auch ohne Internet startet. Bei Änderungen
    die Nummer erhöhen, sonst sehen Handys die alte Version. */
-const CACHE = "brainrot-v1";
+const CACHE = "brainrot-v2";
 const DATEIEN = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
