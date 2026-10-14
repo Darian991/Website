@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plastic Pollution Quiz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one narrow column, a depth gauge on top that sinks deeper with each question */
+:root{
+  --bg:#eef5f6; --surface:#ffffff; --fg:#0f2a33; --muted:#557079; --line:#cfe0e3;
+  --accent:#0b6e7f; --accent-ink:#ffffff; --coral:#d9573b;
+  --good:#1e8a4c; --good-bg:#e3f4ea; --bad:#c23b2a; --bad-bg:#fbe7e3;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#08161b; --surface:#0f242b; --fg:#e4f1f3; --muted:#8fb0b8; --line:#1f3e47;
+  --accent:#3fb6c8; --accent-ink:#04252b; --coral:#f07a5e;
+  --good:#5fd08f; --good-bg:#0f2e1f; --bad:#ff8a78; --bad-bg:#3a1712; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#08161b; --surface:#0f242b; --fg:#e4f1f3; --muted:#8fb0b8; --line:#1f3e47;
+  --accent:#3fb6c8; --accent-ink:#04252b; --coral:#f07a5e;
+  --good:#5fd08f; --good-bg:#0f2e1f; --bad:#ff8a78; --bad-bg:#3a1712; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:640px;margin:0 auto;padding-block:28px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:0;text-wrap:balance}
+.gauge{display:flex;align-items:center;gap:12px;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.track{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent);width:0;transition:width .3s}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:16px}
+.qmeta{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.04em}
+h2{font-family:var(--display);font-weight:600;font-size:22px;line-height:1.25;margin:0;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{font:inherit;text-align:left;color:var(--fg);background:transparent;border:2px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.opt .k{font-weight:700;color:var(--muted);min-width:1.2em}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{cursor:default}
+.feedback{border-radius:10px;padding:12px 14px;font-size:15px}
+.feedback.ok{background:var(--good-bg);color:var(--fg);border-left:4px solid var(--good)}
+.feedback.no{background:var(--bad-bg);color:var(--fg);border-left:4px solid var(--bad)}
+.feedback b{display:block;margin-bottom:2px}
+.btn{font:inherit;font-weight:700;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:13px 18px;cursor:pointer;align-self:flex-start}
+.btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.score{font-family:var(--display);font-weight:800;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:28px;color:var(--muted)}
+.review{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.review li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px}
+.review li.x{border-color:var(--bad)}
+.review .a{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Science quiz · Marine ecosystems</span>
+    <h1>Plastic Pollution in Marine Ecosystems</h1>
+    <div class="gauge"><div class="track"><div class="fill" id="fill"></div></div><span id="count">0 / 25</span></div>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+const Q=[
+ // Slide 1
+ ["What is plastic pollution described as for our oceans?",["A big problem","A small problem","No problem at all","A good thing"],0,"Slide 1: Plastic pollution is a big problem for our oceans."],
+ ["How much plastic ends up in the sea?",["Millions of pieces","A few hundred pieces","Only a handful","None"],0,"Slide 1: Millions of pieces of plastic end up in the sea."],
+ ["Plastic in the sea harms marine animals, plants, and their …",["Habitats","Weather","Mountains","Satellites"],0,"Slide 1: It harms marine animals, plants, and their habitats."],
+ // Slide 2
+ ["When does plastic pollution happen?",["When plastic waste ends up in nature","When plastic is recycled","When plastic is made in factories","When plastic is stored at home"],0,"Slide 2: Plastic pollution happens when plastic waste ends up in nature."],
+ ["Which of these is listed as an example of plastic pollution?",["Straws","Glass jars","Paper books","Wooden spoons"],0,"Slide 2: Examples include plastic bottles, bags, straws, and packaging."],
+ ["Which group contains only examples named on the slides?",["Bottles, bags, straws, packaging","Bottles, cans, tyres, nets","Bags, paper, glass, wood","Straws, metal, stones, sand"],0,"Slide 2: Plastic bottles, bags, straws, and packaging."],
+ ["How long can plastic take to break down?",["Hundreds of years","A few days","About one month","Exactly one year"],0,"Slide 2: Plastic can take hundreds of years to break down."],
+ ["How does much of the plastic reach the ocean?",["Through rivers and beaches","Through the air in clouds","Through underground volcanoes","It is made in the ocean"],0,"Slide 2: Much of it reaches the ocean through rivers and beaches."],
+ // Slide 3
+ ["Sea turtles can mistake plastic bags for …",["Jellyfish","Seaweed","Rocks","Other turtles"],0,"Slide 3: Sea turtles can mistake plastic bags for jellyfish."],
+ ["Which animals sometimes eat small pieces of plastic?",["Fish and seabirds","Cows and horses","Lions and tigers","Bees and ants"],0,"Slide 3: Fish and seabirds sometimes eat small pieces of plastic."],
+ ["Animals can get trapped in fishing nets and …",["Plastic waste","Coral reefs","Sand dunes","Ice"],0,"Slide 3: Animals can get trapped in fishing nets and plastic waste."],
+ ["What can eating plastic cause for animals?",["Injuries, starvation, or death","Faster growth","Better eyesight","Longer life"],0,"Slide 3: Eating plastic can cause injuries, starvation, or death."],
+ // Slide 4
+ ["What are microplastics?",["Tiny pieces of plastic","Very large plastic bottles","A type of fish","A cleaning machine"],0,"Slide 4: Microplastics are tiny pieces of plastic."],
+ ["Microplastics are smaller than …",["5 mm","5 cm","50 cm","5 m"],0,"Slide 4: Microplastics are smaller than 5 mm."],
+ ["Where do microplastics come from?",["Larger plastics breaking into smaller pieces, and other sources","Only from sea animals","From sand and rocks","From rain clouds"],0,"Slide 4: They come from larger plastics breaking into smaller pieces and other sources."],
+ ["How do fish and other sea animals take in microplastics?",["They accidentally eat them","They breathe them in on purpose","They build nests with them","They never touch them"],0,"Slide 4: Fish and other sea animals can accidentally eat them."],
+ ["Microplastics can move through the marine …",["Food chain","Weather system","Volcano","Coastline map"],0,"Slide 4: Microplastics can move through the marine food chain."],
+ // Slide 5
+ ["What does plastic pollution do to marine habitats?",["It damages them","It repairs them","It makes them bigger","Nothing"],0,"Slide 5: Plastic pollution damages marine habitats."],
+ ["What can plastic cover in the ocean, affecting its health?",["Coral reefs","Icebergs","Lighthouses","Islands"],0,"Slide 5: It can cover coral reefs and affect their health."],
+ ["Because of plastic pollution, animals may struggle to …",["Find food or survive","Learn to swim","See colours","Sleep at night"],0,"Slide 5: Animals may struggle to find food or survive."],
+ ["What can plastic pollution disturb?",["The balance of marine ecosystems","The phases of the moon","The temperature of the sun","The length of a day"],0,"Slide 5: Plastic pollution can disturb the balance of marine ecosystems."],
+ // Slide 6
+ ["Which of these helps reduce plastic pollution?",["Using reusable water bottles and shopping bags","Buying more single-use plastics","Throwing rubbish onto beaches","Burying plastic in the sand"],0,"Slide 6: Use reusable water bottles and shopping bags."],
+ ["What should we do with single-use plastics?",["Avoid unnecessary ones","Use as many as possible","Throw them into the sea","Collect them at home forever"],0,"Slide 6: Avoid unnecessary single-use plastics."],
+ ["What can people join to protect marine animals?",["Beach clean-ups","Fishing competitions","Boat races","Sandcastle contests"],0,"Slide 6: Join beach clean-ups to protect marine animals. Also: recycle plastic correctly and never throw rubbish into the sea or onto beaches."],
+ // Slide 7
+ ["According to the conclusion, what can make a big difference?",["Small actions","Only governments","Nothing at all","Building more factories"],0,"Slide 7: Plastic pollution is a serious threat, but small actions can make a big difference by reducing plastic waste and keeping oceans clean."]
+];
+
+const L="ABCD";
+let order,i,score,answers;
+const app=document.getElementById("app"),fill=document.getElementById("fill"),count=document.getElementById("count");
+const shuffle=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function start(){
+  order=Q.map(([q,o,c,e])=>{const opts=shuffle(o.map((t,n)=>({t,ok:n===c})));return{q,opts,e}});
+  i=0;score=0;answers=[];render();
+}
+function progress(n){fill.style.width=(n/Q.length*100)+"%";count.textContent=n+" / "+Q.length}
+function render(){
+  const it=order[i];progress(i);
+  app.innerHTML=`<section class="card" aria-live="polite">
+    <div class="qmeta"><span>QUESTION ${i+1} OF ${Q.length}</span><span>Score ${score}</span></div>
+    <h2>${esc(it.q)}</h2>
+    <div class="opts">${it.opts.map((o,n)=>`<button class="opt" id="opt${n}" data-n="${n}"><span class="k">${L[n]}</span><span>${esc(o.t)}</span></button>`).join("")}</div>
+    <div id="fb"></div></section>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>pick(+b.dataset.n));
+}
+function pick(n){
+  const it=order[i],ok=it.opts[n].ok;if(ok)score++;
+  answers.push({q:it.q,chosen:it.opts[n].t,right:it.opts.find(o=>o.ok).t,ok});
+  app.querySelectorAll(".opt").forEach((b,k)=>{b.disabled=true;if(it.opts[k].ok)b.classList.add("right");else if(k===n)b.classList.add("wrong")});
+  const last=i===Q.length-1;
+  document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"no"}"><b>${ok?"Correct!":"Not quite."}</b>${esc(it.e)}</div>
+    <button class="btn" id="next">${last?"See my result":"Next question"}</button>`;
+  progress(i+1);
+  const nx=document.getElementById("next");nx.focus();
+  nx.onclick=()=>{if(last)result();else{i++;render()}};
+}
+function result(){
+  const pct=Math.round(score/Q.length*100);
+  const msg=pct>=90?"Excellent! You know the slides really well.":pct>=70?"Good job! Check the questions you missed below.":pct>=50?"Not bad. Read the slides again and try once more.":"Keep practising. Go through the slides and try again.";
+  const wrong=answers.filter(a=>!a.ok);
+  app.innerHTML=`<section class="card">
+    <div class="qmeta"><span>YOUR RESULT</span><span>${pct}%</span></div>
+    <div class="score">${score}<small> / ${Q.length}</small></div>
+    <p style="margin:0">${msg}</p>
+    <div class="row"><button class="btn" id="again">Try again</button>${wrong.length?`<button class="btn ghost" id="retry">Practise only my mistakes (${wrong.length})</button>`:""}</div>
+    ${wrong.length?`<h2>Questions to review</h2><ul class="review">${wrong.map(a=>`<li class="x"><b>${esc(a.q)}</b><br><span class="a">Your answer: ${esc(a.chosen)}</span><br>Correct: ${esc(a.right)}</li>`).join("")}</ul>`:""}
+  </section>`;
+  document.getElementById("again").onclick=start;
+  const r=document.getElementById("retry");
+  if(r)r.onclick=()=>{const set=new Set(wrong.map(a=>a.q));order=shuffle(order.filter(o=>set.has(o.q)));
+    order.forEach(o=>o.opts=shuffle(o.opts));Qlen=order.length;i=0;score=0;answers=[];renderSub()};
+}
+// practice mode for missed questions only
+let Qlen=0;
+function renderSub(){
+  const it=order[i];fill.style.width=(i/Qlen*100)+"%";count.textContent=i+" / "+Qlen;
+  app.innerHTML=`<section class="card"><div class="qmeta"><span>PRACTICE ${i+1} OF ${Qlen}</span><span>Score ${score}</span></div>
+    <h2>${esc(it.q)}</h2><div class="opts">${it.opts.map((o,n)=>`<button class="opt" data-n="${n}"><span class="k">${L[n]}</span><span>${esc(o.t)}</span></button>`).join("")}</div><div id="fb"></div></section>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const n=+b.dataset.n,ok=it.opts[n].ok;if(ok)score++;
+    app.querySelectorAll(".opt").forEach((x,k)=>{x.disabled=true;if(it.opts[k].ok)x.classList.add("right");else if(k===n)x.classList.add("wrong")});
+    const last=i===Qlen-1;fill.style.width=((i+1)/Qlen*100)+"%";count.textContent=(i+1)+" / "+Qlen;
+    document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"no"}"><b>${ok?"Correct!":"Not quite."}</b>${esc(it.e)}</div><button class="btn" id="next">${last?"Finish practice":"Next question"}</button>`;
+    const nx=document.getElementById("next");nx.focus();
+    nx.onclick=()=>{if(last){app.innerHTML=`<section class="card"><div class="qmeta"><span>PRACTICE DONE</span></div><div class="score">${score}<small> / ${Qlen}</small></div><button class="btn" id="again">Start the full quiz again</button></section>`;document.getElementById("again").onclick=start}else{i++;renderSub()}};
+  });
+}
+start();
+</script>
+</body>
+</html>
