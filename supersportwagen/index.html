@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VELORAX Noctis – Hypersportwagen</title>
-<meta name="description" content="VELORAX Noctis – ein erfundener Hypersportwagen mit bis zu 1.950 PS. Stelle dir deinen Noctis im Konfigurator zusammen.">
+<title>Pagani Tempesta – Fan-Konfigurator</title>
+<meta name="description" content="Pagani Tempesta – ein erfundenes Pagani-Modell als Fan-Projekt. Stelle dir deinen Tempesta im Konfigurator zusammen.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
     --line: #232832;
     --text: #eef1f5;
     --muted: #8b93a1;
-    --accent: #ff4d1a;
-    --accent-2: #ffb21a;
+    --accent: #d4a24c;
+    --accent-2: #f0d08a;
     --radius: 14px;
     --display: "Michroma", "Eurostile", "Arial Black", sans-serif;
     --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -46,17 +46,18 @@
   .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
   .logo svg { width: 34px; height: 34px; }
   .logo span { font-family: var(--display); letter-spacing: .32em; font-size: 15px; }
+  .logo .fan { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--line); border-radius: 999px; padding: 3px 8px; }
   nav.links { display: flex; gap: 28px; }
   nav.links a { text-decoration: none; color: var(--muted); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; transition: color .2s; }
   nav.links a:hover { color: var(--text); }
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-    border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    border: 1px solid var(--accent); background: var(--accent); color: #120d05;
     padding: 12px 22px; border-radius: 999px; cursor: pointer;
     font: 600 13px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; text-decoration: none;
     transition: transform .15s, box-shadow .2s, background .2s;
   }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(255, 77, 26, .35); }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(212, 162, 76, .35); }
   .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
   .btn.ghost:hover { border-color: var(--text); box-shadow: none; }
 
@@ -65,7 +66,7 @@
   .hero::before {
     content: ""; position: absolute; inset: 0;
     background:
-      radial-gradient(60% 50% at 50% 70%, rgba(255, 77, 26, .18), transparent 70%),
+      radial-gradient(60% 50% at 50% 70%, rgba(212, 162, 76, .16), transparent 70%),
       radial-gradient(40% 40% at 80% 10%, rgba(80, 120, 255, .12), transparent 70%);
     pointer-events: none;
   }
@@ -73,7 +74,7 @@
   .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .4em; text-transform: uppercase; font-weight: 600; }
   .hero h1 {
     font-family: var(--display); font-weight: 400;
-    font-size: clamp(54px, 13vw, 170px); line-height: 1; letter-spacing: .08em;
+    font-size: clamp(40px, 10.5vw, 136px); line-height: 1; letter-spacing: .06em;
     margin: 18px 0 10px;
     background: linear-gradient(180deg, #fff 30%, #6d7480);
     -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -178,7 +179,7 @@
     transition: border-color .15s, background .15s;
   }
   .choice:hover { border-color: #3a4150; }
-  .choice[aria-pressed="true"] { border-color: var(--accent); background: rgba(255, 77, 26, .08); }
+  .choice[aria-pressed="true"] { border-color: var(--accent); background: rgba(212, 162, 76, .1); }
   .choice b { display: block; font-size: 14px; font-weight: 600; }
   .choice small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
   .choice .pr { color: var(--accent-2); font-size: 12px; margin-top: 6px; display: block; }
@@ -242,6 +243,7 @@
   @media (max-width: 720px) {
     .wrap { padding: 0 16px; }
     nav.links { display: none; }
+    header.top .btn { display: none; }
     .stats-strip .wrap { grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(2) { border-right: 0; }
     .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
@@ -259,12 +261,8 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="VELORAX Startseite">
-      <svg viewBox="0 0 40 40" aria-hidden="true">
-        <path d="M4 8 L20 34 L36 8 L28 8 L20 22 L12 8 Z" fill="url(#lg)"/>
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb21a"/><stop offset="1" stop-color="#ff4d1a"/></linearGradient></defs>
-      </svg>
-      <span>VELORAX</span>
+    <a class="logo" href="#top" aria-label="Pagani Tempesta Startseite">
+      <span>PAGANI</span><small class="fan">Fan-Projekt</small>
     </a>
     <nav class="links">
       <a href="#modell">Modell</a>
@@ -279,12 +277,12 @@
 <main id="top">
   <section class="hero" id="modell">
     <div class="wrap">
-      <div class="eyebrow">Limitiert auf 99 Exemplare</div>
-      <h1>NOCTIS</h1>
-      <p class="lead">Der Hypersportwagen, den es eigentlich nicht geben dürfte. Bis zu 1.950 PS, Karosserie komplett aus Carbon, gebaut für Menschen, die keine Grenzen kennen.</p>
+      <div class="eyebrow">Fan-Konzept · Limitiert auf 99 Exemplare</div>
+      <h1>TEMPESTA</h1>
+      <p class="lead">Ein Sturm aus Carbon, Titan und Leder. Ausgedacht im Stil von Pagani – mit Tropfen-Cockpit, aktiven Klappen und einem V12 im Rücken, der singt statt brüllt.</p>
       <div class="car-hero" id="heroCar"></div>
       <div class="cta">
-        <a class="btn" href="#konfigurator">Deinen Noctis bauen</a>
+        <a class="btn" href="#konfigurator">Deinen Tempesta bauen</a>
         <button class="btn ghost" type="button" id="heroStart">▶ Motor starten</button>
       </div>
     </div>
@@ -292,22 +290,22 @@
 
   <div class="stats-strip">
     <div class="wrap">
-      <div class="stat"><b>1.950</b><span>PS maximal</span></div>
-      <div class="stat"><b>1,9 s</b><span>0 – 100 km/h</span></div>
-      <div class="stat"><b>455</b><span>km/h Spitze</span></div>
-      <div class="stat"><b>1.200</b><span>kg Abtrieb</span></div>
+      <div class="stat"><b>1.400</b><span>PS maximal</span></div>
+      <div class="stat"><b>2,1 s</b><span>0 – 100 km/h</span></div>
+      <div class="stat"><b>390</b><span>km/h Spitze</span></div>
+      <div class="stat"><b>1.220</b><span>kg Leergewicht</span></div>
     </div>
   </div>
 
   <section class="block" id="technik">
     <div class="wrap">
       <div class="eyebrow">Antrieb</div>
-      <h2>Drei Herzen. Eine Wahl.</h2>
-      <p class="sub">Jeder Noctis wird um seinen Motor herum gebaut. Wähle zwischen dem kreischenden V12, dem gewaltigen W16 oder dem brutalen Hybrid mit drei Elektromotoren.</p>
+      <h2>Immer ein V12.</h2>
+      <p class="sub">Ein Pagani ohne Zwölfzylinder? Undenkbar. Wähle zwischen Biturbo, dem frei saugenden V12 mit Handschaltung oder dem Hybrid mit zwei Elektromotoren.</p>
       <div class="cards">
-        <div class="card"><h3>V12 BITURBO</h3><div class="big">1.350 PS</div><p>6,5 Liter, Drehzahl bis 9.800 U/min. Der klassische Schrei eines echten Supersportwagens.</p></div>
-        <div class="card"><h3>W16 QUAD-TURBO</h3><div class="big">1.600 PS</div><p>8,0 Liter und vier Turbolader. Schiebt an, als würde die Straße unter dir weggezogen.</p></div>
-        <div class="card"><h3>V8 HYBRID-TRI</h3><div class="big">1.950 PS</div><p>5,0-Liter-V8 plus drei E-Motoren mit Torque-Vectoring. Von 0 auf 100 in 1,9 Sekunden.</p></div>
+        <div class="card"><h3>V12 BITURBO</h3><div class="big">1.050 PS</div><p>6,0 Liter, zwei Turbolader, 1.300 Nm. Schiebt mit unendlicher Ruhe bis 375 km/h.</p></div>
+        <div class="card"><h3>V12 MANUALE</h3><div class="big">900 PS</div><p>7,3-Liter-Sauger mit 7-Gang-Handschaltung und offener Schaltkulisse. Dreht bis 9.200 U/min.</p></div>
+        <div class="card"><h3>V12 IBRIDO</h3><div class="big">1.400 PS</div><p>Biturbo-V12 plus zwei E-Motoren an der Vorderachse. Allrad, 0 auf 100 in 2,1 Sekunden.</p></div>
       </div>
     </div>
   </section>
@@ -316,14 +314,14 @@
     <div class="wrap feature">
       <div>
         <div class="eyebrow">Aerodynamik</div>
-        <h2>Geformt vom Wind.</h2>
-        <p class="sub">Die Linie des Noctis entstand im Windkanal, nicht auf dem Zeichenbrett. Aktiver Heckflügel, Venturi-Kanäle im Unterboden und ein Diffusor, der das Auto bei 300 km/h förmlich an die Straße saugt.</p>
+        <h2>Benannt nach dem Sturm.</h2>
+        <p class="sub">Wie alle Pagani trägt auch dieser den Namen eines Windes: Tempesta heißt Sturm. Vier aktive Klappen an Front und Heck stellen sich in jeder Kurve einzeln an, das Tropfen-Cockpit schneidet durch die Luft wie ein Flugzeugrumpf.</p>
         <ul>
-          <li>Chassis <span>Carbon-Monocoque, 82 kg</span></li>
-          <li>Getriebe <span>9-Gang Doppelkupplung</span></li>
-          <li>Bremsen <span>Carbon-Keramik, 420 mm</span></li>
-          <li>Reifen <span>vorn 285/30 R20 · hinten 355/25 R21</span></li>
-          <li>Abtrieb <span>bis 1.200 kg bei 280 km/h</span></li>
+          <li>Chassis <span>Carbo-Titan-Monocoque</span></li>
+          <li>Getriebe <span>7-Gang sequenziell oder manuell</span></li>
+          <li>Schrauben <span>1.400 Stück aus Titan, jede graviert</span></li>
+          <li>Räder <span>Zentralverschluss, vorn 21″ · hinten 22″</span></li>
+          <li>Abtrieb <span>bis 1.050 kg bei 280 km/h</span></li>
         </ul>
       </div>
       <div class="visual" id="wheelVisual" aria-hidden="true"></div>
@@ -333,14 +331,14 @@
   <section class="block" id="konfigurator">
     <div class="wrap">
       <div class="eyebrow">Konfigurator</div>
-      <h2>Bau deinen Noctis.</h2>
+      <h2>Bau deinen Tempesta.</h2>
       <p class="sub">Lack, Felgen, Motor, Flügel, Innenraum – jede Wahl siehst du sofort am Auto. Deine Zusammenstellung wird gespeichert und lässt sich als Link teilen.</p>
 
       <div class="config">
         <div class="stage-col">
           <div class="stage" id="stage">
             <div class="speed"></div>
-            <div class="stage-name">VELORAX NOCTIS<b id="stageEngine">V12 BITURBO</b></div>
+            <div class="stage-name">PAGANI TEMPESTA<b id="stageEngine">V12 BITURBO</b></div>
             <div id="stageCar"></div>
           </div>
           <div class="stage-actions">
@@ -366,7 +364,7 @@
         <div class="summary-grid">
           <div>
             <div class="eyebrow">Zusammenfassung</div>
-            <h2 style="margin-bottom:20px">Dein Noctis</h2>
+            <h2 style="margin-bottom:20px">Dein Tempesta</h2>
             <table>
               <tbody id="sumBody"></tbody>
               <tfoot><tr><td>Gesamtpreis</td><td></td><td id="sumTotal"></td></tr></tfoot>
@@ -379,11 +377,11 @@
             </div>
             <div class="field">
               <label for="plateName">Name für dein Auto</label>
-              <input id="plateName" maxlength="24" placeholder="z. B. Schwarzer Blitz">
+              <input id="plateName" maxlength="24" placeholder="z. B. Bora Nera">
             </div>
             <button class="btn" type="button" id="order" style="width:100%">Jetzt reservieren</button>
             <button class="btn ghost" type="button" id="share" style="width:100%;margin-top:10px">🔗 Link zur Konfiguration kopieren</button>
-            <p class="note">VELORAX und der Noctis sind frei erfunden. Es wird nichts bestellt und nichts bezahlt – das hier ist nur zum Träumen.</p>
+            <p class="note">Fan-Projekt: Den Pagani Tempesta gibt es nicht, und diese Seite ist keine offizielle Seite von Pagani. Es wird nichts bestellt und nichts bezahlt – das hier ist nur zum Träumen.</p>
           </div>
         </div>
       </div>
@@ -393,8 +391,8 @@
 
 <footer>
   <div class="wrap">
-    <div>© VELORAX Automobili · Fantasie-Marke, kein echtes Unternehmen</div>
-    <div>Noctis · Hypersportwagen · 99 Exemplare</div>
+    <div>Fan-Projekt · Kein Angebot und keine offizielle Seite von Pagani Automobili</div>
+    <div>Tempesta · erfundenes Modell · nur zum Träumen</div>
   </div>
 </footer>
 
@@ -415,23 +413,26 @@
   /* =========================================================
      Optionen
      ========================================================= */
-  const BASE_PRICE = 2890000;
+  const BASE_PRICE = 3150000;
 
   const PAINTS = [
-    { id: "obsidian", name: "Obsidian Schwarz", c: "#101217", p: 0 },
-    { id: "arktis",   name: "Arktis Weiß",      c: "#e6e9ed", p: 0 },
-    { id: "inferno",  name: "Inferno Rot",      c: "#b5121b", p: 4500 },
-    { id: "tiefsee",  name: "Tiefsee Blau",     c: "#123f95", p: 4500 },
-    { id: "toxic",    name: "Toxic Grün",       c: "#5cc91a", p: 6000 },
-    { id: "solar",    name: "Solar Orange",     c: "#ff6a00", p: 6000 },
-    { id: "royal",    name: "Royal Violett",    c: "#4b1f8a", p: 8000 },
-    { id: "sand",     name: "Wüstensand",       c: "#c8ad85", p: 8000 },
-    { id: "silber",   name: "Flüssig-Silber",   c: "chrome", sw: "linear-gradient(160deg,#fbfcfe,#8d96a1 45%,#eef1f4 55%,#5e666f)", p: 12000 },
-    { id: "carbon",   name: "Sichtcarbon",      c: "carbon", sw: "repeating-linear-gradient(45deg,#16181c 0 4px,#30343c 4px 8px)", p: 85000 }
+    { id: "nero",     name: "Nero Profondo",    c: "#101217", p: 0 },
+    { id: "bianco",   name: "Bianco Perla",     c: "#e9e6e0", p: 0 },
+    { id: "rosso",    name: "Rosso Corsa",      c: "#b5121b", p: 6500 },
+    { id: "blu",      name: "Blu Tricolore",    c: "#1c4fa0", p: 6500 },
+    { id: "verde",    name: "Verde Smeraldo",   c: "#0f6b45", p: 8000 },
+    { id: "arancio",  name: "Arancio Sole",     c: "#f2741c", p: 8000 },
+    { id: "viola",    name: "Viola Imperiale",  c: "#4b1f6a", p: 9500 },
+    { id: "oro",      name: "Oro Sabbia",       c: "#c8ad85", p: 9500 },
+    { id: "argento",  name: "Argento Liquido",  c: "chrome", sw: "linear-gradient(160deg,#fbfcfe,#8d96a1 45%,#eef1f4 55%,#5e666f)", p: 14000 },
+    { id: "carbon",   name: "Carbonio a vista", c: "carbon", sw: "repeating-linear-gradient(45deg,#16181c 0 4px,#30343c 4px 8px)", p: 95000 },
+    { id: "carbonblu",   name: "Carbonio Blu",   c: "carbonblu", sw: "repeating-linear-gradient(45deg,#0b1a3a 0 4px,#24467e 4px 8px)", p: 125000 },
+    { id: "carbonrosso", name: "Carbonio Rosso", c: "carbonrosso", sw: "repeating-linear-gradient(45deg,#3a0b10 0 4px,#7e1f2a 4px 8px)", p: 125000 }
   ];
   const ACCENTS = [
     { id: "none",   name: "Einfarbig",        c: null, p: 0 },
     { id: "carbon", name: "Carbon",           c: "carbon", sw: "repeating-linear-gradient(45deg,#16181c 0 4px,#30343c 4px 8px)", p: 15000 },
+    { id: "carbonblu", name: "Carbonio Blu",  c: "carbonblu", sw: "repeating-linear-gradient(45deg,#0b1a3a 0 4px,#24467e 4px 8px)", p: 32000 },
     { id: "schwarz",name: "Schwarz",          c: "#0c0d10", p: 9000 },
     { id: "weiss",  name: "Weiß",             c: "#eef0f2", p: 9000 },
     { id: "gold",   name: "Gold",             c: "#c9a24a", p: 14000 },
@@ -439,10 +440,10 @@
     { id: "blau",   name: "Blau",             c: "#1449b8", p: 9000 }
   ];
   const RIMS = [
-    { id: "stern",   name: "Stern",        info: "5 Speichen, Alu geschmiedet", p: 0 },
-    { id: "ypsilon", name: "Ypsilon",      info: "10 Y-Speichen, Magnesium",    p: 12000 },
-    { id: "turbine", name: "Turbine",      info: "Hohlspeichen aus Carbon",     p: 38000 },
-    { id: "aero",    name: "Aero-Scheibe", info: "Geschlossen, weniger Luftwiderstand", p: 22000 }
+    { id: "stern",   name: "Stella",       info: "5 Speichen, Alu geschmiedet",  p: 0 },
+    { id: "ypsilon", name: "Forcella",     info: "10 Y-Speichen, Magnesium",     p: 12000 },
+    { id: "turbine", name: "Turbina",      info: "Hohlspeichen aus Carbon",      p: 38000 },
+    { id: "aero",    name: "Disco",        info: "Geschlossene Aero-Scheibe",    p: 22000 }
   ];
   const RIM_COLORS = [
     { id: "silber",   name: "Silber",   c: "#c9ced5", p: 0 },
@@ -460,35 +461,37 @@
     { id: "schwarz", name: "Schwarz", c: "#25272c", p: 0 }
   ];
   const ENGINES = [
-    { id: "v12", name: "V12 Biturbo",     info: "6,5 l · 1.350 PS · 1.500 Nm", ps: 1350, acc: 2.5, top: 425, weight: 1420, pitch: 1.0, p: 0 },
-    { id: "w16", name: "W16 Quad-Turbo",  info: "8,0 l · 1.600 PS · 1.800 Nm", ps: 1600, acc: 2.3, top: 445, weight: 1560, pitch: 0.75, p: 350000 },
-    { id: "hyb", name: "V8 Hybrid-Tri",   info: "5,0 l + 3 E-Motoren · 1.950 PS", ps: 1950, acc: 1.9, top: 440, weight: 1610, pitch: 1.25, p: 520000 }
+    { id: "v12", name: "V12 Biturbo",  info: "6,0 l · 1.050 PS · 1.300 Nm",       ps: 1050, acc: 2.6, top: 375, weight: 1250, pitch: 0.9, p: 0 },
+    { id: "man", name: "V12 Manuale",  info: "7,3 l Sauger · 900 PS · Handschaltung", ps: 900, acc: 2.9, top: 360, weight: 1220, pitch: 1.3, p: 180000 },
+    { id: "hyb", name: "V12 Ibrido",   info: "6,0 l + 2 E-Motoren · 1.400 PS",     ps: 1400, acc: 2.1, top: 390, weight: 1390, pitch: 1.1, p: 420000 }
   ];
   const WINGS = [
-    { id: "aktiv",  name: "Aktiv versenkt", info: "Fährt bei Bedarf aus",     down: 450,  top: 10,  p: 0 },
-    { id: "track",  name: "Track-Flügel",   info: "Fest, für die Rennstrecke", down: 850,  top: -12, p: 45000 },
-    { id: "swan",   name: "Schwanenhals XL",info: "Maximaler Abtrieb",         down: 1200, top: -25, p: 78000 }
+    { id: "aktiv",  name: "Aktive Klappen", info: "Vier Klappen vorn und hinten", down: 500,  top: 10,  p: 0 },
+    { id: "track",  name: "Heckflügel",     info: "Fest, für die Rennstrecke",    down: 800,  top: -10, p: 45000 },
+    { id: "swan",   name: "Rennflügel R",   info: "Schwanenhals, maximaler Abtrieb", down: 1050, top: -22, p: 78000 }
   ];
   const INTERIORS = [
-    { id: "nero",    name: "Nero Schwarz", c: "#1c1c1f", p: 0 },
-    { id: "cognac",  name: "Cognac",       c: "#8a4b22", p: 6500 },
-    { id: "rosso",   name: "Rosso",        c: "#8e1520", p: 6500 },
-    { id: "elfenbein", name: "Elfenbein",  c: "#e7dcc6", p: 6500 },
-    { id: "petrol",  name: "Petrol",       c: "#1f4d55", p: 6500 },
-    { id: "alcantara", name: "Alcantara Grau", c: "#4a4d54", p: 9000 }
+    { id: "nero",    name: "Pelle Nera",      c: "#1c1c1f", p: 0 },
+    { id: "tabacco", name: "Cuoio Tabacco",   c: "#8a4b22", p: 7500 },
+    { id: "bordeaux",name: "Rosso Bordeaux",  c: "#7a1420", p: 7500 },
+    { id: "avorio",  name: "Avorio",          c: "#e7dcc6", p: 7500 },
+    { id: "blunotte",name: "Blu Notte",       c: "#1b2a4a", p: 7500 },
+    { id: "alcantara", name: "Alcantara Grigio", c: "#4a4d54", p: 9000 }
   ];
   const EXTRAS = [
     { id: "aeroCarbon", name: "Carbon-Aeropaket", info: "Splitter, Schweller & Diffusor in Sichtcarbon · −60 kg", p: 95000 },
     { id: "titan",      name: "Titan-Sportauspuff", info: "Blau angelaufene Endrohre, lauterer Sound", p: 28000 },
     { id: "lift",       name: "Liftsystem vorne", info: "Hebt die Front um 45 mm für Rampen", p: 9500 },
+    { id: "motorglas",  name: "Gläserne Motorabdeckung", info: "Zeigt die goldenen Ansaugtrichter des V12", p: 24000 },
     { id: "sterne",     name: "Sternenhimmel", info: "1.200 Glasfaser-Lichtpunkte im Dachhimmel", p: 18000 },
     { id: "telemetrie", name: "Track-Telemetrie", info: "Rundenzeiten, Videos, G-Kräfte live", p: 14000 },
     { id: "gepaeck",    name: "Maßgepäck-Set", info: "Zwei Taschen, passend zur Innenausstattung", p: 22000 },
+    { id: "gravur",     name: "Gravur am Motor", info: "Dein Name auf einer Titanplakette", p: 6000 },
     { id: "jet",        name: "Übergabe per Privatjet", info: "Wir liefern weltweit vor deine Haustür", p: 45000 }
   ];
 
   const DEFAULT = {
-    paint: "obsidian", accent: "none", rim: "stern", rimColor: "silber", caliper: "rot",
+    paint: "nero", accent: "none", rim: "stern", rimColor: "silber", caliper: "rot",
     engine: "v12", wing: "aktiv", interior: "nero", extras: []
   };
 
@@ -511,27 +514,39 @@
   function loadState() {
     const m = location.hash.match(/^#c=(.+)$/);
     if (m) { try { return sanitize(JSON.parse(decodeURIComponent(m[1]))); } catch (e) { /* weiter */ } }
-    try { return sanitize(JSON.parse(localStorage.getItem("noctis-config"))); } catch (e) { return { ...DEFAULT }; }
+    try { return sanitize(JSON.parse(localStorage.getItem("tempesta-config"))); } catch (e) { return { ...DEFAULT }; }
   }
   let state = loadState();
   function saveState() {
-    try { localStorage.setItem("noctis-config", JSON.stringify(state)); } catch (e) { /* ohne Speicher geht es auch */ }
+    try { localStorage.setItem("tempesta-config", JSON.stringify(state)); } catch (e) { /* ohne Speicher geht es auch */ }
   }
 
   /* =========================================================
      Auto zeichnen (SVG, Seitenansicht)
      ========================================================= */
   const BODY =
-    "M 70 304 L 55 290 Q 50 270 75 262 " +
-    "C 160 246, 260 233, 340 222 " +
-    "C 400 190, 440 158, 510 150 " +
-    "C 580 145, 640 150, 690 170 " +
-    "C 760 195, 840 205, 905 212 " +
-    "L 935 218 Q 950 226 946 246 L 940 292 L 905 305 " +
+    "M 70 304 L 52 290 Q 46 272 70 264 " +
+    "C 118 254, 160 236, 228 230 " +
+    "C 288 226, 318 238, 352 238 " +
+    "C 450 238, 560 230, 640 222 " +
+    "C 712 214, 760 204, 816 206 " +
+    "C 876 210, 924 220, 942 232 " +
+    "Q 954 246 948 272 L 940 292 L 905 305 " +
     "L 838 305 A 78 78 0 0 0 682 305 " +
     "L 312 305 A 78 78 0 0 0 158 305 Z";
+  const CANOPY =
+    "M 326 240 C 380 212, 440 174, 520 164 C 604 157, 690 174, 772 208 " +
+    "C 700 218, 560 230, 326 240 Z";
+  const GLASS =
+    "M 356 236 C 400 213, 450 184, 520 174 C 576 169, 620 175, 652 186 " +
+    "C 640 198, 630 208, 622 216 C 540 224, 450 230, 356 236 Z";
 
   const pt = (cx, cy, r, a) => [(cx + r * Math.cos(a)).toFixed(2), (cy + r * Math.sin(a)).toFixed(2)];
+
+  function carbonPattern(id, dark, light) {
+    return `<pattern id="${id}" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="${dark}"/><rect width="4" height="4" fill="${light}"/><rect x="4" y="4" width="4" height="4" fill="${light}"/></pattern>`;
+  }
 
   function spokes(design, cx, cy, color, P) {
     let s = "";
@@ -585,55 +600,63 @@
       <g class="spin">
         ${spokes(cfg.rim, cx, cy, rimC, P)}
         <circle cx="${cx}" cy="${cy}" r="47" fill="none" stroke="${rimC}" stroke-width="3.5"/>
-        <circle cx="${cx}" cy="${cy}" r="12" fill="${rimC}"/>
-        <circle cx="${cx}" cy="${cy}" r="7" fill="#0b0c0e"/>
-        <path d="M${cx - 3} ${cy - 3} L${cx} ${cy + 3} L${cx + 3} ${cy - 3}" stroke="#ff4d1a" stroke-width="1.6" fill="none"/>
+        <circle cx="${cx}" cy="${cy}" r="13" fill="${rimC}"/>
+        <path d="${[0, 1, 2, 3, 4, 5].map((i) => (i ? "L" : "M") + pt(cx, cy, 9, (i / 6) * Math.PI * 2).join(" ")).join(" ")} Z" fill="#2a2c31" stroke="#8a8f97" stroke-width="1"/>
+        <circle cx="${cx}" cy="${cy}" r="3.5" fill="#d4a24c"/>
       </g>`;
   }
 
   function carSVG(cfg, P) {
     const paint = byId(PAINTS, cfg.paint);
     const accent = byId(ACCENTS, cfg.accent);
-    const fill = (c) => (c === "chrome" ? `url(#${P}chrome)` : c === "carbon" ? `url(#${P}carbon)` : c);
+    const fill = (c) => (c === "chrome" || c.startsWith("carbon") ? `url(#${P}${c})` : c);
     const bodyFill = fill(paint.c);
     const interior = byId(INTERIORS, cfg.interior).c;
     const carbonPack = cfg.extras.includes("aeroCarbon");
     const trim = carbonPack ? `url(#${P}carbon)` : "#121317";
     const titan = cfg.extras.includes("titan");
-    const lineColor = accent.c ? fill(accent.c) : "rgba(255,255,255,.55)";
+    const pipe = titan ? `url(#${P}titan)` : "#3a3d43";
 
     let wing = "";
     if (cfg.wing === "aktiv") {
-      wing = `<path d="M 878 209 L 936 216 L 940 207 L 902 202 Z" fill="${bodyFill}"/>
-              <path d="M 878 209 L 936 216 L 940 207 L 902 202 Z" fill="url(#${P}shade)"/>`;
+      // Aktive Klappen wie beim Huayra: zwei vorn, zwei hinten (seitlich sieht man je eine)
+      wing = `<path d="M 168 243 L 212 235 L 214 225 L 174 233 Z" fill="${bodyFill}"/>
+              <path d="M 168 243 L 212 235 L 214 225 L 174 233 Z" fill="rgba(0,0,0,.3)"/>
+              <path d="M 866 212 L 912 219 L 918 207 L 876 201 Z" fill="${bodyFill}"/>
+              <path d="M 866 212 L 912 219 L 918 207 L 876 201 Z" fill="rgba(0,0,0,.3)"/>`;
     } else if (cfg.wing === "track") {
-      wing = `<rect x="866" y="166" width="7" height="44" rx="2" fill="#111"/>
-              <rect x="904" y="164" width="7" height="50" rx="2" fill="#111"/>
-              <path d="M 818 162 Q 880 150 950 156 L 950 167 Q 880 163 820 172 Z" fill="${trim === "#121317" ? `url(#${P}carbon)` : trim}"/>
-              <path d="M 936 144 L 952 146 L 954 180 L 938 178 Z" fill="#141518"/>`;
+      wing = `<rect x="866" y="168" width="7" height="44" rx="2" fill="#111"/>
+              <rect x="904" y="166" width="7" height="52" rx="2" fill="#111"/>
+              <path d="M 818 164 Q 880 152 950 158 L 950 169 Q 880 165 820 174 Z" fill="url(#${P}carbon)"/>
+              <path d="M 936 146 L 952 148 L 954 182 L 938 180 Z" fill="#141518"/>`;
     } else {
-      wing = `<path d="M 872 208 C 868 175, 872 150, 884 132" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
-              <path d="M 912 214 C 910 180, 916 152, 926 130" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
+      wing = `<path d="M 872 210 C 868 175, 872 150, 884 132" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <path d="M 912 218 C 910 180, 916 152, 926 130" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
               <path d="M 788 134 Q 870 118 962 124 L 962 138 Q 870 134 790 146 Z" fill="url(#${P}carbon)"/>
               <path d="M 948 108 L 966 110 L 968 152 L 950 150 Z" fill="#141518"/>
               <path d="M 788 134 Q 870 118 962 124" stroke="rgba(255,255,255,.25)" stroke-width="1.2" fill="none"/>`;
     }
 
     const stars = cfg.extras.includes("sterne")
-      ? [[470, 178], [500, 168], [530, 165], [560, 164], [590, 168], [515, 175], [545, 172], [575, 176], [610, 172]]
+      ? [[470, 190], [500, 181], [530, 177], [560, 176], [590, 178], [515, 186], [545, 183], [575, 186], [610, 184]]
           .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.1" fill="#fff" opacity=".9"/>`).join("")
       : "";
+
+    // Gläserne Motorabdeckung mit goldenen Ansaugtrichtern
+    const engineGlass = cfg.extras.includes("motorglas")
+      ? `<path d="M 664 190 C 712 196, 744 202, 770 208 L 756 214 C 724 210, 694 206, 662 202 Z" fill="#0a0c10"/>
+         ${[672, 688, 704, 720, 736].map((x, i) => `<rect x="${x}" y="${195 + i * 2.2}" width="9" height="${6 - i * 0.4}" rx="2" fill="#d4a24c"/>`).join("")}
+         <path d="M 664 190 C 712 196, 744 202, 770 208 L 756 214 C 724 210, 694 206, 662 202 Z" fill="url(#${P}glass)" opacity=".6"/>`
+      : `<path d="M 664 196 C 712 200, 744 205, 768 209" stroke="rgba(0,0,0,.35)" stroke-width="1.4" fill="none"/>`;
 
     const lift = cfg.extras.includes("lift") ? "rotate(-0.6 760 302)" : "";
 
     return `
-<svg viewBox="0 0 1000 400" role="img" aria-label="VELORAX Noctis in ${paint.name}" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1000 400" role="img" aria-label="Pagani Tempesta in ${paint.name}" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <pattern id="${P}carbon" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
-      <rect width="8" height="8" fill="#17191d"/>
-      <rect width="4" height="4" fill="#2d3038"/>
-      <rect x="4" y="4" width="4" height="4" fill="#2d3038"/>
-    </pattern>
+    ${carbonPattern(P + "carbon", "#17191d", "#2d3038")}
+    ${carbonPattern(P + "carbonblu", "#0b1a3a", "#24467e")}
+    ${carbonPattern(P + "carbonrosso", "#3a0b10", "#7e1f2a")}
     <linearGradient id="${P}chrome" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#fbfcfe"/><stop offset=".35" stop-color="#97a0aa"/>
       <stop offset=".5" stop-color="#eef1f4"/><stop offset=".78" stop-color="#58606a"/><stop offset="1" stop-color="#c8ced5"/>
@@ -678,47 +701,56 @@
     ${wheel(235, 302, cfg, true, P)}
     ${wheel(760, 302, cfg, false, P)}
 
+    <!-- Karosserie -->
     <path d="${BODY}" fill="${bodyFill}"/>
     ${accent.c ? `<g clip-path="url(#${P}bodyClip)">
-        <path d="M 40 272 C 300 268, 560 262, 980 254 L 980 330 L 40 330 Z" fill="${fill(accent.c)}"/>
+        <path d="M 40 276 C 300 272, 560 266, 980 258 L 980 330 L 40 330 Z" fill="${fill(accent.c)}"/>
       </g>` : ""}
     <path d="${BODY}" fill="url(#${P}shade)"/>
 
-    <!-- Innenraum durch die Scheibe -->
-    <path d="M 548 210 C 549 186, 560 170, 576 168 C 590 169, 594 186, 588 212 Z" fill="${interior}"/>
-    <path d="M 470 214 C 478 200, 492 196, 506 198 L 520 212 Z" fill="${interior}" opacity=".85"/>
-    <path d="M 352 224 C 405 196, 450 166, 512 158 C 575 152, 628 158, 672 178 C 640 196, 600 204, 560 208 C 480 214, 410 220, 352 224 Z" fill="url(#${P}glass)"/>
+    <!-- Tropfen-Cockpit -->
+    <path d="${CANOPY}" fill="${bodyFill}"/>
+    <path d="${CANOPY}" fill="url(#${P}shade)"/>
+    ${engineGlass}
+    <path d="M 548 216 C 549 196, 560 182, 576 180 C 590 181, 594 196, 588 218 Z" fill="${interior}"/>
+    <path d="M 470 222 C 478 206, 492 202, 506 204 L 520 220 Z" fill="${interior}" opacity=".85"/>
+    <path d="${GLASS}" fill="url(#${P}glass)"/>
     ${stars}
-    <path d="M 420 196 C 470 170, 530 160, 600 160" stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none"/>
+    <path d="M 420 206 C 470 186, 530 177, 600 177" stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none"/>
+    <path d="M 326 240 C 450 234, 600 224, 772 208" stroke="#d4a24c" stroke-width="1.2" fill="none" opacity=".7"/>
 
-    <!-- Lichtkante -->
-    <path d="M 110 258 C 350 236, 650 224, 902 218" stroke="rgba(255,255,255,.28)" stroke-width="1.6" fill="none"/>
+    <!-- Lichtkanten über den Kotflügeln -->
+    <path d="M 100 258 C 150 246, 190 236, 240 233" stroke="rgba(255,255,255,.35)" stroke-width="1.6" fill="none"/>
+    <path d="M 700 218 C 750 210, 800 208, 860 212" stroke="rgba(255,255,255,.3)" stroke-width="1.6" fill="none"/>
 
-    <!-- Seitenlinie (Signatur) -->
-    <path d="M 572 214 C 528 236, 520 280, 566 304" stroke="${lineColor}" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Seitlicher Lufteinlass vor dem Hinterrad -->
+    <path d="M 600 246 C 630 238, 664 238, 690 248 C 684 262, 680 276, 682 290 C 655 286, 625 284, 604 286 C 612 272, 610 258, 600 246 Z" fill="url(#${P}intake)"/>
+    <path d="M 612 258 L 684 260 M 614 270 L 682 272 M 612 282 L 680 283" stroke="#2a2d33" stroke-width="2"/>
 
-    <!-- Lufteinlass -->
-    <path d="M 592 240 C 625 232, 662 236, 694 252 L 684 286 C 655 281, 622 280, 596 282 C 604 268, 602 252, 592 240 Z" fill="url(#${P}intake)"/>
-    <path d="M 604 252 L 684 258 M 606 264 L 682 270 M 604 276 L 680 280" stroke="#2a2d33" stroke-width="2"/>
+    <!-- Türfuge -->
+    <path d="M 344 300 C 346 270, 350 252, 352 240" stroke="rgba(0,0,0,.45)" stroke-width="1.6" fill="none"/>
 
-    <!-- Türfuge, Spiegel -->
-    <path d="M 340 300 C 342 262, 352 238, 372 222" stroke="rgba(0,0,0,.45)" stroke-width="1.6" fill="none"/>
-    <path d="M 386 214 C 384 202, 396 196, 414 197 L 420 206 C 410 208, 398 212, 386 214 Z" fill="${bodyFill}"/>
-    <path d="M 386 214 C 384 202, 396 196, 414 197 L 420 206 C 410 208, 398 212, 386 214 Z" fill="rgba(0,0,0,.25)"/>
+    <!-- Spiegel auf dünnem Arm -->
+    <path d="M 410 222 C 400 206, 390 198, 376 196" stroke="${bodyFill}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="366" cy="194" rx="15" ry="7.5" fill="${bodyFill}"/>
+    <ellipse cx="366" cy="194" rx="15" ry="7.5" fill="url(#${P}shade)"/>
 
-    <!-- Front -->
-    <path d="M 62 290 L 150 284 L 144 298 L 70 301 Z" fill="#07080a"/>
-    <path d="M 70 266 C 100 261, 135 255, 172 249 L 164 258 C 128 263, 98 268, 74 273 Z" fill="#cfe8ff" filter="url(#${P}glow)" opacity=".8"/>
-    <path d="M 70 266 C 100 261, 135 255, 172 249 L 164 258 C 128 263, 98 268, 74 273 Z" fill="#f4fbff"/>
+    <!-- Front: tropfenförmiger Scheinwerfer, Lufteinlass -->
+    <path d="M 60 290 L 146 285 L 140 299 L 68 302 Z" fill="#07080a"/>
+    <path d="M 78 268 C 98 256, 136 250, 162 251 C 150 262, 112 271, 78 268 Z" fill="#cfe8ff" filter="url(#${P}glow)" opacity=".8"/>
+    <path d="M 78 268 C 98 256, 136 250, 162 251 C 150 262, 112 271, 78 268 Z" fill="#f4fbff"/>
+    <circle cx="146" cy="255" r="3" fill="#fff"/>
 
-    <!-- Heck -->
-    <path d="M 902 216 L 945 224 L 946 232 L 900 224 Z" fill="#ff2121" filter="url(#${P}glow)"/>
-    <path d="M 902 216 L 945 224 L 946 232 L 900 224 Z" fill="#ff4040"/>
-    <circle cx="928" cy="268" r="10" fill="${titan ? `url(#${P}titan)` : "#2b2d31"}"/>
-    <circle cx="928" cy="268" r="6" fill="#050506"/>
+    <!-- Heck: runde Rückleuchten, Endrohre in der Mitte -->
+    <circle cx="938" cy="238" r="7" fill="#ff2121" filter="url(#${P}glow)"/>
+    <circle cx="938" cy="238" r="6" fill="#ff4040"/>
+    <circle cx="945" cy="252" r="5.5" fill="#ff4040"/>
+    <path d="M 922 258 L 950 256 Q 958 256 958 264 L 958 276 Q 958 284 950 284 L 922 284 Z" fill="#141518"/>
+    <circle cx="950" cy="263" r="6" fill="${pipe}"/><circle cx="950" cy="263" r="3.5" fill="#050506"/>
+    <circle cx="950" cy="277" r="6" fill="${pipe}"/><circle cx="950" cy="277" r="3.5" fill="#050506"/>
 
     <!-- Anbauteile -->
-    <path d="M 48 302 L 162 304 L 158 311 L 46 308 Z" fill="${trim}"/>
+    <path d="M 46 302 L 162 304 L 158 311 L 44 308 Z" fill="${trim}"/>
     <path d="M 314 302 L 680 302 L 674 312 L 320 312 Z" fill="${trim}"/>
     <path d="M 858 302 L 942 292 L 944 306 L 862 313 Z" fill="${trim}"/>
 
@@ -825,10 +857,10 @@
     if (cfg.extras.includes("aeroCarbon")) weight -= 60;
     if (cfg.paint === "carbon") weight -= 25;
     if (cfg.rim === "turbine") weight -= 12;
-    const acc = Math.max(1.7, eng.acc + (weight - eng.weight) * 0.002);
+    const acc = Math.max(1.9, eng.acc + (weight - eng.weight) * 0.002);
     const top = eng.top + wing.top + (cfg.rim === "aero" ? 5 : 0);
     const items = [
-      ["Basispreis", "VELORAX Noctis", BASE_PRICE],
+      ["Basispreis", "Pagani Tempesta", BASE_PRICE],
       ["Lackierung", byId(PAINTS, cfg.paint).name, byId(PAINTS, cfg.paint).p],
       ["Zweifarbig", byId(ACCENTS, cfg.accent).name, byId(ACCENTS, cfg.accent).p],
       ["Felgen", byId(RIMS, cfg.rim).name, byId(RIMS, cfg.rim).p],
@@ -872,13 +904,13 @@
     const r = compute(state);
     $("stageEngine").textContent = r.eng.name.toUpperCase();
     $("vPs").textContent = r.eng.ps.toLocaleString("de-DE") + " PS";
-    $("bPs").style.width = (r.eng.ps / 2000) * 100 + "%";
+    $("bPs").style.width = (r.eng.ps / 1500) * 100 + "%";
     $("vAcc").textContent = r.acc.toFixed(1).replace(".", ",") + " s";
-    $("bAcc").style.width = ((3.2 - r.acc) / (3.2 - 1.6)) * 100 + "%";
+    $("bAcc").style.width = ((3.4 - r.acc) / (3.4 - 1.8)) * 100 + "%";
     $("vTop").textContent = r.top + " km/h";
-    $("bTop").style.width = (r.top / 480) * 100 + "%";
+    $("bTop").style.width = (r.top / 420) * 100 + "%";
     $("vDown").textContent = r.wing.down.toLocaleString("de-DE") + " kg";
-    $("bDown").style.width = (r.wing.down / 1300) * 100 + "%";
+    $("bDown").style.width = (r.wing.down / 1150) * 100 + "%";
     $("price").textContent = euro.format(r.total);
 
     $("sumBody").innerHTML = r.items.map(([k, v, p]) =>
@@ -959,12 +991,12 @@
     const owner = $("owner").value.trim();
     const nick = $("plateName").value.trim();
     const r = compute(state);
-    const nr = "VX-N" + String(Math.floor(Math.random() * 99) + 1).padStart(2, "0") + "-" +
+    const nr = "PT-" + String(Math.floor(Math.random() * 99) + 1).padStart(2, "0") + "-" +
       Math.random().toString(36).slice(2, 8).toUpperCase();
     $("dlgTitle").textContent = owner ? `Glückwunsch, ${owner}!` : "Glückwunsch!";
     $("dlgText").textContent =
-      `Dein Noctis${nick ? ` „${nick}“` : ""} in ${byId(PAINTS, state.paint).name} mit ${r.eng.name} ist reserviert. ` +
-      `Preis: ${euro.format(r.total)}. Die Fertigung dauert 14 Monate – natürlich nur in deiner Fantasie.`;
+      `Dein Tempesta${nick ? ` „${nick}“` : ""} in ${byId(PAINTS, state.paint).name} mit ${r.eng.name} ist reserviert. ` +
+      `Preis: ${euro.format(r.total)}. Die Handfertigung dauert 18 Monate – natürlich nur in deiner Fantasie.`;
     $("dlgNum").textContent = nr;
     const d = $("dlg");
     if (typeof d.showModal === "function") d.showModal(); else alert($("dlgTitle").textContent + "\n" + $("dlgText").textContent);

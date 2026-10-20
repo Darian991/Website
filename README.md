@@ -532,10 +532,13 @@ als Platzhalter.
 
 ## Supersportwagen-Konfigurator (`supersportwagen/`)
 
-Eigenständige Seite für den erfundenen Hypersportwagen **VELORAX Noctis**,
-unabhängig vom Möbelshop: `supersportwagen/index.html` enthält HTML, CSS und
-JavaScript in einer Datei. Das Auto wird als SVG gezeichnet und ändert sich
-live mit jeder Wahl (Lack, Zweifarbig, Felgen, Felgenfarbe, Bremssättel, Motor,
-Heckflügel, Innenraum, Extras). Preis und Fahrwerte rechnen mit, die Wahl wird
-im Browser gemerkt und lässt sich als Link teilen. „Probefahrt" lässt die Räder
-drehen und spielt einen Motorsound.
+Eigenständige Fan-Seite für den erfundenen **Pagani Tempesta**, unabhängig vom
+Möbelshop. Den Tempesta gibt es nicht; die Seite sagt an mehreren Stellen, dass
+sie ein Fan-Projekt und keine offizielle Seite von Pagani ist.
+`supersportwagen/index.html` enthält HTML, CSS und JavaScript in einer Datei.
+Das Auto wird als SVG gezeichnet (Tropfen-Cockpit, Spiegel auf Armen, aktive
+Klappen, Endrohre in der Mitte) und ändert sich live mit jeder Wahl: Lack (auch
+getöntes Carbon), Zweifarbig, Felgen mit Zentralverschluss, Felgenfarbe,
+Bremssättel, V12-Motor, Klappen oder Flügel, Innenraum, Extras. Preis und
+Fahrwerte rechnen mit, die Wahl wird im Browser gemerkt und lässt sich als Link
+teilen. „Probefahrt" lässt die Räder drehen und spielt einen Motorsound.
