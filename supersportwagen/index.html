@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VELORAX Noctis – Hypersportwagen</title>
+<meta name="description" content="VELORAX Noctis – ein erfundener Hypersportwagen mit bis zu 1.950 PS. Stelle dir deinen Noctis im Konfigurator zusammen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080b;
+    --bg-2: #0e1015;
+    --panel: #12151b;
+    --line: #232832;
+    --text: #eef1f5;
+    --muted: #8b93a1;
+    --accent: #ff4d1a;
+    --accent-2: #ffb21a;
+    --radius: 14px;
+    --display: "Michroma", "Eurostile", "Arial Black", sans-serif;
+    --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Kopfzeile ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(7, 8, 11, .82);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo svg { width: 34px; height: 34px; }
+  .logo span { font-family: var(--display); letter-spacing: .32em; font-size: 15px; }
+  nav.links { display: flex; gap: 28px; }
+  nav.links a { text-decoration: none; color: var(--muted); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; transition: color .2s; }
+  nav.links a:hover { color: var(--text); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    padding: 12px 22px; border-radius: 999px; cursor: pointer;
+    font: 600 13px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; text-decoration: none;
+    transition: transform .15s, box-shadow .2s, background .2s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(255, 77, 26, .35); }
+  .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--text); box-shadow: none; }
+
+  /* ---------- Bühne ---------- */
+  .hero { position: relative; overflow: hidden; padding: 70px 0 30px; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(60% 50% at 50% 70%, rgba(255, 77, 26, .18), transparent 70%),
+      radial-gradient(40% 40% at 80% 10%, rgba(80, 120, 255, .12), transparent 70%);
+    pointer-events: none;
+  }
+  .hero .wrap { position: relative; text-align: center; }
+  .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .4em; text-transform: uppercase; font-weight: 600; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(54px, 13vw, 170px); line-height: 1; letter-spacing: .08em;
+    margin: 18px 0 10px;
+    background: linear-gradient(180deg, #fff 30%, #6d7480);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lead { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: 18px; }
+  .hero .car-hero { margin: 10px auto 0; max-width: 1100px; }
+  .hero .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+  .stats-strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .stats-strip .wrap { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .stat { padding: 28px 12px; text-align: center; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: 0; }
+  .stat b { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 3.4vw, 40px); }
+  .stat span { color: var(--muted); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; }
+
+  /* ---------- Abschnitte ---------- */
+  section.block { padding: 100px 0; }
+  .block h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 4vw, 46px); letter-spacing: .06em; margin: 12px 0 18px; }
+  .block p.sub { color: var(--muted); max-width: 680px; font-size: 17px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; }
+  .card {
+    background: linear-gradient(180deg, var(--panel), var(--bg-2));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 30px;
+    position: relative; overflow: hidden;
+  }
+  .card::after { content: ""; position: absolute; left: 0; top: 0; height: 3px; width: 40%; background: linear-gradient(90deg, var(--accent), transparent); }
+  .card h3 { font-family: var(--display); font-weight: 400; font-size: 17px; letter-spacing: .08em; margin: 0 0 6px; }
+  .card .big { font-family: var(--display); font-size: 34px; margin: 18px 0 4px; }
+  .card p { color: var(--muted); margin: 0; font-size: 15px; }
+
+  .feature { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .feature ul { list-style: none; padding: 0; margin: 26px 0 0; }
+  .feature li { padding: 14px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; }
+  .feature li span { color: var(--muted); }
+  .feature .visual {
+    aspect-ratio: 4 / 3; border-radius: var(--radius); border: 1px solid var(--line);
+    background: radial-gradient(circle at 50% 60%, #1b2030, #08090c 70%);
+    display: grid; place-items: center; overflow: hidden;
+  }
+
+  /* ---------- Konfigurator ---------- */
+  #konfigurator { background: var(--bg-2); border-top: 1px solid var(--line); }
+  .config { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 34px; margin-top: 40px; align-items: start; }
+  .stage-col { position: sticky; top: 88px; }
+  .stage {
+    position: relative; border-radius: 20px; overflow: hidden; border: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, transparent 62%, rgba(255, 255, 255, .03) 62%),
+      radial-gradient(70% 60% at 50% 55%, #1d2230, #0a0b0f 75%);
+    padding: 24px 10px 6px;
+  }
+  .stage .speed {
+    position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .4s;
+    background: repeating-linear-gradient(90deg, transparent 0 60px, rgba(255, 255, 255, .07) 60px 62px, transparent 62px 170px);
+    background-size: 340px 100%;
+  }
+  .stage.driving .speed { opacity: 1; animation: rush .25s linear infinite; }
+  @keyframes rush { from { background-position: 0 0; } to { background-position: 340px 0; } }
+  .stage.driving .car-body { animation: rumble .12s linear infinite; }
+  @keyframes rumble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(1.2px); } }
+  .stage.driving .spin, .hero.driving .spin { animation: spin .28s linear infinite reverse; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { transform-box: fill-box; transform-origin: center; }
+  .stage-name {
+    position: absolute; left: 22px; top: 18px; font-family: var(--display); letter-spacing: .25em; font-size: 12px; color: var(--muted);
+  }
+  .stage-name b { color: var(--text); font-weight: 400; display: block; font-size: 15px; margin-top: 4px; letter-spacing: .14em; }
+  .stage-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+  .live { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+  .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 26px; }
+  .bar label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .bar label b { color: var(--text); font-weight: 600; letter-spacing: 0; }
+  .bar .track { height: 5px; border-radius: 3px; background: #222731; margin-top: 7px; overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .5s cubic-bezier(.2, .8, .2, 1); }
+  .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); gap: 12px; flex-wrap: wrap; }
+  .price-row span { color: var(--muted); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .price-row strong { font-weight: 300; letter-spacing: -.01em; font-size: clamp(22px, 2.6vw, 30px); }
+
+  .opts { display: flex; flex-direction: column; gap: 14px; }
+  .group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+  .group h3 { margin: 0 0 4px; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; display: flex; gap: 10px; align-items: center; }
+  .group h3 i { font-style: normal; color: var(--accent); font-family: var(--display); font-size: 11px; }
+  .group .chosen { color: var(--muted); font-size: 14px; margin-bottom: 14px; min-height: 1.2em; }
+  .group .chosen em { font-style: normal; color: var(--text); }
+
+  .swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+  .swatch {
+    width: 44px; height: 44px; border-radius: 50%; cursor: pointer; padding: 0;
+    border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: 2px;
+    box-shadow: inset 0 -8px 14px rgba(0, 0, 0, .35), inset 0 6px 10px rgba(255, 255, 255, .25);
+    transition: transform .15s, outline-color .15s;
+  }
+  .swatch:hover { transform: scale(1.08); }
+  .swatch[aria-pressed="true"] { outline: 2px solid var(--text); }
+  .swatch.none { background: repeating-linear-gradient(45deg, #2a2f39 0 3px, transparent 3px 7px), var(--bg); }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice {
+    text-align: left; background: var(--bg-2); color: var(--text); cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font: inherit;
+    transition: border-color .15s, background .15s;
+  }
+  .choice:hover { border-color: #3a4150; }
+  .choice[aria-pressed="true"] { border-color: var(--accent); background: rgba(255, 77, 26, .08); }
+  .choice b { display: block; font-size: 14px; font-weight: 600; }
+  .choice small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .choice .pr { color: var(--accent-2); font-size: 12px; margin-top: 6px; display: block; }
+  .choice svg { width: 54px; height: 54px; display: block; margin-bottom: 6px; }
+  .choices.wide { grid-template-columns: 1fr; }
+
+  .extras { display: flex; flex-direction: column; gap: 8px; }
+  .extra {
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  }
+  .extra:hover { border-color: #3a4150; }
+  .extra input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+  .extra div { flex: 1; }
+  .extra b { font-size: 14px; font-weight: 600; display: block; }
+  .extra small { color: var(--muted); font-size: 12px; }
+  .extra .pr { color: var(--accent-2); font-size: 13px; white-space: nowrap; }
+
+  .summary { margin-top: 60px; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 34px; }
+  .summary-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; }
+  .summary table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .summary td { padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .summary td:first-child { color: var(--muted); width: 34%; padding-right: 12px; }
+  .summary td:last-child { text-align: right; white-space: nowrap; padding-left: 12px; }
+  .summary tfoot td { border-bottom: 0; padding-top: 18px; font-size: 16px; color: var(--text); }
+  .summary tfoot td:last-child { font-size: 22px; font-weight: 600; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .field input {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; color: var(--text);
+    padding: 13px 14px; font: inherit;
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .note { color: var(--muted); font-size: 13px; margin-top: 14px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 30px); opacity: 0;
+    background: var(--text); color: var(--bg); padding: 12px 20px; border-radius: 999px; font-weight: 600; font-size: 14px;
+    transition: .3s; z-index: 100; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  dialog {
+    border: 1px solid var(--line); border-radius: 20px; background: var(--panel); color: var(--text);
+    max-width: 560px; width: calc(100% - 32px); padding: 34px; text-align: center;
+  }
+  dialog::backdrop { background: rgba(0, 0, 0, .7); backdrop-filter: blur(4px); }
+  dialog h3 { font-family: var(--display); font-weight: 400; letter-spacing: .08em; font-size: 22px; margin: 10px 0; }
+  dialog p { color: var(--muted); }
+  dialog .num { font-family: var(--display); color: var(--accent-2); letter-spacing: .2em; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 60px; color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  @media (max-width: 1000px) {
+    .config { grid-template-columns: 1fr; }
+    .stage-col { position: static; }
+    .feature { grid-template-columns: 1fr; gap: 30px; }
+    .cards { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .wrap { padding: 0 16px; }
+    nav.links { display: none; }
+    .stats-strip .wrap { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: 0; }
+    .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    section.block { padding: 70px 0; }
+    .bars { grid-template-columns: 1fr; }
+    .choices { grid-template-columns: 1fr; }
+    .summary { padding: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="VELORAX Startseite">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M4 8 L20 34 L36 8 L28 8 L20 22 L12 8 Z" fill="url(#lg)"/>
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb21a"/><stop offset="1" stop-color="#ff4d1a"/></linearGradient></defs>
+      </svg>
+      <span>VELORAX</span>
+    </a>
+    <nav class="links">
+      <a href="#modell">Modell</a>
+      <a href="#technik">Technik</a>
+      <a href="#aero">Aerodynamik</a>
+      <a href="#konfigurator">Konfigurator</a>
+    </nav>
+    <a class="btn" href="#konfigurator">Konfigurieren</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="modell">
+    <div class="wrap">
+      <div class="eyebrow">Limitiert auf 99 Exemplare</div>
+      <h1>NOCTIS</h1>
+      <p class="lead">Der Hypersportwagen, den es eigentlich nicht geben dürfte. Bis zu 1.950 PS, Karosserie komplett aus Carbon, gebaut für Menschen, die keine Grenzen kennen.</p>
+      <div class="car-hero" id="heroCar"></div>
+      <div class="cta">
+        <a class="btn" href="#konfigurator">Deinen Noctis bauen</a>
+        <button class="btn ghost" type="button" id="heroStart">▶ Motor starten</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-strip">
+    <div class="wrap">
+      <div class="stat"><b>1.950</b><span>PS maximal</span></div>
+      <div class="stat"><b>1,9 s</b><span>0 – 100 km/h</span></div>
+      <div class="stat"><b>455</b><span>km/h Spitze</span></div>
+      <div class="stat"><b>1.200</b><span>kg Abtrieb</span></div>
+    </div>
+  </div>
+
+  <section class="block" id="technik">
+    <div class="wrap">
+      <div class="eyebrow">Antrieb</div>
+      <h2>Drei Herzen. Eine Wahl.</h2>
+      <p class="sub">Jeder Noctis wird um seinen Motor herum gebaut. Wähle zwischen dem kreischenden V12, dem gewaltigen W16 oder dem brutalen Hybrid mit drei Elektromotoren.</p>
+      <div class="cards">
+        <div class="card"><h3>V12 BITURBO</h3><div class="big">1.350 PS</div><p>6,5 Liter, Drehzahl bis 9.800 U/min. Der klassische Schrei eines echten Supersportwagens.</p></div>
+        <div class="card"><h3>W16 QUAD-TURBO</h3><div class="big">1.600 PS</div><p>8,0 Liter und vier Turbolader. Schiebt an, als würde die Straße unter dir weggezogen.</p></div>
+        <div class="card"><h3>V8 HYBRID-TRI</h3><div class="big">1.950 PS</div><p>5,0-Liter-V8 plus drei E-Motoren mit Torque-Vectoring. Von 0 auf 100 in 1,9 Sekunden.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="aero" style="padding-top:0">
+    <div class="wrap feature">
+      <div>
+        <div class="eyebrow">Aerodynamik</div>
+        <h2>Geformt vom Wind.</h2>
+        <p class="sub">Die Linie des Noctis entstand im Windkanal, nicht auf dem Zeichenbrett. Aktiver Heckflügel, Venturi-Kanäle im Unterboden und ein Diffusor, der das Auto bei 300 km/h förmlich an die Straße saugt.</p>
+        <ul>
+          <li>Chassis <span>Carbon-Monocoque, 82 kg</span></li>
+          <li>Getriebe <span>9-Gang Doppelkupplung</span></li>
+          <li>Bremsen <span>Carbon-Keramik, 420 mm</span></li>
+          <li>Reifen <span>vorn 285/30 R20 · hinten 355/25 R21</span></li>
+          <li>Abtrieb <span>bis 1.200 kg bei 280 km/h</span></li>
+        </ul>
+      </div>
+      <div class="visual" id="wheelVisual" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="block" id="konfigurator">
+    <div class="wrap">
+      <div class="eyebrow">Konfigurator</div>
+      <h2>Bau deinen Noctis.</h2>
+      <p class="sub">Lack, Felgen, Motor, Flügel, Innenraum – jede Wahl siehst du sofort am Auto. Deine Zusammenstellung wird gespeichert und lässt sich als Link teilen.</p>
+
+      <div class="config">
+        <div class="stage-col">
+          <div class="stage" id="stage">
+            <div class="speed"></div>
+            <div class="stage-name">VELORAX NOCTIS<b id="stageEngine">V12 BITURBO</b></div>
+            <div id="stageCar"></div>
+          </div>
+          <div class="stage-actions">
+            <button class="btn" type="button" id="drive">▶ Probefahrt</button>
+            <button class="btn ghost" type="button" id="random">🎲 Zufall</button>
+            <button class="btn ghost" type="button" id="reset">Zurücksetzen</button>
+          </div>
+          <div class="live">
+            <div class="bars">
+              <div class="bar"><label>Leistung <b id="vPs"></b></label><div class="track"><div class="fill" id="bPs"></div></div></div>
+              <div class="bar"><label>0 – 100 km/h <b id="vAcc"></b></label><div class="track"><div class="fill" id="bAcc"></div></div></div>
+              <div class="bar"><label>Spitze <b id="vTop"></b></label><div class="track"><div class="fill" id="bTop"></div></div></div>
+              <div class="bar"><label>Abtrieb <b id="vDown"></b></label><div class="track"><div class="fill" id="bDown"></div></div></div>
+            </div>
+            <div class="price-row"><span>Dein Preis</span><strong id="price"></strong></div>
+          </div>
+        </div>
+
+        <div class="opts" id="opts"></div>
+      </div>
+
+      <div class="summary" id="zusammenfassung">
+        <div class="summary-grid">
+          <div>
+            <div class="eyebrow">Zusammenfassung</div>
+            <h2 style="margin-bottom:20px">Dein Noctis</h2>
+            <table>
+              <tbody id="sumBody"></tbody>
+              <tfoot><tr><td>Gesamtpreis</td><td></td><td id="sumTotal"></td></tr></tfoot>
+            </table>
+          </div>
+          <div>
+            <div class="field">
+              <label for="owner">Name des Besitzers</label>
+              <input id="owner" maxlength="40" placeholder="z. B. Max Mustermann" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="plateName">Name für dein Auto</label>
+              <input id="plateName" maxlength="24" placeholder="z. B. Schwarzer Blitz">
+            </div>
+            <button class="btn" type="button" id="order" style="width:100%">Jetzt reservieren</button>
+            <button class="btn ghost" type="button" id="share" style="width:100%;margin-top:10px">🔗 Link zur Konfiguration kopieren</button>
+            <p class="note">VELORAX und der Noctis sind frei erfunden. Es wird nichts bestellt und nichts bezahlt – das hier ist nur zum Träumen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© VELORAX Automobili · Fantasie-Marke, kein echtes Unternehmen</div>
+    <div>Noctis · Hypersportwagen · 99 Exemplare</div>
+  </div>
+</footer>
+
+<dialog id="dlg">
+  <div class="eyebrow">Reservierung bestätigt</div>
+  <h3 id="dlgTitle">Glückwunsch!</h3>
+  <p id="dlgText"></p>
+  <p>Fahrgestellnummer<br><span class="num" id="dlgNum"></span></p>
+  <button class="btn" type="button" id="dlgClose">Schließen</button>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* =========================================================
+     Optionen
+     ========================================================= */
+  const BASE_PRICE = 2890000;
+
+  const PAINTS = [
+    { id: "obsidian", name: "Obsidian Schwarz", c: "#101217", p: 0 },
+    { id: "arktis",   name: "Arktis Weiß",      c: "#e6e9ed", p: 0 },
+    { id: "inferno",  name: "Inferno Rot",      c: "#b5121b", p: 4500 },
+    { id: "tiefsee",  name: "Tiefsee Blau",     c: "#123f95", p: 4500 },
+    { id: "toxic",    name: "Toxic Grün",       c: "#5cc91a", p: 6000 },
+    { id: "solar",    name: "Solar Orange",     c: "#ff6a00", p: 6000 },
+    { id: "royal",    name: "Royal Violett",    c: "#4b1f8a", p: 8000 },
+    { id: "sand",     name: "Wüstensand",       c: "#c8ad85", p: 8000 },
+    { id: "silber",   name: "Flüssig-Silber",   c: "chrome", sw: "linear-gradient(160deg,#fbfcfe,#8d96a1 45%,#eef1f4 55%,#5e666f)", p: 12000 },
+    { id: "carbon",   name: "Sichtcarbon",      c: "carbon", sw: "repeating-linear-gradient(45deg,#16181c 0 4px,#30343c 4px 8px)", p: 85000 }
+  ];
+  const ACCENTS = [
+    { id: "none",   name: "Einfarbig",        c: null, p: 0 },
+    { id: "carbon", name: "Carbon",           c: "carbon", sw: "repeating-linear-gradient(45deg,#16181c 0 4px,#30343c 4px 8px)", p: 15000 },
+    { id: "schwarz",name: "Schwarz",          c: "#0c0d10", p: 9000 },
+    { id: "weiss",  name: "Weiß",             c: "#eef0f2", p: 9000 },
+    { id: "gold",   name: "Gold",             c: "#c9a24a", p: 14000 },
+    { id: "rot",    name: "Rot",              c: "#c4111b", p: 9000 },
+    { id: "blau",   name: "Blau",             c: "#1449b8", p: 9000 }
+  ];
+  const RIMS = [
+    { id: "stern",   name: "Stern",        info: "5 Speichen, Alu geschmiedet", p: 0 },
+    { id: "ypsilon", name: "Ypsilon",      info: "10 Y-Speichen, Magnesium",    p: 12000 },
+    { id: "turbine", name: "Turbine",      info: "Hohlspeichen aus Carbon",     p: 38000 },
+    { id: "aero",    name: "Aero-Scheibe", info: "Geschlossen, weniger Luftwiderstand", p: 22000 }
+  ];
+  const RIM_COLORS = [
+    { id: "silber",   name: "Silber",   c: "#c9ced5", p: 0 },
+    { id: "schwarz",  name: "Schwarz",  c: "#16181c", p: 0 },
+    { id: "gunmetal", name: "Gunmetal", c: "#50565f", p: 2500 },
+    { id: "gold",     name: "Gold",     c: "#c9a24a", p: 4500 },
+    { id: "bronze",   name: "Bronze",   c: "#8c5a2b", p: 4500 }
+  ];
+  const CALIPERS = [
+    { id: "rot",     name: "Rot",     c: "#d61a2a", p: 0 },
+    { id: "gelb",    name: "Gelb",    c: "#f2c200", p: 1800 },
+    { id: "blau",    name: "Blau",    c: "#1f6fe0", p: 1800 },
+    { id: "gruen",   name: "Grün",    c: "#29c24a", p: 1800 },
+    { id: "orange",  name: "Orange",  c: "#ff6a00", p: 1800 },
+    { id: "schwarz", name: "Schwarz", c: "#25272c", p: 0 }
+  ];
+  const ENGINES = [
+    { id: "v12", name: "V12 Biturbo",     info: "6,5 l · 1.350 PS · 1.500 Nm", ps: 1350, acc: 2.5, top: 425, weight: 1420, pitch: 1.0, p: 0 },
+    { id: "w16", name: "W16 Quad-Turbo",  info: "8,0 l · 1.600 PS · 1.800 Nm", ps: 1600, acc: 2.3, top: 445, weight: 1560, pitch: 0.75, p: 350000 },
+    { id: "hyb", name: "V8 Hybrid-Tri",   info: "5,0 l + 3 E-Motoren · 1.950 PS", ps: 1950, acc: 1.9, top: 440, weight: 1610, pitch: 1.25, p: 520000 }
+  ];
+  const WINGS = [
+    { id: "aktiv",  name: "Aktiv versenkt", info: "Fährt bei Bedarf aus",     down: 450,  top: 10,  p: 0 },
+    { id: "track",  name: "Track-Flügel",   info: "Fest, für die Rennstrecke", down: 850,  top: -12, p: 45000 },
+    { id: "swan",   name: "Schwanenhals XL",info: "Maximaler Abtrieb",         down: 1200, top: -25, p: 78000 }
+  ];
+  const INTERIORS = [
+    { id: "nero",    name: "Nero Schwarz", c: "#1c1c1f", p: 0 },
+    { id: "cognac",  name: "Cognac",       c: "#8a4b22", p: 6500 },
+    { id: "rosso",   name: "Rosso",        c: "#8e1520", p: 6500 },
+    { id: "elfenbein", name: "Elfenbein",  c: "#e7dcc6", p: 6500 },
+    { id: "petrol",  name: "Petrol",       c: "#1f4d55", p: 6500 },
+    { id: "alcantara", name: "Alcantara Grau", c: "#4a4d54", p: 9000 }
+  ];
+  const EXTRAS = [
+    { id: "aeroCarbon", name: "Carbon-Aeropaket", info: "Splitter, Schweller & Diffusor in Sichtcarbon · −60 kg", p: 95000 },
+    { id: "titan",      name: "Titan-Sportauspuff", info: "Blau angelaufene Endrohre, lauterer Sound", p: 28000 },
+    { id: "lift",       name: "Liftsystem vorne", info: "Hebt die Front um 45 mm für Rampen", p: 9500 },
+    { id: "sterne",     name: "Sternenhimmel", info: "1.200 Glasfaser-Lichtpunkte im Dachhimmel", p: 18000 },
+    { id: "telemetrie", name: "Track-Telemetrie", info: "Rundenzeiten, Videos, G-Kräfte live", p: 14000 },
+    { id: "gepaeck",    name: "Maßgepäck-Set", info: "Zwei Taschen, passend zur Innenausstattung", p: 22000 },
+    { id: "jet",        name: "Übergabe per Privatjet", info: "Wir liefern weltweit vor deine Haustür", p: 45000 }
+  ];
+
+  const DEFAULT = {
+    paint: "obsidian", accent: "none", rim: "stern", rimColor: "silber", caliper: "rot",
+    engine: "v12", wing: "aktiv", interior: "nero", extras: []
+  };
+
+  const byId = (list, id) => list.find((x) => x.id === id) || list[0];
+  const euro = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const fmtPrice = (p) => (p === 0 ? "inklusive" : "+ " + euro.format(p));
+
+  /* =========================================================
+     Zustand laden: Link > gespeicherte Wahl > Standard
+     ========================================================= */
+  function sanitize(s) {
+    const out = { ...DEFAULT };
+    if (!s || typeof s !== "object") return out;
+    const pick = (key, list) => { if (list.some((x) => x.id === s[key])) out[key] = s[key]; };
+    pick("paint", PAINTS); pick("accent", ACCENTS); pick("rim", RIMS); pick("rimColor", RIM_COLORS);
+    pick("caliper", CALIPERS); pick("engine", ENGINES); pick("wing", WINGS); pick("interior", INTERIORS);
+    if (Array.isArray(s.extras)) out.extras = s.extras.filter((id) => EXTRAS.some((x) => x.id === id));
+    return out;
+  }
+  function loadState() {
+    const m = location.hash.match(/^#c=(.+)$/);
+    if (m) { try { return sanitize(JSON.parse(decodeURIComponent(m[1]))); } catch (e) { /* weiter */ } }
+    try { return sanitize(JSON.parse(localStorage.getItem("noctis-config"))); } catch (e) { return { ...DEFAULT }; }
+  }
+  let state = loadState();
+  function saveState() {
+    try { localStorage.setItem("noctis-config", JSON.stringify(state)); } catch (e) { /* ohne Speicher geht es auch */ }
+  }
+
+  /* =========================================================
+     Auto zeichnen (SVG, Seitenansicht)
+     ========================================================= */
+  const BODY =
+    "M 70 304 L 55 290 Q 50 270 75 262 " +
+    "C 160 246, 260 233, 340 222 " +
+    "C 400 190, 440 158, 510 150 " +
+    "C 580 145, 640 150, 690 170 " +
+    "C 760 195, 840 205, 905 212 " +
+    "L 935 218 Q 950 226 946 246 L 940 292 L 905 305 " +
+    "L 838 305 A 78 78 0 0 0 682 305 " +
+    "L 312 305 A 78 78 0 0 0 158 305 Z";
+
+  const pt = (cx, cy, r, a) => [(cx + r * Math.cos(a)).toFixed(2), (cy + r * Math.sin(a)).toFixed(2)];
+
+  function spokes(design, cx, cy, color, P) {
+    let s = "";
+    if (design === "stern") {
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const [x1, y1] = pt(cx, cy, 11, a - 0.32), [x2, y2] = pt(cx, cy, 46, a - 0.17);
+        const [x3, y3] = pt(cx, cy, 46, a + 0.17), [x4, y4] = pt(cx, cy, 11, a + 0.32);
+        s += `<path d="M${x1} ${y1} L${x2} ${y2} L${x3} ${y3} L${x4} ${y4} Z" fill="${color}"/>`;
+        const [m1, n1] = pt(cx, cy, 14, a), [m2, n2] = pt(cx, cy, 44, a);
+        s += `<path d="M${m1} ${n1} L${m2} ${n2}" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/>`;
+      }
+    } else if (design === "ypsilon") {
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const [x0, y0] = pt(cx, cy, 10, a), [xm, ym] = pt(cx, cy, 27, a);
+        const [xa, ya] = pt(cx, cy, 46, a - 0.26), [xb, yb] = pt(cx, cy, 46, a + 0.26);
+        s += `<path d="M${x0} ${y0} L${xm} ${ym} L${xa} ${ya} M${xm} ${ym} L${xb} ${yb}" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+      }
+    } else if (design === "turbine") {
+      for (let i = 0; i < 14; i++) {
+        const a = (i / 14) * Math.PI * 2;
+        const [x0, y0] = pt(cx, cy, 11, a), [xc, yc] = pt(cx, cy, 32, a + 0.35), [x1, y1] = pt(cx, cy, 46, a + 0.75);
+        s += `<path d="M${x0} ${y0} Q${xc} ${yc} ${x1} ${y1}" stroke="${color}" stroke-width="4.2" stroke-linecap="round" fill="none"/>`;
+      }
+      s += `<circle cx="${cx}" cy="${cy}" r="46" fill="none" stroke="url(#${P}carbon)" stroke-width="3"/>`;
+    } else if (design === "aero") {
+      s += `<circle cx="${cx}" cy="${cy}" r="46" fill="${color}"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="46" fill="url(#${P}disc)"/>`;
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const [x, y] = pt(cx, cy, 32, a);
+        s += `<ellipse cx="${x}" cy="${y}" rx="6" ry="9" transform="rotate(${(a * 180) / Math.PI + 90} ${x} ${y})" fill="#090a0c"/>`;
+      }
+    }
+    return s;
+  }
+
+  function wheel(cx, cy, cfg, front, P) {
+    const rimC = byId(RIM_COLORS, cfg.rimColor).c;
+    const calC = byId(CALIPERS, cfg.caliper).c;
+    const a0 = front ? -2.75 : -1.05, a1 = front ? -2.05 : -0.35;
+    const [o1x, o1y] = pt(cx, cy, 42, a0), [o2x, o2y] = pt(cx, cy, 42, a1);
+    const [i1x, i1y] = pt(cx, cy, 29, a1), [i2x, i2y] = pt(cx, cy, 29, a0);
+    return `
+      <circle cx="${cx}" cy="${cy}" r="64" fill="#0a0a0b"/>
+      <circle cx="${cx}" cy="${cy}" r="60" fill="none" stroke="#1d1e21" stroke-width="2"/>
+      <circle cx="${cx}" cy="${cy}" r="49" fill="#0f1012"/>
+      <circle cx="${cx}" cy="${cy}" r="40" fill="url(#${P}brake)"/>
+      <path d="M${o1x} ${o1y} A42 42 0 0 1 ${o2x} ${o2y} L${i1x} ${i1y} A29 29 0 0 0 ${i2x} ${i2y} Z" fill="${calC}"/>
+      <g class="spin">
+        ${spokes(cfg.rim, cx, cy, rimC, P)}
+        <circle cx="${cx}" cy="${cy}" r="47" fill="none" stroke="${rimC}" stroke-width="3.5"/>
+        <circle cx="${cx}" cy="${cy}" r="12" fill="${rimC}"/>
+        <circle cx="${cx}" cy="${cy}" r="7" fill="#0b0c0e"/>
+        <path d="M${cx - 3} ${cy - 3} L${cx} ${cy + 3} L${cx + 3} ${cy - 3}" stroke="#ff4d1a" stroke-width="1.6" fill="none"/>
+      </g>`;
+  }
+
+  function carSVG(cfg, P) {
+    const paint = byId(PAINTS, cfg.paint);
+    const accent = byId(ACCENTS, cfg.accent);
+    const fill = (c) => (c === "chrome" ? `url(#${P}chrome)` : c === "carbon" ? `url(#${P}carbon)` : c);
+    const bodyFill = fill(paint.c);
+    const interior = byId(INTERIORS, cfg.interior).c;
+    const carbonPack = cfg.extras.includes("aeroCarbon");
+    const trim = carbonPack ? `url(#${P}carbon)` : "#121317";
+    const titan = cfg.extras.includes("titan");
+    const lineColor = accent.c ? fill(accent.c) : "rgba(255,255,255,.55)";
+
+    let wing = "";
+    if (cfg.wing === "aktiv") {
+      wing = `<path d="M 878 209 L 936 216 L 940 207 L 902 202 Z" fill="${bodyFill}"/>
+              <path d="M 878 209 L 936 216 L 940 207 L 902 202 Z" fill="url(#${P}shade)"/>`;
+    } else if (cfg.wing === "track") {
+      wing = `<rect x="866" y="166" width="7" height="44" rx="2" fill="#111"/>
+              <rect x="904" y="164" width="7" height="50" rx="2" fill="#111"/>
+              <path d="M 818 162 Q 880 150 950 156 L 950 167 Q 880 163 820 172 Z" fill="${trim === "#121317" ? `url(#${P}carbon)` : trim}"/>
+              <path d="M 936 144 L 952 146 L 954 180 L 938 178 Z" fill="#141518"/>`;
+    } else {
+      wing = `<path d="M 872 208 C 868 175, 872 150, 884 132" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <path d="M 912 214 C 910 180, 916 152, 926 130" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <path d="M 788 134 Q 870 118 962 124 L 962 138 Q 870 134 790 146 Z" fill="url(#${P}carbon)"/>
+              <path d="M 948 108 L 966 110 L 968 152 L 950 150 Z" fill="#141518"/>
+              <path d="M 788 134 Q 870 118 962 124" stroke="rgba(255,255,255,.25)" stroke-width="1.2" fill="none"/>`;
+    }
+
+    const stars = cfg.extras.includes("sterne")
+      ? [[470, 178], [500, 168], [530, 165], [560, 164], [590, 168], [515, 175], [545, 172], [575, 176], [610, 172]]
+          .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.1" fill="#fff" opacity=".9"/>`).join("")
+      : "";
+
+    const lift = cfg.extras.includes("lift") ? "rotate(-0.6 760 302)" : "";
+
+    return `
+<svg viewBox="0 0 1000 400" role="img" aria-label="VELORAX Noctis in ${paint.name}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="${P}carbon" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#17191d"/>
+      <rect width="4" height="4" fill="#2d3038"/>
+      <rect x="4" y="4" width="4" height="4" fill="#2d3038"/>
+    </pattern>
+    <linearGradient id="${P}chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbfcfe"/><stop offset=".35" stop-color="#97a0aa"/>
+      <stop offset=".5" stop-color="#eef1f4"/><stop offset=".78" stop-color="#58606a"/><stop offset="1" stop-color="#c8ced5"/>
+    </linearGradient>
+    <linearGradient id="${P}shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".42"/>
+      <stop offset=".28" stop-color="#fff" stop-opacity=".07"/>
+      <stop offset=".5" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".82" stop-color="#000" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".62"/>
+    </linearGradient>
+    <linearGradient id="${P}glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9fb4d0" stop-opacity=".55"/>
+      <stop offset=".4" stop-color="#1a2230" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#05070a" stop-opacity=".8"/>
+    </linearGradient>
+    <linearGradient id="${P}intake" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#1b1d22"/>
+    </linearGradient>
+    <radialGradient id="${P}brake">
+      <stop offset=".25" stop-color="#2a2c30"/><stop offset=".8" stop-color="#5a5d63"/><stop offset="1" stop-color="#3a3c40"/>
+    </radialGradient>
+    <radialGradient id="${P}disc" cx=".35" cy=".3">
+      <stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/>
+    </radialGradient>
+    <linearGradient id="${P}titan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e2b45a"/><stop offset=".45" stop-color="#7a4fb8"/><stop offset="1" stop-color="#2b6fd6"/>
+    </linearGradient>
+    <radialGradient id="${P}floor" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#000" stop-opacity=".85"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="${P}glow" x="-50%" y="-200%" width="200%" height="500%"><feGaussianBlur stdDeviation="3"/></filter>
+    <clipPath id="${P}bodyClip"><path d="${BODY}"/></clipPath>
+  </defs>
+
+  <ellipse cx="500" cy="368" rx="470" ry="22" fill="url(#${P}floor)"/>
+
+  <g class="car-body"><g transform="${lift}">
+    <path d="M 159 305 A 76 76 0 0 1 311 305 Z" fill="#050506"/>
+    <path d="M 683 305 A 76 76 0 0 1 837 305 Z" fill="#050506"/>
+
+    ${wheel(235, 302, cfg, true, P)}
+    ${wheel(760, 302, cfg, false, P)}
+
+    <path d="${BODY}" fill="${bodyFill}"/>
+    ${accent.c ? `<g clip-path="url(#${P}bodyClip)">
+        <path d="M 40 272 C 300 268, 560 262, 980 254 L 980 330 L 40 330 Z" fill="${fill(accent.c)}"/>
+      </g>` : ""}
+    <path d="${BODY}" fill="url(#${P}shade)"/>
+
+    <!-- Innenraum durch die Scheibe -->
+    <path d="M 548 210 C 549 186, 560 170, 576 168 C 590 169, 594 186, 588 212 Z" fill="${interior}"/>
+    <path d="M 470 214 C 478 200, 492 196, 506 198 L 520 212 Z" fill="${interior}" opacity=".85"/>
+    <path d="M 352 224 C 405 196, 450 166, 512 158 C 575 152, 628 158, 672 178 C 640 196, 600 204, 560 208 C 480 214, 410 220, 352 224 Z" fill="url(#${P}glass)"/>
+    ${stars}
+    <path d="M 420 196 C 470 170, 530 160, 600 160" stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none"/>
+
+    <!-- Lichtkante -->
+    <path d="M 110 258 C 350 236, 650 224, 902 218" stroke="rgba(255,255,255,.28)" stroke-width="1.6" fill="none"/>
+
+    <!-- Seitenlinie (Signatur) -->
+    <path d="M 572 214 C 528 236, 520 280, 566 304" stroke="${lineColor}" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+    <!-- Lufteinlass -->
+    <path d="M 592 240 C 625 232, 662 236, 694 252 L 684 286 C 655 281, 622 280, 596 282 C 604 268, 602 252, 592 240 Z" fill="url(#${P}intake)"/>
+    <path d="M 604 252 L 684 258 M 606 264 L 682 270 M 604 276 L 680 280" stroke="#2a2d33" stroke-width="2"/>
+
+    <!-- Türfuge, Spiegel -->
+    <path d="M 340 300 C 342 262, 352 238, 372 222" stroke="rgba(0,0,0,.45)" stroke-width="1.6" fill="none"/>
+    <path d="M 386 214 C 384 202, 396 196, 414 197 L 420 206 C 410 208, 398 212, 386 214 Z" fill="${bodyFill}"/>
+    <path d="M 386 214 C 384 202, 396 196, 414 197 L 420 206 C 410 208, 398 212, 386 214 Z" fill="rgba(0,0,0,.25)"/>
+
+    <!-- Front -->
+    <path d="M 62 290 L 150 284 L 144 298 L 70 301 Z" fill="#07080a"/>
+    <path d="M 70 266 C 100 261, 135 255, 172 249 L 164 258 C 128 263, 98 268, 74 273 Z" fill="#cfe8ff" filter="url(#${P}glow)" opacity=".8"/>
+    <path d="M 70 266 C 100 261, 135 255, 172 249 L 164 258 C 128 263, 98 268, 74 273 Z" fill="#f4fbff"/>
+
+    <!-- Heck -->
+    <path d="M 902 216 L 945 224 L 946 232 L 900 224 Z" fill="#ff2121" filter="url(#${P}glow)"/>
+    <path d="M 902 216 L 945 224 L 946 232 L 900 224 Z" fill="#ff4040"/>
+    <circle cx="928" cy="268" r="10" fill="${titan ? `url(#${P}titan)` : "#2b2d31"}"/>
+    <circle cx="928" cy="268" r="6" fill="#050506"/>
+
+    <!-- Anbauteile -->
+    <path d="M 48 302 L 162 304 L 158 311 L 46 308 Z" fill="${trim}"/>
+    <path d="M 314 302 L 680 302 L 674 312 L 320 312 Z" fill="${trim}"/>
+    <path d="M 858 302 L 942 292 L 944 306 L 862 313 Z" fill="${trim}"/>
+
+    ${wing}
+  </g></g>
+</svg>`;
+  }
+
+  /* =========================================================
+     Optionsfelder aufbauen
+     ========================================================= */
+  const opts = document.getElementById("opts");
+  let step = 0;
+
+  function group(title, key, content) {
+    step++;
+    const el = document.createElement("div");
+    el.className = "group";
+    el.innerHTML = `<h3><i>${String(step).padStart(2, "0")}</i>${title}</h3><div class="chosen" data-chosen="${key}"></div>`;
+    el.appendChild(content);
+    opts.appendChild(el);
+  }
+
+  function swatchGroup(title, key, list) {
+    const box = document.createElement("div");
+    box.className = "swatches";
+    list.forEach((o) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "swatch" + (o.c === null ? " none" : "");
+      if (o.c !== null) b.style.background = o.sw || o.c;
+      b.title = `${o.name} – ${fmtPrice(o.p)}`;
+      b.setAttribute("aria-label", o.name);
+      b.dataset.key = key; b.dataset.val = o.id;
+      b.addEventListener("click", () => set(key, o.id));
+      box.appendChild(b);
+    });
+    group(title, key, box);
+  }
+
+  function choiceGroup(title, key, list, icon) {
+    const box = document.createElement("div");
+    box.className = "choices";
+    list.forEach((o) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "choice";
+      b.dataset.key = key; b.dataset.val = o.id;
+      b.innerHTML = `${icon ? icon(o) : ""}<b>${o.name}</b><small>${o.info}</small><span class="pr">${fmtPrice(o.p)}</span>`;
+      b.addEventListener("click", () => set(key, o.id));
+      box.appendChild(b);
+    });
+    group(title, key, box);
+  }
+
+  const rimIcon = (o) => `<svg viewBox="-60 -60 120 120" aria-hidden="true">
+      <circle r="58" fill="#0a0a0b"/><circle r="40" fill="url(#iconBrake)"/>
+      ${spokes(o.id, 0, 0, "#c9ced5", "icon")}
+      <circle r="47" fill="none" stroke="#c9ced5" stroke-width="3.5"/><circle r="12" fill="#c9ced5"/><circle r="7" fill="#0b0c0e"/></svg>`;
+
+  swatchGroup("Lackierung", "paint", PAINTS);
+  swatchGroup("Zweifarbig unten", "accent", ACCENTS);
+  choiceGroup("Felgen-Design", "rim", RIMS, rimIcon);
+  swatchGroup("Felgenfarbe", "rimColor", RIM_COLORS);
+  swatchGroup("Bremssättel", "caliper", CALIPERS);
+  choiceGroup("Motor", "engine", ENGINES);
+  choiceGroup("Heckflügel", "wing", WINGS);
+  swatchGroup("Innenraum Leder", "interior", INTERIORS);
+
+  // Extras
+  (() => {
+    const box = document.createElement("div");
+    box.className = "extras";
+    EXTRAS.forEach((o) => {
+      const l = document.createElement("label");
+      l.className = "extra";
+      l.innerHTML = `<input type="checkbox" value="${o.id}"><div><b>${o.name}</b><small>${o.info}</small></div><span class="pr">+ ${euro.format(o.p)}</span>`;
+      l.querySelector("input").addEventListener("change", (e) => {
+        const set = new Set(state.extras);
+        e.target.checked ? set.add(o.id) : set.delete(o.id);
+        state.extras = EXTRAS.map((x) => x.id).filter((id) => set.has(id));
+        update();
+      });
+      box.appendChild(l);
+    });
+    group("Extras", "extras", box);
+  })();
+
+  // Gemeinsame Verläufe für die Felgen-Symbole
+  document.body.insertAdjacentHTML("beforeend",
+    `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <radialGradient id="iconBrake"><stop offset=".25" stop-color="#2a2c30"/><stop offset=".8" stop-color="#5a5d63"/></radialGradient>
+      <pattern id="iconcarbon" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" fill="#17191d"/><rect width="4" height="4" fill="#2d3038"/><rect x="4" y="4" width="4" height="4" fill="#2d3038"/></pattern>
+      <radialGradient id="icondisc" cx=".35" cy=".3"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>
+    </defs></svg>`);
+
+  function set(key, val) { state[key] = val; update(); }
+
+  /* =========================================================
+     Werte & Preis
+     ========================================================= */
+  function compute(cfg) {
+    const eng = byId(ENGINES, cfg.engine), wing = byId(WINGS, cfg.wing);
+    let weight = eng.weight;
+    if (cfg.extras.includes("aeroCarbon")) weight -= 60;
+    if (cfg.paint === "carbon") weight -= 25;
+    if (cfg.rim === "turbine") weight -= 12;
+    const acc = Math.max(1.7, eng.acc + (weight - eng.weight) * 0.002);
+    const top = eng.top + wing.top + (cfg.rim === "aero" ? 5 : 0);
+    const items = [
+      ["Basispreis", "VELORAX Noctis", BASE_PRICE],
+      ["Lackierung", byId(PAINTS, cfg.paint).name, byId(PAINTS, cfg.paint).p],
+      ["Zweifarbig", byId(ACCENTS, cfg.accent).name, byId(ACCENTS, cfg.accent).p],
+      ["Felgen", byId(RIMS, cfg.rim).name, byId(RIMS, cfg.rim).p],
+      ["Felgenfarbe", byId(RIM_COLORS, cfg.rimColor).name, byId(RIM_COLORS, cfg.rimColor).p],
+      ["Bremssättel", byId(CALIPERS, cfg.caliper).name, byId(CALIPERS, cfg.caliper).p],
+      ["Motor", eng.name, eng.p],
+      ["Heckflügel", wing.name, wing.p],
+      ["Innenraum", byId(INTERIORS, cfg.interior).name, byId(INTERIORS, cfg.interior).p],
+      ...cfg.extras.map((id) => { const x = byId(EXTRAS, id); return ["Extra", x.name, x.p]; })
+    ];
+    const total = items.reduce((s, i) => s + i[2], 0);
+    return { eng, wing, weight, acc, top, total, items };
+  }
+
+  /* =========================================================
+     Aktualisieren
+     ========================================================= */
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function update() {
+    $("stageCar").innerHTML = carSVG(state, "s");
+    $("heroCar").innerHTML = carSVG(state, "h");
+
+    document.querySelectorAll("[data-key]").forEach((b) => {
+      b.setAttribute("aria-pressed", String(state[b.dataset.key] === b.dataset.val));
+    });
+    document.querySelectorAll(".extra input").forEach((i) => { i.checked = state.extras.includes(i.value); });
+
+    const lists = { paint: PAINTS, accent: ACCENTS, rim: RIMS, rimColor: RIM_COLORS, caliper: CALIPERS, engine: ENGINES, wing: WINGS, interior: INTERIORS };
+    document.querySelectorAll("[data-chosen]").forEach((el) => {
+      const key = el.dataset.chosen;
+      if (key === "extras") {
+        el.innerHTML = state.extras.length ? `<em>${state.extras.length} gewählt</em>` : "Nichts gewählt";
+      } else {
+        const o = byId(lists[key], state[key]);
+        el.innerHTML = `<em>${o.name}</em> · ${fmtPrice(o.p)}`;
+      }
+    });
+
+    const r = compute(state);
+    $("stageEngine").textContent = r.eng.name.toUpperCase();
+    $("vPs").textContent = r.eng.ps.toLocaleString("de-DE") + " PS";
+    $("bPs").style.width = (r.eng.ps / 2000) * 100 + "%";
+    $("vAcc").textContent = r.acc.toFixed(1).replace(".", ",") + " s";
+    $("bAcc").style.width = ((3.2 - r.acc) / (3.2 - 1.6)) * 100 + "%";
+    $("vTop").textContent = r.top + " km/h";
+    $("bTop").style.width = (r.top / 480) * 100 + "%";
+    $("vDown").textContent = r.wing.down.toLocaleString("de-DE") + " kg";
+    $("bDown").style.width = (r.wing.down / 1300) * 100 + "%";
+    $("price").textContent = euro.format(r.total);
+
+    $("sumBody").innerHTML = r.items.map(([k, v, p]) =>
+      `<tr><td>${esc(k)}</td><td>${esc(v)}</td><td>${p ? euro.format(p) : "–"}</td></tr>`).join("") +
+      `<tr><td>Gewicht</td><td>${r.weight.toLocaleString("de-DE")} kg</td><td></td></tr>`;
+    $("sumTotal").textContent = euro.format(r.total);
+
+    saveState();
+  }
+
+  /* =========================================================
+     Probefahrt mit Motorsound
+     ========================================================= */
+  let audioCtx = null;
+  function engineSound(pitch) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const A = audioCtx, t = A.currentTime;
+      const gain = A.createGain(), filter = A.createBiquadFilter();
+      filter.type = "lowpass"; filter.frequency.value = 900; filter.Q.value = 6;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.16, t + 0.08);
+      gain.gain.setValueAtTime(0.16, t + 2.9);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 3.5);
+      filter.connect(gain); gain.connect(A.destination);
+      [[1, "sawtooth"], [0.5, "square"], [1.01, "sawtooth"]].forEach(([m, type]) => {
+        const o = A.createOscillator(); o.type = type;
+        const f = (x) => x * m * pitch;
+        o.frequency.setValueAtTime(f(42), t);
+        o.frequency.exponentialRampToValueAtTime(f(75), t + 0.35);
+        o.frequency.exponentialRampToValueAtTime(f(230), t + 1.5);
+        o.frequency.exponentialRampToValueAtTime(f(150), t + 1.7);
+        o.frequency.exponentialRampToValueAtTime(f(280), t + 2.7);
+        o.frequency.exponentialRampToValueAtTime(f(48), t + 3.4);
+        o.connect(filter); o.start(t); o.stop(t + 3.6);
+      });
+      filter.frequency.setValueAtTime(500, t);
+      filter.frequency.linearRampToValueAtTime(2200, t + 1.5);
+      filter.frequency.linearRampToValueAtTime(2600, t + 2.7);
+      filter.frequency.linearRampToValueAtTime(400, t + 3.4);
+    } catch (e) { /* ohne Ton */ }
+  }
+  function drive(container) {
+    if (container.classList.contains("driving")) return;
+    engineSound(byId(ENGINES, state.engine).pitch * (state.extras.includes("titan") ? 1.1 : 1));
+    container.classList.add("driving");
+    setTimeout(() => container.classList.remove("driving"), 3400);
+  }
+  $("drive").addEventListener("click", () => drive($("stage")));
+  $("heroStart").addEventListener("click", () => drive(document.querySelector(".hero")));
+
+  /* =========================================================
+     Knöpfe
+     ========================================================= */
+  const rnd = (list) => list[Math.floor(Math.random() * list.length)].id;
+  $("random").addEventListener("click", () => {
+    state = {
+      paint: rnd(PAINTS), accent: Math.random() < 0.45 ? rnd(ACCENTS) : "none", rim: rnd(RIMS), rimColor: rnd(RIM_COLORS),
+      caliper: rnd(CALIPERS), engine: rnd(ENGINES), wing: rnd(WINGS), interior: rnd(INTERIORS),
+      extras: EXTRAS.filter(() => Math.random() < 0.35).map((x) => x.id)
+    };
+    update();
+  });
+  $("reset").addEventListener("click", () => { state = { ...DEFAULT, extras: [] }; update(); });
+
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+  $("share").addEventListener("click", async () => {
+    const url = location.href.split("#")[0] + "#c=" + encodeURIComponent(JSON.stringify(state));
+    history.replaceState(null, "", url);
+    try { await navigator.clipboard.writeText(url); toast("Link kopiert!"); }
+    catch (e) { toast("Link steht jetzt in der Adresszeile"); }
+  });
+
+  $("order").addEventListener("click", () => {
+    const owner = $("owner").value.trim();
+    const nick = $("plateName").value.trim();
+    const r = compute(state);
+    const nr = "VX-N" + String(Math.floor(Math.random() * 99) + 1).padStart(2, "0") + "-" +
+      Math.random().toString(36).slice(2, 8).toUpperCase();
+    $("dlgTitle").textContent = owner ? `Glückwunsch, ${owner}!` : "Glückwunsch!";
+    $("dlgText").textContent =
+      `Dein Noctis${nick ? ` „${nick}“` : ""} in ${byId(PAINTS, state.paint).name} mit ${r.eng.name} ist reserviert. ` +
+      `Preis: ${euro.format(r.total)}. Die Fertigung dauert 14 Monate – natürlich nur in deiner Fantasie.`;
+    $("dlgNum").textContent = nr;
+    const d = $("dlg");
+    if (typeof d.showModal === "function") d.showModal(); else alert($("dlgTitle").textContent + "\n" + $("dlgText").textContent);
+  });
+  $("dlgClose").addEventListener("click", () => $("dlg").close());
+
+  // Großes Rad im Abschnitt Aerodynamik
+  $("wheelVisual").innerHTML = `<svg viewBox="-80 -80 160 160" width="70%" aria-hidden="true">
+      <circle r="78" fill="#0a0a0b"/><circle r="72" fill="none" stroke="#1d1e21" stroke-width="2"/>
+      <circle r="49" fill="#0f1012"/><circle r="40" fill="url(#iconBrake)"/>
+      <path d="M-35 -23 A42 42 0 0 1 -12 -40 L-8 -28 A29 29 0 0 0 -24 -16 Z" fill="#d61a2a"/>
+      <g class="spin" style="animation:spin 6s linear infinite">${spokes("turbine", 0, 0, "#c9ced5", "icon")}
+      <circle r="47" fill="none" stroke="#c9ced5" stroke-width="3.5"/><circle r="12" fill="#c9ced5"/><circle r="7" fill="#0b0c0e"/></g></svg>`;
+
+  update();
+})();
+</script>
+</body>
+</html>
