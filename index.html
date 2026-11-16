@@ -2,257 +2,71 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-i18n="title.home">Premium Meubles — Luxusmöbel und Leuchten aus zweiter Hand</title>
-<meta name="description" data-i18n-content="desc.home" content="Premium Meubles verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171713">
+<title>Premium Meubles — Design, das bleibt.</title>
+<meta name="description" content="Entdecken Sie ausgewählte Designmöbel, ikonische Formen und zeitlose Stücke für besondere Räume. Premium Meubles.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
-<!-- kopfdaten:anfang (wird von tools/build.js geschrieben) -->
-<link rel="canonical" href="https://www.premium-meubles.de/">
-<meta name="robots" content="index, follow, max-image-preview:large">
-
-<!-- Vorschau beim Teilen (WhatsApp, Facebook, LinkedIn, Signal …) -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Premium Meubles">
-<meta property="og:locale" content="de_DE">
-<meta property="og:locale:alternate" content="en_GB">
-<meta property="og:locale:alternate" content="fr_FR">
-<meta property="og:locale:alternate" content="es_ES">
-<meta property="og:title" content="Premium Meubles — Luxusmöbel und Leuchten aus zweiter Hand">
-<meta property="og:description" content="Premium Meubles verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.">
-<meta property="og:url" content="https://www.premium-meubles.de/">
-<meta property="og:image" content="https://www.premium-meubles.de/assets/img/og-premium-meubles.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Premium Meubles — Gute Stücke aus zweiter Hand.">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Premium Meubles — Luxusmöbel und Leuchten aus zweiter Hand">
-<meta name="twitter:description" content="Premium Meubles verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.">
-<meta name="twitter:image" content="https://www.premium-meubles.de/assets/img/og-premium-meubles.jpg">
-
-<!-- Signet und Farbe der Adresszeile. Relative Pfade, damit die
-     Seite auch in einem Unterordner liegen darf (etwa GitHub Pages). -->
-<link rel="icon" href="favicon.ico" sizes="48x48">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icon-180.png">
-<link rel="manifest" href="site.webmanifest">
-<meta name="theme-color" content="#3a3229">
-
-<!-- Auszeichnung für Suchmaschinen -->
-<script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@type": "FurnitureStore",
-  "@id": "https://www.premium-meubles.de/#haus",
-  "name": "Premium Meubles",
-  "description": "Premium Meubles verkauft ausgesuchte Luxusmöbel und Leuchten aus zweiter Hand: Sofas, Sessel, Tische und Leuchten als geprüfte Einzelstücke. Persönliche Beratung und Lieferung bis in den Raum.",
-  "url": "https://www.premium-meubles.de/",
-  "image": "https://www.premium-meubles.de/assets/img/og-premium-meubles.jpg",
-  "logo": "https://www.premium-meubles.de/assets/icon-512.png",
-  "telephone": "+49 40 41 92 74 60",
-  "email": "norbert.wichele@gemail.com",
-  "priceRange": "€€€",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Stadthausbrücke 8",
-    "postalCode": "20355",
-    "addressLocality": "Hamburg",
-    "addressCountry": "DE"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 53.5511,
-    "longitude": 9.9865
-  },
-  "areaServed": "DE",
-  "currenciesAccepted": "EUR"
-}</script>
-<script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": "https://www.premium-meubles.de/#website",
-  "url": "https://www.premium-meubles.de/",
-  "name": "Premium Meubles",
-  "inLanguage": [
-    "de",
-    "en",
-    "fr",
-    "es"
-  ],
-  "publisher": {
-    "@id": "https://www.premium-meubles.de/#haus"
-  },
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": "https://www.premium-meubles.de/kollektion.html?suche={search_term_string}"
-    },
-    "query-input": "required name=search_term_string"
-  }
-}</script>
-<!-- kopfdaten:ende -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#191914;--paper:#f3f0e9;--cream:#e8e1d5;--muted:#77756d;--gold:#b99a64;--line:rgba(25,25,20,.15);--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',Arial,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.announcement{background:var(--ink);color:#eee9df;text-align:center;padding:10px 16px;font-size:10px;letter-spacing:.18em;text-transform:uppercase}.header{height:82px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:relative;z-index:5;background:var(--paper)}.brand{font-family:var(--serif);font-size:22px;letter-spacing:.04em}.brand small{display:block;font:9px var(--sans);letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin-top:4px}.nav{display:flex;gap:34px;align-items:center}.nav a,.nav button{font-size:11px;letter-spacing:.13em;text-transform:uppercase;background:none;border:0}.nav a:hover,.nav button:hover{color:var(--gold)}.header-actions{display:flex;align-items:center;gap:20px}.icon-btn{border:0;background:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase}.count{display:inline-grid;place-items:center;background:var(--ink);color:white;border-radius:50%;width:19px;height:19px;font-size:10px;margin-left:5px}.menu-toggle{display:none}
+.hero{min-height:650px;height:min(790px,82vw);position:relative;background:#292820;overflow:hidden;color:#fff}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,14,11,.75),rgba(14,14,11,.22) 58%,rgba(14,14,11,.04)),url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2200&q=88') center 55%/cover;transform:scale(1.015)}.hero-content{position:relative;z-index:1;padding:clamp(90px,13vw,190px) 10vw 80px;max-width:900px}.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600}.hero h1{font:clamp(54px,7.5vw,108px)/1.04 var(--serif);font-weight:400;letter-spacing:-.04em;margin:24px 0}.hero p{font-size:14px;line-height:1.9;color:rgba(255,255,255,.78);max-width:440px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:20px;padding:17px 24px;border:1px solid var(--gold);background:var(--gold);color:#171713;font-size:10px;letter-spacing:.17em;text-transform:uppercase;transition:.25s}.btn:hover{background:transparent;color:var(--gold)}.btn-light{background:transparent;color:white;border-color:rgba(255,255,255,.6);margin-left:10px}.btn-light:hover{background:white;color:var(--ink)}.hero-note{position:absolute;right:5vw;bottom:34px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.marquee{border-bottom:1px solid var(--line);padding:20px 0;overflow:hidden;white-space:nowrap;color:var(--muted);font:13px var(--serif);letter-spacing:.12em;text-align:center}.marquee span{color:var(--gold);padding:0 20px}
+.section{padding:110px 7vw}.section-top{display:flex;justify-content:space-between;align-items:end;margin-bottom:42px}.section h2{font:clamp(38px,5vw,64px)/1.08 var(--serif);font-weight:400;letter-spacing:-.035em;margin:13px 0 0}.section-intro{max-width:360px;color:var(--muted);font-size:12px;line-height:1.9}.filters{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 28px}.filter{border:1px solid var(--line);padding:10px 16px;background:transparent;color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.filter.active,.filter:hover{background:var(--ink);border-color:var(--ink);color:white}.products{display:grid;grid-template-columns:repeat(3,1fr);gap:42px 20px}.product{min-width:0}.product-image{position:relative;aspect-ratio:4/4.8;background:var(--cream);overflow:hidden}.product-image img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}.product:hover .product-image img{transform:scale(1.045)}.tag{position:absolute;top:14px;left:14px;background:var(--paper);padding:8px 10px;font-size:9px;letter-spacing:.13em;text-transform:uppercase}.wish{position:absolute;right:14px;top:12px;border:0;background:rgba(243,240,233,.9);width:35px;height:35px;border-radius:50%;font-size:18px}.wish.selected{color:#a24c3d}.quick-add{position:absolute;bottom:12px;left:12px;right:12px;width:calc(100% - 24px);border:0;background:rgba(25,25,20,.92);color:white;padding:14px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:.25s}.product:hover .quick-add,.quick-add:focus{opacity:1;transform:none}.product-meta{display:flex;justify-content:space-between;gap:10px;margin-top:17px}.product-name{font:22px var(--serif)}.product-price{font-size:12px;font-weight:600;white-space:nowrap}.product-detail{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:7px}
+.editorial{display:grid;grid-template-columns:1.1fr .9fr;min-height:650px;background:#ded6c9}.editorial-image{min-height:550px;background:url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1500&q=85') center/cover}.editorial-copy{padding:10%;display:flex;flex-direction:column;justify-content:center}.editorial-copy h2{font:clamp(42px,5vw,68px)/1.08 var(--serif);font-weight:400;margin:20px 0}.editorial-copy p{font-size:13px;line-height:2;color:#666257;max-width:400px;margin:0 0 28px}
+.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.category{position:relative;aspect-ratio:3/4;overflow:hidden;background:#d7d0c4}.category img{width:100%;height:100%;object-fit:cover;transition:.6s}.category:hover img{transform:scale(1.05)}.category:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.55))}.category span{position:absolute;z-index:1;bottom:22px;left:20px;color:white;font:25px var(--serif)}
+.promise{background:var(--ink);color:var(--paper);display:grid;grid-template-columns:repeat(3,1fr);padding:65px 7vw;gap:45px}.promise article{border-left:1px solid rgba(255,255,255,.2);padding-left:25px}.promise b{font:23px var(--serif);font-weight:400}.promise p{color:#aaa79e;font-size:11px;line-height:1.8;max-width:260px}
+.newsletter{background:#e4ddd1;text-align:center;padding:85px 20px}.newsletter h2{font:clamp(38px,5vw,58px) var(--serif);font-weight:400;margin:15px}.newsletter p{font-size:12px;color:var(--muted)}.newsletter-form{display:flex;max-width:470px;margin:28px auto 0;border-bottom:1px solid #8f887b}.newsletter-form input{flex:1;min-width:0;padding:15px 5px;background:transparent;border:0;outline:0;font:12px var(--sans)}.newsletter-form button{background:none;border:0;font-size:10px;letter-spacing:.13em;text-transform:uppercase}
+.footer{background:#171713;color:#eee9df;padding:65px 7vw 25px}.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px;padding-bottom:55px}.footer .brand{font-size:25px}.footer p,.footer a{font-size:11px;line-height:2;color:#aaa79e}.footer h4{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500}.footer-bottom{border-top:1px solid #393932;padding-top:20px;display:flex;justify-content:space-between;color:#77756d;font-size:9px;letter-spacing:.1em}
+.cart-panel{position:fixed;inset:0;z-index:20;pointer-events:none}.cart-panel.open{pointer-events:auto}.cart-shade{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:.25s}.cart-panel.open .cart-shade{opacity:1}.cart-drawer{position:absolute;right:0;top:0;height:100%;width:min(430px,100%);background:var(--paper);padding:28px;transform:translateX(100%);transition:.3s;display:flex;flex-direction:column}.cart-panel.open .cart-drawer{transform:none}.cart-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px}.cart-head h3{font:27px var(--serif);font-weight:400;margin:0}.close{border:0;background:none;font-size:24px}.cart-items{overflow:auto;flex:1}.cart-row{display:flex;gap:15px;padding:18px 0;border-bottom:1px solid var(--line)}.cart-row img{width:78px;height:90px;object-fit:cover}.cart-row strong{font:18px var(--serif)}.cart-row small{display:block;color:var(--muted);margin-top:7px}.remove{border:0;background:none;text-decoration:underline;font-size:10px;margin-top:10px}.cart-total{border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;font-size:13px}.cart-note{font-size:10px;line-height:1.7;color:var(--muted)}.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:white;padding:14px 20px;font-size:11px;opacity:0;transition:.25s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){.nav{gap:16px}.nav a{font-size:9px}.products{grid-template-columns:repeat(2,1fr)}.categories{grid-template-columns:repeat(2,1fr)}.editorial{grid-template-columns:1fr}.editorial-image{min-height:440px}.promise{padding:55px 6vw}.footer-top{grid-template-columns:1fr 1fr}.footer-top>div:first-child{grid-column:1/-1}}
+@media(max-width:620px){.announcement{font-size:8px}.header{height:70px;padding:0 5vw}.brand{font-size:18px}.menu-toggle{display:block}.nav{display:none;position:absolute;top:70px;left:0;right:0;background:var(--paper);padding:25px;flex-direction:column;align-items:flex-start;border-bottom:1px solid var(--line)}.nav.open{display:flex}.header-actions{gap:12px}.icon-btn{font-size:9px}.hero{height:690px;min-height:0}.hero:before{background:linear-gradient(90deg,rgba(14,14,11,.72),rgba(14,14,11,.22)),url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85') 58% center/cover}.hero-content{padding:145px 7vw 60px}.hero h1{font-size:58px}.hero p{font-size:12px}.hero-note{display:none}.section{padding:75px 5vw}.section-top{display:block}.section-intro{margin-top:20px}.products{gap:30px 12px}.product-name{font-size:18px}.product-price{font-size:10px}.product-detail{font-size:8px}.quick-add{opacity:1;transform:none;padding:12px;font-size:8px}.product-image{aspect-ratio:4/4.7}.editorial-image{min-height:360px}.editorial-copy{padding:65px 8vw}.categories{gap:9px}.category span{font-size:20px;left:14px;bottom:15px}.promise{grid-template-columns:1fr;gap:25px;padding:55px 8vw}.promise article{padding-left:18px}.footer-top{grid-template-columns:1fr 1fr;gap:25px}.footer-top>div:first-child{grid-column:1/-1}.footer-bottom{gap:12px;flex-direction:column}.btn-light{margin:10px 0 0}.hero .btn{width:100%;max-width:260px}}
+</style>
 </head>
-<body data-page="home">
-<div id="site-header">
-<noscript>
-  <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
-  <div class="topbar">Showroom Hamburg · Beratung nach Vereinbarung unter +49 40 41 92 74 60</div>
-  <header class="header"><div class="wrap header__inner">
-    <a class="logo" href="index.html"><span class="logo__mark">PM</span><span class="logo__name">Premium Meubles<small>Interior Design Concepts</small></span></a>
-    <nav class="nav-static">
-      <a href="index.html" class="is-active">Startseite</a>
-      <a href="kollektion.html">Kollektion</a>
-      <a href="ueber-uns.html">Studio</a>
-      <a href="kontakt.html">Kontakt</a>
-    </nav>
-  </div></header>
-</noscript>
-</div>
-
+<body>
+<div class="announcement">Ausgewählte Designstücke · Zeitlose Qualität · Persönliche Beratung</div>
+<header class="header">
+<a class="brand" href="#">PREMIUM MEUBLES<small>Design for living</small></a>
+<nav class="nav" id="nav"><a href="#kollektion">Kollektion</a><a href="#welten">Wohnwelten</a><a href="#geschichte">Unsere Haltung</a><a href="#kontakt">Kontakt</a></nav>
+<div class="header-actions"><button class="icon-btn" onclick="openCart()">Warenkorb <span class="count" id="cartCount">0</span></button><button class="icon-btn menu-toggle" onclick="document.getElementById('nav').classList.toggle('open')" aria-label="Menü öffnen">☰</button></div>
+</header>
 <main>
-  <section class="hero">
-    <div class="hero__bg" id="hero-art">
-      <span class="hero__caption caption"><b>/ Premium Meubles</b> Material Inspiration</span>
-    </div>
-    <div class="hero__content">
-      <span class="eyebrow" data-i18n="home.hero.eyebrow">Interior Design Concepts</span>
-      <h1 data-i18n-html="home.hero.title">Räume als Lebensräume.<br>Design mit Substanz.</h1>
-      <span class="rule"></span>
-      <p class="lede" data-i18n="home.hero.lede">Wir gestalten Räume, die über Trends hinausgehen. Als Interior Design Studio mit Fokus auf ganzheitliche Planung verbinden wir höchste gestalterische Ansprüche mit technischer Präzision.</p>
-      <div class="hero__actions">
-        <a class="btn" href="kollektion.html" data-i18n="home.hero.cta1">Kollektion ansehen</a>
-        <a class="btn btn--ghost" href="kontakt.html" data-i18n="home.hero.cta2">Showroom besuchen</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="features">
-    <div class="feature"><h4 data-i18n="home.feat1.t">Geprüft &amp; aufbereitet</h4><p data-i18n="home.feat1.p">Jedes gebrauchte Stück wird von Hand kontrolliert</p></div>
-    <div class="feature"><h4 data-i18n="home.feat2.t">Lieferung bis in den Raum</h4><p data-i18n="home.feat2.p">Weißhandschuh-Service inklusive Montage</p></div>
-    <div class="feature"><h4 data-i18n="home.feat3.t">Einzelstücke</h4><p data-i18n="home.feat3.p">Die meisten Stücke gibt es nur einmal</p></div>
-    <div class="feature"><h4 data-i18n="home.feat4.t">Persönliche Beratung</h4><p data-i18n="home.feat4.p">Im Showroom Hamburg oder bei Ihnen zu Hause</p></div>
-  </div>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow" data-i18n="home.featured.eyebrow">Ausgewählt</span>
-          <h2 data-i18n="home.featured.title">Die Stücke der Saison</h2>
-          <span class="rule"></span>
-        </div>
-        <a class="link-underline" href="kollektion.html" data-i18n="home.featured.link">Alle 16 Stücke</a>
-      </div>
-      <div class="grid grid--3" id="featured"></div>
-    </div>
-  </section>
-
-  <section class="split">
-    <div class="split__media" id="story-art"></div>
-    <div class="split__text split--dark">
-      <span class="eyebrow" data-i18n="home.story.eyebrow">Unsere Philosophie</span>
-      <h2 data-i18n="home.story.title">Für Räume, die wirken.</h2>
-          <span class="rule"></span>
-      <p data-i18n="home.story.p1">Wir sind überzeugt: Exzellentes Interior Design entsteht im Dialog — zwischen Vision und Machbarkeit, zwischen Kreativität und Struktur, zwischen Ästhetik und Alltagstauglichkeit.</p>
-      <p data-i18n="home.story.p2">Mit Leidenschaft, Expertise und einem klaren gestalterischen Anspruch entwickeln wir Räume, die zu Lebensräumen werden. Nicht beliebig, sondern einzigartig.</p>
-      <div style="margin-top:1.5rem"><a class="link-underline" href="ueber-uns.html" data-i18n="home.story.link">Das Studio kennenlernen</a></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <div>
-          <span class="eyebrow" data-i18n="home.cats.eyebrow">Nach Raum</span>
-          <h2 data-i18n="home.cats.title">Wo möchten Sie beginnen?</h2>
-          <span class="rule"></span>
-        </div>
-      </div>
-      <div class="grid grid--3" id="cats"></div>
-    </div>
-  </section>
-
-  <section class="section" style="background:var(--paper-2)">
-    <div class="wrap center">
-      <blockquote class="quote reveal">
-        <span data-i18n="home.quote">„Premium Meubles. Für Räume, die wirken.“</span>
-        <cite data-i18n="home.quote.cite">Premium Meubles · Hamburg</cite>
-      </blockquote>
-    </div>
-  </section>
-
-  <section class="split">
-    <div class="split__text">
-      <span class="eyebrow" data-i18n="home.service.eyebrow">Service</span>
-      <h2 data-i18n="home.service.title">Wir planen Ihren Raum mit.</h2>
-          <span class="rule"></span>
-      <p data-i18n="home.service.p">Unsere Beraterinnen und Berater kommen zu Ihnen, nehmen Maß, bringen Muster mit und entwerfen einen Plan — kostenfrei und unverbindlich.</p>
-      <ul class="specs" style="margin:1.5rem 0 2rem">
-        <li><span data-i18n="home.service.r1">Erstgespräch</span><span data-i18n="home.service.v1">kostenfrei</span></li>
-        <li><span data-i18n="home.service.r2">Raumplanung inkl. 3D-Ansicht</span><span data-i18n="home.service.v2">ab 2 Wochen</span></li>
-        <li><span data-i18n="home.service.r3">Materialmuster nach Hause</span><span data-i18n="home.service.v3">inklusive</span></li>
-      </ul>
-      <div><a class="btn" href="kontakt.html" data-i18n="home.service.cta">Termin vereinbaren</a></div>
-    </div>
-    <div class="split__media" id="service-art"></div>
-  </section>
-
-  <section class="section newsletter">
-    <div class="wrap center">
-      <span class="eyebrow" data-i18n="home.news.eyebrow">Bleiben Sie in Verbindung</span>
-      <h2 data-i18n="home.news.title">Neue Entwürfe zuerst sehen</h2>
-          <span class="rule"></span>
-      <p class="lede" style="margin-inline:auto;color:rgba(250,247,242,.75)" data-i18n="home.news.lede">Etwa sechs Mal im Jahr schreiben wir über neue Stücke, Werkstattbesuche und Einblicke ins Handwerk.</p>
-      <form data-demo name="neuheiten" method="POST" data-netlify="true" netlify-honeypot="firma">
-        <input type="hidden" name="form-name" value="neuheiten">
-        <p class="sr-only" aria-hidden="true">
-          <label>Bitte leer lassen <input name="firma" tabindex="-1" autocomplete="off"></label>
-        </p>
-        <input type="email" name="email" required data-i18n-placeholder="home.news.placeholder" data-i18n-aria="home.news.placeholder" placeholder="Ihre E-Mail-Adresse" aria-label="Ihre E-Mail-Adresse">
-        <button class="btn btn--light" type="submit" data-i18n="home.news.cta">Abonnieren</button>
-        <div class="form-msg" data-msg hidden style="flex:1 1 100%;border-color:rgba(250,247,242,.4);background:rgba(250,247,242,.08)"></div>
-      </form>
-    </div>
-  </section>
+<section class="hero"><div class="hero-content"><div class="eyebrow">Die Kunst des Wohnens</div><h1>Design, das<br>bleibt.</h1><p>Entdecken Sie Möbel mit Charakter. Sorgfältig ausgewählte Formen, besondere Materialien und Stücke, die Räume zu etwas Eigenem machen.</p><a class="btn" href="#kollektion">Kollektion entdecken <span>↗</span></a><a class="btn btn-light" href="#geschichte">Unsere Welt</a></div><div class="hero-note">01 / Zeitlose Wohnkultur</div></section>
+<div class="marquee">FORM · MATERIAL · HANDWERK <span>✳</span> ZEITLOSES DESIGN <span>✳</span> BESONDERE RÄUME <span>✳</span> FORM · MATERIAL · HANDWERK</div>
+<section class="section" id="kollektion"><div class="section-top"><div><div class="eyebrow">Die Auswahl</div><h2>Stücke mit Charakter.</h2></div><p class="section-intro">Eine kuratierte Auswahl für Menschen, die bewusst einrichten. Entdecken Sie unsere Favoriten und finden Sie Ihr neues Lieblingsstück.</p></div>
+<div class="filters" id="filters"><button class="filter active" data-filter="Alle">Alle Stücke</button><button class="filter" data-filter="Sofas">Sofas</button><button class="filter" data-filter="Sessel">Sessel</button><button class="filter" data-filter="Tische">Tische</button><button class="filter" data-filter="Leuchten">Leuchten</button></div>
+<div class="products" id="products"></div></section>
+<section class="editorial" id="geschichte"><div class="editorial-image"></div><div class="editorial-copy"><div class="eyebrow">Weniger, aber besser</div><h2>Ein Zuhause mit Haltung.</h2><p>Wir glauben an Räume, die nicht laut sein müssen, um Eindruck zu hinterlassen. An ehrliche Materialien, ausgewogene Proportionen und Möbel, die mit der Zeit nur schöner werden.</p><a class="btn" href="#kontakt">Mehr über Premium Meubles ↗</a></div></section>
+<section class="section" id="welten"><div class="section-top"><div><div class="eyebrow">Inspiration finden</div><h2>Ihre Wohnwelt.</h2></div><p class="section-intro">Von der ruhigen Lounge bis zum Essbereich mit Charakter – entdecken Sie Möbel für jeden Moment.</p></div>
+<div class="categories"><a class="category" href="#kollektion" onclick="setFilter('Sofas')"><img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=700&q=80" alt="Designsofa im Wohnzimmer"><span>Living</span></a><a class="category" href="#kollektion" onclick="setFilter('Tische')"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=700&q=80" alt="Eleganter Essbereich"><span>Dining</span></a><a class="category" href="#kollektion" onclick="setFilter('Sessel')"><img src="https://images.unsplash.com/photo-1598300056393-4aac492f4344?auto=format&fit=crop&w=700&q=80" alt="Designer Sessel"><span>Relax</span></a><a class="category" href="#kollektion" onclick="setFilter('Leuchten')"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=700&q=80" alt="Moderne Designleuchte"><span>Lighting</span></a></div></section>
+<section class="promise"><article><b>Bewusst ausgewählt</b><p>Eine kuratierte Auswahl statt beliebiger Masse – jedes Stück verdient seinen Platz.</p></article><article><b>Persönlich beraten</b><p>Wir helfen Ihnen, das passende Möbelstück für Ihren Raum und Ihren Stil zu finden.</p></article><article><b>Qualität, die bleibt</b><p>Materialien, Verarbeitung und Design stehen im Mittelpunkt unserer Auswahl.</p></article></section>
+<section class="newsletter" id="kontakt"><div class="eyebrow">Inspiration im Postfach</div><h2>Ein wenig Design-Post.</h2><p>Neue Stücke, besondere Fundstücke und Ideen für schöne Räume.</p><form class="newsletter-form" onsubmit="event.preventDefault();toast('Danke! Die Newsletter-Anmeldung ist noch nicht mit einem E-Mail-Dienst verbunden.');"><input type="email" placeholder="Ihre E-Mail-Adresse" required aria-label="Ihre E-Mail-Adresse"><button type="submit">Anmelden ↗</button></form></section>
 </main>
-
-<div id="site-footer">
-<noscript>
-  <footer class="footer"><div class="wrap">
-    <p>Wir gestalten Räume, die über Trends hinausgehen: zeitlos, durchdacht, elegant und authentisch.</p>
-    <p>Stadthausbrücke 8 · 20355 Hamburg · <a href="tel:+4940419274600">+49 40 41 92 74 60</a> ·
-       <a href="mailto:norbert.wichele@gemail.com">norbert.wichele@gemail.com</a></p>
-    <p class="muted">Warenkorb, Suche und Sprachwahl brauchen JavaScript.</p>
-  </div></footer>
-</noscript>
-</div>
-
-<script src="assets/js/i18n.js"></script>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/hero.js"></script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/berater.js"></script>
+<footer class="footer"><div class="footer-top"><div><a class="brand" href="#">PREMIUM MEUBLES<small>Design for living</small></a><p>Besondere Möbel. Zeitlose Räume.<br>Entdecken Sie Design mit Persönlichkeit.</p></div><div><h4>Entdecken</h4><p><a href="#kollektion">Kollektion</a><br><a href="#welten">Wohnwelten</a><br><a href="#geschichte">Unsere Haltung</a></p></div><div><h4>Kontakt</h4><p>Fragen zu einem Möbelstück?<br><a href="#kontakt">Schreiben Sie uns</a></p><p>Impressum · Datenschutz</p></div></div><div class="footer-bottom"><span>© 2026 PREMIUM MEUBLES</span><span>DESIGN FOR LIVING</span></div></footer>
+<div class="cart-panel" id="cartPanel"><div class="cart-shade" onclick="closeCart()"></div><aside class="cart-drawer"><div class="cart-head"><h3>Ihr Warenkorb</h3><button class="close" onclick="closeCart()" aria-label="Warenkorb schließen">×</button></div><div class="cart-items" id="cartItems"></div><div class="cart-total"><strong>Zwischensumme</strong><strong id="cartTotal">0 €</strong></div><p class="cart-note">Die Artikel im Warenkorb sind unverbindlich vorgemerkt. Preise und Verfügbarkeit werden vor einer Bestellung persönlich bestätigt.</p><a class="btn" href="#kontakt" onclick="closeCart()">Anfrage stellen ↗</a></aside></div>
+<div class="toast" id="toast"></div>
 <script>
-function initPage() {
-  heroCanvas($("#hero-art"));
-  $("#story-art").innerHTML   = ART.regal(TONES.studio);
-  $("#service-art").innerHTML = ART.tisch(TONES.studio);
-
-  // Ausgewaehlte Stuecke und Rubrikkacheln kommen aus dem Bestand, nicht aus
-  // einer festen Liste — sonst zeigt die Startseite auf Verkauftes.
-  $("#featured").innerHTML = PRODUCTS.slice(0, 6).map(productCard).join("");
-
-  $("#cats").innerHTML = belegteKategorien().map((k) => {
-    const erstes = PRODUCTS.find((p) => p.categoryKey === k);
-    return `
-    <a class="cat-tile reveal" href="kollektion.html?kategorie=${k}">
-      ${artFor(erstes)}
-      <span class="cat-tile__label">${t("cat." + k)}</span>
-    </a>`;
-  }).join("");
-}
+const items=[
+{id:1,name:'Sofa Élan',cat:'Sofas',price:2890,detail:'Bouclé · Natur · 3-Sitzer',img:'photo-1555041469-a586c61ea9bc',tag:'Ausgewählt'},
+{id:2,name:'Lounge Chair No. 4',cat:'Sessel',price:1240,detail:'Eiche · Leder · Handarbeit',img:'photo-1598300056393-4aac492f4344',tag:'Ikonisches Design'},
+{id:3,name:'Tisch Forma',cat:'Tische',price:1780,detail:'Travertin · Massiv · Rund',img:'photo-1600607687939-ce8a6c25118c',tag:'Neu'},
+{id:4,name:'Leuchte Aurelia',cat:'Leuchten',price:690,detail:'Gebürstetes Messing · Opalglas',img:'photo-1507473885765-e6ed057f782c',tag:'Limited'},
+{id:5,name:'Sessel Noma',cat:'Sessel',price:980,detail:'Wollstoff · Sand · Drehfuß',img:'photo-1567538096630-e0c55bd6374c',tag:'Bestseller'},
+{id:6,name:'Sofa Serein',cat:'Sofas',price:3450,detail:'Leinen · Warmgrau · Modular',img:'photo- sofa',tag:'Designklassiker'}
+];
+items[5].img='photo-1600210492486-724fe5c67fb0';
+let cart=[];
+const fmt=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+function renderProducts(filter='Alle'){const list=filter==='Alle'?items:items.filter(p=>p.cat===filter);document.getElementById('products').innerHTML=list.map(p=>`<article class="product"><div class="product-image"><img loading="lazy" src="https://images.unsplash.com/${p.img}?auto=format&fit=crop&w=850&q=82" alt="${p.name}"><span class="tag">${p.tag}</span><button class="wish" onclick="this.classList.toggle('selected');this.textContent=this.classList.contains('selected')?'♥':'♡'" aria-label="Auf die Wunschliste">♡</button><button class="quick-add" onclick="addToCart(${p.id})">In den Warenkorb +</button></div><div class="product-meta"><span class="product-name">${p.name}</span><span class="product-price">${fmt(p.price)}</span></div><div class="product-detail">${p.detail}</div></article>`).join('')}
+function setFilter(f){document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===f));renderProducts(f)}
+document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)setFilter(b.dataset.filter)});
+function addToCart(id){const p=items.find(x=>x.id===id);const found=cart.find(x=>x.id===id);if(found)found.qty++;else cart.push({...p,qty:1});renderCart();toast(p.name+' wurde hinzugefügt.')}
+function removeFromCart(id){cart=cart.filter(x=>x.id!==id);renderCart()}
+function renderCart(){document.getElementById('cartCount').textContent=cart.reduce((s,x)=>s+x.qty,0);document.getElementById('cartItems').innerHTML=cart.length?cart.map(p=>`<div class="cart-row"><img src="https://images.unsplash.com/${p.img}?auto=format&fit=crop&w=180&q=70" alt=""><div><strong>${p.name}</strong><small>${fmt(p.price)} · Menge: ${p.qty}</small><button class="remove" onclick="removeFromCart(${p.id})">Entfernen</button></div></div>`).join(''):'<p style="color:#777;margin-top:25px;font-size:13px">Ihr Warenkorb ist noch leer.</p>';document.getElementById('cartTotal').textContent=fmt(cart.reduce((s,x)=>s+x.price*x.qty,0))}
+function openCart(){document.getElementById('cartPanel').classList.add('open')}function closeCart(){document.getElementById('cartPanel').classList.remove('open')}
+let toastTimer;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+renderProducts();renderCart();
 </script>
-</body>
-</html>
+</body></html>
